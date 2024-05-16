@@ -1,0 +1,30 @@
+.login-page {
+  display: flex;
+  background-color: #edeff3;
+  .login-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 50vw;
+    height: 100vh h2 {
+      text-align: center;
+    }
+    :global {
+      .ant-form-item-label {
+        padding-bottom: 0px;
+        font-weight: 700;
+        font-family: "Inter", "Roobert", "Helvetica Neue", Helvetica, Arial,
+          sans-serif;
+      }
+    }
+  }
+  .login-bg {
+    width: 50vw;
+    height: 100vh;
+    overflow: hidden;
+    img {
+      height: 100%;
+    }
+  }
+}
