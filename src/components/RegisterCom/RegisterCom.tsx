@@ -1,8 +1,9 @@
 import React from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
-import { registerRequest } from "../../api";
+import { registerRequest } from "@/api";
 import styles from "./index.module.scss";
+import { RuleObject } from "antd/es/form";
 
 type FieldType = {
   account?: string;
@@ -69,7 +70,17 @@ const RegisterCom = (props: any) => {
       <Form.Item<FieldType>
         label="确认密码"
         name="confirmPassword"
-        rules={[{ required: true, message: "再一次输入你的密码" }]}
+        rules={[
+          { required: true, message: "请再次输入密码" },
+          (form) => {
+            const password = form.getFieldValue("password");
+            const confirmPassword = form.getFieldValue("confirmPassword");
+            return {
+              validator: confirmPassword !== "" && confirmPassword !== password,
+              message: "两次密码不一致",
+            } as unknown as RuleObject;
+          },
+        ]}
         style={{ marginBottom: 10 }}
         required={false}
       >

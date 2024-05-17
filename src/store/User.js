@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { setToken as _setToken, getToken } from "../utils";
+import { setToken as _setToken, getToken } from "@/utils";
 
 class User {
   constructor() {

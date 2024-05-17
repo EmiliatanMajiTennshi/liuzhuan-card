@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken } from "./token";
 
 // axios的配置文件, 可以在这里去区分开发环境和生产环境等全局一些配置
 const devBaseUrl = "target/";
@@ -19,6 +20,10 @@ var request = axios.create({
 //拦截请求
 request.interceptors.request.use(
   (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = token;
+    }
     return config;
   },
   (error) => {

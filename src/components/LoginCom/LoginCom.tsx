@@ -1,26 +1,72 @@
 import React from "react";
 import type { FormProps } from "antd";
-import { Button, Checkbox, Form, Input } from "antd";
-import { loginRequest } from "../../api";
+import { Button, Form, Input, message } from "antd";
+import { loginRequest } from "@/api";
 import { useNavigate } from "react-router-dom";
-import { setToken } from "../../utils";
+import { setToken } from "@/utils";
 import styles from "./index.module.scss";
 
 type FieldType = {
-  account?: string;
-  password?: string;
-  remember?: string;
+  account: string;
+  password: string;
 };
-
+type TRes = {
+  code?: number;
+  data?: string;
+  msg?: string;
+};
 // 登录组件
 const LoginCom = (props: any) => {
   const { setActiveTabKey } = props;
   const navigate = useNavigate();
+  //   const [remember, setRemember] = useState(true);
 
+  //   useEffect(()=>{
+  //     setRemember(localStorage.getItem('remember'))
+  //   })
+
+  const successMessage = (_message: string) => {
+    message.success({
+      content: _message,
+      className: "custom-class",
+      duration: 2,
+      style: {
+        marginTop: "20vh",
+        position: "relative",
+        transform: "translateX(-25%)",
+      },
+    });
+  };
+
+  const errorMessage = (_message: string) => {
+    message.error({
+      content: _message,
+      className: "custom-class",
+      duration: 2,
+      style: {
+        marginTop: "20vh",
+        position: "relative",
+        transform: "translateX(-25%)",
+      },
+    });
+  };
   const onLoginFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     console.log("Success:", values);
-    await loginRequest(values)(setToken); //登录请求
-    navigate("./home");
+    const res: TRes = await loginRequest(values)(setToken); //登录请求
+    if (res?.code === 200) {
+      //   if (remember) {
+      //     localStorage.setItem("account", values.account);
+      //     localStorage.setItem("password", values.password);
+      //   } else {
+      //     localStorage.removeItem("account");
+      //     localStorage.removeItem("password");
+      //   }
+      successMessage(res.msg || "");
+      navigate("./home");
+    } else {
+      debugger;
+      errorMessage(typeof res === "string" ? res : res.msg || "");
+    }
   };
 
   const onLoginFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
@@ -35,7 +81,10 @@ const LoginCom = (props: any) => {
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
       style={{ maxWidth: 600 }}
-      initialValues={{ remember: true }}
+      initialValues={{
+        account: localStorage.getItem("account") || "",
+        password: localStorage.getItem("password") || "",
+      }}
       onFinish={onLoginFinish}
       onFinishFailed={onLoginFinishFailed}
       autoComplete="off"
@@ -47,7 +96,11 @@ const LoginCom = (props: any) => {
         style={{ marginBottom: 10 }}
         required={false}
       >
-        <Input placeholder="用户名" style={{ width: 350 }} />
+        <Input
+          placeholder="用户名"
+          style={{ width: 350 }}
+          //   value={localStorage.getItem("account") || ""}
+        />
       </Form.Item>
 
       <Form.Item<FieldType>
@@ -57,7 +110,11 @@ const LoginCom = (props: any) => {
         style={{ marginBottom: 10 }}
         required={false}
       >
-        <Input.Password placeholder="密码" style={{ width: 350 }} />
+        <Input.Password
+          placeholder="密码"
+          style={{ width: 350 }}
+          //   value={localStorage.getItem("password") || ""}
+        />
       </Form.Item>
 
       <Form.Item wrapperCol={{ span: 16 }} style={{ marginBottom: 0 }}>
