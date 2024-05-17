@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 // import {
 //   MenuFoldOutlined,
 //   MenuUnfoldOutlined,
@@ -8,14 +8,40 @@ import React, { useState } from "react";
 // } from "@ant-design/icons";
 import { Button, ConfigProvider, Layout, Menu, theme } from "antd";
 import styles from "./index.module.scss";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useRootStore } from "@/store";
+import { observer } from "mobx-react";
+import { logoutRequest } from "@/api/logoutRequest";
+import { getUserlist } from "@/api";
 
 const { Header, Sider, Content } = Layout;
 
 const Home: React.FC = () => {
+  const store = useRootStore();
+  const { pageTitle } = store?.pageTitle;
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-
+  // 拿到当前url
+  const location = useLocation();
+  const navigate = useNavigate();
+  const onMenuClick = ({ key }: { key: string }) => {
+    navigate(key);
+  };
+  const handleLogout = async () => {
+    const res = (await logoutRequest()) as any;
+    // res.data 的格式是 redirect:/login
+    debugger;
+    const route = res?.data.split(":")[1];
+    if (typeof route === "string" && route.indexOf("/") !== -1) {
+      navigate(res);
+    } else {
+      navigate("/");
+    }
+  };
+  const getUserlist1 = () => {
+    getUserlist({ page: 1, rows: 10 });
+  };
   return (
     <ConfigProvider
       theme={{
@@ -34,20 +60,21 @@ const Home: React.FC = () => {
       <Layout style={{ height: "100%" }}>
         <Sider trigger={null}>
           <div className="demo-logo-vertical" />
-          <h2 className={styles.title}>流转卡网站管理 </h2>
+          <h2 className={styles.title}>流转卡管理系统 </h2>
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={["1"]}
+            defaultSelectedKeys={[location.pathname]}
+            onClick={onMenuClick}
             items={[
               {
                 key: "1",
                 label: "新豪轴承",
                 children: [
-                  { key: "5", label: "Option 5" },
-                  { key: "6", label: "Option 6" },
-                  { key: "7", label: "Option 7" },
-                  { key: "8", label: "Option 8" },
+                  { key: "/add_part_flow_card", label: "零件流转卡添加" },
+                  { key: "/add_assembly_flow_card", label: "装配流转卡添加" },
+                  { key: "5", label: "Option 7" },
+                  { key: "6", label: "Option 8" },
                 ],
               },
               {
@@ -58,15 +85,30 @@ const Home: React.FC = () => {
           />
         </Sider>
         <Layout>
-          <Header style={{ padding: 0, background: colorBgContainer }}>
-            <Button
-              type="text"
+          <Header
+            style={{
+              padding: "0px 24px",
+              background: colorBgContainer,
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <div
               style={{
-                fontSize: "16px",
-                width: 64,
-                height: 64,
+                fontSize: 24,
+                background: colorBgContainer,
               }}
-            />
+            >
+              {pageTitle}
+            </div>
+            <div>
+              <Button type="link" onClick={handleLogout}>
+                退出登录
+              </Button>
+              <Button type="link" onClick={getUserlist1}>
+                获取用户列表
+              </Button>
+            </div>
           </Header>
           <Content
             style={{
@@ -77,7 +119,7 @@ const Home: React.FC = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            Content
+            <Outlet></Outlet>
           </Content>
         </Layout>
       </Layout>
@@ -85,4 +127,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default observer(Home);

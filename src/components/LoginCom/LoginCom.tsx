@@ -62,7 +62,7 @@ const LoginCom = (props: any) => {
       //     localStorage.removeItem("password");
       //   }
       successMessage(res.msg || "");
-      navigate("./home");
+      navigate("/");
     } else {
       debugger;
       errorMessage(typeof res === "string" ? res : res.msg || "");
