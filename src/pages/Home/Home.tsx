@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // import {
 //   MenuFoldOutlined,
 //   MenuUnfoldOutlined,
@@ -9,29 +9,37 @@ import React from "react";
 import { Button, ConfigProvider, Layout, Menu, theme } from "antd";
 import styles from "./index.module.scss";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useRootStore } from "@/store";
-import { observer } from "mobx-react";
 import { logoutRequest } from "@/api/logoutRequest";
 import { getUserlist } from "@/api";
+import { menuList, flatMenuList } from "@/constant";
 
 const { Header, Sider, Content } = Layout;
 
 const Home: React.FC = () => {
-  const store = useRootStore();
-  const { pageTitle } = store?.pageTitle;
+  const [pageTitle, setPageTitle] = useState("");
+
+  // 拿到当前url
+  const location = useLocation();
+  useEffect(() => {
+    // 获取页面标题
+    const _pageTitle = flatMenuList.find((item) => {
+      return item.key === location.pathname;
+    })?.label;
+    setPageTitle(_pageTitle || "");
+  }, [location.pathname]);
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-  // 拿到当前url
-  const location = useLocation();
+
   const navigate = useNavigate();
+
   const onMenuClick = ({ key }: { key: string }) => {
     navigate(key);
   };
   const handleLogout = async () => {
     const res = (await logoutRequest()) as any;
     // res.data 的格式是 redirect:/login
-    debugger;
     const route = res?.data.split(":")[1];
     if (typeof route === "string" && route.indexOf("/") !== -1) {
       navigate(res);
@@ -42,6 +50,7 @@ const Home: React.FC = () => {
   const getUserlist1 = () => {
     getUserlist({ page: 1, rows: 10 });
   };
+
   return (
     <ConfigProvider
       theme={{
@@ -66,22 +75,7 @@ const Home: React.FC = () => {
             mode="inline"
             defaultSelectedKeys={[location.pathname]}
             onClick={onMenuClick}
-            items={[
-              {
-                key: "1",
-                label: "新豪轴承",
-                children: [
-                  { key: "/add_part_flow_card", label: "零件流转卡添加" },
-                  { key: "/add_assembly_flow_card", label: "装配流转卡添加" },
-                  { key: "5", label: "Option 7" },
-                  { key: "6", label: "Option 8" },
-                ],
-              },
-              {
-                key: "2",
-                label: "链条流转卡",
-              },
-            ]}
+            items={menuList}
           />
         </Sider>
         <Layout>
@@ -127,4 +121,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default observer(Home);
+export default Home;
