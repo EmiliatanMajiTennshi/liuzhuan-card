@@ -9,6 +9,7 @@ import { OperatorSimpleTask } from "@/pages/OperatorSimpleTask";
 import { FlowCardCancel } from "@/pages/FlowCardCancel";
 import { AddEmployeeInfo } from "@/pages/AddEmployeeInfo";
 import { FullInspectionDefectRate } from "@/pages/FullInspectionDefectRate";
+import { IssueChainboardsSemiFinishedPartFlowCard } from "@/pages/IssueChainboardsSemiFinishedPartFlowCard";
 
 const PrivateRoute = () => {
   return useRoutes([
@@ -26,31 +27,35 @@ const PrivateRoute = () => {
       children: [
         {
           path: "add_part_flow_card",
-          element: <AddPartFlowCard></AddPartFlowCard>,
+          element: <AddPartFlowCard />,
         },
         {
           path: "add_assembly_flow_card",
-          element: <AddAssemblyFlowCard></AddAssemblyFlowCard>,
+          element: <AddAssemblyFlowCard />,
         },
         {
           path: "flow_card_query",
-          element: <FlowCardQuery></FlowCardQuery>,
+          element: <FlowCardQuery />,
         },
         {
           path: "/operator_simple_task",
-          element: <OperatorSimpleTask></OperatorSimpleTask>,
+          element: <OperatorSimpleTask />,
         },
         {
           path: "/flow_card_cancel",
-          element: <FlowCardCancel></FlowCardCancel>,
+          element: <FlowCardCancel />,
         },
         {
           path: "/add_employee_info",
-          element: <AddEmployeeInfo></AddEmployeeInfo>,
+          element: <AddEmployeeInfo />,
         },
         {
           path: "/full_inspection_defect_rate",
-          element: <FullInspectionDefectRate></FullInspectionDefectRate>,
+          element: <FullInspectionDefectRate />,
+        },
+        {
+          path: "/issue_chainboards_semi_finished_part_flow_card",
+          element: <IssueChainboardsSemiFinishedPartFlowCard />,
         },
       ],
     },

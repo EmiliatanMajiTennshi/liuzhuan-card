@@ -4,7 +4,7 @@ import {
   StyleProvider,
   legacyLogicalPropertiesTransformer,
 } from "@ant-design/cssinjs";
-import { BrowserRouter as Router } from "react-router-dom";
+import { HashRouter as Router } from "react-router-dom";
 import PrivateRoute from "./router/PrivateRoute";
 import "./App.css";
 
