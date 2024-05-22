@@ -1,12 +1,12 @@
-// 下发链板半品零件流转卡
+// 零件流转卡查询
 import React from "react";
 import { formConfig, tableConfig } from "./config";
 import { AdvancedSearchCom } from "@/components/AdvancedSearchCom";
 
-const IssueChainboardsSemiFinishedPartFlowCard = () => {
+const PartFlowCardQuery = () => {
   return (
     <>
-      <h2 style={{ marginTop: 0 }}>链板-半品订单列表</h2>
+      <h2 style={{ marginTop: 0 }}>操作前查询</h2>
       <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}
@@ -15,4 +15,4 @@ const IssueChainboardsSemiFinishedPartFlowCard = () => {
   );
 };
 
-export default IssueChainboardsSemiFinishedPartFlowCard;
+export default PartFlowCardQuery;

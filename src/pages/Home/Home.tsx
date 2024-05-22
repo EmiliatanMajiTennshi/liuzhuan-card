@@ -97,7 +97,7 @@ const Home: React.FC = () => {
             items={menuList}
           />
         </Sider>
-        <Layout>
+        <Layout style={{ minWidth: "1000px" }}>
           <Header
             style={{
               padding: "0px 24px",

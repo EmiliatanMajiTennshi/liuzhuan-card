@@ -10,6 +10,11 @@ import { FlowCardCancel } from "@/pages/FlowCardCancel";
 import { AddEmployeeInfo } from "@/pages/AddEmployeeInfo";
 import { FullInspectionDefectRate } from "@/pages/FullInspectionDefectRate";
 import { IssueChainboardsSemiFinishedPartFlowCard } from "@/pages/IssueChainboardsSemiFinishedPartFlowCard";
+import { IssueRollerNestSemiFinishedPartFlowCard } from "@/pages/IssueRollerNestSemiFinishedPartFlowCard";
+import { IssueFinishedPartFlowCard } from "@/pages/IssueFinishedPartFlowCard";
+import { IssueOutsourcingFlowCard } from "@/pages/IssueOutsourcingFlowCard";
+import { IssueReplenishmentOrderFlowCard } from "@/pages/IssueReplenishmentOrderFlowCard";
+import { PartFlowCardQuery } from "@/pages/PartFlowCardQuery";
 
 const PrivateRoute = () => {
   return useRoutes([
@@ -56,6 +61,26 @@ const PrivateRoute = () => {
         {
           path: "/issue_chainboards_semi_finished_part_flow_card",
           element: <IssueChainboardsSemiFinishedPartFlowCard />,
+        },
+        {
+          path: "/issue_rollernest_semi_finished_part_flow_card",
+          element: <IssueRollerNestSemiFinishedPartFlowCard />,
+        },
+        {
+          path: "/issue_finished_part_flow_card",
+          element: <IssueFinishedPartFlowCard />,
+        },
+        {
+          path: "/issue_outsourcing_flow_card",
+          element: <IssueOutsourcingFlowCard />,
+        },
+        {
+          path: "/issue_replenishment_order_flow_card",
+          element: <IssueReplenishmentOrderFlowCard />,
+        },
+        {
+          path: "/part_flow_card_query",
+          element: <PartFlowCardQuery />,
         },
       ],
     },
