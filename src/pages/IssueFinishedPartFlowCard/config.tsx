@@ -5,32 +5,33 @@ const formConfig = {
   api: "",
   formItems: [
     {
-      key: "partType",
+      key: "type1",
       name: "零件类型",
       children: (
         <Select
           options={[
-            { value: "standardParts", label: "标准零件" },
-            { value: "nonStandardParts", label: "非标零件" },
+            { value: "标准", label: "标准零件" },
+            { value: "非标", label: "非标零件" },
+            { value: "盘点", label: "盘点零件" },
           ]}
         ></Select>
       ),
       rules: [],
     },
     {
-      key: "productionOrderCode",
+      key: "orderid",
       name: "生产订单条码",
       children: <Input></Input>,
       rules: [],
     },
     {
-      key: "partNumber",
+      key: "itmid",
       name: "零件料号",
       children: <Input></Input>,
       rules: [],
     },
     {
-      key: "spec",
+      key: "format",
       name: "规格",
       children: <Input></Input>,
       rules: [],
@@ -111,7 +112,7 @@ const formConfig = {
       ],
     },
     {
-      key: "productName",
+      key: "goodsname",
       name: "品名",
       children: <Input></Input>,
       rules: [],
@@ -122,49 +123,60 @@ const tableConfig = {
   columns: [
     {
       title: "零件类型",
-      dataIndex: "partType",
+      dataIndex: "type1",
+      key: "type1",
     },
 
     {
       title: "生产订单条码",
-      dataIndex: "productionOrderCode",
+      dataIndex: "orderid",
+      key: "orderid",
     },
     {
       title: "零件料号",
-      dataIndex: "partNumber",
+      dataIndex: "itmid",
+      key: "itmid",
     },
     {
       title: "品名",
-      dataIndex: "productName",
+      dataIndex: "goodsname",
+      key: "goodsname",
     },
     {
       title: "规格",
-      dataIndex: "spec",
+      dataIndex: "format",
+      key: "format",
     },
     {
       title: "商标",
-      dataIndex: "brand",
+      dataIndex: "Pcode",
+      key: "Pcode",
     },
     {
       title: "完成时间",
-      dataIndex: "finishTime",
+      dataIndex: "ljFinDate",
+      key: "ljFinDate",
     },
     {
       title: "单位",
-      dataIndex: "unit",
+      dataIndex: "uomname",
+      key: "uomname",
     },
     {
       title: "数量",
-      dataIndex: "quantity",
+      dataIndex: "supcount",
+      key: "supcount",
     },
     {
       title: "流转数量累积",
-      dataIndex: "cumFlowVolume",
+      dataIndex: "sumcount",
+      key: "sumcount",
     },
 
     {
       title: "成品零件流转卡",
       dataIndex: "semiFinishedPartFlowCard",
+      key: "semiFinishedPartFlowCard",
     },
   ],
 };

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生产工序流转卡暨派工单</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>生产工序流转卡暨派工单</h2>
+<table>
+    <tr>
+        <th>生产订单条码</th>
+        <td colspan="3">2MX2202405111087</td>
+        <th>料号</th>
+        <td>3201-00000002</td>
+        <th>品名</th>
+        <td>半品外链板</td>
+    </tr>
+    <tr>
+        <th>材质</th>
+        <td>40Mn</td>
+        <th>商标</th>
+        <td>15 CHINA10</td>
+        <th>追溯单号</th>
+        <td>24052341677</td>
+        <th>规格</th>
+        <td>06B-1</td>
+    </tr>
+    <tr>
+        <th>客户订单号</th>
+        <td>Z17979</td>
+        <th>表面处理</th>
+        <td></td>
+        <th>图号</th>
+        <td>06B-1-02-01</td>
+        <th>完成日期</th>
+        <td>2024/6/1 0:00:00</td>
+    </tr>
+    <tr>
+        <th>生产数量（公斤）</th>
+        <td>15</td>
+        <th>流转数量（公斤）</th>
+        <td></td>
+        <th>生产数量（PCS）</th>
+        <td>13915</td>
+        <th>流转数量（PCS）</th>
+        <td></td>
+    </tr>
+    <tr>
+        <th>材料料号</th>
+        <td>4101-000000020</td>
+        <th>材料品名</th>
+        <td>冷轧钢带</td>
+        <th>材料规格</th>
+        <td>1.3x67(精中)</td>
+        <th>材料材质</th>
+        <td>40Mn</td>
+    </tr>
+    <tr>
+        <th>供应/炉批号</th>
+        <td colspan="3"></td>
+        <th>主要尺寸</th>
+        <td colspan="3"></td>
+    </tr>
+    <tr>
+        <th rowspan="2">生产入库扫描条码</th>
+        <td colspan="2">
+            <p>订单号</p>
+            <img src="order_qrcode.png" alt="订单号二维码" width="100">
+        </td>
+        <td colspan="2">
+            <p>追溯单号</p>
+            <img src="trace_qrcode.png" alt="追溯单号二维码" width="100">
+        </td>
+        <td colspan="2">
+            <p>入库二维码</p>
+            <img src="storage_qrcode.png" alt="入库二维码" width="100">
+        </td>
+        <td colspan="2">
+            <p>领料二维码</p>
+            <img src="material_qrcode.png" alt="领料二维码" width="100">
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

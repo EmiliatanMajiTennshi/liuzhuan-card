@@ -10,8 +10,8 @@ const formConfig = {
       children: (
         <Select
           options={[
-            { value: "standardParts", label: "外协件" },
-            { value: "nonStandardParts", label: "外购件" },
+            { value: "标准", label: "外协件" },
+            { value: "非标", label: "外购件" },
             { value: "nonStandardPar1ts", label: "五金" },
           ]}
         ></Select>
@@ -38,13 +38,13 @@ const formConfig = {
       rules: [],
     },
     {
-      key: "partNumber",
+      key: "itmid",
       name: "零件料号",
       children: <Input></Input>,
       rules: [],
     },
     {
-      key: "spec",
+      key: "format",
       name: "规格",
       children: <Input></Input>,
       rules: [],
@@ -131,49 +131,60 @@ const tableConfig = {
     {
       title: "分类",
       dataIndex: "classification",
+      key: "classification",
     },
     {
       title: "类型",
       dataIndex: "type",
+      key: "type",
     },
 
     {
       title: "订单条码",
       dataIndex: "orderCode",
+      key: "orderCode",
     },
     {
       title: "零件料号",
-      dataIndex: "partNumber",
+      dataIndex: "itmid",
+      key: "itmid",
     },
     {
       title: "品名",
-      dataIndex: "productName",
+      dataIndex: "goodsname",
+      key: "goodsname",
     },
     {
       title: "规格",
-      dataIndex: "spec",
+      dataIndex: "format",
+      key: "format",
     },
 
     {
       title: "完成时间",
-      dataIndex: "finishTime",
+      dataIndex: "ljFinDate",
+      key: "ljFinDate",
     },
     {
       title: "单位",
-      dataIndex: "unit",
+      dataIndex: "uomname",
+      key: "uomname",
     },
     {
       title: "数量",
-      dataIndex: "quantity",
+      dataIndex: "supcount",
+      key: "supcount",
     },
     {
       title: "流转数量累积",
-      dataIndex: "cumFlowVolume",
+      dataIndex: "sumcount",
+      key: "sumcount",
     },
 
     {
       title: "流转卡",
       dataIndex: "flowCard",
+      key: "flowCard",
     },
   ],
 };

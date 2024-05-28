@@ -5,13 +5,13 @@ const formConfig = {
   api: "",
   formItems: [
     {
-      key: "productionOrderCode",
+      key: "orderid",
       name: "生产订单条码",
       children: <Input></Input>,
       rules: [],
     },
     {
-      key: "partNumber",
+      key: "itmid",
       name: "料号",
       children: <Input></Input>,
       rules: [],
@@ -29,13 +29,13 @@ const formConfig = {
       rules: [],
     },
     {
-      key: "spec",
+      key: "format",
       name: "规格",
       children: <Input></Input>,
       rules: [],
     },
     {
-      key: "productName",
+      key: "goodsname",
       name: "品名",
       children: <Input></Input>,
       rules: [],
@@ -250,88 +250,109 @@ const tableConfig = {
     {
       title: "流转卡类型",
       dataIndex: "flowCardType",
+      key: "flowCardType",
     },
     {
       title: "类型",
       dataIndex: "type",
+      key: "type",
     },
     {
       title: "流转卡编号",
       dataIndex: "flowCardNumber",
+      key: "flowCardNumber",
     },
     {
       title: "追溯条码",
       dataIndex: "tracingCode",
+      key: "tracingCode",
     },
 
     {
       title: "生产订单条码",
-      dataIndex: "productionOrderCode",
+      dataIndex: "orderid",
+      key: "orderid",
     },
     {
       title: "料号",
-      dataIndex: "partNumber",
+      dataIndex: "itmid",
+      key: "itmid",
     },
     {
       title: "入库料号",
       dataIndex: "IncomingPartNumber",
+      key: "IncomingPartNumber",
     },
     {
       title: "品名",
-      dataIndex: "productName",
+      dataIndex: "goodsname",
+      key: "goodsname",
     },
     {
       title: "规格",
-      dataIndex: "spec",
+      dataIndex: "format",
+      key: "format",
     },
     {
       title: "单位",
-      dataIndex: "unit",
+      dataIndex: "uomname",
+      key: "uomname",
     },
     {
       title: "完成时间",
-      dataIndex: "finishTime",
+      dataIndex: "ljFinDate",
+      key: "ljFinDate",
     },
     {
       title: "创建(流转)时间",
       dataIndex: "createTime",
+      key: "createTime",
     },
 
     {
       title: "热处理炉台",
       dataIndex: "furnaceNumber",
+      key: "furnaceNumber",
     },
     {
       title: "优先顺序",
       dataIndex: "priorityOrder",
+      key: "priorityOrder",
     },
     {
       title: "生产数量总量",
       dataIndex: "totalProductionQuantity",
+      key: "totalProductionQuantity",
     },
     {
       title: "流转数量累积",
-      dataIndex: "cumFlowVolume",
+      dataIndex: "sumcount",
+      key: "sumcount",
     },
     {
       title: "流转桶数",
       dataIndex: "flowBuckets",
+      key: "flowBuckets",
     },
     {
       title: "单桶流转数量",
       dataIndex: "singleBucketFlowVolume",
+      key: "singleBucketFlowVolume",
     },
     {
       title: "当前工艺",
       dataIndex: "currentProcess",
+      key: "currentProcess",
     },
     {
       title: "完工状态",
       dataIndex: "finishStatus",
+      key: "finishStatus",
     },
     {
       title: "零件流转卡",
       dataIndex: "partFlowCard",
+      key: "partFlowCard",
     },
   ],
 };

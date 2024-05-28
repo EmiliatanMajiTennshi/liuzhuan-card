@@ -1,0 +1,3 @@
+const formConfig = {};
+
+export { formConfig };

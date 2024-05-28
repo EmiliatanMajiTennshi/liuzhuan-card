@@ -10,4 +10,14 @@ module.exports = function (app) {
       },
     })
   );
+  app.use(
+    "/apiLz",
+    createProxyMiddleware({
+      target: "http://china-20240408x:7800/lzcard/v1",
+      changeOrigin: true,
+      pathRewrite: {
+        "/apiLz": "",
+      },
+    })
+  );
 };

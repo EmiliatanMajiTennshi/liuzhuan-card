@@ -25,24 +25,27 @@ export interface ITableConfig {
 }
 
 interface IAdvancedSearchCom {
-  formConfig?: IFormConfig;
-  tableConfig?: ITableConfig;
+  formConfig: IFormConfig;
+  tableConfig: ITableConfig;
 }
 const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
   const { formConfig, tableConfig } = props;
-  const [searchedData, setSearchedData] = useState<any[]>([]);
+  const [searchParams, setSearchParams] = useState<object>({});
+  const api = formConfig.api;
+
   return (
     <div>
       {formConfig && (
         <AdvancedSearchForm
           formConfig={formConfig}
-          setSearchedData={setSearchedData}
+          setSearchParams={setSearchParams}
         ></AdvancedSearchForm>
       )}
       {tableConfig && (
         <AdvancedSearchTable
           tableConfig={tableConfig}
-          searchedData={searchedData}
+          api={api}
+          searchParams={searchParams}
         ></AdvancedSearchTable>
       )}
     </div>

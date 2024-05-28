@@ -1,11 +1,13 @@
 import React, { createContext, useContext } from "react";
 import User from "./User";
 import PageTitle from './PageTitle'
+import TableRecord from "./TableRecord";
 
 class RootStore {
   constructor() {
     this.user = new User();
     this.pageTitle = new PageTitle()
+    this.tableRecord = new TableRecord()
   }
 }
 

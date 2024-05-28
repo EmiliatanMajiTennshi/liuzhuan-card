@@ -6,9 +6,9 @@ const span = 6;
 
 const AdvancedSearchForm = (props: {
   formConfig: IFormConfig;
-  setSearchedData: React.Dispatch<React.SetStateAction<any[]>>;
+  setSearchParams: React.Dispatch<React.SetStateAction<object>>;
 }) => {
-  const { formConfig, setSearchedData } = props;
+  const { formConfig, setSearchParams } = props;
   const { formItems, span: _span } = formConfig;
   const [form] = Form.useForm();
 
@@ -36,7 +36,7 @@ const AdvancedSearchForm = (props: {
 
   const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
-    setSearchedData([{ partType: "123" }]);
+    setSearchParams(values);
   };
 
   return (
@@ -44,10 +44,7 @@ const AdvancedSearchForm = (props: {
       <Row gutter={gutter}>
         {formItems.map((item, index) => {
           // 第几列
-          console.log(item);
-
           const columnNum = index % colNumber;
-
           return (
             <Col span={_span || span} key={item.key}>
               <Form.Item
@@ -76,7 +73,8 @@ const AdvancedSearchForm = (props: {
           </Button>
           <Button
             onClick={() => {
-              setSearchedData([]);
+              setSearchParams([]);
+              form.resetFields();
             }}
           >
             重置

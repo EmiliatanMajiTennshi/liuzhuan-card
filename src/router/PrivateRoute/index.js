@@ -15,6 +15,7 @@ import { IssueFinishedPartFlowCard } from "@/pages/IssueFinishedPartFlowCard";
 import { IssueOutsourcingFlowCard } from "@/pages/IssueOutsourcingFlowCard";
 import { IssueReplenishmentOrderFlowCard } from "@/pages/IssueReplenishmentOrderFlowCard";
 import { PartFlowCardQuery } from "@/pages/PartFlowCardQuery";
+import { ProductionProcessFlowCardAndDispatchList } from "@/pages/ProductionProcessFlowCardAndDispatchList";
 
 const PrivateRoute = () => {
   return useRoutes([
@@ -81,6 +82,10 @@ const PrivateRoute = () => {
         {
           path: "/part_flow_card_query",
           element: <PartFlowCardQuery />,
+        },
+        {
+          path: "/production_process_flow_card_and_dispatch_list",
+          element: <ProductionProcessFlowCardAndDispatchList />,
         },
       ],
     },

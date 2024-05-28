@@ -6,19 +6,19 @@ const formConfig = {
   api: "",
   formItems: [
     {
-      key: "productionOrderCode",
+      key: "orderid",
       name: "生产订单条码",
       children: <Input></Input>,
       rules: [],
     },
     {
-      key: "partNumber",
+      key: "itmid",
       name: "零件料号",
       children: <Input></Input>,
       rules: [],
     },
     {
-      key: "spec",
+      key: "format",
       name: "规格",
       children: <Input></Input>,
       rules: [],
@@ -99,7 +99,7 @@ const formConfig = {
       ],
     },
     {
-      key: "partType",
+      key: "type1",
       name: "零件类型",
       children: (
         <Select
@@ -118,51 +118,63 @@ const tableConfig = {
   columns: [
     {
       title: "生产订单条码",
-      dataIndex: "productionOrderCode",
+      dataIndex: "orderid",
+      key: "orderid",
     },
     {
       title: "零件料号",
-      dataIndex: "partNumber",
+      dataIndex: "itmid",
+      key: "itmid",
     },
     {
       title: "品名",
-      dataIndex: "productName",
+      dataIndex: "goodsname",
+      key: "goodsname",
     },
     {
       title: "规格",
-      dataIndex: "spec",
+      dataIndex: "format",
+      key: "format",
     },
     {
       title: "商标",
-      dataIndex: "brand",
+      dataIndex: "Pcode",
+      key: "Pcode",
     },
     {
       title: "完成时间",
-      dataIndex: "finishTime",
+      dataIndex: "ljFinDate",
+      key: "ljFinDate",
     },
     {
       title: "单位",
-      dataIndex: "unit",
+      dataIndex: "uomname",
+      key: "uomname",
     },
     {
       title: "数量",
-      dataIndex: "quantity",
+      dataIndex: "supcount",
+      key: "supcount",
     },
     {
       title: "流转数量累积",
-      dataIndex: "cumFlowVolume",
+      dataIndex: "sumcount",
+      key: "sumcount",
     },
     {
       title: "第一道工艺",
-      dataIndex: "firstProcess",
+      dataIndex: "processname1",
+      key: "processname1",
     },
     {
       title: "第二道工艺",
-      dataIndex: "firstProcess",
+      dataIndex: "processname2",
+      key: "processname2",
     },
     {
       title: "半品零件流转卡",
       dataIndex: "semiFinishedPartFlowCard",
+      key: "semiFinishedPartFlowCard",
     },
   ],
 };
