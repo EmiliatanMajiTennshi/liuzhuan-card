@@ -31,7 +31,7 @@ const menuList = [
       },
       { key: "/issue_replenishment_order_flow_card", label: "下发补单流转卡" },
       { key: "/part_flow_card_query", label: "零件流转卡查询" },
-      { key: "8", label: "零件流转卡打印" },
+      { key: "/part_flow_card_print", label: "零件流转卡打印" },
       { key: "9", label: "订单完成情况统计" },
       { key: "q", label: "流转卡入库信息查询" },
       { key: "w", label: "物料重工流程卡添加" },

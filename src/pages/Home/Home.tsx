@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 // import {
 //   MenuFoldOutlined,
 //   MenuUnfoldOutlined,
@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 //   UserOutlined,
 //   VideoCameraOutlined,
 // } from "@ant-design/icons";
-import { Button, ConfigProvider, Layout, Menu, theme } from "antd";
+import { Button, ConfigProvider, Layout, Menu, Skeleton, theme } from "antd";
 import styles from "./index.module.scss";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { logoutRequest } from "@/api/logoutRequest";
@@ -133,7 +133,9 @@ const Home: React.FC = () => {
               overflow: "auto",
             }}
           >
-            <Outlet></Outlet>
+            <Suspense fallback={<Skeleton active />}>
+              <Outlet></Outlet>
+            </Suspense>
           </Content>
         </Layout>
       </Layout>

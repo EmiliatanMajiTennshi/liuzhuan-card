@@ -5,12 +5,14 @@ const gutter = 24;
 const span = 6;
 
 const AdvancedSearchForm = (props: {
-  formConfig: IFormConfig;
+  formConfig: IFormConfig | ((form?: any) => IFormConfig);
   setSearchParams: React.Dispatch<React.SetStateAction<object>>;
 }) => {
   const { formConfig, setSearchParams } = props;
-  const { formItems, span: _span } = formConfig;
   const [form] = Form.useForm();
+  const _formConfig =
+    typeof formConfig === "function" ? formConfig(form) : formConfig;
+  const { formItems, span: _span } = _formConfig;
 
   // 列数
   const colNumber = gutter / (_span || span);
@@ -21,6 +23,7 @@ const AdvancedSearchForm = (props: {
     // 第几列
     const columnNum = index % colNumber;
     if (
+      // 对比字数
       labelWidths?.[columnNum] < item.name.length ||
       !labelWidths?.[columnNum]
     )

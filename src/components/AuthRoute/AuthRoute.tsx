@@ -6,7 +6,7 @@ const AuthRoute = ({ children }: any) => {
   if (token) {
     return <>{children}</>;
   } else {
-    return <Navigate to={"/login"}></Navigate>;
+    return <Navigate to="/login"></Navigate>;
   }
 };
 
