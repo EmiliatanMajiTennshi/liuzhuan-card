@@ -1,36 +1,90 @@
 import React, { useEffect, useState, Suspense } from "react";
-// import {
-//   MenuFoldOutlined,
-//   MenuUnfoldOutlined,
-//   UploadOutlined,
-//   UserOutlined,
-//   VideoCameraOutlined,
-// } from "@ant-design/icons";
-import { Button, ConfigProvider, Layout, Menu, Skeleton, theme } from "antd";
+import * as Icon from "@ant-design/icons";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import {
+  Breadcrumb,
+  Button,
+  ConfigProvider,
+  Layout,
+  Menu,
+  Skeleton,
+  theme,
+} from "antd";
 import styles from "./index.module.scss";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { logoutRequest } from "@/api/logoutRequest";
-import { getUserlist } from "@/api";
-import { menuList, flatMenuList } from "@/constant";
+import { getMenu } from "@/api";
+import { getFlatMenuList } from "@/constant";
+import Logo from "@/assets/images/logo6.png";
+import classNames from "classnames";
+import { IMenuItem } from "@/constant/menuList";
 
 const { Header, Sider, Content } = Layout;
 
 const Home: React.FC = () => {
-  const [pageTitle, setPageTitle] = useState("");
+  const [pageTitle, setPageTitle] = useState<IMenuItem>({
+    parent: "",
+    label: "",
+    key: "",
+  });
   const [currentOpenKey, setCurrentOpenKey] = useState("");
+  const [collapsed, setCollapsed] = useState(
+    localStorage.getItem("menu_collapsed") === "false" ? false : true
+  );
+  const [menu, setMenu] = useState<IMenuItem[]>([]);
+
+  const handleMenu = (menuString: string) => {
+    localStorage.setItem("menuList", menuString);
+    const _menu = JSON.parse(menuString);
+    console.log(1123, menuString);
+
+    if (_menu) {
+      _menu.forEach((item: any) => {
+        if (item.icon) {
+          // 把icon从字符串处理成dom元素
+          const antIcon: { [key: string]: any } = Icon;
+          item.icon = React.createElement(antIcon[item.icon]);
+        }
+      });
+      setMenu(_menu);
+    }
+  };
+  useEffect(() => {
+    // 获取列表
+    if (localStorage.getItem("menuList")) {
+      const menuString = localStorage.getItem("menuList") || "";
+      handleMenu(menuString);
+      return;
+    }
+
+    getMenu()
+      .then((res: any) => {
+        const menuString = res?.data?.[0]?.message || "";
+        handleMenu(menuString);
+      })
+      .catch((e) => {
+        console.log(e, 123);
+      });
+  }, []);
 
   // 拿到当前url
   const location = useLocation();
+  console.log(location, 11112);
+
   useEffect(() => {
     // 获取页面标题
+    const flatMenuList = getFlatMenuList(menu);
     const _pageTitle = flatMenuList.find((item) => {
       return item.key === location.pathname;
-    })?.label;
-    setPageTitle(_pageTitle || "");
-  }, [location.pathname]);
+    });
+    if (_pageTitle) {
+      setPageTitle(_pageTitle);
+    }
+  }, [location.pathname, menu]);
+  console.log(pageTitle, 12);
 
   // 刷新后仍然可以展开对应子菜单
-  const _currentOpenKey = menuList.find((item) => {
+  const _currentOpenKey = menu.find((item) => {
     return (
       item?.children?.findIndex((subItem) => {
         return subItem.key === location.pathname;
@@ -65,10 +119,13 @@ const Home: React.FC = () => {
     }
   };
   const getUserlist1 = () => {
-    getUserlist({ page: 1, rows: 10 });
+    getMenu();
   };
-  console.log(currentOpenKey, 1111);
 
+  const handleCollapsed = () => {
+    setCollapsed(!collapsed);
+    localStorage.setItem("menu_collapsed", (!collapsed).toString());
+  };
   return (
     <ConfigProvider
       theme={{
@@ -85,22 +142,50 @@ const Home: React.FC = () => {
       }}
     >
       <Layout style={{ height: "100%" }}>
-        <Sider trigger={null} width={240} className={styles.aside}>
-          <div className="demo-logo-vertical" />
-          <h2 className={styles.title}>流转卡管理系统 </h2>
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={[location.pathname]}
-            onClick={onMenuClick}
-            defaultOpenKeys={[currentOpenKey]}
-            items={menuList}
-          />
+        <Sider
+          trigger={null}
+          className={classNames({
+            [styles.aside]: true,
+          })}
+          collapsible
+          collapsed={collapsed}
+          width={245}
+        >
+          <h2
+            className={classNames({
+              [styles.title]: true,
+              [styles["collapsed-title"]]: collapsed,
+            })}
+          >
+            <img
+              src={Logo}
+              width={64}
+              alt=""
+              onClick={handleCollapsed}
+              style={{ cursor: "pointer" }}
+            ></img>
+            <span style={collapsed ? { visibility: "hidden" } : {}}>
+              流转卡管理系统
+            </span>
+          </h2>
+          {menu.length !== 0 ? (
+            <Menu
+              theme="dark"
+              mode="inline"
+              defaultSelectedKeys={[location.pathname]}
+              onClick={onMenuClick}
+              defaultOpenKeys={[currentOpenKey]}
+              items={menu}
+              // inlineCollapsed={true}
+            ></Menu>
+          ) : (
+            <Skeleton />
+          )}
         </Sider>
         <Layout style={{ minWidth: "1000px" }}>
           <Header
             style={{
-              padding: "0px 24px",
+              padding: "0px 16px",
               background: colorBgContainer,
               display: "flex",
               justifyContent: "space-between",
@@ -108,11 +193,44 @@ const Home: React.FC = () => {
           >
             <div
               style={{
-                fontSize: 24,
+                fontSize: 18,
                 background: colorBgContainer,
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              {pageTitle}
+              <Button
+                style={{ marginRight: 10 }}
+                type="text"
+                icon={
+                  collapsed ? (
+                    <MenuUnfoldOutlined
+                      style={{ fontSize: 18 }}
+                      title="点击展开菜单"
+                    />
+                  ) : (
+                    <MenuFoldOutlined
+                      style={{ fontSize: 18 }}
+                      title="点击收起菜单"
+                    />
+                  )
+                }
+                onClick={handleCollapsed}
+              />
+
+              {pageTitle.parent && (
+                <Breadcrumb
+                  separator=">"
+                  items={[
+                    {
+                      title: pageTitle.parent,
+                    },
+                    {
+                      title: pageTitle.label,
+                    },
+                  ]}
+                />
+              )}
             </div>
             <div>
               <Button type="link" onClick={handleLogout}>

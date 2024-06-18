@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styles from "./index.module.scss";
-import { Button, ConfigProvider, Form, Input, Spin } from "antd";
+import { Button, ConfigProvider, Form, Input, Spin, Table } from "antd";
 import { getLZCardNumber, getTrackingNumber, requestLz } from "@/utils";
 import QRCode from "qrcode.react";
 import logo from "@/assets/images/logo.png";
@@ -13,7 +13,7 @@ interface IMaterialInfo {
   caitexture: string;
 }
 const ProductionProcessFlowCardAndDispatchList = () => {
-  const { record } = useLocation().state;
+  const { record } = useLocation().state || {};
   const [form] = Form.useForm();
 
   // 材料信息
@@ -40,14 +40,14 @@ const ProductionProcessFlowCardAndDispatchList = () => {
   }, [record]);
 
   useEffect(() => {
-    form.setFieldValue("orderQRcode", record.orderid);
-    form.setFieldValue("rukuQRcode", record.itmid);
+    form.setFieldValue("orderQRcode", record?.orderid);
+    form.setFieldValue("rukuQRcode", record?.itmid);
     form.setFieldValue("lingliaoQRcode", materialInfo.caiitmid);
     form.setFieldValue("lzCardNumber", lzCardNumber);
   }, [materialInfo]);
 
   const trackingNumber = getTrackingNumber();
-  const unit: string = record.uomname;
+  const unit: string = record?.uomname;
   console.log(record, 11, unit);
   const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
@@ -160,7 +160,69 @@ const ProductionProcessFlowCardAndDispatchList = () => {
       </>
     );
   };
+  const columns = [
+    {
+      title: "零件类型",
+      dataIndex: "type1",
+      key: "type1",
+    },
 
+    {
+      title: "生产订单条码",
+      dataIndex: "orderid",
+      key: "orderid",
+    },
+    {
+      title: "零件料号",
+      dataIndex: "itmid",
+      key: "itmid",
+    },
+    {
+      title: "品名",
+      dataIndex: "goodsname",
+      key: "goodsname",
+    },
+    {
+      title: "规格",
+      dataIndex: "format",
+      key: "format",
+    },
+    {
+      title: "商标",
+      dataIndex: "Pcode",
+      key: "Pcode",
+    },
+    {
+      title: "完成时间",
+      dataIndex: "ljFinDate",
+      key: "ljFinDate",
+    },
+    {
+      title: "单位",
+      dataIndex: "uomname",
+      key: "uomname",
+    },
+    {
+      title: "数量",
+      dataIndex: "supcount",
+      key: "supcount",
+    },
+    {
+      title: "流转数量累积",
+      dataIndex: "sumcount",
+      key: "sumcount",
+    },
+    {
+      title: "第一道工艺",
+      dataIndex: "processname1",
+      key: "processname1",
+    },
+    {
+      title: "第二道工艺",
+      dataIndex: "processname2",
+      key: "processname2",
+    },
+  ];
   return (
     <div className={styles["flow-card"]}>
       <ConfigProvider
@@ -171,10 +233,20 @@ const ProductionProcessFlowCardAndDispatchList = () => {
 
               activeShadow: "0 0 0 0px rgba(5, 145, 255, 0.1)",
             },
+            Table: {
+              headerBorderRadius: 0,
+              headerBg: "#accbe9",
+              borderColor: "#000",
+            },
           },
         }}
       >
-        <Form initialValues={record} onFinish={onFinish} form={form}>
+        <Form
+          initialValues={record}
+          onFinish={onFinish}
+          form={form}
+          className={styles["form"]}
+        >
           <div className={styles["form-title"]}>
             {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <img src={logo} width={128}></img>
@@ -229,18 +301,18 @@ const ProductionProcessFlowCardAndDispatchList = () => {
                   title="生产数量（公斤）"
                   name={unit === "公斤" ? "supcount" : "huancount"}
                 ></ReadOnlyInput>
-                <ReadOnlyInput
+                <EditAbleInput
                   title="流转数量（公斤）"
                   name={unit === "公斤" ? "liucount" : "liuhuancount"}
-                ></ReadOnlyInput>
+                ></EditAbleInput>
                 <ReadOnlyInput
                   title="生产数量（PCS）"
                   name={unit === "公斤" ? "huancount" : "supcount"}
                 ></ReadOnlyInput>
-                <ReadOnlyInput
+                <EditAbleInput
                   title="流转数量（PCS）"
                   name={unit === "公斤" ? "liuhuancount" : "liucount"}
-                ></ReadOnlyInput>
+                ></EditAbleInput>
               </tr>
               <tr>
                 <EditAbleInput
@@ -289,13 +361,13 @@ const ProductionProcessFlowCardAndDispatchList = () => {
                   title="订单号/追溯单号"
                   name="orderQRcode"
                   rowSpan={3}
-                  value={record.orderid}
+                  value={record?.orderid}
                 ></RenderQRCode>
                 <RenderQRCode
                   title="入库二维码"
                   name="rukuQRcode"
                   rowSpan={3}
-                  value={record.itmid}
+                  value={record?.itmid}
                 ></RenderQRCode>
                 <RenderQRCode
                   title="领料二维码"
@@ -316,10 +388,18 @@ const ProductionProcessFlowCardAndDispatchList = () => {
               </tr>
             </tbody>
           </table>
-          <Button type="primary" htmlType="submit">
-            打印
-          </Button>
         </Form>
+        <Table
+          columns={columns}
+          style={{
+            borderRight: "1px solid #000",
+            borderLeft: "1px solid #000",
+            marginBottom: 10,
+          }}
+        ></Table>
+        <Button type="primary" size="large">
+          保存
+        </Button>
       </ConfigProvider>
     </div>
   );

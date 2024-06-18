@@ -1,50 +1,52 @@
 .flow-card {
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  th,
-  td {
-    border: 1px solid #000;
-    padding: 8px;
-    text-align: left;
-  }
-  th {
-    background-color: #f2f2f2;
-  }
-  label::after {
-    content: "" !important;
-  }
-
-  .input-container {
-    box-shadow: inset 0px 0px 0px 1px #000;
-    :global {
-      .ant-form-item {
-        margin-bottom: 0;
-      }
-      .ant-form-item-control-input {
-        min-height: auto;
-      }
-      .ant-input {
-        padding: 0;
-      }
-    }
-    .input {
-      display: inline-block;
-      border: none;
-      outline: none;
+  .form {
+    table {
       width: 100%;
+      border-collapse: collapse;
     }
-  }
-  .input-container:focus-within {
-    box-shadow: inset 0px 0px 0px 2px #14299e;
-  }
+    th,
+    td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    label::after {
+      content: "" !important;
+    }
 
-  .input-container-locked {
-    box-shadow: inset 0px 0px 0px 0px #000;
-  }
-  .input-container-locked:focus-within {
-    box-shadow: inset 0px 0px 0px 0px #000;
+    .input-container {
+      box-shadow: inset 0px 0px 0px 1px #000;
+      :global {
+        .ant-form-item {
+          margin-bottom: 0;
+        }
+        .ant-form-item-control-input {
+          min-height: auto;
+        }
+        .ant-input {
+          padding: 0;
+        }
+      }
+      .input {
+        display: inline-block;
+        border: none;
+        outline: none;
+        width: 100%;
+      }
+    }
+    .input-container:focus-within {
+      box-shadow: inset 0px 0px 0px 2px #14299e;
+    }
+
+    .input-container-locked {
+      box-shadow: inset 0px 0px 0px 0px #000;
+    }
+    .input-container-locked:focus-within {
+      box-shadow: inset 0px 0px 0px 0px #000;
+    }
   }
 }
 .form-qrcode {

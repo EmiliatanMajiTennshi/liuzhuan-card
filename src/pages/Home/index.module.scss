@@ -1,11 +1,25 @@
 .title {
-  background-color: #34495e;
   color: #fff;
-  padding: 15px;
+  padding: 15px 5px;
   margin: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  height: 96px;
+  width: 240px;
+  font-size: 20px;
+  img {
+    margin: 0 5px 0 10px;
+  }
+}
+.collapsed-title {
+  img {
+    margin-left: 8px;
+  }
 }
 .aside {
   overflow: auto;
+  overflow-x: hidden;
 }
 
 /* 整个滚动条 */
@@ -47,6 +61,14 @@
   :global {
     .ant-menu-submenu li {
       padding-left: 32px !important;
+    }
+  }
+}
+:global {
+  .ant-menu-vertical {
+    .ant-menu-item {
+      height: 36px !important;
+      line-height: 36px !important;
     }
   }
 }

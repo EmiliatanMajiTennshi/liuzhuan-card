@@ -6,10 +6,10 @@ import styles from "./index.module.scss";
 import { RuleObject } from "antd/es/form";
 
 type FieldType = {
-  account?: string;
+  username?: string;
   password?: string;
   remember?: string;
-  username?: string;
+  nickName?: string;
   confirmPassword?: string;
 };
 
@@ -42,7 +42,7 @@ const RegisterCom = (props: any) => {
     >
       <Form.Item<FieldType>
         label="用户名"
-        name="account"
+        name="username"
         rules={[{ required: true, message: "请输入你的用户名" }]}
         style={{ marginBottom: 10 }}
         required={false}
@@ -51,7 +51,7 @@ const RegisterCom = (props: any) => {
       </Form.Item>
       <Form.Item<FieldType>
         label="昵称"
-        name="username"
+        name="nickName"
         rules={[{ required: true, message: "请输入你的昵称" }]}
         style={{ marginBottom: 10 }}
         required={false}

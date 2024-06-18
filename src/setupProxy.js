@@ -3,7 +3,7 @@ module.exports = function (app) {
   app.use(
     "/target",
     createProxyMiddleware({
-      target: "http://192.168.70.111:8080",
+      target: "http://desktop-44ime94:7800/lzcard/v1",
       changeOrigin: true,
       pathRewrite: {
         "/target": "",

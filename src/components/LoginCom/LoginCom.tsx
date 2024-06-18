@@ -3,17 +3,15 @@ import type { FormProps } from "antd";
 import { Button, Form, Input, message } from "antd";
 import { loginRequest } from "@/api";
 import { useNavigate } from "react-router-dom";
-import { setToken } from "@/utils";
 import styles from "./index.module.scss";
 
 type FieldType = {
-  account: string;
+  username: string;
   password: string;
 };
 type TRes = {
-  code?: number;
-  data?: string;
-  msg?: string;
+  status?: string;
+  message?: string;
 };
 // 登录组件
 const LoginCom = (props: any) => {
@@ -52,20 +50,19 @@ const LoginCom = (props: any) => {
   };
   const onLoginFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     console.log("Success:", values);
-    const res: TRes = await loginRequest(values)(setToken); //登录请求
-    if (res?.code === 200) {
+    const res: TRes = await loginRequest(values); //登录请求
+    if (res?.status === "success") {
       //   if (remember) {
-      //     localStorage.setItem("account", values.account);
+      //     localStorage.setItem("username", values.username);
       //     localStorage.setItem("password", values.password);
       //   } else {
-      //     localStorage.removeItem("account");
+      //     localStorage.removeItem("username");
       //     localStorage.removeItem("password");
       //   }
-      successMessage(res.msg || "");
+      successMessage("登录成功");
       navigate("/");
     } else {
-      debugger;
-      errorMessage(typeof res === "string" ? res : res.msg || "");
+      errorMessage(res?.status || "");
     }
   };
 
@@ -82,7 +79,7 @@ const LoginCom = (props: any) => {
       wrapperCol={{ span: 16 }}
       style={{ maxWidth: 600 }}
       initialValues={{
-        account: localStorage.getItem("account") || "",
+        username: localStorage.getItem("username") || "",
         password: localStorage.getItem("password") || "",
       }}
       onFinish={onLoginFinish}
@@ -91,16 +88,12 @@ const LoginCom = (props: any) => {
     >
       <Form.Item<FieldType>
         label="用户名"
-        name="account"
+        name="username"
         rules={[{ required: true, message: "请输入你的用户名" }]}
         style={{ marginBottom: 10 }}
         required={false}
       >
-        <Input
-          placeholder="用户名"
-          style={{ width: 350 }}
-          //   value={localStorage.getItem("account") || ""}
-        />
+        <Input placeholder="用户名" style={{ width: 350 }} />
       </Form.Item>
 
       <Form.Item<FieldType>

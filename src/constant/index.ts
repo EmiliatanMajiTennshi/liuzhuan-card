@@ -1,2 +1,2 @@
-import { menuList, flatMenuList } from "./menuList";
-export { menuList, flatMenuList };
+import { menuList, getFlatMenuList } from "./menuList";
+export { menuList, getFlatMenuList };

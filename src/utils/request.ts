@@ -3,12 +3,12 @@ import { getToken } from "./token";
 
 // axios的配置文件, 可以在这里去区分开发环境和生产环境等全局一些配置
 const devBaseUrl = "target/";
-const proBaseUrl = "http://192.168.70.110:8080/";
+const proBaseUrl = "http://desktop-44ime94:7800/lzcard/v1";
 
 // process.env返回的是一个包含用户的环境信息,它可以去区分是开发环境还是生产环境
 export const BASE_URL =
   process.env.NODE_ENV === "development" ? devBaseUrl : proBaseUrl;
-export const TIMEOUT = 5000;
+export const TIMEOUT = 50000;
 
 var request = axios.create({
   baseURL: BASE_URL, //基准地址

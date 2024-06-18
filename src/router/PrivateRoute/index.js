@@ -103,7 +103,10 @@ const PartFlowCardPrint = React.lazy(() =>
 );
 
 const PrivateRoute = () => {
-  return useRoutes([
+  console.log(localStorage.getItem("token_key"));
+  if (localStorage.getItem("token_key")) {
+  }
+  const routeConfig = [
     {
       path: "/login",
       element: <Login />,
@@ -178,7 +181,8 @@ const PrivateRoute = () => {
         },
       ],
     },
-  ]);
+  ];
+  return useRoutes(routeConfig);
 };
 
 export default PrivateRoute;
