@@ -1,3 +1,4 @@
+// 流转卡入库信息查询
 import React from "react";
 
 const FlowCardStorageInfo = () => {

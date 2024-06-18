@@ -1,3 +1,4 @@
+// 全检不良率
 import React from "react";
 
 const FullInspectionDefectRate = () => {

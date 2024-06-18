@@ -1,3 +1,4 @@
+// 操作工简易作业
 import React from "react";
 
 const OperatorSimpleTask = () => {
