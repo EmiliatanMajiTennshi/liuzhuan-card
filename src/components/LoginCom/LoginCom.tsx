@@ -62,7 +62,7 @@ const LoginCom = (props: any) => {
       successMessage("登录成功");
       navigate("/");
     } else {
-      errorMessage(res?.status || "");
+      errorMessage(res?.status || "登录失败");
     }
   };
 
@@ -77,7 +77,6 @@ const LoginCom = (props: any) => {
       layout="vertical"
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
-      style={{ maxWidth: 600 }}
       initialValues={{
         username: localStorage.getItem("username") || "",
         password: localStorage.getItem("password") || "",
@@ -93,7 +92,7 @@ const LoginCom = (props: any) => {
         style={{ marginBottom: 10 }}
         required={false}
       >
-        <Input placeholder="用户名" style={{ width: 350 }} />
+        <Input placeholder="用户名" style={{ width: 300 }} />
       </Form.Item>
 
       <Form.Item<FieldType>
@@ -105,7 +104,7 @@ const LoginCom = (props: any) => {
       >
         <Input.Password
           placeholder="密码"
-          style={{ width: 350 }}
+          style={{ width: 300 }}
           //   value={localStorage.getItem("password") || ""}
         />
       </Form.Item>
@@ -114,19 +113,19 @@ const LoginCom = (props: any) => {
         <Button
           type="primary"
           htmlType="submit"
-          style={{ width: 350, marginTop: 10 }}
+          style={{ margin: "10px 0 30px", width: 300 }}
         >
           登录
         </Button>
       </Form.Item>
-      <Form.Item wrapperCol={{ span: 16 }}>
+      {/* <Form.Item wrapperCol={{ span: 16 }}>
         <div className={styles["login-button"]}>
           没有帐户？
           <Button type="link" onClick={() => setActiveTabKey("tab2")}>
             点击注册
           </Button>
         </div>
-      </Form.Item>
+      </Form.Item> */}
     </Form>
   );
 };

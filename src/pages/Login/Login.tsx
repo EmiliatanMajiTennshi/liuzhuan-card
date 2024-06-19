@@ -5,16 +5,17 @@ import { observer } from "mobx-react";
 import LoginBannerBgImg from "../../assets/images/banner.a05effbe434b6c99458f.jpg";
 import { LoginCom } from "../../components/LoginCom";
 import { RegisterCom } from "../../components/RegisterCom";
+import "animate.css";
 
 const tabList = [
   {
     key: "tab1",
     tab: "登录",
   },
-  {
-    key: "tab2",
-    tab: "注册",
-  },
+  // {
+  //   key: "tab2",
+  //   tab: "注册",
+  // },
 ];
 const Login = observer(() => {
   const [activeTabKey, setActiveTabKey] = useState("tab1");
@@ -25,7 +26,7 @@ const Login = observer(() => {
     setActiveTabKey(key);
   };
   return (
-    <div className={styles["login-page"]}>
+    <div className={`${styles["login-page"]} `}>
       <div className={styles["login-form"]}>
         <ConfigProvider
           theme={{
@@ -39,11 +40,11 @@ const Login = observer(() => {
           }}
         >
           <Card
-            style={{ width: "auto", minWidth: "300px", minHeight: "350px" }}
-            title={<h2>欢迎访问 </h2>}
+            title={<h2 style={{ margin: "10px 0" }}>欢迎访问 </h2>}
             tabList={tabList}
             onTabChange={onTabChange}
             activeTabKey={activeTabKey}
+            className="animate__animated animate__fadeInDown"
           >
             {activeTabKey === "tab1" && (
               <LoginCom setActiveTabKey={setActiveTabKey} />

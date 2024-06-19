@@ -20,7 +20,7 @@ const menuList = [
     label: "链条流转卡",
     children: [
       {
-        key: "/issue_chainboards_semi_finished_part_flow_card",
+        key: "/issue_chain_board_semi_finished_part_flow_card",
         label: "下发链板半品零件流转卡",
       },
       {

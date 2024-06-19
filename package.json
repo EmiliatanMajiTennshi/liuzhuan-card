@@ -14,6 +14,7 @@
     "@types/node": "^16.18.97",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
+    "animate.css": "^4.1.1",
     "antd": "^5.17.0",
     "axios": "^1.6.8",
     "classnames": "^2.5.1",
@@ -41,7 +42,7 @@
       "react-app/jest"
     ],
     "rules": {
-        "react-hooks/exhaustive-deps": "off"
+      "react-hooks/exhaustive-deps": "off"
     }
   },
   "browserslist": {

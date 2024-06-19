@@ -3,7 +3,7 @@ import React from "react";
 import { formConfig, tableConfig } from "./config";
 import { AdvancedSearchCom } from "@/components/AdvancedSearchCom";
 
-const IssueChainboardsSemiFinishedPartFlowCard = () => {
+const IssueChainBoardSemiFinishedPartFlowCard = () => {
   return (
     <>
       <h2 style={{ marginTop: 0 }}>链板-半品订单列表</h2>
@@ -15,4 +15,4 @@ const IssueChainboardsSemiFinishedPartFlowCard = () => {
   );
 };
 
-export default IssueChainboardsSemiFinishedPartFlowCard;
+export default IssueChainBoardSemiFinishedPartFlowCard;
