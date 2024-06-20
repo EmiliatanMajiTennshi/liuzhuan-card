@@ -70,6 +70,10 @@ const nonMenuItems = [
     key: "/production_process_flow_card_and_dispatch_list",
     label: "生产工序流转卡暨派工单",
   },
+  {
+    key: "/404",
+    label: "404",
+  },
 ];
 export interface IMenuItem {
   key: string;

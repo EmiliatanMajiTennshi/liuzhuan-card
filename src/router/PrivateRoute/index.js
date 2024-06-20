@@ -266,30 +266,28 @@ const routeMap = [
     element: <AddEmployeeInfoChain />,
   },
 ];
+
+// 转成对象
+const routeMapObj = routeMap.reduce((acc, route) => {
+  acc[route.path] = route;
+  return acc;
+}, {});
+
 const PrivateRoute = () => {
   const menu = JSON.parse(localStorage.getItem("menuList") || "[]");
-  console.log(menu);
-
   const childrenArr = [];
   const findAllChildren = (menu) => {
     menu.forEach((item) => {
-      routeMap.forEach((routeItem) => {
-        try {
-          if (routeItem.path === item.key) {
-            childrenArr.push(routeItem);
-
-            throw new Error("这不是错误，只是用来中止循环");
-          }
-        } catch {}
-      });
+      if (routeMapObj[item.key]) {
+        childrenArr.push(routeMapObj[item.key]);
+      }
       if (item?.children) {
-        findAllChildren(item?.children);
+        findAllChildren(item.children);
       }
     });
     return childrenArr;
   };
   const children = findAllChildren(menu) || [];
-  console.log(children, 11, menu);
   const routeConfig = [
     {
       path: "/login",
@@ -302,21 +300,21 @@ const PrivateRoute = () => {
           <Home />
         </AuthRoute>
       ),
-      children,
+      children: [
+        ...children,
+        {
+          path: "/404",
+          element: "404 Not Found",
+        },
+      ],
     },
     {
       path: "*",
       element: <Navigate to={"/404"} />,
     },
-    {
-      path: "/404",
-      element: "404 Not Found",
-    },
   ];
-  console.log(routeConfig, 123);
-  const test = useRoutes(routeConfig);
 
-  return test;
+  return useRoutes(routeConfig);
 };
 
 export default PrivateRoute;

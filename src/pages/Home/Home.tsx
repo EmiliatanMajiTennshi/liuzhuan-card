@@ -218,7 +218,7 @@ const Home: React.FC = () => {
                 onClick={handleCollapsed}
               />
 
-              {pageTitle.parent && (
+              {pageTitle.label && (
                 <Breadcrumb
                   separator=">"
                   items={[
