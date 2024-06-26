@@ -1,0 +1,60 @@
+.pagination {
+  margin-right: 10px !important;
+}
+.table {
+  height: 100%;
+  > div {
+    height: 100%;
+  }
+  :global {
+    .ant-spin-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      .ant-table {
+        height: 100%;
+        overflow: auto;
+        scrollbar-color: initial !important;
+        .ant-table-container {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          .ant-table-body {
+            flex: 1;
+            overflow-y: auto !important;
+            max-height: max-content !important;
+          }
+          .ant-table-body::-webkit-scrollbar {
+            width: 6px; /* 滚动条的宽度 */
+            height: 12px; /* 滚动条的高度，对水平滚动条有效 */
+            background-color: #f9f9fd; /* 滚动条的背景颜色 */
+          }
+          .ant-table-body::-webkit-scrollbar-track {
+            background: #e1e1e1; /* 轨道的背景颜色 */
+          }
+          .ant-table-body::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background-color: #c1c1c1; /* 滑块的背景颜色 */
+            border: 2px solid #e1e1e1; /* 滑块的边框和轨道相同的颜色，可以制造“边距”的效果 */
+          }
+          /* 滚动条滑块：悬停效果 */
+          .ant-table-body::-webkit-scrollbar-thumb:hover {
+            background-color: #a8a8a8; /* 滑块的悬停颜色 */
+            border: 0px solid #e1e1e1;
+          }
+
+          /* 滚动条滑块：激活时的效果 */
+          .ant-table-body::-webkit-scrollbar-thumb:active {
+            background-color: #888888; /* 滑块的激活颜色 */
+          }
+
+          /* 滚动条按钮（上下箭头） */
+          .ant-table-body::-webkit-scrollbar-button {
+            display: none; /* 通常情况下不显示滚动条按钮 */
+          }
+        }
+      }
+    }
+  }
+}

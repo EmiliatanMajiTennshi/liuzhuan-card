@@ -1,20 +1,23 @@
-import { Table, message } from "antd";
+import { ConfigProvider, Table, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { ITableConfig } from "../AdvancedSearchCom/AdvancedSearchCom";
 import { requestLz } from "@/utils";
+import styles from "./index.module.scss";
 
 const AdvancedSearchTable = (props: {
   tableConfig: ITableConfig;
   api: string;
   searchParams: object;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { tableConfig, api, searchParams } = props;
+  const { tableConfig, api, searchParams, loading, setLoading } = props;
   const { columns } = tableConfig;
   const [searchedData, setSearchedData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
 
   useEffect(() => {
     setLoading(true);
@@ -39,6 +42,461 @@ const AdvancedSearchTable = (props: {
           content: `数据请求失败，${err?.message}`,
           style: { marginTop: "40vh" },
         });
+        setSearchedData([
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasgggggggggggggggggggggggggggggggggdas",
+            ljFinDate: "saagassssssssfgsa",
+            uomname: "safgsasssssssssgas",
+            supcount: "sagafgsssssssssssssssssasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+          {
+            type1: "123",
+            orderid: "11111111s",
+            itmid: "231231",
+            goodsname: "1234khsa",
+            format: "1241414",
+            Pcode: "dghasdas",
+            ljFinDate: "saagasfgsa",
+            uomname: "safgsagas",
+            supcount: "sagafgasga",
+            sumcount: "sadad",
+            processname1: "wqqqttq",
+            processname2: "15151",
+            semiFinishedPartFlowCard: "15125154",
+          },
+        ]);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, searchParams, currentPage, pageSize]);
@@ -48,22 +506,37 @@ const AdvancedSearchTable = (props: {
   }, [searchParams]);
 
   return (
-    <div style={{ marginTop: 20 }}>
-      <Table
-        columns={columns}
-        dataSource={searchedData}
-        size="small"
-        pagination={{
-          total: totalCount,
-          current: currentPage,
-          pageSize: pageSize,
-          onChange: (page, pageSize) => {
-            setCurrentPage(page);
-            setPageSize(pageSize);
+    <div style={{ height: "100%" }}>
+      <ConfigProvider
+        theme={{
+          components: {
+            Table: {
+              /* 这里是你的组件 token */
+              headerBorderRadius: 0,
+            },
           },
         }}
-        loading={loading}
-      />
+      >
+        <Table
+          columns={columns}
+          dataSource={searchedData}
+          size="middle"
+          className={styles.table}
+          scroll={{ y: 240 }}
+          pagination={{
+            total: totalCount,
+            showSizeChanger: true,
+            current: currentPage,
+            pageSize: pageSize,
+            onChange: (page, pageSize) => {
+              setCurrentPage(page);
+              setPageSize(pageSize);
+            },
+            className: styles.pagination,
+          }}
+          loading={loading}
+        />
+      </ConfigProvider>
     </div>
   );
 };

@@ -15,11 +15,11 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { logoutRequest } from "@/api/logoutRequest";
 import { getMenu } from "@/api";
 import { getFlatMenuList } from "@/constant";
-import Logo from "@/assets/images/logo6.png";
+import Logo from "@/assets/images/logo5.png";
 import classNames from "classnames";
 import { IMenuItem } from "@/constant/menuList";
 
-const { Header, Sider, Content } = Layout;
+const { Header, Sider, Content, Footer } = Layout;
 
 const Home: React.FC = () => {
   const [pageTitle, setPageTitle] = useState<IMenuItem>({
@@ -36,7 +36,12 @@ const Home: React.FC = () => {
   const handleMenu = (menuString: string) => {
     localStorage.setItem("menuList", menuString);
     const _menu = JSON.parse(menuString);
-    console.log(1123, menuString);
+    _menu.unshift({
+      icon: "HomeOutlined",
+      id: "home",
+      key: "/",
+      label: "首页",
+    });
 
     if (_menu) {
       _menu.forEach((item: any) => {
@@ -118,9 +123,6 @@ const Home: React.FC = () => {
       navigate("/");
     }
   };
-  const getUserlist1 = () => {
-    getMenu();
-  };
 
   const handleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -131,76 +133,111 @@ const Home: React.FC = () => {
       theme={{
         components: {
           Layout: {
-            siderBg: "#2c3e50",
+            headerBg: "#fff",
           },
           Menu: {
             darkItemBg: "#2c3e50",
             darkSubMenuItemBg: "#2c3e50",
             darkItemHoverBg: "#34495e",
+            activeBarBorderWidth: 0,
           },
         },
       }}
     >
-      <Layout style={{ height: "100%" }}>
-        <Sider
-          trigger={null}
-          className={classNames({
-            [styles.aside]: true,
-          })}
-          collapsible
-          collapsed={collapsed}
-          width={245}
+      <Layout style={{ height: "100%", display: "flex" }}>
+        <Header
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+          className={styles["header"]}
         >
-          <h2
-            className={classNames({
-              [styles.title]: true,
-              [styles["collapsed-title"]]: collapsed,
-            })}
-          >
-            <img
-              src={Logo}
-              width={64}
-              alt=""
-              onClick={handleCollapsed}
-              style={{ cursor: "pointer" }}
-            ></img>
-            <span style={collapsed ? { visibility: "hidden" } : {}}>
-              流转卡管理系统
-            </span>
-          </h2>
-          {menu.length !== 0 ? (
-            <Menu
-              theme="dark"
-              mode="inline"
-              defaultSelectedKeys={[location.pathname]}
-              onClick={onMenuClick}
-              defaultOpenKeys={[currentOpenKey]}
-              items={menu}
-              // inlineCollapsed={true}
-            ></Menu>
-          ) : (
-            <Skeleton />
-          )}
-        </Sider>
-        <Layout style={{ minWidth: "1000px" }}>
-          <Header
+          <div
             style={{
-              padding: "0px 16px",
-              background: colorBgContainer,
+              fontSize: 18,
               display: "flex",
-              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            <div
+            <h2
+              className={classNames({
+                [styles.title]: true,
+              })}
+            >
+              <img
+                src={Logo}
+                width={84}
+                alt=""
+                style={{ cursor: "pointer" }}
+              ></img>
+              <span style={{ marginTop: 4 }}>流转卡管理系统</span>
+            </h2>
+          </div>
+          <div>
+            <Button type="link" onClick={handleLogout}>
+              退出登录
+            </Button>
+          </div>
+        </Header>
+        <Content
+          style={{
+            padding: "0 16px",
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Breadcrumb
+            separator=">"
+            style={{ margin: "16px 0" }}
+            items={[
+              {
+                title: pageTitle?.parent,
+              },
+              {
+                title: pageTitle?.label,
+              },
+            ]}
+          />
+
+          <Layout
+            style={{
+              borderRadius: borderRadiusLG,
+              marginBottom: 20,
+            }}
+          >
+            <Sider
+              trigger={null}
+              className={classNames({
+                [styles.aside]: true,
+              })}
+              collapsible
+              collapsed={collapsed}
+              width={245}
               style={{
-                fontSize: 18,
                 background: colorBgContainer,
-                display: "flex",
-                alignItems: "center",
+                borderRadius: borderRadiusLG,
               }}
             >
+              <div style={{ height: "100%" }}>
+                {menu.length !== 0 ? (
+                  <Menu
+                    theme="light"
+                    mode="inline"
+                    defaultSelectedKeys={[location.pathname]}
+                    onClick={onMenuClick}
+                    defaultOpenKeys={[currentOpenKey]}
+                    items={menu}
+
+                    // inlineCollapsed={true}
+                  ></Menu>
+                ) : (
+                  <Skeleton />
+                )}
+              </div>
               <Button
-                style={{ marginRight: 10 }}
+                className={styles["collapse-button"]}
                 type="text"
                 icon={
                   collapsed ? (
@@ -217,45 +254,20 @@ const Home: React.FC = () => {
                 }
                 onClick={handleCollapsed}
               />
+            </Sider>
 
-              {pageTitle.label && (
-                <Breadcrumb
-                  separator=">"
-                  items={[
-                    {
-                      title: pageTitle.parent,
-                    },
-                    {
-                      title: pageTitle.label,
-                    },
-                  ]}
-                />
-              )}
-            </div>
-            <div>
-              <Button type="link" onClick={handleLogout}>
-                退出登录
-              </Button>
-              <Button type="link" onClick={getUserlist1}>
-                获取用户列表
-              </Button>
-            </div>
-          </Header>
-          <Content
-            style={{
-              margin: "24px 16px",
-              padding: 24,
-              minHeight: 280,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-              overflow: "auto",
-            }}
-          >
-            <Suspense fallback={<Skeleton active />}>
-              <Outlet></Outlet>
-            </Suspense>
-          </Content>
-        </Layout>
+            <Content
+              style={{
+                minHeight: 280,
+                marginLeft: 16,
+              }}
+            >
+              <Suspense fallback={<Skeleton active />}>
+                <Outlet></Outlet>
+              </Suspense>
+            </Content>
+          </Layout>
+        </Content>
       </Layout>
     </ConfigProvider>
   );

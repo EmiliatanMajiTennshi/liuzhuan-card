@@ -6,10 +6,10 @@ import { formConfig, tableConfig } from "./config";
 const IssueReplenishmentOrderFlowCard = () => {
   return (
     <>
-      <h2 style={{ marginTop: 0 }}>补单订单列表</h2>
       <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}
+        title="补单订单列表"
       ></AdvancedSearchCom>
     </>
   );

@@ -62,7 +62,7 @@ const FullInspectionDefectRate = React.lazy(() =>
   }))
 );
 const IssueChainBoardSemiFinishedPartFlowCard = React.lazy(() =>
-  import("@/pages/IssueChainBoardSemiFinishedPartFlowCard").then((res) => ({
+  import("@/pages/IssueChainboardsSemiFinishedPartFlowCard").then((res) => ({
     default: res.IssueChainBoardSemiFinishedPartFlowCard,
   }))
 );
@@ -209,10 +209,7 @@ const routeMap = [
     path: "/part_flow_card_query",
     element: <PartFlowCardQuery />,
   },
-  {
-    path: "/production_process_flow_card_and_dispatch_list",
-    element: <ProductionProcessFlowCardAndDispatchList />,
-  },
+
   {
     path: "/part_flow_card_print",
     element: <PartFlowCardPrint />,
@@ -307,6 +304,10 @@ const PrivateRoute = () => {
           element: "404 Not Found",
         },
       ],
+    },
+    {
+      path: "/production_process_flow_card_and_dispatch_list",
+      element: <ProductionProcessFlowCardAndDispatchList />,
     },
     {
       path: "*",

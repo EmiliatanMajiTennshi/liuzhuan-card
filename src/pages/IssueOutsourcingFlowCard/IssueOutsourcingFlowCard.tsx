@@ -6,10 +6,10 @@ import { formConfig, tableConfig } from "./config";
 const IssueOutsourcingFlowCard = () => {
   return (
     <>
-      <h2 style={{ marginTop: 0 }}>外协外购-订单列表</h2>
       <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}
+        title="外协外购-订单列表"
       ></AdvancedSearchCom>
     </>
   );

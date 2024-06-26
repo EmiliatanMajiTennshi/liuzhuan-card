@@ -1,0 +1,23 @@
+.title {
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding: 4px 20px;
+}
+
+.shadow {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;
+  :global {
+    .ant-collapse-header {
+      align-items: center !important;
+      padding-left: 20px !important;
+    }
+    .ant-collapse-content {
+      border-top: none !important;
+    }
+  }
+}
+.search-com {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

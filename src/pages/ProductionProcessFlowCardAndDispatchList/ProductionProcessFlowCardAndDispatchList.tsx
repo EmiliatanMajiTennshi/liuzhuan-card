@@ -31,7 +31,7 @@ const ProductionProcessFlowCardAndDispatchList = () => {
 
   useEffect(() => {
     requestLz
-      .get(`/selectLjByItmid?itmid=${record.itmid}`)
+      .get(`/selectLjByItmid?itmid=${record?.itmid}`)
       .then((res) => {
         setMaterialInfo(res?.data[0]);
       })

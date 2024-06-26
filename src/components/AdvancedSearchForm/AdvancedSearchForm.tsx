@@ -7,8 +7,9 @@ const span = 6;
 const AdvancedSearchForm = (props: {
   formConfig: IFormConfig | ((form?: any) => IFormConfig);
   setSearchParams: React.Dispatch<React.SetStateAction<object>>;
+  loading: boolean;
 }) => {
-  const { formConfig, setSearchParams } = props;
+  const { formConfig, setSearchParams, loading } = props;
   const [form] = Form.useForm();
   const _formConfig =
     typeof formConfig === "function" ? formConfig(form) : formConfig;
@@ -71,7 +72,7 @@ const AdvancedSearchForm = (props: {
       </Row>
       <div style={{ textAlign: "right" }}>
         <Space size="small">
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading}>
             查询
           </Button>
           <Button
@@ -79,6 +80,7 @@ const AdvancedSearchForm = (props: {
               setSearchParams([]);
               form.resetFields();
             }}
+            disabled={loading}
           >
             重置
           </Button>

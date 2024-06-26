@@ -6,10 +6,10 @@ import { AdvancedSearchCom } from "@/components/AdvancedSearchCom";
 const PartFlowCardQuery = () => {
   return (
     <>
-      <h2 style={{ marginTop: 0 }}>操作前查询</h2>
       <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}
+        title="操作前查询"
       ></AdvancedSearchCom>
     </>
   );

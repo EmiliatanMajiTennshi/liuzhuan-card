@@ -6,10 +6,10 @@ import { formConfig, tableConfig } from "./config";
 const IssueRollerNestSemiFinishedPartFlowCard = () => {
   return (
     <>
-      <h2 style={{ marginTop: 0 }}>套滚销-半品订单列表</h2>
       <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}
+        title="套滚销-半品订单列表"
       ></AdvancedSearchCom>
     </>
   );

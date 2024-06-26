@@ -74,6 +74,10 @@ const nonMenuItems = [
     key: "/404",
     label: "404",
   },
+  {
+    key: "/",
+    label: "首页",
+  },
 ];
 export interface IMenuItem {
   key: string;
