@@ -1,16 +1,10 @@
 import { ConfigProvider, Table, message } from "antd";
 import React, { useEffect, useState } from "react";
-import { ITableConfig } from "../AdvancedSearchCom/AdvancedSearchCom";
 import { requestLz } from "@/utils";
 import styles from "./index.module.scss";
+import { IAdvancedSearchTable } from "./AdvancedSearchTableType";
 
-const AdvancedSearchTable = (props: {
-  tableConfig: ITableConfig;
-  api: string;
-  searchParams: object;
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const { tableConfig, api, searchParams, loading, setLoading } = props;
   const { columns } = tableConfig;
   const [searchedData, setSearchedData] = useState<any[]>([]);
@@ -522,7 +516,7 @@ const AdvancedSearchTable = (props: {
           dataSource={searchedData}
           size="middle"
           className={styles.table}
-          scroll={{ y: 240 }}
+          scroll={{ y: 240 }} // 240随便打的 用css改了
           pagination={{
             total: totalCount,
             showSizeChanger: true,

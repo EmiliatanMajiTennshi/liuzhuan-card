@@ -14,12 +14,12 @@ import styles from "./index.module.scss";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { logoutRequest } from "@/api/logoutRequest";
 import { getMenu } from "@/api";
-import { getFlatMenuList } from "@/constant";
+import { getFlatMenuList } from "@/constants";
 import Logo from "@/assets/images/logo5.png";
 import classNames from "classnames";
-import { IMenuItem } from "@/constant/menuList";
+import { IMenuItem } from "@/constants/constantsType";
 
-const { Header, Sider, Content, Footer } = Layout;
+const { Header, Sider, Content } = Layout;
 
 const Home: React.FC = () => {
   const [pageTitle, setPageTitle] = useState<IMenuItem>({
@@ -124,6 +124,7 @@ const Home: React.FC = () => {
     }
   };
 
+  // 菜单折叠
   const handleCollapsed = () => {
     setCollapsed(!collapsed);
     localStorage.setItem("menu_collapsed", (!collapsed).toString());
@@ -175,7 +176,7 @@ const Home: React.FC = () => {
             </h2>
           </div>
           <div>
-            <Button type="link" onClick={handleLogout}>
+            <Button type="link" onClick={handleLogout} color="white">
               退出登录
             </Button>
           </div>
@@ -233,7 +234,7 @@ const Home: React.FC = () => {
                     // inlineCollapsed={true}
                   ></Menu>
                 ) : (
-                  <Skeleton />
+                  <Skeleton active />
                 )}
               </div>
               <Button

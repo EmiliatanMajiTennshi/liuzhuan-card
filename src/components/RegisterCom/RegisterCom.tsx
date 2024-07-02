@@ -4,14 +4,7 @@ import { Button, Form, Input } from "antd";
 import { registerRequest } from "@/api";
 import styles from "./index.module.scss";
 import { RuleObject } from "antd/es/form";
-
-type FieldType = {
-  username?: string;
-  password?: string;
-  remember?: string;
-  nickName?: string;
-  confirmPassword?: string;
-};
+import { FieldType } from "./RegisterComType";
 
 // 注册组件
 const RegisterCom = (props: any) => {

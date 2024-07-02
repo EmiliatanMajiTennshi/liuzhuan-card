@@ -1,6 +1,6 @@
 import { getToken, request } from "../utils";
-
-export const registerRequest = (RegisterForm) => {
+import { FieldType } from "@/components/RegisterCom/RegisterComType";
+export const registerRequest = (RegisterForm: FieldType) => {
   request
     .post("/api/user/insertUser", RegisterForm, {
       headers: {

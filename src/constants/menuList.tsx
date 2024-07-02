@@ -1,4 +1,5 @@
 import { SettingOutlined, ProfileOutlined } from "@ant-design/icons";
+import { IMenuItem } from "./constantsType";
 const menuList = [
   {
     icon: <SettingOutlined />,
@@ -79,12 +80,6 @@ const nonMenuItems = [
     label: "首页",
   },
 ];
-export interface IMenuItem {
-  key: string;
-  label: string;
-  parent?: string;
-  children?: IMenuItem[];
-}
 const getFlatMenuList = (menu: IMenuItem[]) => {
   const flatMenuList: IMenuItem[] = [];
 

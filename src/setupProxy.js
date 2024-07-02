@@ -3,7 +3,7 @@ module.exports = function (app) {
   app.use(
     "/target",
     createProxyMiddleware({
-      target: "http://desktop-44ime94:7800/lzcard/v1",
+      target: "http://192.168.20.86:8081/api",
       changeOrigin: true,
       pathRewrite: {
         "/target": "",
@@ -13,7 +13,7 @@ module.exports = function (app) {
   app.use(
     "/apiLz",
     createProxyMiddleware({
-      target: "http://china-20240408x:7800/lzcard/v1",
+      target: "http://192.168.20.86:8081/api",
       changeOrigin: true,
       pathRewrite: {
         "/apiLz": "",

@@ -5,7 +5,7 @@ class TableRecord {
     makeAutoObservable(this, {}, { autoBind: true });
   }
   tableRecord = {};
-  setTableRecord(record) {
+  setTableRecord(record: any) {
     runInAction(() => {
       this.tableRecord = record;
     });

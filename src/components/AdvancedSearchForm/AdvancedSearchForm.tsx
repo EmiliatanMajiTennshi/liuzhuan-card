@@ -1,14 +1,10 @@
 import { Button, Col, Form, Row, Space } from "antd";
+import { IAdvancedSearchForm } from "./AdvancedSearchFormType";
 
-import { IFormConfig } from "../AdvancedSearchCom/AdvancedSearchCom";
 const gutter = 24;
 const span = 6;
 
-const AdvancedSearchForm = (props: {
-  formConfig: IFormConfig | ((form?: any) => IFormConfig);
-  setSearchParams: React.Dispatch<React.SetStateAction<object>>;
-  loading: boolean;
-}) => {
+const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
   const { formConfig, setSearchParams, loading } = props;
   const [form] = Form.useForm();
   const _formConfig =

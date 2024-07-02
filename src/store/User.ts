@@ -6,7 +6,7 @@ class User {
     makeAutoObservable(this, {}, { autoBind: true });
   }
   token = getToken() || "";
-  setToken(token) {
+  setToken(token: string) {
     runInAction(() => {
       this.token = token || "";
       _setToken(token);

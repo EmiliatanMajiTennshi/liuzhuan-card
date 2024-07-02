@@ -1,40 +1,16 @@
 import React, { useState } from "react";
 import { AdvancedSearchForm } from "../AdvancedSearchForm";
 import { AdvancedSearchTable } from "../AdvancedSearchTable";
-import { Rule } from "antd/es/form";
 import { Collapse, CollapseProps, ConfigProvider, theme } from "antd";
 import styles from "./index.module.scss";
 import classNames from "classnames";
+import { IAdvancedSearchCom } from "./AdvancedSearchComType";
 
-export interface IFormItem {
-  key: string;
-  name: string;
-  children: JSX.Element;
-  rules?: Rule[];
-}
-export interface IFormConfig {
-  api: string;
-  span?: number;
-  formItems: IFormItem[];
-}
-
-export interface ITableItem {
-  title: string;
-  dataIndex: string;
-}
-
-export interface ITableConfig {
-  columns: ITableItem[];
-}
-
-interface IAdvancedSearchCom {
-  formConfig: IFormConfig | ((form?: any) => IFormConfig);
-  tableConfig: ITableConfig;
-  title?: string;
-}
 const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
   const { formConfig, tableConfig, title } = props;
+  // 查询参数
   const [searchParams, setSearchParams] = useState<object>({});
+  // 页面loading
   const [loading, setLoading] = useState(true);
   const _formConfig =
     typeof formConfig === "function" ? formConfig() : formConfig;
@@ -44,6 +20,7 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
   } = theme.useToken();
   const borderRadiusLG = "8px";
 
+  // 折叠面板的items
   const items: CollapseProps["items"] = [
     {
       key: "search_form",

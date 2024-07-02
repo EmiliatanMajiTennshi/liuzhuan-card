@@ -5,7 +5,7 @@ class PageTitle {
     makeAutoObservable(this, {}, { autoBind: true });
   }
   pageTitle = "";
-  setPageTitle(title) {
+  setPageTitle(title: string) {
     runInAction(() => {
       this.pageTitle = title;
     });

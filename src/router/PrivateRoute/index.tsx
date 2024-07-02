@@ -1,6 +1,8 @@
 import React from "react";
 import { useRoutes, Navigate } from "react-router-dom";
 import AuthRoute from "@/components/AuthRoute/AuthRoute";
+import { IMenuItem } from "@/constants/constantsType";
+import { AnyObject } from "antd/es/_util/type";
 // import { Home } from "../../pages/Home";
 // import { Login } from "@/pages/Login";
 // import { AddPartFlowCard } from "@/pages/AddPartFlowCard";
@@ -265,15 +267,15 @@ const routeMap = [
 ];
 
 // 转成对象
-const routeMapObj = routeMap.reduce((acc, route) => {
+const routeMapObj = routeMap.reduce((acc: AnyObject, route) => {
   acc[route.path] = route;
   return acc;
 }, {});
 
 const PrivateRoute = () => {
   const menu = JSON.parse(localStorage.getItem("menuList") || "[]");
-  const childrenArr = [];
-  const findAllChildren = (menu) => {
+  const childrenArr: IMenuItem[] = [];
+  const findAllChildren = (menu: IMenuItem[]) => {
     menu.forEach((item) => {
       if (routeMapObj[item.key]) {
         childrenArr.push(routeMapObj[item.key]);
