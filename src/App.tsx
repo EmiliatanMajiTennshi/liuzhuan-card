@@ -13,7 +13,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 // 换成中文
 dayjs.locale("zh-cn");
-console.log("test");
+console.log("test1");
 
 function App() {
   return (
