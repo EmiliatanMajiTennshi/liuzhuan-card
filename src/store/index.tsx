@@ -2,15 +2,18 @@ import React, { ReactNode, createContext, useContext } from "react";
 import User from "./User";
 import PageTitle from "./PageTitle";
 import TableRecord from "./TableRecord";
+import Menu from "./Menu";
 
 class RootStore {
   user: User;
   pageTitle: PageTitle;
   tableRecord: TableRecord;
+  menu: Menu;
   constructor() {
     this.user = new User();
     this.pageTitle = new PageTitle();
     this.tableRecord = new TableRecord();
+    this.menu = new Menu();
   }
 }
 

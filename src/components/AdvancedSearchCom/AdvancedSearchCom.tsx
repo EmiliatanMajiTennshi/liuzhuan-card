@@ -7,7 +7,7 @@ import classNames from "classnames";
 import { IAdvancedSearchCom } from "./AdvancedSearchComType";
 
 const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
-  const { formConfig, tableConfig, title } = props;
+  const { formConfig, tableConfig } = props;
   // 查询参数
   const [searchParams, setSearchParams] = useState<object>({});
   // 页面loading
@@ -15,6 +15,7 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
   const _formConfig =
     typeof formConfig === "function" ? formConfig() : formConfig;
   const api = _formConfig.api;
+  const formTitle = _formConfig.formTitle;
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -24,7 +25,11 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
   const items: CollapseProps["items"] = [
     {
       key: "search_form",
-      label: <h3 style={{ margin: 0, display: "flex" }}>搜索表单</h3>,
+      label: (
+        <h3 style={{ margin: 0, display: "flex" }}>
+          {formTitle || "搜索表单"}
+        </h3>
+      ),
       children: (
         <>
           {formConfig && (
@@ -42,15 +47,6 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
   ];
   return (
     <div className={styles["search-com"]}>
-      <h3
-        className={classNames([styles.title, styles.shadow])}
-        style={{
-          backgroundColor: colorBgContainer,
-          borderRadius: borderRadiusLG,
-        }}
-      >
-        {title}
-      </h3>
       <ConfigProvider
         theme={{
           components: {

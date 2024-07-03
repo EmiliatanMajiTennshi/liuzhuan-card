@@ -1,8 +1,9 @@
+import { IFormConfig } from "@/components/AdvancedSearchForm/AdvancedSearchFormType";
 import { DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
-const formConfig = {
-  api: "",
+const formConfig: IFormConfig = {
+  api: "getMenu",
   formItems: [
     {
       key: "orderid",

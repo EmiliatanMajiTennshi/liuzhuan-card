@@ -1,8 +1,9 @@
 import React from "react";
 import { useRoutes, Navigate } from "react-router-dom";
-import AuthRoute from "@/components/AuthRoute/AuthRoute";
+import { AuthRoute } from "@/components/AuthRoute";
 import { IMenuItem } from "@/constants/constantsType";
 import { AnyObject } from "antd/es/_util/type";
+import { useRootStore } from "@/store";
 // import { Home } from "../../pages/Home";
 // import { Login } from "@/pages/Login";
 // import { AddPartFlowCard } from "@/pages/AddPartFlowCard";
@@ -158,6 +159,17 @@ const AddEmployeeInfoChain = React.lazy(() =>
     default: res.AddEmployeeInfoChain,
   }))
 );
+
+const Dashboard = React.lazy(() =>
+  import("@/pages/Dashboard").then((res) => ({
+    default: res.Dashboard,
+  }))
+);
+const UserManager = React.lazy(() =>
+  import("@/pages/UserManager").then((res) => ({
+    default: res.UserManager,
+  }))
+);
 const routeMap = [
   {
     path: "/add_part_flow_card",
@@ -264,6 +276,8 @@ const routeMap = [
     path: "/add_employee_info_chain",
     element: <AddEmployeeInfoChain />,
   },
+  { path: "/dashboard", element: <Dashboard /> },
+  { path: "/user_manager", element: <UserManager /> },
 ];
 
 // 转成对象
@@ -273,7 +287,9 @@ const routeMapObj = routeMap.reduce((acc: AnyObject, route) => {
 }, {});
 
 const PrivateRoute = () => {
-  const menu = JSON.parse(localStorage.getItem("menuList") || "[]");
+  const menu = useRootStore().menu.menu;
+  console.log(menu, 1112);
+
   const childrenArr: IMenuItem[] = [];
   const findAllChildren = (menu: IMenuItem[]) => {
     menu.forEach((item) => {

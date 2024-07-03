@@ -7,9 +7,12 @@ const span = 6;
 const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
   const { formConfig, setSearchParams, loading } = props;
   const [form] = Form.useForm();
+
+  // 可能是函数
   const _formConfig =
     typeof formConfig === "function" ? formConfig(form) : formConfig;
-  const { formItems, span: _span } = _formConfig;
+
+  const { formTitle, formItems, span: _span } = _formConfig;
 
   // 列数
   const colNumber = gutter / (_span || span);

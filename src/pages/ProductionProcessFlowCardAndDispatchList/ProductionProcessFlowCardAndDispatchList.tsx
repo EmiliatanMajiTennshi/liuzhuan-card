@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styles from "./index.module.scss";
 import { Button, ConfigProvider, Form, Input, Spin, Table } from "antd";
-import { getLZCardNumber, getTrackingNumber, requestLz } from "@/utils";
+import { getLZCardNumber, getTrackingNumber, request } from "@/utils";
 import QRCode from "qrcode.react";
 import logo from "@/assets/images/logo.png";
 
@@ -30,7 +30,7 @@ const ProductionProcessFlowCardAndDispatchList = () => {
   }, []);
 
   useEffect(() => {
-    requestLz
+    request
       .get(`/selectLjByItmid?itmid=${record?.itmid}`)
       .then((res) => {
         setMaterialInfo(res?.data[0]);

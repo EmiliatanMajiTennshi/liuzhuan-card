@@ -9,11 +9,10 @@ import PrivateRoute from "./router/PrivateRoute";
 import "./App.css";
 import locale from "antd/locale/zh_CN";
 import dayjs from "dayjs";
-
+import RootStoreProvider from "./store";
 import "dayjs/locale/zh-cn";
 // 换成中文
 dayjs.locale("zh-cn");
-console.log("test1");
 
 function App() {
   return (
@@ -27,7 +26,9 @@ function App() {
 
         <Router>
           <ConfigProvider locale={locale}>
-            <PrivateRoute></PrivateRoute>
+            <RootStoreProvider>
+              <PrivateRoute></PrivateRoute>
+            </RootStoreProvider>
           </ConfigProvider>
         </Router>
       </AppAnt>

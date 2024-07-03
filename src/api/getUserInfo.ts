@@ -1,15 +1,11 @@
 import { request } from "@/utils";
-import { getToken } from "@/utils";
+
 export const getUserInfo = async () => {
   try {
-    const res = await request.get("queryMenu", {
-      params: {
-        token: getToken(),
-      },
-    });
+    const res = await request.get("/user/info");
     return res;
-  } catch (err) {
-    console.error("获取菜单时发生错误", err);
-    return err;
+  } catch (err: any) {
+    console.error("查询角色数据失败", err);
+    return err?.response;
   }
 };

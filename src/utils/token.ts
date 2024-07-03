@@ -1,6 +1,6 @@
-const TOKENKEY = "token_key";
+import { TOKENKEY } from "@/constants";
 
-const setToken = (token) => {
+const setToken = (token: string) => {
   localStorage.setItem(TOKENKEY, token);
 };
 

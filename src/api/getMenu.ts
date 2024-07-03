@@ -1,14 +1,10 @@
 import { request } from "@/utils";
-import { getToken } from "@/utils";
 export const getMenu = async () => {
   try {
-    const res = await request.get("queryMenu", {
-      params: {
-        token: getToken(),
-      },
-    });
+    const res = await request.get("menu/queryMenuByUser");
+
     return res;
-  } catch (err) {
+  } catch (err: any) {
     console.error("获取菜单时发生错误", err);
     return err;
   }

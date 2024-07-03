@@ -50,7 +50,6 @@ const LoginCom = (props: any) => {
     setLoading(true);
     const res: TRes = await loginRequest(values); //登录请求
     setLoading(false);
-    console.log(res, "ss11");
 
     if (res?.code === 200) {
       //   if (remember) {

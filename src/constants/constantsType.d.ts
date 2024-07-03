@@ -3,4 +3,5 @@ export interface IMenuItem {
   label: string;
   parent?: string;
   children?: IMenuItem[];
+  icon?: string | ReactNode;
 }

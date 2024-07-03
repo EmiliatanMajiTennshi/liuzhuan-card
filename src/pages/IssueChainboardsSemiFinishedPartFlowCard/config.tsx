@@ -1,10 +1,11 @@
+import { IFormConfig } from "@/components/AdvancedSearchForm/AdvancedSearchFormType";
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 import { NavLink } from "react-router-dom";
 
-const formConfig = (form: any) => {
+const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
-    api: "/selectLj",
+    api: "getUserInfo",
     formItems: [
       {
         key: "type1",

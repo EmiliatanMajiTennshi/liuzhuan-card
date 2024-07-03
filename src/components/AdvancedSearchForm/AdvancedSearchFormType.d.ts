@@ -1,3 +1,4 @@
+import { TApi } from "@/api";
 import { Rule } from "antd/es/form";
 
 /**
@@ -14,9 +15,10 @@ export interface IFormItem {
  * 表单配置
  */
 export interface IFormConfig {
-  api: string;
+  api: TApi;
   span?: number;
   formItems: IFormItem[];
+  formTitle?: string;
 }
 
 /**
