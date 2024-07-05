@@ -5,4 +5,5 @@ export type FieldType = {
 export type TRes = {
   code?: number;
   msg?: string;
+  statusText?: string;
 };

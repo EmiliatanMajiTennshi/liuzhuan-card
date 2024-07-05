@@ -11,6 +11,8 @@
       margin-bottom: 20px;
     }
     .sub-content {
+      display: flex;
+      flex-direction: column;
       min-height: 280px;
       margin-left: 16px;
     }

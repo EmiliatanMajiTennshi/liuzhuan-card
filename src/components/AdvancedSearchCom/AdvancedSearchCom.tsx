@@ -12,10 +12,15 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
   const [searchParams, setSearchParams] = useState<object>({});
   // 页面loading
   const [loading, setLoading] = useState(true);
+  // 手动刷新列表
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
   const _formConfig =
     typeof formConfig === "function" ? formConfig() : formConfig;
-  const api = _formConfig.api;
   const formTitle = _formConfig.formTitle;
+  const formExtend = _formConfig.formExtend;
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -38,6 +43,8 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
                 formConfig={formConfig}
                 loading={loading}
                 setSearchParams={setSearchParams}
+                selectedRowKeys={selectedRowKeys}
+                setRefreshFlag={setRefreshFlag}
               ></AdvancedSearchForm>
             </div>
           )}
@@ -59,7 +66,7 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
       >
         <Collapse
           items={items}
-          defaultActiveKey={["1"]}
+          defaultActiveKey={formExtend ? ["search_form"] : []}
           className={styles.shadow}
           style={{ border: "none", marginBottom: 16 }}
         />
@@ -76,10 +83,13 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
         >
           <AdvancedSearchTable
             tableConfig={tableConfig}
-            api={api}
             loading={loading}
             setLoading={setLoading}
             searchParams={searchParams}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            refreshFlag={refreshFlag}
+            setRefreshFlag={setRefreshFlag}
           ></AdvancedSearchTable>
         </div>
       )}

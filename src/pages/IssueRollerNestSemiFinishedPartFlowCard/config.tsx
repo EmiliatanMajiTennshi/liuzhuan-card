@@ -3,7 +3,6 @@ import { DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
 const formConfig: IFormConfig = {
-  api: "getMenu",
   formItems: [
     {
       key: "type1",
@@ -114,6 +113,8 @@ const formConfig: IFormConfig = {
   ],
 };
 const tableConfig = {
+  api: "getMenu",
+
   columns: [
     {
       title: "零件类型",

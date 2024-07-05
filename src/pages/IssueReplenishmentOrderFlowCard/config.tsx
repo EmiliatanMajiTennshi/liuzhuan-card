@@ -4,7 +4,6 @@ import { RuleObject } from "antd/es/form";
 
 const formConfig: IFormConfig = {
   span: 8,
-  api: "getMenu",
   formItems: [
     {
       key: "orderid",

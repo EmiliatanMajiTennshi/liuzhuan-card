@@ -4,7 +4,7 @@ import { AdvancedSearchCom } from "@/components/AdvancedSearchCom";
 import { formConfig, tableConfig } from "./config";
 
 // 用户管理
-const UserManager = () => {
+const UserManage = () => {
   return (
     <ContentRender title="用户管理">
       <AdvancedSearchCom
@@ -15,4 +15,4 @@ const UserManager = () => {
   );
 };
 
-export default UserManager;
+export default UserManage;

@@ -3,6 +3,6 @@ import { IFormConfig } from "../AdvancedSearchForm/AdvancedSearchFormType";
 
 export interface IAdvancedSearchCom {
   formConfig: IFormConfig | ((form?: any) => IFormConfig);
-  tableConfig: ITableConfig;
+  tableConfig: ITableConfig | ((props?: any) => ITableConfig);
   title?: string;
 }

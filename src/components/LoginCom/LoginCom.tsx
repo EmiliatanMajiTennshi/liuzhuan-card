@@ -62,7 +62,9 @@ const LoginCom = (props: any) => {
       successMessage("登录成功");
       navigate("/");
     } else {
-      errorMessage(res?.msg || "登录失败");
+      console.log(res, 123);
+
+      errorMessage(res?.msg || `登录失败${res?.statusText}`);
     }
   };
 

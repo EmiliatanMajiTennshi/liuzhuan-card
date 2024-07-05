@@ -1,11 +1,12 @@
 import { request } from "@/utils";
 export const getUserList = async (params: any) => {
   try {
-    const res = await request.get("user/user", {
-      params: params,
+    const res = await request.get("user/userlist", {
+      params,
     });
-    console.log(res);
+    return res;
   } catch (err) {
     console.log(err);
+    return err;
   }
 };

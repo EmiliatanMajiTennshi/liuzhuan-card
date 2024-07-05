@@ -1,24 +1,51 @@
+import { updateUser } from "./updateUser";
 import { getUserList } from "./getUserList";
 import { loginRequest } from "./loginRequest";
 import { registerRequest } from "./registerRequest";
 import { getMenu } from "./getMenu";
 import { logoutRequest } from "./logoutRequest";
 import { getUserInfo } from "./getUserInfo";
+import { insertUser } from "./insertUser";
+import { queryRole } from "./queryRole";
+import { deleteUsers } from "./deleteUsers";
+import { queryPermission } from "./queryPermission";
+import { queryAllMenu } from "./queryAllMenu";
+import { updateRoleInfoPermission } from "./updateRoleInfoPermission";
+import { insertRole } from "./insertRole";
+import { deleteRoleInfoByRoleId } from "./deleteRoleInfoByRoleId";
 export {
-  loginRequest,
-  registerRequest,
+  deleteUsers,
+  deleteRoleInfoByRoleId,
   getMenu,
-  logoutRequest,
   getUserInfo,
   getUserList,
+  insertUser,
+  insertRole,
+  loginRequest,
+  logoutRequest,
+  registerRequest,
+  queryPermission,
+  queryAllMenu,
+  queryRole,
+  updateUser,
+  updateRoleInfoPermission,
 };
 const Apis = {
-  loginRequest,
-  registerRequest,
+  deleteUsers,
+  deleteRoleInfoByRoleId,
   getMenu,
-  logoutRequest,
   getUserInfo,
   getUserList,
+  insertUser,
+  insertRole,
+  loginRequest,
+  logoutRequest,
+  registerRequest,
+  queryPermission,
+  queryAllMenu,
+  queryRole,
+  updateUser,
+  updateRoleInfoPermission,
 };
 /**
  * 用于formConfig的api

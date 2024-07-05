@@ -1,16 +1,16 @@
-// 下发补单流转卡
-import { AdvancedSearchCom } from "@/components/AdvancedSearchCom";
+// // 下发补单流转卡
+// import { AdvancedSearchCom } from "@/components/AdvancedSearchCom";
 import React from "react";
-import { formConfig, tableConfig } from "./config";
+// import { formConfig, tableConfig } from "./config";
 
 const IssueReplenishmentOrderFlowCard = () => {
   return (
     <>
-      <AdvancedSearchCom
+      {/* <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}
         title="补单订单列表"
-      ></AdvancedSearchCom>
+      ></AdvancedSearchCom> */}
     </>
   );
 };

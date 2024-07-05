@@ -1,23 +1,66 @@
 import { ConfigProvider, Table, message } from "antd";
 import React, { useEffect, useState } from "react";
-import { request } from "@/utils";
 import styles from "./index.module.scss";
-import { IAdvancedSearchTable } from "./AdvancedSearchTableType";
+import {
+  IAdvancedSearchTable,
+  ITableConfigProps,
+  TTableErr,
+  TTableRes,
+} from "./AdvancedSearchTableType";
 import getApi from "@/api";
 
 const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
-  const { tableConfig, api, searchParams, loading, setLoading } = props;
-  const { columns } = tableConfig;
-  const [searchedData, setSearchedData] = useState<any[]>([]);
+  const {
+    tableConfig,
+    searchParams,
+    loading,
+    setLoading,
+    selectedRowKeys,
+    setSelectedRowKeys,
+    refreshFlag,
+    setRefreshFlag,
+  } = props;
 
+  const [searchedData, setSearchedData] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(10);
 
+  // 传给config里的tableConfig
+  const tableProps: ITableConfigProps = {
+    setSearchedData,
+    searchedData,
+    setRefreshFlag,
+  };
+
+  const _tableConfig =
+    typeof tableConfig === "function" ? tableConfig(tableProps) : tableConfig;
+  const { columns, api, rowKey, selectAble } = _tableConfig;
   const currentRequest = getApi(api);
   const params = { ...searchParams, pageSize: pageSize, pageNum: currentPage };
   useEffect(() => {
     setLoading(true);
+    setSelectedRowKeys([]);
+    currentRequest(params).then((res: TTableRes & TTableErr) => {
+      // 有currentData 说明请求成功了
+      const isPaging = res?.data?.data?.page;
+      console.log(res, 1112);
+
+      const currentData = isPaging ? res?.data?.data?.data : res?.data?.data;
+      if (currentData) {
+        setSearchedData(currentData);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.error("请求列表数据时发生错误", res);
+        message.error({
+          content: `数据请求失败，${res.message}`,
+          style: { marginTop: "40vh" },
+        });
+        setSearchedData([]);
+      }
+    });
+
     // request
     //   .get(api, {
     //     params: { ...searchParams, pageSize: pageSize, pageNum: currentPage },
@@ -46,11 +89,24 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     //     setSearchedData([]);
     //   });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, searchParams, currentPage, pageSize]);
+  }, [api, searchParams, currentPage, pageSize, refreshFlag]);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchParams]);
+
+  const onSelectChange = (...props: any) => {
+    const [newSelectedRowKeys, selectedRows] = props;
+
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys, selectedRows);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    columnWidth: 80,
+  };
 
   return (
     <div style={{ height: "100%" }}>
@@ -60,11 +116,14 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
             Table: {
               /* 这里是你的组件 token */
               headerBorderRadius: 0,
+              cellPaddingInlineMD: 12,
             },
           },
         }}
       >
         <Table
+          rowSelection={selectAble ? rowSelection : undefined}
+          rowKey={rowKey || "key"}
           columns={columns}
           dataSource={searchedData}
           size="middle"
@@ -73,6 +132,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           pagination={{
             total: totalCount,
             showSizeChanger: true,
+            pageSizeOptions: [5, 10, 20, 50, 100],
             current: currentPage,
             pageSize: pageSize,
             onChange: (page, pageSize) => {

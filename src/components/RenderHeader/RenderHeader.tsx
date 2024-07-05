@@ -1,7 +1,7 @@
 import React from "react";
 import Logo from "@/assets/images/logo5.png";
 import { Header } from "antd/es/layout/layout";
-import { logoutRequest } from "@/api/logoutRequest";
+import { logoutRequest } from "@/api";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { Button } from "antd";

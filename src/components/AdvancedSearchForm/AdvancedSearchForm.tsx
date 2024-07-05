@@ -1,18 +1,24 @@
 import { Button, Col, Form, Row, Space } from "antd";
-import { IAdvancedSearchForm } from "./AdvancedSearchFormType";
+import { IAdvancedSearchForm, IButtons } from "./AdvancedSearchFormType";
+import { useState } from "react";
 
 const gutter = 24;
 const span = 6;
 
 const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
-  const { formConfig, setSearchParams, loading } = props;
+  const {
+    formConfig,
+    setSearchParams,
+    loading,
+    selectedRowKeys,
+    setRefreshFlag,
+  } = props;
   const [form] = Form.useForm();
-
+  const [buttonLoading, setButtonLoading] = useState({ insertButton: false });
   // 可能是函数
   const _formConfig =
     typeof formConfig === "function" ? formConfig(form) : formConfig;
-
-  const { formTitle, formItems, span: _span } = _formConfig;
+  const { formItems, span: _span, buttons } = _formConfig;
 
   // 列数
   const colNumber = gutter / (_span || span);
@@ -42,6 +48,15 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
     setSearchParams(values);
   };
 
+  /**
+   * 按钮属性
+   */
+  const buttonsProps: IButtons = {
+    selectedRowKeys,
+    setRefreshFlag,
+    buttonLoading,
+    setButtonLoading,
+  };
   return (
     <Form form={form} name="advanced_search" onFinish={onFinish}>
       <Row gutter={gutter}>
@@ -54,6 +69,7 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
                 name={item.key}
                 label={item.name}
                 rules={item.rules}
+                key={item.key}
                 labelCol={{
                   style: {
                     display: "inline-block",
@@ -68,23 +84,31 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
             </Col>
           );
         })}
+        {buttons && typeof buttons !== "function" && (
+          <Form.Item>{buttons}</Form.Item>
+        )}
+        {buttons && typeof buttons === "function" && (
+          <Form.Item>{buttons(buttonsProps)}</Form.Item>
+        )}
       </Row>
-      <div style={{ textAlign: "right" }}>
-        <Space size="small">
-          <Button type="primary" htmlType="submit" loading={loading}>
-            查询
-          </Button>
-          <Button
-            onClick={() => {
-              setSearchParams([]);
-              form.resetFields();
-            }}
-            disabled={loading}
-          >
-            重置
-          </Button>
-        </Space>
-      </div>
+      {!buttons && (
+        <div style={{ textAlign: "right" }}>
+          <Space size="small">
+            <Button type="primary" htmlType="submit" loading={loading}>
+              查询
+            </Button>
+            <Button
+              onClick={() => {
+                setSearchParams([]);
+                form.resetFields();
+              }}
+              disabled={loading}
+            >
+              重置
+            </Button>
+          </Space>
+        </div>
+      )}
     </Form>
   );
 };
