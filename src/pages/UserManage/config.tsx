@@ -32,6 +32,7 @@ type FieldType = {
   confirmPassword?: string;
   role: string[];
   sex?: 0 | 1;
+  department: string;
 };
 
 interface IGetModalConfigProps {
@@ -41,7 +42,22 @@ interface IGetModalConfigProps {
   roles: any;
   isInsert?: boolean;
 }
+const validatePassword = (rule: any, value: string) => {
+  if (!value) {
+    return Promise.resolve();
+  }
+  if (/\s/.test(value)) {
+    return Promise.reject("密码不能包含空格");
+  }
+  if (value.length < 6 || value.length > 8) {
+    return Promise.reject("密码长度必须是 6 到 8 位");
+  }
+  return Promise.resolve();
+};
 
+const onFinish = (values: any) => {
+  console.log("Submitted values:", values);
+};
 const getModalConfig = ({
   onCancel,
   onFinish,
@@ -71,6 +87,7 @@ const getModalConfig = ({
           label="用户名"
           name="account"
           style={{ marginBottom: 10 }}
+          rules={[{ required: true, message: "请输入你的用户名" }]}
         >
           <Input
             placeholder="用户名"
@@ -88,8 +105,29 @@ const getModalConfig = ({
           <Input placeholder="昵称" style={{ width: 350 }} />
         </Form.Item>
         <Form.Item<FieldType>
+          label="部门"
+          name="department"
+          style={{ marginBottom: 10 }}
+          rules={[{ required: true, message: "请输入所属部门" }]}
+        >
+          <Select style={{ width: 350 }}>
+            <Select.Option value={"热处理事业部"}>热处理事业部</Select.Option>
+            <Select.Option value={"冲压事业部"}>冲压事业部</Select.Option>
+            <Select.Option value={"扶梯链事业部"}>扶梯链事业部</Select.Option>
+            <Select.Option value={"零件事业部"}>零件事业部</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item<FieldType>
           label="密码"
           name="password"
+          rules={
+            isInsert
+              ? [
+                  { required: true, message: "请输入你的密码" },
+                  { validator: validatePassword },
+                ]
+              : []
+          }
           style={{ marginBottom: 10 }}
         >
           <Input placeholder="密码" style={{ width: 350 }} />
@@ -113,7 +151,7 @@ const getModalConfig = ({
             style={{ marginBottom: 10 }}
             required={true}
           >
-            <Input.Password
+            <Input
               placeholder="确认密码"
               autoComplete="off"
               style={{ width: 350 }}
@@ -145,7 +183,6 @@ const getModalConfig = ({
           <Select style={{ width: 350 }}>
             <Select.Option value={0}>女</Select.Option>
             <Select.Option value={1}>男</Select.Option>
-            <Select.Option value={2}>其他</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item wrapperCol={{ span: 16 }} style={{ marginBottom: 0 }}>
@@ -214,6 +251,8 @@ const formConfig: IFormConfig = {
               if (res?.data?.code === 200) {
                 message.success("添加新用户成功");
                 setRefreshFlag((flag) => !flag);
+              } else {
+                message.error(res?.response?.data?.msg || res?.data?.msg);
               }
             });
           };
@@ -264,6 +303,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         render: emptyRender,
       },
       {
+        title: "部门",
+        dataIndex: "department",
+        key: "department",
+        render: emptyRender,
+      },
+      {
         title: "性别",
         dataIndex: "sex",
         key: "sex",
@@ -310,9 +355,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "操作",
         dataIndex: "operate",
         key: "operate",
+
         render: (text, record) => {
           return (
             <Button
+              type="primary"
+              size="small"
               loading={record.loading}
               onClick={async () => {
                 setSearchedData((prevData: any[]) =>

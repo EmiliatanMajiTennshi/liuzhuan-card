@@ -35,22 +35,19 @@ import {
 } from "@/api";
 import { IMenuItem } from "@/constants/constantsType";
 
-import { IProcessedMenuItem, IRole, IRoleItem } from "./RoleManageType";
+import {
+  FieldType,
+  IGetModalConfigProps,
+  IProcessedMenuItem,
+  IRole,
+  IRoleItem,
+} from "./RoleManageType";
 
-type FieldType = {
-  name: string;
-  menu: IMenuItem[];
-  permissionDto?: any[];
-};
-// modal配置
-interface IGetModalConfigProps {
-  onCancel: (props: any) => void;
-  onFinish: (props: any) => void;
-  init?: IRoleItem;
-  allPermission: { id: number; name: string }[];
-  allMenu: IMenuItem[];
-  isInsert?: boolean;
-}
+/**
+ * 获取modal配置
+ * @param param0
+ * @returns
+ */
 const getModalConfig = ({
   onCancel,
   onFinish,
@@ -59,7 +56,11 @@ const getModalConfig = ({
   allMenu,
   isInsert,
 }: IGetModalConfigProps) => {
-  // 把后端传来的menu改成符合TreeSelect选择器的格式
+  /**
+   * 把后端传来的menu改成符合TreeSelect选择器的格式
+   * @param menu
+   * @returns
+   */
   const handleMenu = (menu: IMenuItem[]): IProcessedMenuItem[] => {
     return menu?.map((item: IMenuItem) => {
       return {
@@ -71,7 +72,9 @@ const getModalConfig = ({
   };
   const handledMenu = handleMenu(allMenu);
 
-  // 把后端传来的permission改成符合Select选择器的格式
+  /**
+   * 把后端传来的permission改成符合Select选择器的格式
+   */
   const handledPermission = allPermission?.map((item: IRole) => {
     return {
       value: item?.name,
@@ -101,6 +104,7 @@ const getModalConfig = ({
           label="角色名称"
           name="name"
           style={{ marginBottom: 10 }}
+          rules={[{ required: true, message: "请输入角色名" }]}
         >
           <Input
             placeholder="角色名称"
@@ -113,6 +117,7 @@ const getModalConfig = ({
           label="权限"
           name="permissionDto"
           style={{ marginBottom: 10 }}
+          rules={[{ required: true, message: "请选择权限" }]}
         >
           <Select
             mode="multiple"
@@ -137,6 +142,7 @@ const getModalConfig = ({
           label="菜单"
           name="menu"
           style={{ marginBottom: 10 }}
+          rules={[{ required: true, message: "请选择菜单" }]}
         >
           <TreeSelect
             multiple
@@ -171,6 +177,9 @@ const getModalConfig = ({
   };
 };
 
+/**
+ * 表单配置
+ */
 const formConfig: IFormConfig = {
   span: 8,
   formTitle: "操作",
@@ -286,6 +295,9 @@ const formConfig: IFormConfig = {
   ],
 };
 
+/**
+ * table配置
+ */
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setSearchedData, setRefreshFlag } = props;
   return {
@@ -299,6 +311,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "name",
         render: emptyRender,
       },
+
       {
         title: "权限",
         dataIndex: "permissionDto",
@@ -348,6 +361,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         render: (text, record) => {
           return (
             <Button
+              type="primary"
+              size="small"
               loading={record.loading}
               onClick={async () => {
                 setSearchedData((prevData: any[]) =>

@@ -20,7 +20,7 @@ const tabList = [
 const Login = observer(() => {
   const [activeTabKey, setActiveTabKey] = useState("tab1");
 
-  // 切换tab的回调
+  /**切换tab的回调 */
   const onTabChange = (key: string) => {
     console.log(key);
     setActiveTabKey(key);

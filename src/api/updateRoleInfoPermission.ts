@@ -7,6 +7,11 @@ interface IUpdateRoleInfoPermission {
   name: string;
 }
 
+/**
+ * 更新角色权限
+ * @param params
+ * @returns
+ */
 export const updateRoleInfoPermission = async (
   params: IUpdateRoleInfoPermission
 ) => {

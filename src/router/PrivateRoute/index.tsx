@@ -15,7 +15,7 @@ import { MENULIST } from "@/constants/constants";
 // import { FullInspectionDefectRate } from "@/pages/FullInspectionDefectRate";
 // import { IssueSemiFinishedPartFlowCard } from "@/pages/IssueSemiFinishedPartFlowCard";
 // import { IssueRollerNestSemiFinishedPartFlowCard } from "@/pages/IssueRollerNestSemiFinishedPartFlowCard";
-// import { IssueFinishedPartFlowCard } from "@/pages/IssueFinishedPartFlowCard";
+// import { NoStandardProductTransferCard } from "@/pages/NoStandardProductTransferCard";
 // import { IssueOutsourcingFlowCard } from "@/pages/IssueOutsourcingFlowCard";
 // import { IssueReplenishmentOrderFlowCard } from "@/pages/IssueReplenishmentOrderFlowCard";
 // import { PartFlowCardQuery } from "@/pages/PartFlowCardQuery";
@@ -64,9 +64,11 @@ const FullInspectionDefectRate = React.lazy(() =>
     default: res.FullInspectionDefectRate,
   }))
 );
-const IssueChainBoardSemiFinishedPartFlowCard = React.lazy(() =>
-  import("@/pages/IssueChainboardsSemiFinishedPartFlowCard").then((res) => ({
-    default: res.IssueChainBoardSemiFinishedPartFlowCard,
+
+/**标准品流转卡下发 */
+const StandardProductTransferCard = React.lazy(() =>
+  import("@/pages/StandardProductTransferCard").then((res) => ({
+    default: res.StandardProductTransferCard,
   }))
 );
 const IssueRollerNestSemiFinishedPartFlowCard = React.lazy(() =>
@@ -74,9 +76,11 @@ const IssueRollerNestSemiFinishedPartFlowCard = React.lazy(() =>
     default: res.IssueRollerNestSemiFinishedPartFlowCard,
   }))
 );
-const IssueFinishedPartFlowCard = React.lazy(() =>
-  import("@/pages/IssueFinishedPartFlowCard").then((res) => ({
-    default: res.IssueFinishedPartFlowCard,
+
+/**非标准品流转卡下发 */
+const NoStandardProductTransferCard = React.lazy(() =>
+  import("@/pages/NoStandardProductTransferCard").then((res) => ({
+    default: res.NoStandardProductTransferCard,
   }))
 );
 const IssueOutsourcingFlowCard = React.lazy(() =>
@@ -94,11 +98,11 @@ const PartFlowCardQuery = React.lazy(() =>
     default: res.PartFlowCardQuery,
   }))
 );
-const ProductionProcessFlowCardAndDispatchList = React.lazy(() =>
-  import("@/pages/ProductionProcessFlowCardAndDispatchList").then((res) => ({
-    default: res.ProductionProcessFlowCardAndDispatchList,
-  }))
-);
+// const ProductionProcessFlowCardAndDispatchList = React.lazy(() =>
+//   import("@/pages/ProductionProcessFlowCardAndDispatchList").then((res) => ({
+//     default: res.ProductionProcessFlowCardAndDispatchList,
+//   }))
+// );
 const PartFlowCardPrint = React.lazy(() =>
   import("@/pages/PartFlowCardPrint").then((res) => ({
     default: res.PartFlowCardPrint,
@@ -165,17 +169,28 @@ const Dashboard = React.lazy(() =>
     default: res.Dashboard,
   }))
 );
+/**用户管理 */
 const UserManage = React.lazy(() =>
   import("@/pages/UserManage").then((res) => ({
     default: res.UserManage,
   }))
 );
 
+/**角色管理 */
 const RoleManage = React.lazy(() =>
   import("@/pages/RoleManage").then((res) => ({
     default: res.RoleManage,
   }))
 );
+
+/**菜单管理 */
+const MenuManage = React.lazy(() =>
+  import("@/pages/MenuManage").then((res) => ({
+    default: res.MenuManage,
+  }))
+);
+
+/**路由 */
 const routeMap = [
   {
     path: "/add_part_flow_card",
@@ -206,16 +221,16 @@ const routeMap = [
     element: <FullInspectionDefectRate />,
   },
   {
-    path: "/issue_chain_board_semi_finished_part_flow_card",
-    element: <IssueChainBoardSemiFinishedPartFlowCard />,
+    path: "/standard_product_transfer_card",
+    element: <StandardProductTransferCard />,
   },
   {
     path: "/issue_rollernest_semi_finished_part_flow_card",
     element: <IssueRollerNestSemiFinishedPartFlowCard />,
   },
   {
-    path: "/issue_finished_part_flow_card",
-    element: <IssueFinishedPartFlowCard />,
+    path: "/nostandard_product_transfer_card",
+    element: <NoStandardProductTransferCard />,
   },
   {
     path: "/issue_outsourcing_flow_card",
@@ -285,6 +300,7 @@ const routeMap = [
   { path: "/dashboard", element: <Dashboard /> },
   { path: "/user_manage", element: <UserManage /> },
   { path: "/role_manage", element: <RoleManage /> },
+  { path: "/permission_manage", element: <MenuManage /> },
 ];
 
 // 转成对象
@@ -293,6 +309,7 @@ const routeMapObj = routeMap.reduce((acc: AnyObject, route) => {
   return acc;
 }, {});
 
+/** 路由组件*/
 const PrivateRoute = () => {
   const menu = JSON.parse(localStorage.getItem(MENULIST) || "[]");
 
@@ -329,13 +346,10 @@ const PrivateRoute = () => {
         },
       ],
     },
-    {
-      path: "/production_process_flow_card_and_dispatch_list",
-      element: <ProductionProcessFlowCardAndDispatchList />,
-    },
+
     {
       path: "*",
-      element: <Navigate to={"/404"} />,
+      element: <Navigate to="/404" />,
     },
   ];
 

@@ -1,6 +1,7 @@
 import { IMenuItem } from "@/constants/constantsType";
 import { makeAutoObservable, runInAction } from "mobx";
 
+/** 菜单store */
 class Menu {
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });

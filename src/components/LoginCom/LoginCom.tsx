@@ -6,7 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { FieldType, TRes } from "./LoginComType";
 // import styles from "./index.module.scss";
 
-// 登录组件
+/**
+ * 登录组件
+ * @param props
+ * @returns
+ */
 const LoginCom = (props: any) => {
   // const { setActiveTabKey } = props;
   const navigate = useNavigate();
@@ -17,7 +21,10 @@ const LoginCom = (props: any) => {
   //     setRemember(localStorage.getItem('remember'))
   //   })
 
-  // 登陆成功的提示信息
+  /**
+   * 登陆成功的提示信息
+   * @param _message  提示信息
+   */
   const successMessage = (_message: string) => {
     message.success({
       content: _message,
@@ -25,13 +32,14 @@ const LoginCom = (props: any) => {
       duration: 2,
       style: {
         marginTop: "20vh",
-        position: "relative",
-        transform: "translateX(-25%)",
       },
     });
   };
 
-  // 登陆失败的提示信息
+  /**
+   * 登陆失败的提示信息
+   * @param _message  提示信息
+   */
   const errorMessage = (_message: string) => {
     message.error({
       content: _message,
@@ -45,7 +53,10 @@ const LoginCom = (props: any) => {
     });
   };
 
-  // 点击登录校验成功
+  /**
+   * 校验成功的回调
+   * @param values 表单参数
+   */
   const onLoginFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     setLoading(true);
     const res: TRes = await loginRequest(values); //登录请求
@@ -68,7 +79,10 @@ const LoginCom = (props: any) => {
     }
   };
 
-  // 点击登录校验失败
+  /**
+   * 校验失败的回调
+   * @param errorInfo
+   */
   const onLoginFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
     errorInfo
   ) => {

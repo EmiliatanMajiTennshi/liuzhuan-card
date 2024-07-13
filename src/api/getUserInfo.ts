@@ -1,5 +1,9 @@
 import { request } from "@/utils";
 
+/**
+ * 获取用户信息
+ * @returns
+ */
 export const getUserInfo = async () => {
   try {
     const res = await request.get("/user/info");

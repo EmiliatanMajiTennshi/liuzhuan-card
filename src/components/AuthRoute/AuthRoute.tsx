@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 import { IAuthRoute, IRes } from "./AuthRouteType";
 import { useEffect, useState } from "react";
 import { Skeleton, message } from "antd";
+import { removeToken } from "@/utils";
 
 const AuthRoute = ({ children }: IAuthRoute) => {
   const [allowLogin, setAllowLogin] = useState<boolean | null>(null);
@@ -20,7 +21,8 @@ const AuthRoute = ({ children }: IAuthRoute) => {
           setAllowLogin(true);
         } else {
           setAllowLogin(false);
-          message.error("获取用户信息失败，无法进入主页");
+          message.error("登录已过期或者服务器连接失败");
+          removeToken();
         }
       })
       .catch((err) => {

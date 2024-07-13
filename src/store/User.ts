@@ -11,6 +11,9 @@ const initUser = {
   sex: null,
   username: "",
 };
+/**
+ * user的store
+ */
 class User {
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });

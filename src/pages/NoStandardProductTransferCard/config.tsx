@@ -1,4 +1,5 @@
 import { IFormConfig } from "@/components/AdvancedSearchForm/AdvancedSearchFormType";
+import { ITableConfig } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
@@ -119,7 +120,7 @@ const formConfig: IFormConfig = {
     },
   ],
 };
-const tableConfig = {
+const tableConfig: ITableConfig = {
   api: "getMenu",
 
   columns: [

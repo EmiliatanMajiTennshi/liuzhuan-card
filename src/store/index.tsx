@@ -4,6 +4,9 @@ import PageTitle from "./PageTitle";
 import TableRecord from "./TableRecord";
 import Menu from "./Menu";
 
+/**
+ * RootStore
+ */
 class RootStore {
   user: User;
   pageTitle: PageTitle;
@@ -25,6 +28,11 @@ const RootStoreContext = createContext(rootStore);
 interface RootStoreProviderProps {
   children: ReactNode;
 }
+
+/**
+ * RootStoreProvider
+ * @returns
+ */
 const RootStoreProvider = ({ children }: RootStoreProviderProps) => {
   return (
     <RootStoreContext.Provider value={rootStore}>
@@ -35,7 +43,10 @@ const RootStoreProvider = ({ children }: RootStoreProviderProps) => {
 
 export default RootStoreProvider;
 
-// 封装获取上下文对象的方法
+/**
+ * 封装获取上下文对象的方法
+ * @returns
+ */
 export const useRootStore = (): RootStore => {
   return useContext(RootStoreContext);
 };

@@ -4,6 +4,12 @@ interface IQueryRole {
   pageSize?: number;
   role?: string;
 }
+
+/**
+ * 查询角色
+ * @param params
+ * @returns
+ */
 export const queryRole = async (params?: IQueryRole) => {
   try {
     const res = await request.get("role/queryRole", { params });

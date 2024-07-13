@@ -15,3 +15,21 @@ export interface IProcessedMenuItem {
   title: string;
   children: IProcessedMenuItem[];
 }
+
+export type FieldType = {
+  name: string;
+  menu: IMenuItem[];
+  permissionDto?: any[];
+};
+
+/**
+ * 获取modal配置
+ */
+export interface IGetModalConfigProps {
+  onCancel: (props: any) => void;
+  onFinish: (props: any) => void;
+  init?: IRoleItem;
+  allPermission: { id: number; name: string }[];
+  allMenu: IMenuItem[];
+  isInsert?: boolean;
+}

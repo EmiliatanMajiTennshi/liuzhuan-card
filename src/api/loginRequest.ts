@@ -1,7 +1,11 @@
 import { FieldType } from "@/components/LoginCom/LoginComType";
 import { request, setToken } from "@/utils";
 
-// 登录请求
+/**
+ * 登录请求
+ * @param loginForm
+ * @returns
+ */
 export const loginRequest = async (loginForm: FieldType) => {
   try {
     const res = await request.post("user/login", loginForm);

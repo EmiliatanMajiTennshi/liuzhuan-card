@@ -8,19 +8,17 @@ import { Button } from "antd";
 import styles from "./index.module.scss";
 import { useRootStore } from "@/store";
 
+/**
+ * 页面的header
+ * @returns
+ */
 const RenderHeader = () => {
   // 路由
   const navigate = useNavigate();
   // 退出登录
-  const handleLogout = async () => {
-    const res: { data?: string } = (await logoutRequest()) || { data: "" };
-    // res.data 的格式是 redirect:/login
-    const route = res?.data?.split(":")[1];
-    if (typeof route === "string" && route.indexOf("/") !== -1) {
-      navigate(route);
-    } else {
-      navigate("/");
-    }
+  const handleLogout = () => {
+    logoutRequest();
+    navigate("/login");
   };
   // store
   const store = useRootStore();

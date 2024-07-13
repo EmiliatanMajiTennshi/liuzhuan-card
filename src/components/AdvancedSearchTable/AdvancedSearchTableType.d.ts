@@ -7,6 +7,9 @@ export interface ITableItem {
   key: string;
 }
 
+/**
+ * tableConfig的参数
+ */
 export interface ITableConfig {
   api: TApi;
   rowKey?: string;
@@ -14,13 +17,21 @@ export interface ITableConfig {
   selectAble?: boolean;
 }
 
+/**
+ * 传给table的参数
+ */
 export interface IAdvancedSearchTable {
+  // table配置
   tableConfig: ITableConfig | ((props?: any) => ITableConfig);
+  // 查询参数
   searchParams: object;
+  // loading
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  // 当前选中的行
   setSelectedRowKeys: React.Dispatch<React.SetStateAction<any[]>>;
   selectedRowKeys: any[];
+  // 用来主动控制列表刷新
   refreshFlag: boolean;
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -28,18 +39,13 @@ export interface IAdvancedSearchTable {
 export type TTableRes = {
   data: {
     code: number;
-    msg: string;
-    data:
-      | {
-          code: number;
-          data: never[];
-          page: {
-            page: number;
-            limit: number;
-            total: number;
-            totalPage: number;
-          };
-        } & any[];
+    data: {}[];
+    page: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPage: number;
+    };
   };
   status: number;
   statusText: string;
@@ -56,8 +62,13 @@ export type TTableErr = {
   status: number;
 };
 
+/**
+ * 传给tableConfig的参数
+ */
 export interface ITableConfigProps {
-  setSearchedData: React.Dispatch<React.SetStateAction<any[]>>;
   searchedData: any[];
+  setSearchedData: React.Dispatch<React.SetStateAction<any[]>>;
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
+  setIssueModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIssueID: React.Dispatch<React.SetStateAction<number>>;
 }

@@ -7,6 +7,11 @@ interface IInsertUser {
   role: string[];
 }
 
+/**
+ * 更新用户信息
+ * @param params
+ * @returns
+ */
 export const updateUser = async (params: IInsertUser) => {
   try {
     const res = await request.post("user/updateUser", params);

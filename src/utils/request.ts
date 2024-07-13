@@ -10,6 +10,9 @@ export const BASE_URL =
   process.env.NODE_ENV === "development" ? devBaseUrl : proBaseUrl;
 export const TIMEOUT = 50000;
 
+/**
+ * 请求
+ */
 var request = axios.create({
   baseURL: BASE_URL, //基准地址
   timeout: TIMEOUT,

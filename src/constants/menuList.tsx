@@ -80,6 +80,8 @@ const nonMenuItems = [
     label: "首页",
   },
 ];
+
+/**获取扁平菜单 */
 const getFlatMenuList = (menu: IMenuItem[]) => {
   const flatMenuList: IMenuItem[] = [];
 

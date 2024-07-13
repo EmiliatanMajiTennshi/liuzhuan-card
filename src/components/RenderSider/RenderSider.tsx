@@ -13,6 +13,11 @@ import { observer } from "mobx-react-lite";
 import { IMenuItem } from "@/constants/constantsType";
 import { MENULIST } from "@/constants/constants";
 
+/**
+ * 把menu里的icon从字符串转成元素
+ * @param menu
+ * @returns
+ */
 const handleIcon = (menu: IMenuItem[]) => {
   menu.forEach((item) => {
     if (item.icon) {
@@ -25,6 +30,11 @@ const handleIcon = (menu: IMenuItem[]) => {
   });
   return menu;
 };
+
+/**
+ * 页面侧边栏
+ * @returns
+ */
 const RenderSider = () => {
   const [collapsed, setCollapsed] = useState(
     localStorage.getItem("menu_collapsed") === "false" ? false : true

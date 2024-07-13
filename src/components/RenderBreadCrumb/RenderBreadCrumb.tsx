@@ -6,6 +6,10 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
+/**
+ * 面包屑
+ * @returns
+ */
 const RenderBreadCrumb = () => {
   const [pageTitle, setPageTitle] = useState<IMenuItem>({
     parent: "",

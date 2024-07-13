@@ -3,6 +3,12 @@ interface IQueryPermission {
   pageNum?: number;
   pageSize?: number;
 }
+
+/**
+ * 查询权限
+ * @param params
+ * @returns
+ */
 export const queryPermission = async (params?: IQueryPermission) => {
   try {
     const res = await request.get("permission/queryPermission", { params });

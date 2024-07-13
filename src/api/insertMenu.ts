@@ -1,19 +1,19 @@
 import { request } from "@/utils";
 
-interface IInsertRole {
+export interface IInsertMenu {
   name: string;
   menus: string[];
   permission?: string[];
 }
 
 /**
- * 增加角色
+ * 增加菜单
  * @param params
  * @returns
  */
-export const insertRole = async (params: IInsertRole) => {
+export const insertMenu = async (params: IInsertMenu) => {
   try {
-    const res = await request.post("role/insertRole", params);
+    const res = await request.post("menu/insertMenu", params);
     return res;
   } catch (err: any) {
     console.log(err);

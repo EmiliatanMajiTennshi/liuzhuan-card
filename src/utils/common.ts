@@ -1,4 +1,7 @@
-// 追溯单号 年月日+时间戳后八位
+/**
+ * 追溯单号 年月日+时间戳后八位
+ * @returns
+ */
 const getTrackingNumber = () => {
   const newDate = new Date();
   const year = newDate.getFullYear();
@@ -12,6 +15,11 @@ const getTrackingNumber = () => {
     timeStamp.toString().slice(-8);
   return trackingNumber;
 };
+
+/**
+ * 流转卡编号 Lz-xxxx(年)xx(月)xx(日)xx(时)xx(分)xxxxx(时间戳后五位)-xxxxxxxx(随机八位数)
+ * @returns
+ */
 const getLZCardNumber = () => {
   const newDate = new Date();
   const year = newDate.getFullYear();
