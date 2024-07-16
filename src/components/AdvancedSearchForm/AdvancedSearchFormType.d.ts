@@ -36,6 +36,7 @@ export interface IFormConfig {
   formTitle?: string;
   buttons?: Button[] | ((props: IButtons) => Button[]);
   formExtend?: boolean;
+  handleData?: (value) => any;
 }
 
 /**

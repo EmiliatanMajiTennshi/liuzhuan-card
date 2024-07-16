@@ -190,6 +190,13 @@ const MenuManage = React.lazy(() =>
   }))
 );
 
+/**外协流转卡下发*/
+const OutsourcingProductTransferCard = React.lazy(() =>
+  import("@/pages/OutsourcingProductTransferCard").then((res) => ({
+    default: res.OutsourcingProductTransferCard,
+  }))
+);
+
 /**路由 */
 const routeMap = [
   {
@@ -301,6 +308,10 @@ const routeMap = [
   { path: "/user_manage", element: <UserManage /> },
   { path: "/role_manage", element: <RoleManage /> },
   { path: "/permission_manage", element: <MenuManage /> },
+  {
+    path: "/outsourcing_product_transfer_card",
+    element: <OutsourcingProductTransferCard />,
+  },
 ];
 
 // 转成对象

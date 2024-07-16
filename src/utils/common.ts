@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 /**
  * 追溯单号 年月日+时间戳后八位
  * @returns
@@ -43,4 +44,10 @@ const getLZCardNumber = () => {
     randomEight;
   return lzCardNumber;
 };
-export { getTrackingNumber, getLZCardNumber };
+
+/** 把时间格式化成YYYY-MM-DD */
+const formatTime = (time: any) => {
+  return dayjs(time).format("YYYY-MM-DD");
+};
+
+export { getTrackingNumber, getLZCardNumber, formatTime };

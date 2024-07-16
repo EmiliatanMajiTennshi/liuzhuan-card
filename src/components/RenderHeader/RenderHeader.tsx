@@ -47,7 +47,7 @@ const RenderHeader = () => {
           })}
         >
           <img src={Logo} width={84} alt="" style={{ cursor: "pointer" }}></img>
-          <span style={{ marginTop: 4 }}>流转卡管理系统</span>
+          <span style={{ marginTop: 4, color: "#fff" }}>流转卡管理系统</span>
         </h2>
       </div>
       <div>

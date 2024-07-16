@@ -18,7 +18,7 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
   // 可能是函数
   const _formConfig =
     typeof formConfig === "function" ? formConfig(form) : formConfig;
-  const { formItems, span: _span, buttons } = _formConfig;
+  const { formItems, span: _span, buttons, handleData } = _formConfig;
 
   // 列数
   const colNumber = gutter / (_span || span);
@@ -49,7 +49,12 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
    */
   const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
-    setSearchParams(values);
+    if (handleData) {
+      const handledData = handleData(values);
+      setSearchParams(handledData);
+    } else {
+      setSearchParams(values);
+    }
   };
 
   /**

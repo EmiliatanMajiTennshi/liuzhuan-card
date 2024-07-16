@@ -32,12 +32,39 @@ interface IGetModalConfigProps {
 }
 const iconKeys = Object.keys(Icon);
 const antIcon: { [key: string]: any } = Icon;
+
+const validateSpace = (rule: any, value: string) => {
+  if (!value) {
+    return Promise.resolve();
+  }
+  if (/\s/.test(value)) {
+    return Promise.reject("不能包含空格");
+  }
+
+  return Promise.resolve();
+};
+
 const getModalConfig = ({
   onCancel,
   onFinish,
   init,
   isInsert,
 }: IGetModalConfigProps) => {
+  const options: any[] = [];
+  iconKeys?.forEach((item: string) => {
+    const IconComponent = antIcon[item];
+    if (typeof IconComponent === "object") {
+      options.push({
+        label: (
+          <>
+            {React.createElement(antIcon[item]) as ReactNode}
+            {" " + item}
+          </>
+        ),
+        value: item,
+      });
+    }
+  });
   return {
     title: isInsert ? "新增菜单" : "编辑菜单",
     footer: null,
@@ -68,7 +95,10 @@ const getModalConfig = ({
         <Form.Item<FieldType>
           label="名称"
           name="label"
-          rules={[{ required: true, message: "请输入菜单名称" }]}
+          rules={[
+            { required: true, message: "请输入菜单名称" },
+            { validator: validateSpace },
+          ]}
           style={{ marginBottom: 10 }}
           required={true}
         >
@@ -80,18 +110,7 @@ const getModalConfig = ({
           style={{ marginBottom: 10 }}
           rules={[{ required: true, message: "请输入图标名称（来自antd）" }]}
         >
-          <Select style={{ width: 350 }} showSearch>
-            {iconKeys?.map((item: string) => {
-              const IconComponent = antIcon[item];
-
-              return typeof IconComponent === "object" ? (
-                <Select.Option value={item}>
-                  {React.createElement(antIcon[item]) as ReactNode}
-                  {" " + item}
-                </Select.Option>
-              ) : null;
-            })}
-          </Select>
+          <Select style={{ width: 350 }} showSearch options={options}></Select>
         </Form.Item>
         <Form.Item<FieldType>
           label="路径"

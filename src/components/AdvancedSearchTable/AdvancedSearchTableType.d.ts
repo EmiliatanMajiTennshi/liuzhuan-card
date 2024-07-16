@@ -15,6 +15,8 @@ export interface ITableConfig {
   rowKey?: string;
   columns: ColumnsType<RecordType>;
   selectAble?: boolean;
+  queryFlowCardApi?: TApi;
+  flowCardType?: "common" | "outsourcing";
 }
 
 /**

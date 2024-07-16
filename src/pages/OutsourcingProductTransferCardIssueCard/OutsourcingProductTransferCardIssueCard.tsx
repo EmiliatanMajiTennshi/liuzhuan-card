@@ -1,37 +1,12 @@
 // 生产工序流转卡暨派工单
 import React, { useEffect, useMemo, useState } from "react";
 
-import styles from "./index.module.scss";
-import {
-  Button,
-  ConfigProvider,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Spin,
-  Table,
-  message,
-} from "antd";
-import { getLZCardNumber, getTrackingNumber, request } from "@/utils";
-import QRCode from "qrcode.react";
+import { Button, ConfigProvider, Form, Spin, Table, message } from "antd";
 import logo from "@/assets/images/logo.png";
-import getApi, {
-  TApi,
-  getHeatTreatmentFurnacePlatformsList,
-  queryFlowCardInfoById,
-  queryMaterialByItemid,
-} from "@/api";
+import getApi, { TApi, getHeatTreatmentFurnacePlatformsList } from "@/api";
 import { insertSaveCard } from "@/api/insertSaveCard";
-import {
-  EditAbleInput,
-  ReadOnlyInput,
-  RenderDatePicker,
-  RenderQRCode,
-  RenderSelect,
-} from "@/utils";
-
+import { EditAbleInput, ReadOnlyInput, RenderQRCode } from "@/utils";
+import styles from "./index.module.scss";
 interface IData {
   orderid?: string;
   itmid?: string;
@@ -71,9 +46,9 @@ interface IData {
   type?: string;
 }
 const kgArr = ["公斤", "千克", "KG", "kg"];
-const pcsArr = ["pcs", "PCS", "条", "根"];
+// const pcsArr = ["pcs", "PCS", "条", "根"];
 
-const ProductionProcessFlowCardAndDispatchList = (props: {
+const OutsourcingProductTransferCardIssueCard = (props: {
   issueID: number;
   queryFlowCardApi?: TApi;
 }) => {
@@ -83,11 +58,9 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const [mItmID, setMItemId] = useState<string>("");
   const [form] = Form.useForm();
 
-  // 热处理炉台
-  const [heatTreatmentFurnaces, setHeatTreatmentFurnaces] = useState<any[]>([]);
-
   useEffect(() => {
     /**加载数据 */
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -137,12 +110,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       getHeatTreatmentFurnacePlatformsList()
         .then((res: any) => {
           if (res?.data?.code === 20000) {
-            setHeatTreatmentFurnaces(
-              res?.data?.data.map((item: any) => ({
-                value: item.id,
-                label: item.name,
-              }))
-            );
           }
         })
         .catch((err) => {
@@ -159,8 +126,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     }
     return {};
   }, [data]);
-
-  const trackingNumber = getTrackingNumber();
 
   const unit = data.uomname || "";
   const isKg = kgArr.indexOf(unit) !== -1;
@@ -194,11 +159,11 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     heatTreatmentFurnace: string;
     priority: string;
     transferTime: string;
+    U9LineNo?: string;
   }
 
   const onFinish = (values: IFormFields) => {
-    const a = {
-      // id: "",
+    const params = {
       //零件类型
       type: data?.type,
       //生产订单条码
@@ -217,14 +182,12 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       unit: data?.unit,
       //材质
       material: values?.itmtdid,
-      //表面处理
-      surfaceTreatment: values?.itmtcid,
+
       //流转卡编号
       transferCardCode: data?.transferCardCode,
       //追溯单号
       traceabilityNumber: values?.traceabilityNumber,
-      //客户订单号
-      customerOrderNo: values?.ordernum,
+
       //图号
       drawingNumber: values?.itmTEID,
       //生产公斤数
@@ -235,16 +198,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       productionPcs: !isKg ? values?.newsupcount : values?.huancount,
       //流转PCS数
       transferPcs: !isKg ? values?.liucount : values?.liuhuancount,
-      //供方/炉批号
-      furnaceNo: values.furnaceNum,
-      //材料料号
-      materialPartNumber: values.mItmID,
-      //材料品名
-      materialName: values.mName,
-      //材料规格
-      materialSpec: values.mspec,
-      //材料材质
-      materialQuality: values.mItmTDID,
+
       //主要尺寸名字1
       project1Name: mainsize.project1,
       //主要尺寸名字1内容
@@ -267,21 +221,16 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       project5Item: mainsize.projectitem5,
       //商标
       trademark: values.trademark,
-      //追溯单号(半品)
-      orderCatchHalf: values.orderCatchHalf,
-      //热处理炉台
-      heatTreatmentFurnacePlatform: values.heatTreatmentFurnace,
-      //优先顺序
-      priorityOrder: values.priority,
-      //零件流转时间
-      tranferTime: values.transferTime,
+
       //工艺
       process: data?.processList,
+      //行号
+      U9LineNo: values?.U9LineNo,
     };
-    insertSaveCard(a).then((res) => {
+    insertSaveCard(params).then((res) => {
       console.log(res, 1123);
     });
-    console.log("Received values of form: ", values, a);
+    console.log("Received values of form: ", values, params);
   };
 
   const columns = [
@@ -384,27 +333,18 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                 </tr>
                 <tr>
                   <ReadOnlyInput title="材质" name="itmtdid" />
-                  <RenderSelect
+                  <ReadOnlyInput
                     title="商标"
                     name="trademark"
-                    options={
-                      data?.trademarkList?.map((item) => ({
-                        value: item.trademark,
-                        label: item.trademark,
-                      })) || []
-                    }
-                    placeholder="请选择商标"
+                    // options={
+                    //   data?.trademarkList?.map((item) => ({
+                    //     value: item.trademark,
+                    //     label: item.trademark,
+                    //   })) || []
+                    // }
+                    // placeholder="请选择商标"
                   />
                   <ReadOnlyInput title="追溯单号" name="traceabilityNumber" />
-                  <EditAbleInput
-                    title="追溯单号（半品）"
-                    name="orderCatchHalf"
-                  />
-                </tr>
-                <tr>
-                  <ReadOnlyInput title="客户订单号" name="ordernum" />
-                  <ReadOnlyInput title="表面处理" name="itmtcid" />
-                  <ReadOnlyInput title="图号" name="itmTEID" />
                   <ReadOnlyInput title="完成日期" name="ljFinDate" />
                 </tr>
                 <tr>
@@ -452,39 +392,8 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                   />
                 </tr>
                 <tr>
-                  <EditAbleInput
-                    title="材料料号"
-                    name="mItmID"
-                    onBlur={(e) => {
-                      const currentId = e.target.value;
-                      if (currentId === mItmID) {
-                        return;
-                      }
-                      setMItemId(currentId);
-                      queryMaterialByItemid({ itemid: currentId }).then(
-                        (res) => {
-                          console.log(res, 123111);
-
-                          const data = res?.data?.data?.[0];
-                          if (res?.data?.code !== 20000 || !data) {
-                            message.error("获取材料数据失败");
-                            form.setFieldValue("mName", "");
-                            form.setFieldValue("mspec", "");
-                            form.setFieldValue("mItmTDID", "");
-                            return;
-                          }
-
-                          form.setFieldValue("mName", data.mName);
-                          form.setFieldValue("mspec", data.mformat);
-                          form.setFieldValue("mItmTDID", data.mtexture);
-                          message.success("材料数据更新成功");
-                        }
-                      );
-                    }}
-                  />
-                  <EditAbleInput title="材料品名" name="mName" />
-                  <EditAbleInput title="材料规格" name="mspec" />
-                  <EditAbleInput title="材料材质" name="mItmTDID" />
+                  <ReadOnlyInput title="行号" name="U9LineNo" />
+                  <ReadOnlyInput title="图号" name="itmTEID" colSpan={5} />
                 </tr>
                 <tr>
                   <ReadOnlyInput
@@ -540,13 +449,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                         value={data.itmid || "没有数据"}
                         noTd
                       />
-                      <RenderQRCode
-                        title="领料二维码"
-                        name="lingliaoQRcode"
-                        rowSpan={3}
-                        value={data.mItmID || "没有数据"}
-                        noTd
-                      />
                     </div>
                   </td>
                 </tr>
@@ -582,33 +484,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                     form={form}
                   />
                 </tr>
-                {data?.itmid?.substring(0, 2) === "31" && (
-                  <tr>
-                    <RenderSelect
-                      title="热处理炉台"
-                      name="heatTreatmentFurnace"
-                      options={heatTreatmentFurnaces}
-                      titleStyle={{ color: "red" }}
-                      colSpan={1}
-                      labelColSpan={2}
-                      placeholder="请选择炉台"
-                    />
-                    <RenderSelect
-                      title="优先顺序"
-                      name="priority"
-                      options={Array.from({ length: 50 }, (item, index) => ({
-                        value: index + 1,
-                        label: index + 1,
-                      }))}
-                      placeholder="请选择优先顺序"
-                    />
-                    <RenderDatePicker
-                      title="流转时间"
-                      name="transferTime"
-                      colSpan={2}
-                    />
-                  </tr>
-                )}
               </tbody>
             </table>
           </Form>
@@ -631,4 +506,4 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   );
 };
 
-export default ProductionProcessFlowCardAndDispatchList;
+export default OutsourcingProductTransferCardIssueCard;

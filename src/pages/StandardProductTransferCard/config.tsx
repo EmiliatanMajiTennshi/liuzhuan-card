@@ -7,6 +7,7 @@ import { Button, DatePicker, Input, Modal, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 import { NavLink } from "react-router-dom";
 import { sortBy } from "lodash";
+import { formatTime } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -43,27 +44,27 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         rules: [],
       },
       {
-        key: "completeTimeStart",
+        key: "finishTimeStart",
         name: "完成时间开始",
         children: (
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
               if (form) {
-                form.validateFields(["completeTimeEnd"]);
+                form.validateFields(["finishTimeEnd"]);
               }
             }}
           ></DatePicker>
         ),
         rules: [
           (form: any) => {
-            const completeTimeStart = form.getFieldValue("completeTimeStart");
-            const completeTimeEnd = form.getFieldValue("completeTimeEnd");
+            const finishTimeStart = form.getFieldValue("finishTimeStart");
+            const finishTimeEnd = form.getFieldValue("finishTimeEnd");
 
             if (
-              completeTimeEnd &&
-              completeTimeStart &&
-              completeTimeEnd < completeTimeStart
+              finishTimeEnd &&
+              finishTimeStart &&
+              finishTimeEnd < finishTimeStart
             ) {
               return {
                 validator: true,
@@ -75,27 +76,27 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         ],
       },
       {
-        key: "completeTimeEnd",
+        key: "finishTimeEnd",
         name: "完成时间结束",
         children: (
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
               if (form) {
-                form.validateFields(["completeTimeStart"]);
+                form.validateFields(["finishTimeStart"]);
               }
             }}
           ></DatePicker>
         ),
         rules: [
           (form: any) => {
-            const completeTimeStart = form.getFieldValue("completeTimeStart");
-            const completeTimeEnd = form.getFieldValue("completeTimeEnd");
+            const finishTimeStart = form.getFieldValue("finishTimeStart");
+            const finishTimeEnd = form.getFieldValue("finishTimeEnd");
 
             if (
-              completeTimeEnd &&
-              completeTimeStart &&
-              completeTimeEnd < completeTimeStart
+              finishTimeEnd &&
+              finishTimeStart &&
+              finishTimeEnd < finishTimeStart
             ) {
               return {
                 validator: true,
@@ -108,6 +109,17 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         ],
       },
     ],
+    handleData: (values: any) => {
+      if (values?.finishTimeEnd) {
+        const _tempTime = formatTime(values?.finishTimeEnd);
+        values.finishTimeEnd = _tempTime;
+      }
+      if (values?.finishTimeStart) {
+        const _tempTime = formatTime(values?.finishTimeStart);
+        values.finishTimeStart = _tempTime;
+      }
+      return values;
+    },
   };
 };
 
@@ -115,6 +127,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setIssueModalOpen, setIssueID } = props;
   return {
     api: "queryHalfTransferCard",
+    queryFlowCardApi: "queryFlowCardInfoById",
+    flowCardType: "common",
     columns: [
       {
         title: "零件类型",
@@ -171,15 +185,15 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "number",
         width: 100,
       },
-      {
-        title: "流转数量累积",
-        dataIndex: "sumTransferNumberList",
-        key: "sumTransferNumberList",
-        render: (data: string[]) => {
-          return data.map((item) => item);
-        },
-        width: 120,
-      },
+      // {
+      //   title: "流转数量累积",
+      //   dataIndex: "sumTransferNumberList",
+      //   key: "sumTransferNumberList",
+      //   // render: (data: string[]) => {
+      //   //   return data.map((item) => item);
+      //   // },
+      //   width: 120,
+      // },
       // {
       //   title: "查看工艺",
       //   dataIndex: "processList",

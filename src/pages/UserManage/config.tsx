@@ -54,6 +54,16 @@ const validatePassword = (rule: any, value: string) => {
   }
   return Promise.resolve();
 };
+const validateSpace = (rule: any, value: string) => {
+  if (!value) {
+    return Promise.resolve();
+  }
+  if (/\s/.test(value)) {
+    return Promise.reject("不能包含空格");
+  }
+
+  return Promise.resolve();
+};
 
 const onFinish = (values: any) => {
   console.log("Submitted values:", values);
@@ -87,7 +97,10 @@ const getModalConfig = ({
           label="用户名"
           name="account"
           style={{ marginBottom: 10 }}
-          rules={[{ required: true, message: "请输入你的用户名" }]}
+          rules={[
+            { required: true, message: "请输入你的用户名" },
+            { validator: validateSpace },
+          ]}
         >
           <Input
             placeholder="用户名"
@@ -98,7 +111,10 @@ const getModalConfig = ({
         <Form.Item<FieldType>
           label="昵称"
           name="username"
-          rules={[{ required: true, message: "请输入你的昵称" }]}
+          rules={[
+            { required: true, message: "请输入你的昵称" },
+            { validator: validateSpace },
+          ]}
           style={{ marginBottom: 10 }}
           required={true}
         >

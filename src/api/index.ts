@@ -18,6 +18,12 @@ import { queryFlowCardInfoById } from "./queryFlowCardInfoById";
 import { updateMenuById } from "./updateMenuById";
 import { deleteMenuById } from "./deleteMenuById";
 import { insertMenu } from "./insertMenu";
+import { getHeatTreatmentFurnacePlatformsList } from "./getHeatTreatmentFurnacePlatformsList";
+import { queryMaterialByItemid } from "./queryMaterialByItemid";
+import { queryUnHalfTransferCard } from "./queryUnHalfTransferCard";
+import { queryUnFlowCardInfoById } from "./queryUnFlowCardInfoById";
+import { queryOutsourcingPurchasing } from "./queryOutsourcingPurchasing";
+import { queryFlowCardInfoByOrderNo } from "./queryFlowCardInfoByOrderNo";
 export {
   deleteUsers,
   deleteRoleInfoByRoleId,
@@ -25,6 +31,7 @@ export {
   getMenu,
   getUserInfo,
   getUserList,
+  getHeatTreatmentFurnacePlatformsList,
   insertUser,
   insertRole,
   insertMenu,
@@ -36,6 +43,11 @@ export {
   queryRole,
   queryHalfTransferCard,
   queryFlowCardInfoById,
+  queryUnFlowCardInfoById,
+  queryUnHalfTransferCard,
+  queryMaterialByItemid,
+  queryOutsourcingPurchasing,
+  queryFlowCardInfoByOrderNo,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
@@ -47,6 +59,7 @@ const Apis = {
   getMenu,
   getUserInfo,
   getUserList,
+  getHeatTreatmentFurnacePlatformsList,
   insertUser,
   insertRole,
   insertMenu,
@@ -57,7 +70,12 @@ const Apis = {
   queryAllMenu,
   queryRole,
   queryHalfTransferCard,
+  queryUnHalfTransferCard,
   queryFlowCardInfoById,
+  queryUnFlowCardInfoById,
+  queryMaterialByItemid,
+  queryOutsourcingPurchasing,
+  queryFlowCardInfoByOrderNo,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,

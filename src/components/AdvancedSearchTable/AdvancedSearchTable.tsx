@@ -8,6 +8,7 @@ import {
 import getApi from "@/api";
 import { ProductionProcessFlowCardAndDispatchList } from "@/pages/ProductionProcessFlowCardAndDispatchList";
 import { throttle } from "lodash";
+import { OutsourcingProductTransferCardIssueCard } from "@/pages/OutsourcingProductTransferCardIssueCard";
 
 const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const {
@@ -54,7 +55,8 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const _tableConfig =
     typeof tableConfig === "function" ? tableConfig(tableProps) : tableConfig;
 
-  const { columns, api, rowKey, selectAble } = _tableConfig;
+  const { columns, api, rowKey, selectAble, queryFlowCardApi, flowCardType } =
+    _tableConfig;
 
   const currentRequest = getApi(api);
   const params = { ...searchParams, pageSize: pageSize, pageNum: currentPage };
@@ -64,9 +66,10 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
       try {
         setLoading(true);
         setSelectedRowKeys([]);
-        const res = await currentRequest(params);
+        const res: any = await currentRequest(params);
+
         const currentData = res?.data?.data;
-        if (currentData) {
+        if (res?.data && currentData) {
           setSearchedData(currentData);
           setTotalCount(res?.data?.page?.total);
         } else if (res?.data?.code === 20000) {
@@ -76,7 +79,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           });
           setSearchedData([]);
         } else {
-          throw new Error(`数据请求失败，${res.message}`);
+          throw new Error(`数据请求失败，${res?.message || ""}`);
         }
       } catch (error: any) {
         console.error("请求列表数据时发生错误", error);
@@ -184,8 +187,20 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           onCancel={() => setIssueModalOpen(false)}
           footer={null}
           width={1400}
+          className={styles.issueModal}
         >
-          <ProductionProcessFlowCardAndDispatchList issueID={issueID} />
+          {flowCardType === "common" && (
+            <ProductionProcessFlowCardAndDispatchList
+              issueID={issueID}
+              queryFlowCardApi={queryFlowCardApi}
+            />
+          )}
+          {flowCardType === "outsourcing" && (
+            <OutsourcingProductTransferCardIssueCard
+              issueID={issueID}
+              queryFlowCardApi={queryFlowCardApi}
+            />
+          )}
         </Modal>
       )}
     </div>

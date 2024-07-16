@@ -43,6 +43,17 @@ import {
   IRoleItem,
 } from "./RoleManageType";
 
+const validateSpace = (rule: any, value: string) => {
+  if (!value) {
+    return Promise.resolve();
+  }
+  if (/\s/.test(value)) {
+    return Promise.reject("不能包含空格");
+  }
+
+  return Promise.resolve();
+};
+
 /**
  * 获取modal配置
  * @param param0
@@ -104,7 +115,10 @@ const getModalConfig = ({
           label="角色名称"
           name="name"
           style={{ marginBottom: 10 }}
-          rules={[{ required: true, message: "请输入角色名" }]}
+          rules={[
+            { required: true, message: "请输入角色名" },
+            { validator: validateSpace },
+          ]}
         >
           <Input
             placeholder="角色名称"
@@ -244,11 +258,11 @@ const formConfig: IFormConfig = {
               name: values.name,
               permission: values.permissionDto,
             }).then((res) => {
-              if (res?.status === 200) {
+              if (res?.data.code === 20000) {
                 message.success("添加成功");
                 setRefreshFlag((flag) => !flag);
               } else {
-                message.error(res?.message || "无法连接到服务器");
+                message.error(res?.data?.data || "无法连接到服务器");
               }
             });
           };

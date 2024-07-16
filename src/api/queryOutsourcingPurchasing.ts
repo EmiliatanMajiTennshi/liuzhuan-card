@@ -1,5 +1,5 @@
 import { request } from "@/utils";
-interface IQueryHalfTransferCard {
+interface IQueryOutsourcingPurchasing {
   pageNum?: number;
   pageSize?: number;
 }
@@ -9,11 +9,13 @@ interface IQueryHalfTransferCard {
  * @param params
  * @returns
  */
-export const queryHalfTransferCard = async (
-  params?: IQueryHalfTransferCard
+export const queryOutsourcingPurchasing = async (
+  params?: IQueryOutsourcingPurchasing
 ) => {
   try {
-    const res = await request.get("flowCard/queryHalfTransferCard", { params });
+    const res = await request.get("outSource/queryOutsourcingPurchasing", {
+      params,
+    });
     return res;
   } catch (err: any) {
     console.log(err);

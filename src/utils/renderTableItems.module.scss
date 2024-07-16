@@ -1,0 +1,94 @@
+.input-container {
+  box-shadow: inset 0px 0px 0px 1px #000;
+  :global {
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+    .ant-form-item-control-input {
+      min-height: auto !important;
+    }
+    .ant-input {
+      padding: 0;
+    }
+    .ant-input-number-in-form-item {
+      box-shadow: none !important;
+    }
+  }
+  .input {
+    display: inline-block;
+    border: none;
+    outline: none;
+    width: 100%;
+    :global {
+      .ant-input-number-input {
+        padding: 0;
+        width: 100%;
+        border: none;
+        box-shadow: none;
+      }
+    }
+  }
+}
+.input-container:focus-within {
+  box-shadow: inset 0px 0px 0px 2px #14299e;
+}
+
+.input-container-locked {
+  box-shadow: inset 0px 0px 0px 0px #000;
+}
+.input-container-locked:focus-within {
+  box-shadow: inset 0px 0px 0px 0px #000;
+}
+.select-container {
+  :global {
+    .ant-select-selector {
+      display: flex;
+      border: none !important;
+      outline: none;
+      box-shadow: none !important;
+      padding: 0;
+    }
+    .ant-form-item-control-input-content {
+      height: 22px;
+      & > div {
+        height: 22px;
+      }
+    }
+    .ant-select-selection-search {
+      height: 22px !important;
+    }
+    .ant-select-selection-search {
+      top: 0;
+      left: 0;
+      & > input {
+        height: 22px !important;
+        width: 100%;
+      }
+    }
+  }
+}
+
+.date-container {
+  :global {
+    .ant-picker {
+      padding: 0;
+      width: 100%;
+      border: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.QRcodes {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 20px;
+}
+
+.form-qrcode {
+  :global {
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+  }
+}

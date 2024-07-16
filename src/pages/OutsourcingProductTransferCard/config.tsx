@@ -126,8 +126,9 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setIssueModalOpen, setIssueID } = props;
   return {
-    api: "queryUnHalfTransferCard",
-    queryFlowCardApi: "queryUnFlowCardInfoById",
+    api: "queryOutsourcingPurchasing",
+    queryFlowCardApi: "queryFlowCardInfoByOrderNo",
+    flowCardType: "outsourcing",
     columns: [
       {
         title: "零件类型",
@@ -248,8 +249,10 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 type="primary"
                 size="small"
                 onClick={() => {
+                  console.log(record, 12313);
+
                   setIssueModalOpen(true);
-                  setIssueID(record?.id);
+                  setIssueID(record?.uid);
                 }}
               >
                 下发
