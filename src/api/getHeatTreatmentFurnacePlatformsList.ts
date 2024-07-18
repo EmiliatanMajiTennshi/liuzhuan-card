@@ -8,7 +8,7 @@ export const getHeatTreatmentFurnacePlatformsList = async () => {
   try {
     const res = await request.get("furnacechange/queryAllFurnacePlatform");
     return res;
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return err;
   }

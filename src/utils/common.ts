@@ -50,4 +50,22 @@ const formatTime = (time: any) => {
   return dayjs(time).format("YYYY-MM-DD");
 };
 
-export { getTrackingNumber, getLZCardNumber, formatTime };
+/**psc转kg */
+const transFormToKg = (number: number | string, weight: number | string) => {
+  return (
+    parseFloat(number.toString()) * parseFloat(weight.toString())
+  ).toFixed(2);
+};
+/**kg转psc */
+const transFormToPcs = (number: number | string, weight: number | string) => {
+  return (
+    parseFloat(number.toString()) / parseFloat(weight.toString())
+  ).toFixed(2);
+};
+export {
+  getTrackingNumber,
+  getLZCardNumber,
+  formatTime,
+  transFormToKg,
+  transFormToPcs,
+};

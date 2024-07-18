@@ -24,7 +24,12 @@ import { queryUnHalfTransferCard } from "./queryUnHalfTransferCard";
 import { queryUnFlowCardInfoById } from "./queryUnFlowCardInfoById";
 import { queryOutsourcingPurchasing } from "./queryOutsourcingPurchasing";
 import { queryFlowCardInfoByOrderNo } from "./queryFlowCardInfoByOrderNo";
+import { querySupplementaryOrder } from "./querySupplementaryOrder";
+import { querySupplementaryOrderById } from "./querySupplementaryOrderById";
+import { queryTransferCard } from "./queryTransferCard";
+import { countProductType } from "./countProductType";
 export {
+  countProductType,
   deleteUsers,
   deleteRoleInfoByRoleId,
   deleteMenuById,
@@ -48,11 +53,15 @@ export {
   queryMaterialByItemid,
   queryOutsourcingPurchasing,
   queryFlowCardInfoByOrderNo,
+  querySupplementaryOrder,
+  querySupplementaryOrderById,
+  queryTransferCard,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
 };
 const Apis = {
+  countProductType,
   deleteUsers,
   deleteRoleInfoByRoleId,
   deleteMenuById,
@@ -76,6 +85,9 @@ const Apis = {
   queryMaterialByItemid,
   queryOutsourcingPurchasing,
   queryFlowCardInfoByOrderNo,
+  querySupplementaryOrder,
+  querySupplementaryOrderById,
+  queryTransferCard,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,

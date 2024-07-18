@@ -162,7 +162,7 @@ const formConfig: IFormConfig = {
       </Button>,
       <Popconfirm
         title="确认删除"
-        description="你确定要删除选中用户嘛"
+        description="你确定要删除选中菜单嘛"
         onConfirm={() => {
           deleteMenuById(selectedRowKeys).then((res) => {
             setRefreshFlag((flag) => !flag);
@@ -190,11 +190,11 @@ const formConfig: IFormConfig = {
           const onCancel = () => {};
           const onFinish = (values: IInsertMenu) => {
             insertMenu(values).then((res) => {
-              if (res?.data?.code === 200) {
-                message.success("添加新用户成功");
+              if (res?.data?.code === 601) {
+                message.success(res?.data?.data);
                 setRefreshFlag((flag) => !flag);
               } else {
-                message.error(res?.response?.data?.msg || res?.data?.msg);
+                message.error(res?.response?.data?.msg || res?.data?.data);
               }
             });
           };

@@ -8,7 +8,6 @@ import {
 import getApi from "@/api";
 import { ProductionProcessFlowCardAndDispatchList } from "@/pages/ProductionProcessFlowCardAndDispatchList";
 import { throttle } from "lodash";
-import { OutsourcingProductTransferCardIssueCard } from "@/pages/OutsourcingProductTransferCardIssueCard";
 
 const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const {
@@ -189,18 +188,11 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           width={1400}
           className={styles.issueModal}
         >
-          {flowCardType === "common" && (
-            <ProductionProcessFlowCardAndDispatchList
-              issueID={issueID}
-              queryFlowCardApi={queryFlowCardApi}
-            />
-          )}
-          {flowCardType === "outsourcing" && (
-            <OutsourcingProductTransferCardIssueCard
-              issueID={issueID}
-              queryFlowCardApi={queryFlowCardApi}
-            />
-          )}
+          <ProductionProcessFlowCardAndDispatchList
+            issueID={issueID}
+            queryFlowCardApi={queryFlowCardApi}
+            flowCardType={flowCardType}
+          />
         </Modal>
       )}
     </div>

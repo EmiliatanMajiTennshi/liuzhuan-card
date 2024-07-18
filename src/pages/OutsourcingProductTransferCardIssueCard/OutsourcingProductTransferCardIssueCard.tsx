@@ -5,7 +5,13 @@ import { Button, ConfigProvider, Form, Spin, Table, message } from "antd";
 import logo from "@/assets/images/logo.png";
 import getApi, { TApi, getHeatTreatmentFurnacePlatformsList } from "@/api";
 import { insertSaveCard } from "@/api/insertSaveCard";
-import { EditAbleInput, ReadOnlyInput, RenderQRCode } from "@/utils";
+import {
+  EditAbleInput,
+  ReadOnlyInput,
+  RenderQRCode,
+  transFormToKg,
+  transFormToPcs,
+} from "@/utils";
 import styles from "./index.module.scss";
 interface IData {
   orderid?: string;
@@ -44,9 +50,14 @@ interface IData {
   traceabilityNumber?: string;
   trademarkList?: any[];
   type?: string;
+  alreadySend?: {
+    alreaySendNumKG?: string;
+    alreaySendNumPCS?: string;
+  };
+  parseWeight?: string;
 }
 const kgArr = ["公斤", "千克", "KG", "kg"];
-// const pcsArr = ["pcs", "PCS", "条", "根"];
+const pcsArr = ["pcs", "PCS", "条", "根"];
 
 const OutsourcingProductTransferCardIssueCard = (props: {
   issueID: number;
@@ -58,6 +69,8 @@ const OutsourcingProductTransferCardIssueCard = (props: {
   const [mItmID, setMItemId] = useState<string>("");
   const [form] = Form.useForm();
 
+  const [liuMaxKg, setLiuMaxKg] = useState(0);
+  const [liuMaxPCS, setLiuMaxPCS] = useState(0);
   useEffect(() => {
     /**加载数据 */
 
@@ -96,15 +109,43 @@ const OutsourcingProductTransferCardIssueCard = (props: {
     form.setFieldValue("lingliaoQRcode", data.mItmID);
     form.setFieldValue(
       "huancount",
-      data?.newsupcount && data?.weight
-        ? Math.round(
-            isKg
-              ? parseFloat(data?.newsupcount) / parseFloat(data?.weight)
-              : parseFloat(data?.newsupcount) * parseFloat(data?.weight)
-          ).toString()
+      data?.newsupcount && data?.parseWeight
+        ? (isKg
+            ? parseFloat(data?.newsupcount) / parseFloat(data?.parseWeight)
+            : parseFloat(data?.newsupcount) * parseFloat(data?.parseWeight)
+          ).toFixed(2)
         : ""
     );
+    if (isKg) {
+      if (data?.newsupcount && data?.parseWeight) {
+        const liucount =
+          parseFloat(data?.newsupcount) -
+          parseFloat(data?.alreadySend?.alreaySendNumKG || "0");
+        const liuhuancount = parseFloat(
+          (liucount / parseFloat(data?.parseWeight)).toFixed(2)
+        );
+        form.setFieldValue("liucount", liucount);
+        setLiuMaxKg(liucount);
+        setLiuMaxPCS(liuhuancount);
+        form.setFieldValue("liuhuancount", liuhuancount);
+      }
+    } else {
+      if (data?.newsupcount && data?.parseWeight) {
+        const liucount =
+          parseFloat(data?.newsupcount) -
+          parseFloat(data?.alreadySend?.alreaySendNumPCS || "0");
+        const liuhuancount = (liucount * parseFloat(data?.parseWeight)).toFixed(
+          2
+        );
+
+        setLiuMaxKg(parseFloat(liuhuancount));
+        setLiuMaxPCS(liucount);
+        form.setFieldValue("liucount", liucount);
+        form.setFieldValue("liuhuancount", liuhuancount);
+      }
+    }
     form.setFieldValue("transferCardCode", data.transferCardCode);
+    // form.setFieldValue('liucount',isKg?parseFloat(data?.newsupcount)-parseFloat)
 
     if (data?.itmid?.substring(0, 2) === "31") {
       getHeatTreatmentFurnacePlatformsList()
@@ -193,11 +234,11 @@ const OutsourcingProductTransferCardIssueCard = (props: {
       //生产公斤数
       productionKg: isKg ? values?.newsupcount : values?.huancount,
       //流转公斤数
-      transferKg: isKg ? values?.liucount : values?.liuhuancount,
+      transferKg: (isKg ? values?.liucount : values?.liuhuancount).toString(),
       //生产PCS数
       productionPcs: !isKg ? values?.newsupcount : values?.huancount,
       //流转PCS数
-      transferPcs: !isKg ? values?.liucount : values?.liuhuancount,
+      transferPcs: (!isKg ? values?.liucount : values?.liuhuancount).toString(),
 
       //主要尺寸名字1
       project1Name: mainsize.project1,
@@ -228,7 +269,11 @@ const OutsourcingProductTransferCardIssueCard = (props: {
       U9LineNo: values?.U9LineNo,
     };
     insertSaveCard(params).then((res) => {
-      console.log(res, 1123);
+      if (res?.data?.code === 20000) {
+        message.success(res?.data?.data);
+      } else {
+        message.error("插入失败");
+      }
     });
     console.log("Received values of form: ", values, params);
   };
@@ -356,11 +401,12 @@ const OutsourcingProductTransferCardIssueCard = (props: {
                     title="流转数量（公斤）"
                     isNumber
                     name={isKg ? "liucount" : "liuhuancount"}
+                    max={liuMaxKg}
                     onChange={(e: number) => {
                       const valueKg = e;
                       const valuePCS =
-                        data?.weight && valueKg
-                          ? Math.round(valueKg / parseFloat(data?.weight))
+                        data?.parseWeight && valueKg
+                          ? transFormToPcs(valueKg, data?.parseWeight)
                           : "";
                       if (isKg) {
                         form.setFieldValue("liuhuancount", valuePCS.toString());
@@ -376,12 +422,13 @@ const OutsourcingProductTransferCardIssueCard = (props: {
                   <EditAbleInput
                     title="流转数量（PCS）"
                     isNumber
+                    max={liuMaxPCS}
                     name={isKg ? "liuhuancount" : "liucount"}
                     onChange={(e: number) => {
                       const valuePCS = e;
                       const valueKg =
-                        data?.weight && valuePCS
-                          ? (valuePCS * parseFloat(data?.weight)).toFixed(2)
+                        data?.parseWeight && valuePCS
+                          ? transFormToKg(valuePCS, data?.parseWeight)
                           : "";
                       if (!isKg) {
                         form.setFieldValue("liuhuancount", valueKg.toString());

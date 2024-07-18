@@ -1,6 +1,12 @@
 import request from "./request";
 import requestLz from "./requestLz";
-import { getTrackingNumber, getLZCardNumber, formatTime } from "./common";
+import {
+  getTrackingNumber,
+  getLZCardNumber,
+  formatTime,
+  transFormToKg,
+  transFormToPcs,
+} from "./common";
 import { setToken, getToken, removeToken } from "./token";
 import {
   EditAbleInput,
@@ -23,4 +29,6 @@ export {
   RenderDatePicker,
   RenderQRCode,
   RenderSelect,
+  transFormToKg,
+  transFormToPcs,
 };

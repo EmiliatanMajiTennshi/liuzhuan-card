@@ -27,12 +27,21 @@ export interface IButtons {
   >;
 }
 
+interface IOptions {
+  type?: any[];
+  heatTreatmentFurnacePlatforms?: any[];
+}
+export interface IFormItemProps {
+  options: IOptions;
+  setOptions: React.Dispatch<React.SetStateAction<IOptions>>;
+}
+
 /**
  * 表单配置
  */
 export interface IFormConfig {
   span?: number;
-  formItems: IFormItem[];
+  formItems: IFormItem[] | ((props: IFormItemProps) => IFormItem[]);
   formTitle?: string;
   buttons?: Button[] | ((props: IButtons) => Button[]);
   formExtend?: boolean;

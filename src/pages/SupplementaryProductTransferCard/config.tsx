@@ -5,32 +5,20 @@ import {
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { Button, DatePicker, Input, Modal, Select } from "antd";
 import { RuleObject } from "antd/es/form";
-import { NavLink } from "react-router-dom";
 import { sortBy } from "lodash";
 import { formatTime } from "@/utils";
+import { kgArr } from "@/constants";
 
-const formConfig: (form: any) => IFormConfig = (form) => {
+const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formItems: [
-      // {
-      //   key: "type",
-      //   name: "零件类型",
-      //   children: (
-      //     <Select
-      //       options={[
-      //         { value: "标准", label: "标准零件" },
-      //         { value: "非标", label: "非标零件" },
-      //       ]}
-      //     ></Select>
-      //   ),
-      //   rules: [],
-      // },
       {
         key: "barCode",
         name: "生产订单条码",
         children: <Input></Input>,
         rules: [],
       },
+
       {
         key: "partNumber",
         name: "零件料号",
@@ -140,16 +128,16 @@ const formConfig: (form: any) => IFormConfig = (form) => {
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setIssueModalOpen, setIssueID } = props;
   return {
-    api: "queryUnHalfTransferCard",
-    queryFlowCardApi: "queryUnFlowCardInfoById",
+    api: "querySupplementaryOrder",
+    queryFlowCardApi: "querySupplementaryOrderById",
     flowCardType: "common",
     columns: [
-      {
-        title: "零件类型",
-        dataIndex: "type",
-        key: "type",
-        width: 100,
-      },
+      //   {
+      //     title: "零件类型",
+      //     dataIndex: "type",
+      //     key: "type",
+      //     width: 100,
+      //   },
 
       {
         title: "生产订单条码",
@@ -199,15 +187,19 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "number",
         width: 100,
       },
-      // {
-      //   title: "流转数量累积",
-      //   dataIndex: "sumTransferNumberList",
-      //   key: "sumTransferNumberList",
-      //   render: (data: any[]) => {
-      //     return data?.[0]?.sumTransferKg;
-      //   },
-      //   width: 120,
-      // },
+      {
+        title: "流转数量累积",
+        dataIndex: "sumTransferNumberList",
+        key: "sumTransferNumberList",
+        render: (data: any[], record) => {
+          const unit = record?.unit;
+          if (kgArr.indexOf(unit) !== -1) {
+            return data?.[0]?.sumTransferKg;
+          }
+          return data?.[0]?.sumTransferPcs;
+        },
+        width: 120,
+      },
       // {
       //   title: "查看工艺",
       //   dataIndex: "processList",

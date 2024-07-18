@@ -15,17 +15,30 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
   } = props;
   const [form] = Form.useForm();
   const [buttonLoading, setButtonLoading] = useState({ insertButton: false });
+
+  const [options, setOptions] = useState({});
   // 可能是函数
   const _formConfig =
     typeof formConfig === "function" ? formConfig(form) : formConfig;
-  const { formItems, span: _span, buttons, handleData } = _formConfig;
+  const {
+    formItems: _formItems,
+    span: _span,
+    buttons,
+    handleData,
+  } = _formConfig;
 
   // 列数
   const colNumber = gutter / (_span || span);
   // 控制每一列宽度相同
   let labelWidths: number[] = [];
   let requiredArr: number[] | undefined[] = [];
-  formItems.forEach((item, index) => {
+
+  const formItems =
+    typeof _formItems === "function"
+      ? _formItems({ options, setOptions })
+      : _formItems;
+
+  formItems?.forEach((item, index) => {
     // 第几列
     const columnNum = index % colNumber;
     if (
@@ -69,7 +82,7 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
   return (
     <Form form={form} name="advanced_search" onFinish={onFinish}>
       <Row gutter={gutter}>
-        {formItems.map((item, index) => {
+        {formItems?.map((item, index) => {
           // 第几列
           const columnNum = index % colNumber;
           return (

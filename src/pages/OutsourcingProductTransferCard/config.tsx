@@ -5,26 +5,42 @@ import {
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { Button, DatePicker, Input, Modal, Select } from "antd";
 import { RuleObject } from "antd/es/form";
-import { NavLink } from "react-router-dom";
-import { sortBy } from "lodash";
+
 import { formatTime } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formItems: [
-      // {
-      //   key: "type",
-      //   name: "零件类型",
-      //   children: (
-      //     <Select
-      //       options={[
-      //         { value: "标准", label: "标准零件" },
-      //         { value: "非标", label: "非标零件" },
-      //       ]}
-      //     ></Select>
-      //   ),
-      //   rules: [],
-      // },
+      {
+        key: "category",
+        name: "分类",
+        children: (
+          <Select
+            allowClear
+            options={[
+              { value: "2PO14", label: "外协件" },
+              { value: "2PO012", label: "外购件" },
+              { value: "2PO032", label: "五金" },
+              { value: "240", label: "苏州采购" },
+            ]}
+          ></Select>
+        ),
+        rules: [],
+      },
+      {
+        key: "type",
+        name: "类别",
+        children: (
+          <Select
+            allowClear
+            options={[
+              { value: "32", label: "半成品" },
+              { value: "31", label: "成品" },
+            ]}
+          ></Select>
+        ),
+        rules: [],
+      },
       {
         key: "barCode",
         name: "生产订单条码",
@@ -131,7 +147,13 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     flowCardType: "outsourcing",
     columns: [
       {
-        title: "零件类型",
+        title: "分类",
+        dataIndex: "category",
+        key: "category",
+        width: 100,
+      },
+      {
+        title: "类型",
         dataIndex: "type",
         key: "type",
         width: 100,
@@ -150,6 +172,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         width: 150,
       },
       {
+        title: "行号",
+        dataIndex: "u9LineNo",
+        key: "u9LineNo",
+        width: 80,
+      },
+      {
         title: "品名",
         dataIndex: "name",
         key: "name",
@@ -161,12 +189,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "specs",
         width: 100,
       },
-      {
-        title: "商标",
-        dataIndex: "trademark",
-        key: "trademark",
-        width: 80,
-      },
+
       {
         title: "完成时间",
         dataIndex: "finishTime",
@@ -213,38 +236,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "processList",
         key: "processList",
         render: (data: any, record: any, index: number) => {
-          // 这里后面要
-
           return (
             <>
-              <Button
-                type="primary"
-                size="small"
-                style={{ marginRight: 10 }}
-                onClick={async () => {
-                  Modal.info({
-                    title: "工艺详情",
-                    footer: null,
-                    width: 400,
-                    closable: true,
-                    icon: null,
-
-                    content: (
-                      <div>
-                        {sortBy(data, "seq")?.map((item) => {
-                          console.log(item, 12131);
-
-                          return (
-                            <p>{`第${item?.seq}道工艺：${item?.processName}`}</p>
-                          );
-                        })}
-                      </div>
-                    ),
-                  });
-                }}
-              >
-                查看工艺
-              </Button>
               <Button
                 type="primary"
                 size="small"

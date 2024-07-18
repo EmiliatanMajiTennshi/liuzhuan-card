@@ -103,6 +103,7 @@ const EditAbleInput = ({
   onBlur,
   isNumber,
   colSpan,
+  max,
 }: {
   title: string;
   name: string;
@@ -112,6 +113,7 @@ const EditAbleInput = ({
   onBlur?: (e: any) => void;
   isNumber?: boolean;
   colSpan?: number;
+  max?: number;
 }) => {
   return (
     <>
@@ -126,6 +128,7 @@ const EditAbleInput = ({
               onChange={onChange}
               onBlur={onBlur}
               controls={false}
+              max={max}
             ></InputNumber>
           ) : (
             <Input

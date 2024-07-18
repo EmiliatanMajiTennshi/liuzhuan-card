@@ -196,7 +196,18 @@ const OutsourcingProductTransferCard = React.lazy(() =>
     default: res.OutsourcingProductTransferCard,
   }))
 );
-
+/**补单流转卡下发 */
+const SupplementaryProductTransferCard = React.lazy(() =>
+  import("@/pages/SupplementaryProductTransferCard").then((res) => ({
+    default: res.SupplementaryProductTransferCard,
+  }))
+);
+/**零件流转卡管理 */
+const QueryProductTransferCard = React.lazy(() =>
+  import("@/pages/QueryProductTransferCard").then((res) => ({
+    default: res.QueryProductTransferCard,
+  }))
+);
 /**路由 */
 const routeMap = [
   {
@@ -307,10 +318,18 @@ const routeMap = [
   { path: "/dashboard", element: <Dashboard /> },
   { path: "/user_manage", element: <UserManage /> },
   { path: "/role_manage", element: <RoleManage /> },
-  { path: "/permission_manage", element: <MenuManage /> },
+  { path: "/menu_manage", element: <MenuManage /> },
   {
     path: "/outsourcing_product_transfer_card",
     element: <OutsourcingProductTransferCard />,
+  },
+  {
+    path: "/supplementary_product_transfer_card",
+    element: <SupplementaryProductTransferCard />,
+  },
+  {
+    path: "/query_product_transfer_card",
+    element: <QueryProductTransferCard />,
   },
 ];
 

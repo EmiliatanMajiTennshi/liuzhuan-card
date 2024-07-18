@@ -3,9 +3,9 @@ import { ContentRender } from "@/components/ContentRender";
 import React from "react";
 import { formConfig, tableConfig } from "./config";
 
-const MenuManage = () => {
+const QueryProductTransferCard = () => {
   return (
-    <ContentRender title="菜单管理">
+    <ContentRender title="零件流转卡管理">
       <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}
@@ -14,4 +14,4 @@ const MenuManage = () => {
   );
 };
 
-export default MenuManage;
+export default QueryProductTransferCard;
