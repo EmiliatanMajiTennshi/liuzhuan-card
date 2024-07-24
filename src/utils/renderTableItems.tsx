@@ -1,12 +1,4 @@
-import {
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Spin,
-  Tooltip,
-} from "antd";
+import { DatePicker, Form, Input, InputNumber, Select, Spin } from "antd";
 import { useEffect } from "react";
 import QRCode from "qrcode.react";
 import styles from "./renderTableItems.module.scss";
@@ -116,7 +108,6 @@ const ReadOnlyInput = ({
 const EditAbleInput = ({
   title,
   name,
-  defaultValue,
   titleStyle,
   onChange,
   onBlur,

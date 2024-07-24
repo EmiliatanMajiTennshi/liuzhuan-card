@@ -3,12 +3,10 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Modal, Select } from "antd";
+import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
-import { NavLink } from "react-router-dom";
-import { sortBy } from "lodash";
+
 import { checkProcess, formatTime } from "@/utils";
-import { queryProcessByItemId } from "@/api";
 
 const formConfig: (form: any) => IFormConfig = (form) => {
   return {

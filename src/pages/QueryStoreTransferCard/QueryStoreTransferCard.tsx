@@ -2,10 +2,11 @@ import { AdvancedSearchCom } from "@/components/AdvancedSearchCom";
 import { ContentRender } from "@/components/ContentRender";
 import React from "react";
 import { formConfig, tableConfig } from "./config";
-/**外协流转卡下发*/
-const OutsourcingProductTransferCard = () => {
+
+/**流转卡入库信息查询 */
+const QueryStoreTransferCard = () => {
   return (
-    <ContentRender title="外协流转卡下发">
+    <ContentRender title="流转卡入库信息查询">
       <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}
@@ -14,4 +15,4 @@ const OutsourcingProductTransferCard = () => {
   );
 };
 
-export default OutsourcingProductTransferCard;
+export default QueryStoreTransferCard;

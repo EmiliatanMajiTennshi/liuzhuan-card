@@ -176,7 +176,7 @@ export const getTableColumns = ({
     setErrors({ ...errors, ...newErrors });
     if (Object.keys(newErrors).length === 0) {
       console.log("Record saved:", record);
-      insertSaveTransferCard(record).then((res) => {
+      insertSaveTransferCard({ ...record, hunit: "公斤" }).then((res) => {
         if (res?.data?.code === 20000) {
           message.success(res?.data?.data);
         }

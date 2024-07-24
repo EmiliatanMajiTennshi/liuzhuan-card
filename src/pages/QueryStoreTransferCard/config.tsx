@@ -3,62 +3,42 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Select } from "antd";
+import { DatePicker, Input } from "antd";
 import { RuleObject } from "antd/es/form";
 
+import { kgArr } from "@/constants";
 import { formatTime } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formItems: [
       {
-        key: "category",
-        name: "分类",
-        children: (
-          <Select
-            allowClear
-            options={[
-              { value: "2PO14", label: "外协件" },
-              { value: "2PO012", label: "外购件" },
-              { value: "2PO032", label: "五金" },
-              { value: "240", label: "苏州采购" },
-            ]}
-          ></Select>
-        ),
-        rules: [],
-      },
-      {
-        key: "type",
-        name: "类别",
-        children: (
-          <Select
-            allowClear
-            options={[
-              { value: "32", label: "半成品" },
-              { value: "31", label: "成品" },
-            ]}
-          ></Select>
-        ),
+        key: "transfCardNo",
+        name: "流转卡编号",
+        children: <Input></Input>,
         rules: [],
       },
       {
         key: "barCode",
-        name: "生产订单条码",
+        name: "订单号",
         children: <Input></Input>,
         rules: [],
       },
+
       {
         key: "partNumber",
         name: "零件料号",
         children: <Input></Input>,
         rules: [],
       },
+
       {
         key: "specs",
         name: "规格",
         children: <Input></Input>,
         rules: [],
       },
+
       {
         key: "finishTimeStart",
         name: "完成时间开始",
@@ -140,48 +120,53 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueModalOpen, setIssueID } = props;
   return {
-    api: "queryOutsourcingPurchasing",
-    queryFlowCardApi: "queryFlowCardInfoByOrderNo",
-    flowCardType: "outsourcing",
+    rowKey: "id", // 唯一标识
+    api: "queryTransferStore",
+
     columns: [
-      {
-        title: "分类",
-        dataIndex: "category",
-        key: "category",
-        width: 100,
-      },
-      {
-        title: "类型",
-        dataIndex: "type",
-        key: "type",
-        width: 100,
-      },
+      //   {
+      //     title: "流转卡类型",
+      //     dataIndex: "transferCardType",
+      //     key: "transferCardType",
+      //     width: 100,
+      //   },
+      //   {
+      //     title: "零件类型",
+      //     dataIndex: "type",
+      //     key: "type",
+      //     width: 100,
+      //   },
 
       {
-        title: "生产订单条码",
+        title: "流转卡编号",
+        dataIndex: "transferCardCode",
+        key: "transferCardCode",
+        width: 240,
+      },
+      {
+        title: "生产订单号",
         dataIndex: "barCode",
         key: "barCode",
-        width: 150,
+        width: 160,
       },
       {
         title: "零件料号",
         dataIndex: "partNumber",
         key: "partNumber",
-        width: 150,
+        width: 130,
       },
       {
-        title: "行号",
-        dataIndex: "u9LineNo",
-        key: "u9LineNo",
-        width: 80,
+        title: "追溯单号",
+        dataIndex: "traceabilityNumber",
+        key: "traceabilityNumber",
+        width: 110,
       },
       {
         title: "品名",
         dataIndex: "name",
         key: "name",
-        width: 100,
+        width: 150,
       },
       {
         title: "规格",
@@ -189,34 +174,116 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "specs",
         width: 100,
       },
-
+      {
+        title: "材质",
+        dataIndex: "material",
+        key: "material",
+        width: 100,
+      },
+      {
+        title: "字样",
+        dataIndex: "trademark",
+        key: "trademark",
+        width: 120,
+      },
       {
         title: "完成时间",
         dataIndex: "finishTime",
         key: "finishTime",
-        width: 100,
+        width: 160,
       },
+      //   {
+      //     title: "入库料号",
+      //     dataIndex: "storePartNumber",
+      //     key: "storePartNumber",
+      //     width: 130,
+      //   },
+
       {
         title: "单位",
         dataIndex: "unit",
         key: "unit",
         width: 100,
       },
+      //   {
+      //     title: "商标",
+      //     dataIndex: "trademark",
+      //     key: "trademark",
+      //     width: 80,
+      //   },
+
+      //   {
+      //     title: "创建(流转)时间",
+      //     dataIndex: "createTime",
+      //     key: "createTime",
+      //     width: 160,
+      //   },
+      //   {
+      //     title: "热处理炉台",
+      //     dataIndex: "heatTreatmentFurnacePlatform",
+      //     key: "heatTreatmentFurnacePlatform",
+      //     width: 120,
+      //   },
+      //   {
+      //     title: "优先顺序",
+      //     dataIndex: "priorityOrder",
+      //     key: "priorityOrder",
+      //     width: 120,
+      //   },
+
       {
-        title: "数量",
-        dataIndex: "number",
-        key: "number",
+        title: "订单数量",
+        dataIndex: "production",
+        key: "production",
+        width: 110,
+        render: (text, record) => {
+          const isKg = kgArr.indexOf(record?.unit) !== -1;
+          return isKg ? record?.productionKg : record?.productionPcs;
+        },
+      },
+      {
+        title: "流转数量",
+        dataIndex: "alreadySend",
+        key: "alreadySend",
+        render: (data: any, record) => {
+          const unit = record?.unit;
+          if (kgArr.indexOf(unit) !== -1) {
+            return data?.alreaySendNumKG;
+          }
+          return data?.alreaySendNumPCS;
+        },
+        width: 120,
+      },
+      {
+        title: "单桶数量",
+        dataIndex: "produceNumber",
+        key: "produceNumber",
         width: 100,
       },
-      // {
-      //   title: "流转数量累积",
-      //   dataIndex: "sumTransferNumberList",
-      //   key: "sumTransferNumberList",
-      //   // render: (data: string[]) => {
-      //   //   return data.map((item) => item);
-      //   // },
-      //   width: 120,
-      // },
+      {
+        title: "入库数量",
+        dataIndex: "ctotal",
+        key: "ctotal",
+        width: 100,
+      },
+      {
+        title: "入库单位",
+        dataIndex: "cunit",
+        key: "cunit",
+        width: 100,
+      },
+      {
+        title: "入库名",
+        dataIndex: "bname",
+        key: "bname",
+        width: 160,
+      },
+      {
+        title: "入库时间",
+        dataIndex: "caddtime",
+        key: "caddtime",
+        width: 160,
+      },
       // {
       //   title: "查看工艺",
       //   dataIndex: "processList",
@@ -231,31 +298,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       //   width: 100,
       //   fixed: "right",
       // },
-      {
-        title: "操作",
-        dataIndex: "processList",
-        key: "processList",
-        render: (data: any, record: any, index: number) => {
-          return (
-            <>
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => {
-                  console.log(record, 12313);
-
-                  setIssueModalOpen(true);
-                  setIssueID(record?.uid);
-                }}
-              >
-                下发
-              </Button>
-            </>
-          );
-        },
-        width: 180,
-        fixed: "right",
-      },
+      //
     ],
   };
 };

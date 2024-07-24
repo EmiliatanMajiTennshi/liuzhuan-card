@@ -23,14 +23,12 @@ import { kgArr } from "@/constants";
 import { getParams, getTableColumns } from "./config";
 import FlowCardForm from "./FlowCardForm";
 
-import { Item } from "@/components/EditableCell/EditableCell";
 import { AnyObject } from "antd/es/_util/type";
 import { insertSaveCard } from "@/api/insertSaveCard";
 import PrintFlowCardForm from "./PrintFlowCardForm";
 import { useReactToPrint } from "react-to-print";
 import PrintFlowCardFormOutsourcing from "./PrintFlowCardFormOutsourcing";
 import FlowCardFormOutsourcing from "./FlowCardFormOutsourcing";
-import { debounce } from "lodash";
 
 const ProductionProcessFlowCardAndDispatchList = (props: {
   issueID: number;

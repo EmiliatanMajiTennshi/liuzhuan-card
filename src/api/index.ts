@@ -34,6 +34,7 @@ import { queryOperationInfo } from "./queryOperationInfo";
 import { queryEquipmentInfo } from "./queryEquipmentInfo";
 import { insertSaveTransferCard } from "./insertSaveTransferCard";
 import { queryProcessByItemId } from "./queryProcessByItemId";
+import { queryTransferStore } from "./queryTransferStore";
 export {
   countProductType,
   clickTransferCard,
@@ -68,11 +69,12 @@ export {
   queryOperationInfo,
   queryEquipmentInfo,
   queryProcessByItemId,
+  queryTransferStore,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
 };
-const Apis = {
+const apis = {
   countProductType,
   clickTransferCard,
   deleteUsers,
@@ -106,6 +108,7 @@ const Apis = {
   queryOperationInfo,
   queryEquipmentInfo,
   queryProcessByItemId,
+  queryTransferStore,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
@@ -113,7 +116,7 @@ const Apis = {
 /**
  * 用于formConfig的api
  */
-export type TApi = keyof typeof Apis;
+export type TApi = keyof typeof apis;
 
 /**
  * 获取接口
@@ -121,6 +124,6 @@ export type TApi = keyof typeof Apis;
  * @returns
  */
 const getApi = (api: TApi) => {
-  return Apis[api];
+  return apis[api];
 };
 export default getApi;

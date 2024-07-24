@@ -3,9 +3,8 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Modal, Select } from "antd";
+import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
-import { sortBy } from "lodash";
 import { checkProcess, formatTime } from "@/utils";
 import { kgArr } from "@/constants";
 

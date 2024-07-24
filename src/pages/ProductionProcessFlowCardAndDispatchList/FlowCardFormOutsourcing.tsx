@@ -1,17 +1,15 @@
 import {
   EditAbleInput,
   ReadOnlyInput,
-  RenderDatePicker,
   RenderQRCode,
-  RenderSelect,
   transFormToKg,
   transFormToPcs,
 } from "@/utils";
-import { FormInstance, message } from "antd";
+import { FormInstance } from "antd";
 import { IData } from "./indexType";
 
 import styles from "./index.module.scss";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 // import { getHeatTreatmentFurnacePlatformsList } from "@/api";
 
 interface IProps {
@@ -22,9 +20,9 @@ interface IProps {
 const FlowCardFormOutsourcing = (props: IProps) => {
   const { data, isKg, form } = props;
 
-  // 最大流转数量
-  const [liuMaxKg, setLiuMaxKg] = useState(0);
-  const [liuMaxPCS, setLiuMaxPCS] = useState(0);
+  // // 最大流转数量
+  // const [liuMaxKg, setLiuMaxKg] = useState(0);
+  // const [liuMaxPCS, setLiuMaxPCS] = useState(0);
 
   const isFinished = data?.partNumber?.substring(0, 2) === "31";
   console.log(data?.partNumber, 213, isFinished);
@@ -45,27 +43,27 @@ const FlowCardFormOutsourcing = (props: IProps) => {
     );
     form.setFieldValue("transferCardCode", data?.transferCard);
 
-    // 给流转数量初始值 产量-已使用
-    if (isKg) {
-      if (data?.productionKg) {
-        // 流转数量
-        const transferKg = (
-          parseFloat(data?.productionKg) -
-          parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
-        ).toFixed(2);
+    // // 给流转数量初始值 产量-已使用
+    // if (isKg) {
+    //   if (data?.productionKg) {
+    //     // 流转数量
+    //     const transferKg = (
+    //       parseFloat(data?.productionKg) -
+    //       parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
+    //     ).toFixed(2);
 
-        setLiuMaxKg(parseFloat(transferKg));
-      }
-    } else {
-      if (data?.productionPcs) {
-        const transferPcs = (
-          parseFloat(data?.productionPcs) -
-          parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
-        ).toFixed(2);
+    //     setLiuMaxKg(parseFloat(transferKg));
+    //   }
+    // } else {
+    //   if (data?.productionPcs) {
+    //     const transferPcs = (
+    //       parseFloat(data?.productionPcs) -
+    //       parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
+    //     ).toFixed(2);
 
-        setLiuMaxPCS(parseFloat(transferPcs));
-      }
-    }
+    //     setLiuMaxPCS(parseFloat(transferPcs));
+    //   }
+    // }
   }, [data]);
   useEffect(() => {
     // if(isKg){

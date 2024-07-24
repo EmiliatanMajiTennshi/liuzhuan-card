@@ -7,7 +7,6 @@ import {
 } from "./AdvancedSearchTableType";
 import getApi from "@/api";
 import { ProductionProcessFlowCardAndDispatchList } from "@/pages/ProductionProcessFlowCardAndDispatchList";
-import { throttle } from "lodash";
 
 const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const {
@@ -36,7 +35,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   // 下发id
   const [issueID, setIssueID] = useState(0);
   // 窗口大小 用来监听窗口变化
-  const [screenW, setScreenW] = useState(0);
+  // const [screenW, setScreenW] = useState(0);
 
   const tableRef = useRef<any>(null);
 
@@ -113,19 +112,19 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   //   };
   // }, []);
 
-  useEffect(() => {
-    const parentNode = tableRef?.current?.parentNode;
-    const tableBody = parentNode?.querySelector(".ant-table-body");
-    const operateCell = parentNode?.querySelector(
-      ".ant-table-cell-fix-right-first"
-    );
-    if (!parentNode || !operateCell || !tableBody) return;
-    if (tableBody?.scrollHeight === tableBody?.clientHeight) {
-      operateCell.style.right = 0;
-    } else {
-      operateCell.style.right = "6px";
-    }
-  }, [screenW]);
+  // useEffect(() => {
+  //   const parentNode = tableRef?.current?.parentNode;
+  //   const tableBody = parentNode?.querySelector(".ant-table-body");
+  //   const operateCell = parentNode?.querySelector(
+  //     ".ant-table-cell-fix-right-first"
+  //   );
+  //   if (!parentNode || !operateCell || !tableBody) return;
+  //   if (tableBody?.scrollHeight === tableBody?.clientHeight) {
+  //     operateCell.style.right = 0;
+  //   } else {
+  //     operateCell.style.right = "6px";
+  //   }
+  // }, [screenW]);
 
   useEffect(() => {
     setCurrentPage(1);

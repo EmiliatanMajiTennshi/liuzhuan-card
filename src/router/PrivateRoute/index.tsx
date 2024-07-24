@@ -163,7 +163,7 @@ const AddEmployeeInfoChain = React.lazy(() =>
     default: res.AddEmployeeInfoChain,
   }))
 );
-
+/**首页 */
 const Dashboard = React.lazy(() =>
   import("@/pages/Dashboard").then((res) => ({
     default: res.Dashboard,
@@ -208,6 +208,25 @@ const QueryProductTransferCard = React.lazy(() =>
     default: res.QueryProductTransferCard,
   }))
 );
+/**订单完成情况统计 */
+const CountOrder = React.lazy(() =>
+  import("@/pages/CountOrder").then((res) => ({
+    default: res.CountOrder,
+  }))
+);
+/**流转卡入库信息查询 */
+const QueryStoreTransferCard = React.lazy(() =>
+  import("@/pages/QueryStoreTransferCard").then((res) => ({
+    default: res.QueryStoreTransferCard,
+  }))
+);
+/**外协外购报检及检查 */
+const OutsourcedPurchasedInspectionTesting = React.lazy(() =>
+  import("@/pages/OutsourcedPurchasedInspectionTesting").then((res) => ({
+    default: res.OutsourcedPurchasedInspectionTesting,
+  }))
+);
+
 /**路由 */
 const routeMap = [
   {
@@ -330,6 +349,18 @@ const routeMap = [
   {
     path: "/query_product_transfer_card",
     element: <QueryProductTransferCard />,
+  },
+  {
+    path: "/count_order",
+    element: <CountOrder />,
+  },
+  {
+    path: "/query_store_transfer_card",
+    element: <QueryStoreTransferCard />,
+  },
+  {
+    path: "/outsourced_purchased_inspection_testing",
+    element: <OutsourcedPurchasedInspectionTesting />,
   },
 ];
 

@@ -1,8 +1,6 @@
 import {
-  EditAbleInput,
   ReadOnlyInput,
   RenderQRCode,
-  RenderSelect,
   transFormToKg,
   transFormToPcs,
 } from "@/utils";
@@ -27,9 +25,7 @@ const boldWeight = {
 const fontSize18 = {
   fontSize: 18,
 };
-const fontSize28 = {
-  fontSize: 28,
-};
+
 const fontColorRed = {
   color: "red",
 };

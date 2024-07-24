@@ -3,7 +3,7 @@ import { ContentRender } from "@/components/ContentRender";
 import { AdvancedSearchCom } from "@/components/AdvancedSearchCom";
 import { formConfig, tableConfig } from "./config";
 
-// 用户管理
+/**用户管理 */
 const UserManage = () => {
   return (
     <ContentRender title="用户管理">

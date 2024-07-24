@@ -65,9 +65,6 @@ const validateSpace = (rule: any, value: string) => {
   return Promise.resolve();
 };
 
-const onFinish = (values: any) => {
-  console.log("Submitted values:", values);
-};
 const getModalConfig = ({
   onCancel,
   onFinish,
