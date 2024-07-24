@@ -20,8 +20,7 @@ interface IProps {
   data: IData;
   isKg: boolean;
   form: FormInstance<any>;
-  liuMaxKg: number;
-  liuMaxPCS: number;
+
   mItmID: string;
   setMItemId: React.Dispatch<React.SetStateAction<string>>;
   mainsize: any;
@@ -31,15 +30,18 @@ const CommonForm = (props: IProps) => {
     data,
     isKg,
     form,
-    liuMaxKg,
-    liuMaxPCS,
+
     mItmID,
     setMItemId,
     mainsize,
   } = props;
+  console.log(mainsize, 124);
 
   // 热处理炉台
   const [heatTreatmentFurnaces, setHeatTreatmentFurnaces] = useState<any[]>([]);
+  // 最大流转数量
+  const [liuMaxKg, setLiuMaxKg] = useState(0);
+  const [liuMaxPCS, setLiuMaxPCS] = useState(0);
   useEffect(() => {
     if (
       data?.itmid?.substring(0, 2) === "31" &&
@@ -61,7 +63,59 @@ const CommonForm = (props: IProps) => {
           console.log(err);
         });
     }
-  });
+  }, [data]);
+
+  useEffect(() => {
+    // 二维码不手动设置值会出现奇怪的bug
+    form.setFieldValue("orderQRcode", data.orderid);
+    form.setFieldValue("traceabilityNumberQRcode", data.traceabilityNumber);
+    form.setFieldValue("rukuQRcode", data.itmid);
+    form.setFieldValue("lingliaoQRcode", data.mItmID);
+    form.setFieldValue(
+      "huancount",
+      data?.newsupcount && data?.parseWeight
+        ? isKg
+          ? transFormToPcs(data?.newsupcount, data?.parseWeight)
+          : transFormToKg(data?.newsupcount, data?.parseWeight)
+        : ""
+    );
+    form.setFieldValue("transferCardCode", data.transferCardCode);
+
+    if (isKg) {
+      if (data?.newsupcount && data?.parseWeight) {
+        const liucount = (
+          parseFloat(data?.newsupcount) -
+          parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
+        ).toFixed(2);
+        const liuhuancount = (
+          parseFloat(data?.newsupcount) / parseFloat(data?.parseWeight) -
+          parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
+        ).toFixed(2);
+
+        form.setFieldValue("liucount", liucount);
+        setLiuMaxKg(parseFloat(liucount));
+        setLiuMaxPCS(parseFloat(liuhuancount));
+        form.setFieldValue("liuhuancount", liuhuancount);
+      }
+    } else {
+      if (data?.newsupcount && data?.parseWeight) {
+        const liucount = (
+          parseFloat(data?.newsupcount) -
+          parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
+        ).toFixed(2);
+        const liuhuancount = (
+          parseFloat(data?.newsupcount) * parseFloat(data?.parseWeight) -
+          parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
+        ).toFixed(2);
+
+        setLiuMaxKg(parseFloat(liuhuancount));
+        setLiuMaxPCS(parseFloat(liucount));
+        form.setFieldValue("liucount", liucount);
+        form.setFieldValue("liuhuancount", liuhuancount);
+      }
+    }
+  }, [data]);
+
   return (
     <tbody>
       <tr>
@@ -83,9 +137,17 @@ const CommonForm = (props: IProps) => {
             data?.trademarkList?.map((item) => ({
               value: item.trademark,
               label: item.trademark,
+              pnumber: item?.pnumber,
             })) || []
           }
           placeholder="请选择商标"
+          onSelect={(e: any, record: any) => {
+            const pnumber = record?.pnumber;
+
+            if (pnumber) {
+              form.setFieldValue("pnumber", pnumber);
+            }
+          }}
         />
         <ReadOnlyInput title="追溯单号" name="traceabilityNumber" />
         <EditAbleInput title="追溯单号（半品）" name="orderCatchHalf" />
@@ -153,8 +215,6 @@ const CommonForm = (props: IProps) => {
             }
             setMItemId(currentId);
             queryMaterialByItemid({ itemid: currentId }).then((res) => {
-              console.log(res, 123111);
-
               const data = res?.data?.data?.[0];
               if (res?.data?.code !== 20000 || !data) {
                 message.error("获取材料数据失败");
@@ -177,10 +237,12 @@ const CommonForm = (props: IProps) => {
       </tr>
       <tr>
         <ReadOnlyInput
-          title="供应/炉批号"
-          name="furnaceNum"
+          title="供方/炉批号"
+          name="furnaceNo"
           colSpan={4}
           titleStyle={{ color: "red" }}
+          defaultValue={mainsize?.allID || ""}
+          form={form}
         />
 
         <th colSpan={3} style={{ textAlign: "center" }}>
@@ -219,21 +281,21 @@ const CommonForm = (props: IProps) => {
               title="追溯单号"
               name="traceabilityNumberQRCode"
               rowSpan={3}
-              value={data.traceabilityNumber || "没有数据"}
+              value={data?.traceabilityNumber || "没有数据"}
               noTd
             />
             <RenderQRCode
               title="入库二维码"
               name="rukuQRcode"
               rowSpan={3}
-              value={data.itmid || "没有数据"}
+              value={data?.itmid || "没有数据"}
               noTd
             />
             <RenderQRCode
               title="领料二维码"
               name="lingliaoQRcode"
               rowSpan={3}
-              value={data.mItmID || "没有数据"}
+              value={data?.mItmID || "没有数据"}
               noTd
             />
           </div>

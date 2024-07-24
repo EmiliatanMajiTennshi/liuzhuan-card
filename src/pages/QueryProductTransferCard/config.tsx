@@ -283,11 +283,12 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueModalOpen, setIssueID } = props;
+  const { setIssueModalOpen, setIssueID, setPrintModalOpen } = props;
   return {
+    rowKey: "id", // 唯一标识
     api: "queryTransferCard",
-    queryFlowCardApi: "queryFlowCardInfoById",
-    flowCardType: "common",
+    queryFlowCardApi: "clickTransferCard",
+    flowCardType: "flowCard",
     columns: [
       {
         title: "流转卡类型",
@@ -431,29 +432,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 type="primary"
                 size="small"
                 style={{ marginRight: 10 }}
-                onClick={async () => {
-                  Modal.info({
-                    title: "工艺详情",
-                    footer: null,
-                    width: 400,
-                    closable: true,
-                    icon: null,
-
-                    content: (
-                      <div>
-                        {sortBy(data, "seq")?.map((item) => {
-                          console.log(item, 12131);
-
-                          return (
-                            <p>{`第${item?.seq}道工艺：${item?.processName}`}</p>
-                          );
-                        })}
-                      </div>
-                    ),
-                  });
+                onClick={() => {
+                  setPrintModalOpen(true);
+                  setIssueID(record?.id);
                 }}
               >
-                查看工艺
+                打印流转卡
               </Button>
               <Button
                 type="primary"
@@ -463,7 +447,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   setIssueID(record?.id);
                 }}
               >
-                下发
+                编辑
               </Button>
             </>
           );

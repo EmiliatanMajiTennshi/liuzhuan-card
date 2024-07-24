@@ -210,7 +210,7 @@ const formConfig: IFormConfig = {
   },
   formItems: [
     {
-      key: "label",
+      key: "search",
       name: "名称",
       children: <Input></Input>,
       rules: [],
@@ -292,7 +292,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                     //   success: true;
                     //   timestamp: 1720598915612;
                     // }
-                    if (res?.data?.code === 20000) {
+                    if (res?.data?.code === 604) {
                       message.success(res?.data?.data);
                       setRefreshFlag((flag) => !flag);
                       modal.destroy();

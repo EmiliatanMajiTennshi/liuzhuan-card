@@ -6,6 +6,8 @@ import {
   formatTime,
   transFormToKg,
   transFormToPcs,
+  limitDecimals,
+  checkProcess,
 } from "./common";
 import { setToken, getToken, removeToken } from "./token";
 import {
@@ -31,4 +33,6 @@ export {
   RenderSelect,
   transFormToKg,
   transFormToPcs,
+  limitDecimals,
+  checkProcess,
 };

@@ -103,11 +103,11 @@ const PartFlowCardQuery = React.lazy(() =>
 //     default: res.ProductionProcessFlowCardAndDispatchList,
 //   }))
 // );
-const PartFlowCardPrint = React.lazy(() =>
-  import("@/pages/PartFlowCardPrint").then((res) => ({
-    default: res.PartFlowCardPrint,
-  }))
-);
+// const PartFlowCardPrint = React.lazy(() =>
+//   import("@/pages/PartFlowCardPrint").then((res) => ({
+//     default: res.PartFlowCardPrint,
+//   }))
+// );
 const OrderCompletionStatus = React.lazy(() =>
   import("@/pages/OrderCompletionStatus").then((res) => ({
     default: res.OrderCompletionStatus,
@@ -263,10 +263,10 @@ const routeMap = [
     element: <PartFlowCardQuery />,
   },
 
-  {
-    path: "/part_flow_card_print",
-    element: <PartFlowCardPrint />,
-  },
+  // {
+  //   path: "/part_flow_card_print",
+  //   element: <PartFlowCardPrint />,
+  // },
   {
     path: "/order_completion_status",
     element: <OrderCompletionStatus />,

@@ -258,7 +258,7 @@ const formConfig: IFormConfig = {
               name: values.name,
               permission: values.permissionDto,
             }).then((res) => {
-              if (res?.data.code === 20000) {
+              if (res?.data.code === 601) {
                 message.success("添加成功");
                 setRefreshFlag((flag) => !flag);
               } else {

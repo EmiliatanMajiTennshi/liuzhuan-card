@@ -35,6 +35,63 @@
 }
 .QRcodes {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   padding: 0px 20px;
+}
+
+.cellForm {
+  :global {
+    .ant-form-item {
+      margin: 0;
+    }
+  }
+}
+.flow-card {
+  .printForm {
+    th,
+    td {
+      padding: 1px 5px;
+      // width: 25%; /* 设置每个单元格的宽度为表格宽度的25% */
+    }
+    // th[colspan="2"],
+    // td[colspan="2"] {
+    //   width: 25%; /* 确保带有colspan的单元格自动调整宽度 */
+    // }
+    // th[colspan="1"],
+    // td[colspan="1"] {
+    //   width: 12.5%; /* 确保带有colspan的单元格自动调整宽度 */
+    // }
+    .noPadding {
+      padding: 0;
+    }
+  }
+}
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  .footerTips {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    margin-right: 20px;
+    .footerTextArea {
+      height: 40px;
+    }
+    h4 {
+      width: 48px;
+      margin: 0;
+    }
+  }
+  .footerSaveBtn {
+    width: 120px;
+  }
+  .footerForm {
+    width: 100%;
+    :global {
+      .ant-form-item {
+        margin-bottom: 0 !important;
+      }
+    }
+  }
 }

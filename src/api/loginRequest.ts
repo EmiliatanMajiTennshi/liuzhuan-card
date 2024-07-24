@@ -10,7 +10,6 @@ export const loginRequest = async (loginForm: FieldType) => {
   try {
     const res = await request.post("user/login", loginForm);
     const token = res?.data?.data;
-    console.log(res, 112);
 
     if (token) {
       setToken(token);

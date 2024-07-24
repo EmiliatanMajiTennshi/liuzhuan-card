@@ -1,4 +1,7 @@
+import { queryProcessByItemId } from "@/api";
+import { Modal } from "antd";
 import dayjs from "dayjs";
+import { sortBy } from "lodash";
 /**
  * 追溯单号 年月日+时间戳后八位
  * @returns
@@ -62,10 +65,52 @@ const transFormToPcs = (number: number | string, weight: number | string) => {
     parseFloat(number.toString()) / parseFloat(weight.toString())
   ).toFixed(2);
 };
+/**限制小数位数 */
+const limitDecimals = (value: string | number | undefined): string => {
+  // eslint-disable-next-line no-useless-escape
+  const reg = /^(\-)*(\d+)\.(\d\d).*$/;
+
+  if (typeof value === "string") {
+    return !isNaN(Number(value)) ? value.replace(reg, "$1$2.$3") : "";
+  } else if (typeof value === "number") {
+    return !isNaN(value) ? String(value).replace(reg, "$1$2.$3") : "";
+  } else {
+    return "";
+  }
+};
+/** 查看工艺 */
+const checkProcess = async (partNumber: string) => {
+  try {
+    const res = await queryProcessByItemId({
+      itemid: partNumber,
+    });
+    const processList = res?.data?.data;
+
+    Modal.info({
+      title: "工艺详情",
+      footer: null,
+      width: 400,
+      closable: true,
+      icon: null,
+
+      content: (
+        <div>
+          {sortBy(processList, "seq")?.map((item) => {
+            return <p>{`第${item?.seq}道工艺：${item?.processName}`}</p>;
+          })}
+        </div>
+      ),
+    });
+  } catch (err) {
+    console.log("error", err);
+  }
+};
 export {
   getTrackingNumber,
   getLZCardNumber,
   formatTime,
   transFormToKg,
   transFormToPcs,
+  limitDecimals,
+  checkProcess,
 };

@@ -28,8 +28,15 @@ import { querySupplementaryOrder } from "./querySupplementaryOrder";
 import { querySupplementaryOrderById } from "./querySupplementaryOrderById";
 import { queryTransferCard } from "./queryTransferCard";
 import { countProductType } from "./countProductType";
+import { clickTransferCard } from "./clickTransferCard";
+import { queryTestInfo } from "./queryTestInfo";
+import { queryOperationInfo } from "./queryOperationInfo";
+import { queryEquipmentInfo } from "./queryEquipmentInfo";
+import { insertSaveTransferCard } from "./insertSaveTransferCard";
+import { queryProcessByItemId } from "./queryProcessByItemId";
 export {
   countProductType,
+  clickTransferCard,
   deleteUsers,
   deleteRoleInfoByRoleId,
   deleteMenuById,
@@ -40,6 +47,7 @@ export {
   insertUser,
   insertRole,
   insertMenu,
+  insertSaveTransferCard,
   loginRequest,
   logoutRequest,
   registerRequest,
@@ -56,12 +64,17 @@ export {
   querySupplementaryOrder,
   querySupplementaryOrderById,
   queryTransferCard,
+  queryTestInfo,
+  queryOperationInfo,
+  queryEquipmentInfo,
+  queryProcessByItemId,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
 };
 const Apis = {
   countProductType,
+  clickTransferCard,
   deleteUsers,
   deleteRoleInfoByRoleId,
   deleteMenuById,
@@ -72,6 +85,7 @@ const Apis = {
   insertUser,
   insertRole,
   insertMenu,
+  insertSaveTransferCard,
   loginRequest,
   logoutRequest,
   registerRequest,
@@ -88,6 +102,10 @@ const Apis = {
   querySupplementaryOrder,
   querySupplementaryOrderById,
   queryTransferCard,
+  queryTestInfo,
+  queryOperationInfo,
+  queryEquipmentInfo,
+  queryProcessByItemId,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,

@@ -1,4 +1,5 @@
 export interface IData {
+  partNumber?: string;
   orderid?: string;
   itmid?: string;
   name?: string;
@@ -28,6 +29,11 @@ export interface IData {
     seq?: number;
     processName?: string;
   }[];
+  detailProcessesList?: {
+    hid?: number;
+    processName?: string;
+    traceabilityNumber: string;
+  }[];
   transferCardCode?: string;
   orderCode?: string;
   storeCode?: string;
@@ -40,6 +46,27 @@ export interface IData {
     alreaySendNumPCS?: string;
   };
   parseWeight?: string;
+  transferKg?: string;
+  transferPcs?: string;
+  productionKg?: string;
+  productionPcs?: string;
+  project1Item?: string;
+  project1Name?: string;
+  project2Item?: string;
+  project2Name?: string;
+  project3Item?: string;
+  project3Name?: string;
+  project4Item?: string;
+  project4Name?: string;
+  project5Item?: string;
+  project5Name?: string;
+  project6Item?: string;
+  project6Name?: string;
+  barCode?: string;
+  transferCard?: string;
+  materialPartNumber?: string;
+  id?: number;
+  remark?: string;
 }
 
 export interface IFormFields {

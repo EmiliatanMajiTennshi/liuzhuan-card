@@ -7,7 +7,8 @@ import { Button, DatePicker, Input, Modal, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 import { NavLink } from "react-router-dom";
 import { sortBy } from "lodash";
-import { formatTime } from "@/utils";
+import { checkProcess, formatTime } from "@/utils";
+import { queryProcessByItemId } from "@/api";
 
 const formConfig: (form: any) => IFormConfig = (form) => {
   return {
@@ -235,27 +236,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 type="primary"
                 size="small"
                 style={{ marginRight: 10 }}
-                onClick={async () => {
-                  Modal.info({
-                    title: "工艺详情",
-                    footer: null,
-                    width: 400,
-                    closable: true,
-                    icon: null,
-
-                    content: (
-                      <div>
-                        {sortBy(data, "seq")?.map((item) => {
-                          console.log(item, 12131);
-
-                          return (
-                            <p>{`第${item?.seq}道工艺：${item?.processName}`}</p>
-                          );
-                        })}
-                      </div>
-                    ),
-                  });
-                }}
+                onClick={() => checkProcess(record?.partNumber)}
               >
                 查看工艺
               </Button>

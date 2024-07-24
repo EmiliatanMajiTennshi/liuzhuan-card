@@ -9,17 +9,71 @@ import { FormInstance } from "antd";
 import { IData } from "./indexType";
 
 import styles from "./index.module.scss";
+import { useEffect, useState } from "react";
 
 interface IProps {
   data: IData;
   isKg: boolean;
   form: FormInstance<any>;
-  liuMaxKg: number;
-  liuMaxPCS: number;
+
   mainsize: any;
 }
 const OutsourcingForm = (props: IProps) => {
-  const { data, isKg, form, liuMaxKg, liuMaxPCS, mainsize } = props;
+  const { data, isKg, form, mainsize } = props;
+  // 最大流转数量
+  const [liuMaxKg, setLiuMaxKg] = useState(0);
+  const [liuMaxPCS, setLiuMaxPCS] = useState(0);
+  useEffect(() => {
+    // 二维码不手动设置值会出现奇怪的bug
+    form.setFieldValue("orderQRcode", data.orderid);
+    form.setFieldValue("traceabilityNumberQRcode", data.traceabilityNumber);
+    form.setFieldValue("rukuQRcode", data.itmid);
+    form.setFieldValue("lingliaoQRcode", data.mItmID);
+    form.setFieldValue(
+      "huancount",
+      data?.newsupcount && data?.parseWeight
+        ? isKg
+          ? transFormToPcs(data?.newsupcount, data?.parseWeight)
+          : transFormToKg(data?.newsupcount, data?.parseWeight)
+        : ""
+    );
+    form.setFieldValue("transferCardCode", data.transferCardCode);
+
+    // 给流转数量初始值 产量-已使用
+    if (isKg) {
+      if (data?.newsupcount && data?.parseWeight) {
+        const liucount = (
+          parseFloat(data?.newsupcount) -
+          parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
+        ).toFixed(2);
+        const liuhuancount = (
+          parseFloat(data?.newsupcount) / parseFloat(data?.parseWeight) -
+          parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
+        ).toFixed(2);
+
+        form.setFieldValue("liucount", liucount);
+        setLiuMaxKg(parseFloat(liucount));
+        setLiuMaxPCS(parseFloat(liuhuancount));
+        form.setFieldValue("liuhuancount", liuhuancount);
+      }
+    } else {
+      if (data?.newsupcount && data?.parseWeight) {
+        const liucount = (
+          parseFloat(data?.newsupcount) -
+          parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
+        ).toFixed(2);
+        const liuhuancount = (
+          parseFloat(data?.newsupcount) * parseFloat(data?.parseWeight) -
+          parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
+        ).toFixed(2);
+
+        setLiuMaxKg(parseFloat(liuhuancount));
+        setLiuMaxPCS(parseFloat(liucount));
+        form.setFieldValue("liucount", liucount);
+        form.setFieldValue("liuhuancount", liuhuancount);
+      }
+    }
+  }, [data]);
   return (
     <tbody>
       <tr>
@@ -95,12 +149,12 @@ const OutsourcingForm = (props: IProps) => {
         />
       </tr>
       <tr>
-        <ReadOnlyInput title="行号" name="U9LineNo" />
+        <ReadOnlyInput title="行号" name="u9LineNo" />
         <ReadOnlyInput title="图号" name="itmTEID" colSpan={5} />
       </tr>
       <tr>
         <ReadOnlyInput
-          title="供应/炉批号"
+          title="供方/炉批号"
           name="furnaceNum"
           colSpan={4}
           titleStyle={{ color: "red" }}

@@ -16,7 +16,7 @@ export interface ITableConfig {
   columns: ColumnsType<RecordType>;
   selectAble?: boolean;
   queryFlowCardApi?: TApi;
-  flowCardType?: "common" | "outsourcing";
+  flowCardType?: "common" | "outsourcing" | "flowCard" | "print";
 }
 
 /**
@@ -73,4 +73,5 @@ export interface ITableConfigProps {
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
   setIssueModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIssueID: React.Dispatch<React.SetStateAction<number>>;
+  setPrintModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }

@@ -1,7 +1,17 @@
-import { DatePicker, Form, Input, InputNumber, Select, Spin } from "antd";
+import {
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Spin,
+  Tooltip,
+} from "antd";
 import { useEffect } from "react";
 import QRCode from "qrcode.react";
 import styles from "./renderTableItems.module.scss";
+import { limitDecimals } from "./common";
+import { MyTooltip } from "@/components/MyTooltip";
 const RenderQRCode = ({
   title,
   name,
@@ -21,18 +31,20 @@ const RenderQRCode = ({
 }) => {
   // form.setFieldValue(name, value);
   const qrcode = (
-    <span style={{ textAlign: "center", margin: "0 5px" }} title={value}>
+    <div style={{ textAlign: "center", margin: "0 5px" }} title={value}>
       {title && <div>{title}</div>}
       <Form.Item name={name} style={{ marginBottom: 0 }}>
-        {value && <QRCode value={value} size={size || 72} />}
-        {!value && (
+        {value ? (
+          <QRCode value={value} size={size || 72} />
+        ) : (
           <Spin>
             <QRCode value="二维码努力生成中~" size={size || 72} />
           </Spin>
         )}
       </Form.Item>
-    </span>
+    </div>
   );
+
   return (
     <>
       {noTd && qrcode}
@@ -54,22 +66,26 @@ const ReadOnlyInput = ({
   defaultValue,
   colSpan,
   titleStyle,
+  tdStyle,
   labelColSpan,
   form,
+  style,
 }: {
   title: string;
   name: string;
-  defaultValue?: string;
+  defaultValue?: string; //穿了defaultValue 必须传form
   colSpan?: number;
   labelColSpan?: number;
+  style?: React.CSSProperties;
   titleStyle?: React.CSSProperties;
+  tdStyle?: React.CSSProperties;
   form?: any;
 }) => {
   useEffect(() => {
     if (form && defaultValue) {
       form.setFieldValue(name, defaultValue);
     }
-  }, [name]);
+  }, [defaultValue]);
   return (
     <>
       <th style={titleStyle} colSpan={labelColSpan}>
@@ -80,15 +96,18 @@ const ReadOnlyInput = ({
           styles["input-container-locked"],
           styles["input-container"],
         ].join(" ")}
+        style={tdStyle}
         colSpan={colSpan}
       >
         <Form.Item name={name}>
-          <Input
-            className={styles.input}
-            style={{ border: "none" }}
-            autoComplete="off"
-            readOnly
-          ></Input>
+          <MyTooltip>
+            <Input
+              className={styles.input}
+              style={{ ...style, border: "none" }}
+              autoComplete="off"
+              readOnly
+            ></Input>
+          </MyTooltip>
         </Form.Item>
       </td>
     </>
@@ -104,6 +123,7 @@ const EditAbleInput = ({
   isNumber,
   colSpan,
   max,
+  step,
 }: {
   title: string;
   name: string;
@@ -114,6 +134,7 @@ const EditAbleInput = ({
   isNumber?: boolean;
   colSpan?: number;
   max?: number;
+  step?: number;
 }) => {
   return (
     <>
@@ -129,6 +150,9 @@ const EditAbleInput = ({
               onBlur={onBlur}
               controls={false}
               max={max}
+              step={step}
+              formatter={limitDecimals}
+              parser={limitDecimals as any}
             ></InputNumber>
           ) : (
             <Input
@@ -152,6 +176,7 @@ const RenderSelect = ({
   labelColSpan,
   colSpan,
   placeholder,
+  onSelect,
 }: {
   title: string;
   name: string;
@@ -160,6 +185,7 @@ const RenderSelect = ({
   colSpan?: number;
   labelColSpan?: number;
   placeholder?: string;
+  onSelect?: any;
 }) => {
   return (
     <>
@@ -171,7 +197,11 @@ const RenderSelect = ({
         className={`${styles["input-container"]} ${styles["select-container"]}`}
       >
         <Form.Item name={name}>
-          <Select placeholder={placeholder} options={options}></Select>
+          <Select
+            placeholder={placeholder}
+            options={options}
+            onSelect={onSelect}
+          ></Select>
         </Form.Item>
       </td>
     </>

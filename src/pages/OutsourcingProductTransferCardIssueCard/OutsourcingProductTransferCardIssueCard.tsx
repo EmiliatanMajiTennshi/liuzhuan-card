@@ -121,27 +121,24 @@ const OutsourcingProductTransferCardIssueCard = (props: {
         const liucount =
           parseFloat(data?.newsupcount) -
           parseFloat(data?.alreadySend?.alreaySendNumKG || "0");
-        const liuhuancount = parseFloat(
-          (liucount / parseFloat(data?.parseWeight)).toFixed(2)
-        );
-        form.setFieldValue("liucount", liucount);
+        const liuhuancount = liucount / parseFloat(data?.parseWeight);
+
+        form.setFieldValue("liucount", liucount.toFixed(2));
         setLiuMaxKg(liucount);
         setLiuMaxPCS(liuhuancount);
-        form.setFieldValue("liuhuancount", liuhuancount);
+        form.setFieldValue("liuhuancount", liuhuancount.toFixed(2));
       }
     } else {
       if (data?.newsupcount && data?.parseWeight) {
         const liucount =
           parseFloat(data?.newsupcount) -
           parseFloat(data?.alreadySend?.alreaySendNumPCS || "0");
-        const liuhuancount = (liucount * parseFloat(data?.parseWeight)).toFixed(
-          2
-        );
+        const liuhuancount = liucount * parseFloat(data?.parseWeight);
 
-        setLiuMaxKg(parseFloat(liuhuancount));
+        setLiuMaxKg(liuhuancount);
         setLiuMaxPCS(liucount);
-        form.setFieldValue("liucount", liucount);
-        form.setFieldValue("liuhuancount", liuhuancount);
+        form.setFieldValue("liucount", liucount.toFixed(2));
+        form.setFieldValue("liuhuancount", liuhuancount.toFixed(2));
       }
     }
     form.setFieldValue("transferCardCode", data.transferCardCode);
@@ -439,12 +436,12 @@ const OutsourcingProductTransferCardIssueCard = (props: {
                   />
                 </tr>
                 <tr>
-                  <ReadOnlyInput title="行号" name="U9LineNo" />
+                  <ReadOnlyInput title="行号" name="u9LineNo" />
                   <ReadOnlyInput title="图号" name="itmTEID" colSpan={5} />
                 </tr>
                 <tr>
                   <ReadOnlyInput
-                    title="供应/炉批号"
+                    title="供方/炉批号"
                     name="furnaceNum"
                     colSpan={4}
                     titleStyle={{ color: "red" }}

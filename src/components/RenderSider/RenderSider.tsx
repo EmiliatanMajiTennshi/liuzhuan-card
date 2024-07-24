@@ -59,7 +59,7 @@ const RenderSider = () => {
     getMenu()
       .then((res: IRes) => {
         const _menu = res?.data?.data;
-        console.log(res, 1123, _menu);
+
         handleMenu(_menu);
       })
       .catch((e) => {

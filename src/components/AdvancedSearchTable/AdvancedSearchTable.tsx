@@ -28,15 +28,15 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   // 当前页码
   const [currentPage, setCurrentPage] = useState(1);
   // 页面大小
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   // 下发模态框
   const [issueModalOpen, setIssueModalOpen] = useState(false);
+  // 打印
+  const [printModalOpen, setPrintModalOpen] = useState(false);
   // 下发id
   const [issueID, setIssueID] = useState(0);
   // 窗口大小 用来监听窗口变化
-  const [screenW, setScreenW] = useState(
-    document.documentElement.clientWidth || document.body.clientWidth
-  );
+  const [screenW, setScreenW] = useState(0);
 
   const tableRef = useRef<any>(null);
 
@@ -49,6 +49,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     setRefreshFlag,
     setIssueModalOpen,
     setIssueID,
+    setPrintModalOpen,
   };
 
   const _tableConfig =
@@ -95,22 +96,22 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     fetchData();
   }, [api, searchParams, currentPage, pageSize, refreshFlag]);
 
-  // 用来修复antdTable fixed:right出现的对不齐bug
-  const handleWindowResize = () => {
-    setScreenW(
-      document.documentElement.clientWidth || document.body.clientWidth
-    );
-  };
+  // // 用来修复antdTable fixed:right出现的对不齐bug
+  // const handleWindowResize = () => {
+  //   setScreenW(
+  //     document.documentElement.clientWidth || document.body.clientWidth
+  //   );
+  // };
 
-  const throttleResize = throttle(handleWindowResize, 300);
-  useEffect(() => {
-    //组件渲染后添加
-    window.addEventListener("resize", throttleResize);
-    //组件卸载后移除
-    return () => {
-      window.removeEventListener("resize", throttleResize);
-    };
-  }, []);
+  // const throttleResize = throttle(handleWindowResize, 300);
+  // useEffect(() => {
+  //   //组件渲染后添加
+  //   window.addEventListener("resize", throttleResize);
+  //   //组件卸载后移除
+  //   return () => {
+  //     window.removeEventListener("resize", throttleResize);
+  //   };
+  // }, []);
 
   useEffect(() => {
     const parentNode = tableRef?.current?.parentNode;
@@ -128,6 +129,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
 
   useEffect(() => {
     setCurrentPage(1);
+    // handleWindowResize();
   }, [searchParams]);
 
   const onSelectChange = (...props: any) => {
@@ -185,13 +187,27 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           open={issueModalOpen}
           onCancel={() => setIssueModalOpen(false)}
           footer={null}
-          width={1400}
+          width={1600}
           className={styles.issueModal}
         >
           <ProductionProcessFlowCardAndDispatchList
             issueID={issueID}
             queryFlowCardApi={queryFlowCardApi}
             flowCardType={flowCardType}
+          />
+        </Modal>
+      )}
+      {printModalOpen && (
+        <Modal
+          open={printModalOpen}
+          onCancel={() => setPrintModalOpen(false)}
+          footer={null}
+          width={800}
+        >
+          <ProductionProcessFlowCardAndDispatchList
+            issueID={issueID}
+            queryFlowCardApi={queryFlowCardApi}
+            flowCardType="print"
           />
         </Modal>
       )}
