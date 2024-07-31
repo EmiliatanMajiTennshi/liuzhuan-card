@@ -1,4 +1,4 @@
-import React from "react";
+import React, { startTransition } from "react";
 import Logo from "@/assets/images/logo5.png";
 import { Header } from "antd/es/layout/layout";
 import { logoutRequest } from "@/api";
@@ -16,9 +16,11 @@ const RenderHeader = () => {
   // 路由
   const navigate = useNavigate();
   // 退出登录
-  const handleLogout = () => {
+  const handleLogout = async () => {
     logoutRequest();
-    navigate("/login");
+    await startTransition(() => {
+      navigate("/login");
+    });
   };
   // store
   const store = useRootStore();

@@ -7,7 +7,6 @@ import { DatePicker, Input } from "antd";
 import { RuleObject } from "antd/es/form";
 
 import { kgArr } from "@/constants";
-import { formatDate } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {

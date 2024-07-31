@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRoutes, Navigate } from "react-router-dom";
 import { AuthRoute } from "@/components/AuthRoute";
 import { IMenuItem } from "@/constants/constantsType";
 import { AnyObject } from "antd/es/_util/type";
 import { MENULIST } from "@/constants/constants";
+import { useRootStore } from "@/store";
+import { observer } from "mobx-react-lite";
 // import { Home } from "../../pages/Home";
 // import { Login } from "@/pages/Login";
 // import { AddPartFlowCard } from "@/pages/AddPartFlowCard";
@@ -310,7 +312,10 @@ const routeMap = [
     path: "/add_employee_info_chain",
     element: <AddEmployeeInfoChain />,
   },
-  { path: "/dashboard", element: <Dashboard /> },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+  },
   { path: "/user_manage", element: <UserManage /> },
   { path: "/role_manage", element: <RoleManage /> },
   { path: "/menu_manage", element: <MenuManage /> },
@@ -369,11 +374,14 @@ const routeMapObj = routeMap.reduce((acc: AnyObject, route) => {
 
 /** 路由组件*/
 const PrivateRoute = () => {
-  const menu = JSON.parse(localStorage.getItem(MENULIST) || "[]");
-
+  const menu = useRootStore().menu.menu || [];
+  let dashboardFlag = false;
   const childrenArr: IMenuItem[] = [];
   const findAllChildren = (menu: IMenuItem[]) => {
     menu.forEach((item) => {
+      if (item?.key === "/dashboard") {
+        dashboardFlag = true;
+      }
       if (routeMapObj[item.key]) {
         childrenArr.push(routeMapObj[item.key]);
       }
@@ -383,16 +391,20 @@ const PrivateRoute = () => {
     });
     return childrenArr;
   };
+
   const children = findAllChildren(menu) || [];
+  console.log(dashboardFlag, menu, 123);
+
   const routeConfig = [
     {
       path: "/login",
       element: <Login />,
     },
+
     {
       path: "/",
       element: (
-        <AuthRoute>
+        <AuthRoute dashboardFlag={dashboardFlag}>
           <Home />
         </AuthRoute>
       ),
@@ -414,4 +426,4 @@ const PrivateRoute = () => {
   return useRoutes(routeConfig);
 };
 
-export default PrivateRoute;
+export default observer(PrivateRoute);

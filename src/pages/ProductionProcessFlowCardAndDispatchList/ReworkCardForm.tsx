@@ -6,7 +6,7 @@ import {
   ReadOnlyInput,
   RenderSelect,
 } from "@/utils";
-import { FormInstance, Spin, message } from "antd";
+import { FormInstance, Spin } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import { debounce } from "lodash";
 import { useEffect } from "react";

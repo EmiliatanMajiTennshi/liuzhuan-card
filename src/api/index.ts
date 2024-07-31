@@ -53,8 +53,10 @@ import { updateReworkDetailById } from "./updateReworkDetailById";
 import { updateReworkInfoById } from "./updateReworkInfoById";
 import { insertSaveTransferCardDetail } from "./insertSaveTransferCardDetail";
 import { changeFurnacePlatformById } from "./changeFurnacePlatformById";
+import { countOrderCompletionStatus } from "./countOrderCompletionStatus";
 export {
   countProductType,
+  countOrderCompletionStatus,
   clickTransferCard,
   changeFurnacePlatformById,
   deleteUsers,
@@ -112,6 +114,7 @@ export {
 };
 const apis = {
   countProductType,
+  countOrderCompletionStatus,
   clickTransferCard,
   changeFurnacePlatformById,
   deleteUsers,

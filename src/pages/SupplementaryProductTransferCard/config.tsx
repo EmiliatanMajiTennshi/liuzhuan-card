@@ -5,7 +5,7 @@ import {
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
-import { checkProcess, formatDate } from "@/utils";
+import { checkProcess } from "@/utils";
 import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
 

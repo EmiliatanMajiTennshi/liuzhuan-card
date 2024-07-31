@@ -6,7 +6,7 @@ import {
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { checkProcess, formatDate } from "@/utils";
+import { checkProcess } from "@/utils";
 import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
 
@@ -169,9 +169,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "商标",
-        dataIndex: "trademark",
-        key: "trademark",
+        dataIndex: "pCodeList",
+        key: "pCodeList",
         width: 80,
+        render: (list) => {
+          return list?.[0]?.pCodde;
+        },
       },
       {
         title: "完成时间",

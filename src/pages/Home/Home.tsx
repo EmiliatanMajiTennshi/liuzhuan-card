@@ -8,15 +8,15 @@ import styles from "./index.module.scss";
 
 const { Content } = Layout;
 
-const Home: React.FC = () => {
+const Home = () => {
   return (
     <Layout className={styles["layout"]}>
       <RenderHeader />
       <Content className={styles["content"]}>
-        <RenderBreadCrumb />
         <Layout className={styles["sub-layout"]}>
           <RenderSider />
           <Content className={styles["sub-content"]}>
+            <RenderBreadCrumb />
             <Suspense fallback={<Skeleton active />}>
               <Outlet></Outlet>
             </Suspense>

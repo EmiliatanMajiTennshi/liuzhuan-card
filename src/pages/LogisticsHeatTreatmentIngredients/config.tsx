@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { RenderQRCode, formatDate } from "@/utils";
+import { RenderQRCode } from "@/utils";
 import {
   getHeatTreatmentFurnacePlatformsList,
   updateHeatTreatmentStatus,

@@ -1,18 +1,26 @@
 import { getUserInfo } from "@/api";
 import { useRootStore } from "@/store";
 
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { IAuthRoute, IRes } from "./AuthRouteType";
 import { useEffect, useState } from "react";
 import { Skeleton, message } from "antd";
 import { removeToken } from "@/utils";
 import { TOKEN_ERROR } from "@/constants";
 
-const AuthRoute = ({ children }: IAuthRoute) => {
+const AuthRoute = ({ dashboardFlag, children }: IAuthRoute) => {
+  console.log(dashboardFlag, 1241);
+
   const [allowLogin, setAllowLogin] = useState<boolean | null>(null);
   const store = useRootStore();
   const userStore = store.user;
   const setUserInfo = userStore.setUserInfo;
+
+  const navigate = useNavigate();
+
+  if (dashboardFlag && window.location.hash === "#/") {
+    navigate("/dashboard");
+  }
 
   useEffect(() => {
     getUserInfo()

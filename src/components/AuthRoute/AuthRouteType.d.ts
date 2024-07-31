@@ -1,5 +1,6 @@
 export interface IAuthRoute {
   children: ReactNode;
+  dashboardFlag: boolean;
 }
 
 export interface IUserInfo {

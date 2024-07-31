@@ -3,16 +3,14 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Select, Tag, message } from "antd";
+import { Button, DatePicker, Input, Select, message } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { formatDate } from "@/utils";
 import {
   changeFurnacePlatformById,
   getHeatTreatmentFurnacePlatformsList,
-  updateHeatTreatmentStatus,
 } from "@/api";
-import { ERROR_MESSAGE, kgArr } from "@/constants";
+import { kgArr } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
 import {
   DEFAULT_ORANGE,
@@ -20,7 +18,6 @@ import {
   UPDATE_FAILED,
   UPDATE_SUCCESS,
 } from "@/constants/constants";
-import { cloneDeep } from "lodash";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
