@@ -23,6 +23,7 @@ import { IInsertUser, IRole, ITableConfigProps } from "./UserManageType";
 import { ITableConfig } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { deleteUsers, insertUser, queryRole, updateUser } from "@/api";
 import { RuleObject } from "antd/es/form";
+import { ADD_SUCCESS, ERROR_MESSAGE } from "@/constants";
 
 type FieldType = {
   username: string;
@@ -217,13 +218,14 @@ const formConfig: IFormConfig = {
   formTitle: "操作",
   formExtend: true,
   buttons: (props: IButtons) => {
-    const { selectedRowKeys, setRefreshFlag } = props;
+    const { selectedRowKeys, setRefreshFlag, loading } = props;
 
     return [
       <Button
         type="primary"
         htmlType="submit"
         key="search"
+        loading={loading}
         style={{ marginRight: 5 }}
       >
         <SearchOutlined />
@@ -231,7 +233,7 @@ const formConfig: IFormConfig = {
       </Button>,
       <Popconfirm
         title="确认删除"
-        description="你确定要删除选中用户嘛"
+        description="你确定要删除选中用户吗"
         onConfirm={() => {
           deleteUsers(selectedRowKeys).then((res) => {
             setRefreshFlag((flag) => !flag);
@@ -255,6 +257,7 @@ const formConfig: IFormConfig = {
 
       <Button
         style={{ marginRight: 5 }}
+        type="dashed"
         onClick={async () => {
           const onCancel = () => {};
           const onFinish = (values: IInsertUser) => {
@@ -262,7 +265,7 @@ const formConfig: IFormConfig = {
             values.role = [values.role] as unknown as string[];
             insertUser(values).then((res) => {
               if (res?.data?.code === 200) {
-                message.success("添加新用户成功");
+                message.success(res?.data?.data || ADD_SUCCESS);
                 setRefreshFlag((flag) => !flag);
               } else {
                 message.error(res?.response?.data?.msg || res?.data?.msg);
@@ -273,7 +276,7 @@ const formConfig: IFormConfig = {
           // 获取所有角色
           const roles = res?.data?.data;
           if (!roles) {
-            message.error("无法连接到服务器");
+            message.error(ERROR_MESSAGE);
           }
           Modal.info(
             getModalConfig({ onCancel, onFinish, roles, isInsert: true })
@@ -386,7 +389,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 // 获取所有角色
                 const roles = res?.data?.data;
                 if (!roles) {
-                  message.error("无法连接到服务器");
+                  message.error(ERROR_MESSAGE);
                   setSearchedData((prevData: any[]) =>
                     prevData.map((item) =>
                       item.id === record.id ? { ...item, loading: false } : item
@@ -406,7 +409,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                       setRefreshFlag((flag) => !flag);
                       modal.destroy();
                     } else {
-                      message.error("更新失败，连接超时");
+                      message.error(ERROR_MESSAGE);
                     }
                   });
                 };

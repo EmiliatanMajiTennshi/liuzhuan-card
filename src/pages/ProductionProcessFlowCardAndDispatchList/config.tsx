@@ -4,12 +4,13 @@ import {
   Button,
   DatePicker,
   FormInstance,
+  Input,
   InputNumber,
+  Popconfirm,
   Select,
-  message,
 } from "antd";
 import {
-  insertSaveTransferCard,
+  TApi,
   queryEquipmentInfo,
   queryOperationInfo,
   queryTestInfo,
@@ -19,30 +20,29 @@ import { AnyObject } from "antd/es/_util/type";
 import { cloneDeep } from "lodash";
 import dayjs from "dayjs";
 
+import { formatTime, handleSave, validateField } from "@/utils";
+import { SUCCESS_CODE } from "@/constants";
+
 export const getTableColumns = ({
   flowCardType,
   options,
   setOptions,
-  currentInspector,
-  setCurrentInspector,
-  currentOperator,
-  setCurrentOperator,
-  currentEquipment,
-  setCurrentEquipment,
   errors,
   setErrors,
+  tableData,
+  setTableData,
+  queryFlowCardApi,
+  data,
 }: {
   flowCardType: ITableConfig["flowCardType"];
   options: AnyObject;
   setOptions: React.Dispatch<React.SetStateAction<AnyObject>>;
-  currentInspector: AnyObject[];
-  setCurrentInspector: React.Dispatch<React.SetStateAction<AnyObject[]>>;
-  currentOperator: AnyObject[];
-  setCurrentOperator: React.Dispatch<React.SetStateAction<AnyObject[]>>;
-  currentEquipment: AnyObject[];
-  setCurrentEquipment: React.Dispatch<React.SetStateAction<AnyObject[]>>;
-  errors: AnyObject;
-  setErrors: React.Dispatch<React.SetStateAction<AnyObject>>;
+  errors: any;
+  setErrors: React.Dispatch<React.SetStateAction<any>>;
+  tableData: any[];
+  setTableData: React.Dispatch<React.SetStateAction<any[]>>;
+  queryFlowCardApi?: TApi;
+  data?: IData;
 }) => {
   // 防抖
   // 检验员
@@ -50,7 +50,7 @@ export const getTableColumns = ({
     try {
       setOptions({ ...options, inspectorOptionsLoading: true });
       const res = await queryTestInfo({ id: e });
-      if (res?.data?.code === 20000) {
+      if (res?.data?.code === SUCCESS_CODE) {
         const inspectorData = res?.data?.data || [];
         const _options = {
           ...options,
@@ -67,7 +67,7 @@ export const getTableColumns = ({
     try {
       setOptions({ ...options, inspectorOptionsLoading: true });
       const res = await queryTestInfo({ name: e });
-      if (res?.data?.code === 20000) {
+      if (res?.data?.code === SUCCESS_CODE) {
         const inspectorData = res?.data?.data || [];
         const _options = {
           ...options,
@@ -85,7 +85,7 @@ export const getTableColumns = ({
     try {
       setOptions({ ...options, operatorOptionsLoading: true });
       const res = await queryOperationInfo({ id: e });
-      if (res?.data?.code === 20000) {
+      if (res?.data?.code === SUCCESS_CODE) {
         const operatorData = res?.data?.data || [];
         const _options = {
           ...options,
@@ -102,7 +102,7 @@ export const getTableColumns = ({
     try {
       setOptions({ ...options, operatorOptionsLoading: true });
       const res = await queryOperationInfo({ name: e });
-      if (res?.data?.code === 20000) {
+      if (res?.data?.code === SUCCESS_CODE) {
         const operatorData = res?.data?.data || [];
         const _options = {
           ...options,
@@ -120,7 +120,7 @@ export const getTableColumns = ({
     try {
       setOptions({ ...options, equipmentOptionsLoading: true });
       const res = await queryEquipmentInfo({ id: e });
-      if (res?.data?.code === 20000) {
+      if (res?.data?.code === SUCCESS_CODE) {
         const equipmentData = res?.data?.data || [];
         const _options = {
           ...options,
@@ -137,7 +137,7 @@ export const getTableColumns = ({
     try {
       setOptions({ ...options, equipmentOptionsLoading: true });
       const res = await queryEquipmentInfo({ name: e });
-      if (res?.data?.code === 20000) {
+      if (res?.data?.code === SUCCESS_CODE) {
         const equipmentData = res?.data?.data || [];
         const _options = {
           ...options,
@@ -150,41 +150,7 @@ export const getTableColumns = ({
       console.log(err);
     }
   }, 500);
-  // 校验
-  const validateField = (field: string, value: string | number | null) => {
-    if (!value && value !== 0) {
-      return `请输入${field}`;
-    }
-    return "";
-  };
-  // 保存时手动校验
-  const handleSave = ({ record, columns, index }: any) => {
-    const newErrors: AnyObject = {};
 
-    columns.forEach((item: any) => {
-      if (item.needValidate) {
-        const error = validateField(item.title, record[item.key]);
-        if (error) {
-          newErrors[item.key] = {
-            ...errors?.[item.key],
-            [index]: error,
-          };
-        }
-      }
-    });
-
-    setErrors({ ...errors, ...newErrors });
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Record saved:", record);
-      insertSaveTransferCard({ ...record, hunit: "公斤" }).then((res) => {
-        if (res?.data?.code === 20000) {
-          message.success(res?.data?.data);
-        }
-      });
-    } else {
-      message.error("请修正表单中的错误");
-    }
-  };
   const columns = {
     common: [
       {
@@ -316,24 +282,28 @@ export const getTableColumns = ({
                 defaultValue={text}
                 onSelect={(e) => {
                   record.inspectionLevel = e;
-                  setErrors({
-                    ...errors,
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
 
-                    inspectionLevel: {
-                      ...errors?.inspectionLevel,
-                      [index]: validateField("检验等级", e),
-                    },
-                  });
+                  cloneErrors[index].inspectionLevel = validateField(
+                    "检验等级",
+                    e
+                  );
+                  setErrors(cloneErrors);
                 }}
                 onClear={() => {
                   delete record.inspectionLevel;
-                  setErrors({
-                    ...errors,
-                    inspectionLevel: {
-                      ...errors?.inspectionLevel,
-                      [index]: validateField("检验等级", ""),
-                    },
-                  });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].inspectionLevel = validateField(
+                    "检验等级",
+                    ""
+                  );
+                  setErrors(cloneErrors);
                 }}
                 options={[
                   { value: "A+", label: "A+", key: "A+" },
@@ -343,9 +313,9 @@ export const getTableColumns = ({
                   { value: "D", label: "D", key: "D" },
                 ]}
               ></Select>
-              {errors["inspectionLevel"]?.[index] && (
+              {errors[index]?.inspectionLevel && (
                 <span style={{ color: "red" }}>
-                  {errors["inspectionLevel"]?.[index]}
+                  {errors[index]?.inspectionLevel}
                 </span>
               )}
             </>
@@ -365,29 +335,21 @@ export const getTableColumns = ({
                 placeholder="查询条码"
                 allowClear
                 style={{ width: "100%" }}
-                defaultValue={text}
-                value={currentInspector?.[index]?.testId}
+                value={text}
                 loading={options?.inspectorOptionsLoading}
                 onClear={() => {
-                  const _currentInspector = cloneDeep(currentInspector);
-                  _currentInspector[index] = {
-                    testName: "",
-                    testId: "",
-                  };
-                  setCurrentInspector(_currentInspector);
                   delete record.verifierBarcode;
                   delete record.verifierName;
-                  setErrors({
-                    ...errors,
-                    verifierName: {
-                      ...errors?.verifierName,
-                      [index]: validateField("检验员", ""),
-                    },
-                    verifierBarcode: {
-                      ...errors?.verifierBarcode,
-                      [index]: validateField("检验员条码", ""),
-                    },
-                  });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].verifierBarcode = validateField(
+                    "检验员条码",
+                    ""
+                  );
+                  cloneErrors[index].verifierName = validateField("检验员", "");
+                  setErrors(cloneErrors);
                 }}
                 onSelect={(e) => {
                   record.verifierBarcode = e;
@@ -396,32 +358,23 @@ export const getTableColumns = ({
                       return item.testId === e;
                     }
                   );
-                  if (itemIndex !== -1) {
-                    const _currentInspector = cloneDeep(currentInspector);
-                    _currentInspector[index] =
-                      options?.inspectorOptions[itemIndex];
-                    record.verifierName = _currentInspector?.[index]?.testName;
-                    setCurrentInspector(_currentInspector);
-                    setErrors({
-                      ...errors,
-                      verifierName: {
-                        ...errors?.verifierName,
-                        [index]: validateField("检验员", record.verifierName),
-                      },
-                      verifierBarcode: {
-                        ...errors?.verifierBarcode,
-                        [index]: validateField("检验员条码", e),
-                      },
-                    });
-                  } else {
-                    setErrors({
-                      ...errors,
-                      verifierBarcode: {
-                        ...errors?.verifierBarcode,
-                        [index]: validateField("检验员条码", e),
-                      },
-                    });
+                  record.verifierName =
+                    options?.inspectorOptions?.[itemIndex]?.testName;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
                   }
+                  cloneErrors[index].verifierBarcode = validateField(
+                    "检验员条码",
+                    e
+                  );
+                  if (itemIndex !== -1) {
+                    cloneErrors[index].verifierName = validateField(
+                      "检验员",
+                      record.verifierName
+                    );
+                  }
+                  setErrors(cloneErrors);
                 }}
                 showSearch
                 onSearch={(e) => {
@@ -438,9 +391,9 @@ export const getTableColumns = ({
                   }
                 )}
               </Select>
-              {errors["verifierBarcode"]?.[index] && (
+              {errors[index]?.verifierBarcode && (
                 <span style={{ color: "red" }}>
-                  {errors["verifierBarcode"]?.[index]}
+                  {errors[index]?.verifierBarcode}
                 </span>
               )}
             </>
@@ -459,30 +412,22 @@ export const getTableColumns = ({
               <Select
                 allowClear
                 placeholder="查询姓名"
-                defaultValue={text}
+                value={text}
                 style={{ width: "100%" }}
                 onClear={() => {
-                  const _currentInspector = cloneDeep(currentInspector);
-                  _currentInspector[index] = {
-                    testName: "",
-                    testId: "",
-                  };
-                  setCurrentInspector(_currentInspector);
                   delete record.verifierBarcode;
                   delete record.verifierName;
-                  setErrors({
-                    ...errors,
-                    verifierName: {
-                      ...errors?.verifierName,
-                      [index]: validateField("检验员", ""),
-                    },
-                    verifierBarcode: {
-                      ...errors?.verifierBarcode,
-                      [index]: validateField("检验员条码", ""),
-                    },
-                  });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].verifierBarcode = validateField(
+                    "检验员条码",
+                    ""
+                  );
+                  cloneErrors[index].verifierName = validateField("检验员", "");
+                  setErrors(cloneErrors);
                 }}
-                value={currentInspector?.[index]?.testName}
                 onSelect={(e, a) => {
                   record.verifierName = e;
                   const itemIndex = options?.inspectorOptions?.findIndex(
@@ -490,35 +435,21 @@ export const getTableColumns = ({
                       return item.testName === e;
                     }
                   );
-                  if (itemIndex !== -1) {
-                    const _currentInspector = cloneDeep(currentInspector);
-                    _currentInspector[index] =
-                      options?.inspectorOptions[itemIndex];
-                    record.verifierBarcode = _currentInspector?.[index]?.testId;
-                    setCurrentInspector(_currentInspector);
-                    setErrors({
-                      ...errors,
-                      verifierName: {
-                        ...errors?.verifierName,
-                        [index]: validateField("检验员", e),
-                      },
-                      verifierBarcode: {
-                        ...errors?.verifierBarcode,
-                        [index]: validateField(
-                          "检验员条码",
-                          record.verifierBarcode
-                        ),
-                      },
-                    });
-                  } else {
-                    setErrors({
-                      ...errors,
-                      verifierName: {
-                        ...errors?.verifierName,
-                        [index]: validateField("检验员", e),
-                      },
-                    });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
                   }
+                  cloneErrors[index].verifierName = validateField("检验员", e);
+                  if (itemIndex !== -1) {
+                    record.verifierBarcode =
+                      options?.inspectorOptions[itemIndex].testId;
+
+                    cloneErrors[index].verifierBarcode = validateField(
+                      "检验员条码",
+                      record.verifierBarcode
+                    );
+                  }
+                  setErrors(cloneErrors);
                 }}
                 showSearch
                 onSearch={(e) => {
@@ -535,9 +466,9 @@ export const getTableColumns = ({
                   }
                 )}
               </Select>
-              {errors["verifierName"]?.[index] && (
+              {errors[index]?.verifierName && (
                 <span style={{ color: "red" }}>
-                  {errors["verifierName"]?.[index]}
+                  {errors[index]?.verifierName}
                 </span>
               )}
             </>
@@ -556,30 +487,22 @@ export const getTableColumns = ({
               <Select
                 placeholder="查询条码"
                 allowClear
-                defaultValue={text}
                 style={{ width: "100%" }}
-                value={currentOperator?.[index]?.operationId}
+                value={text}
                 loading={options?.operatorOptionsLoading}
                 onClear={() => {
-                  const _currentOperator = cloneDeep(currentOperator);
-                  _currentOperator[index] = {
-                    operationName: "",
-                    operationId: "",
-                  };
-                  setCurrentOperator(_currentOperator);
                   delete record.operatorBarcode;
                   delete record.operatorName;
-                  setErrors({
-                    ...errors,
-                    operatorName: {
-                      ...errors?.operatorName,
-                      [index]: validateField("操作工", ""),
-                    },
-                    operatorBarcode: {
-                      ...errors?.Barcode,
-                      [index]: validateField("操作工条码", ""),
-                    },
-                  });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].operatorBarcode = validateField(
+                    "操作工条码",
+                    ""
+                  );
+                  cloneErrors[index].operatorName = validateField("操作工", "");
+                  setErrors(cloneErrors);
                 }}
                 onSelect={(e) => {
                   record.operatorBarcode = e;
@@ -588,33 +511,24 @@ export const getTableColumns = ({
                       return item.operationId === e;
                     }
                   );
-                  if (itemIndex !== -1) {
-                    const _currentOperator = cloneDeep(currentOperator);
-                    _currentOperator[index] =
-                      options?.operatorOptions[itemIndex];
-                    record.operatorName =
-                      _currentOperator?.[index]?.operationName;
-                    setCurrentOperator(_currentOperator);
-                    setErrors({
-                      ...errors,
-                      operatorName: {
-                        ...errors?.operatorName,
-                        [index]: validateField("操作工", record.operatorName),
-                      },
-                      operatorBarcode: {
-                        ...errors?.Barcode,
-                        [index]: validateField("操作工条码", e),
-                      },
-                    });
-                  } else {
-                    setErrors({
-                      ...errors,
-                      operatorBarcode: {
-                        ...errors?.Barcode,
-                        [index]: validateField("操作工条码", e),
-                      },
-                    });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
                   }
+                  cloneErrors[index].operatorBarcode = validateField(
+                    "操作工条码",
+                    e
+                  );
+
+                  if (itemIndex !== -1) {
+                    record.operatorName =
+                      options?.operatorOptions[itemIndex].operationName;
+                    cloneErrors[index].operatorName = validateField(
+                      "操作工",
+                      e
+                    );
+                  }
+                  setErrors(cloneErrors);
                 }}
                 showSearch
                 onSearch={(e) => {
@@ -634,9 +548,9 @@ export const getTableColumns = ({
                   }
                 )}
               </Select>
-              {errors["operatorBarcode"]?.[index] && (
+              {errors[index]?.operatorBarcode && (
                 <span style={{ color: "red" }}>
-                  {errors["operatorBarcode"]?.[index]}
+                  {errors[index]?.operatorBarcode}
                 </span>
               )}
             </>
@@ -653,32 +567,24 @@ export const getTableColumns = ({
           return (
             <>
               <Select
-                defaultValue={text}
                 placeholder="查询姓名"
                 allowClear
                 style={{ width: "100%" }}
-                value={currentOperator?.[index]?.operationName}
+                value={text}
                 loading={options?.operatorOptionsLoading}
                 onClear={() => {
-                  const _currentOperator = cloneDeep(currentOperator);
-                  _currentOperator[index] = {
-                    operatorName: "",
-                    operationId: "",
-                  };
-                  setCurrentOperator(_currentOperator);
                   delete record.operatorName;
                   delete record.operatorBarcode;
-                  setErrors({
-                    ...errors,
-                    operatorName: {
-                      ...errors?.operatorName,
-                      [index]: validateField("操作工", ""),
-                    },
-                    operatorBarcode: {
-                      ...errors?.Barcode,
-                      [index]: validateField("操作工条码", ""),
-                    },
-                  });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].operatorBarcode = validateField(
+                    "操作工条码",
+                    ""
+                  );
+                  cloneErrors[index].operatorName = validateField("操作工", "");
+                  setErrors(cloneErrors);
                 }}
                 onSelect={(e) => {
                   record.operatorName = e;
@@ -687,36 +593,22 @@ export const getTableColumns = ({
                       return item.operationName === e;
                     }
                   );
-                  if (itemIndex !== -1) {
-                    const _currentOperator = cloneDeep(currentOperator);
-                    _currentOperator[index] =
-                      options?.operatorOptions[itemIndex];
-                    record.operatorBarcode =
-                      _currentOperator?.[index]?.operationId;
-                    setCurrentOperator(_currentOperator);
-                    setErrors({
-                      ...errors,
-                      operatorName: {
-                        ...errors?.operatorName,
-                        [index]: validateField("操作工", e),
-                      },
-                      operatorBarcode: {
-                        ...errors?.Barcode,
-                        [index]: validateField(
-                          "操作工条码",
-                          record.operatorBarcode
-                        ),
-                      },
-                    });
-                  } else {
-                    setErrors({
-                      ...errors,
-                      operatorName: {
-                        ...errors?.operatorName,
-                        [index]: validateField("操作工", e),
-                      },
-                    });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
                   }
+
+                  cloneErrors[index].operatorName = validateField("操作工", e);
+
+                  if (itemIndex !== -1) {
+                    record.operatorBarcode =
+                      options?.operatorOptions[itemIndex].operationId;
+                    cloneErrors[index].operatorBarcode = validateField(
+                      "操作工条码",
+                      record.operatorBarcode
+                    );
+                  }
+                  setErrors(cloneErrors);
                 }}
                 showSearch
                 onSearch={(e) => {
@@ -736,9 +628,9 @@ export const getTableColumns = ({
                   }
                 )}
               </Select>
-              {errors["operatorName"]?.[index] && (
+              {errors[index]?.operatorName && (
                 <span style={{ color: "red" }}>
-                  {errors["operatorName"]?.[index]}
+                  {errors[index]?.operatorName}
                 </span>
               )}
             </>
@@ -755,26 +647,25 @@ export const getTableColumns = ({
           return (
             <>
               <DatePicker
-                defaultValue={text ? dayjs(text) : null}
                 showTime
+                value={text ? dayjs(text) : null}
                 onChange={(e, date) => {
-                  setErrors({
-                    ...errors,
-                    finishTime: {
-                      ...errors?.finishTime,
-                      [index]: validateField("完成日期", date as string),
-                    },
-                  });
-                  if (date === "") {
-                    delete record.finishTime;
-                    return;
-                  }
                   record.finishTime = date;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].finishTime = validateField(
+                    "完成日期",
+                    date as string
+                  );
+
+                  setErrors(cloneErrors);
                 }}
               />
-              {errors["finishTime"]?.[index] && (
+              {errors[index]?.finishTime && (
                 <span style={{ color: "red" }}>
-                  {errors["finishTime"]?.[index]}
+                  {errors[index]?.finishTime}
                 </span>
               )}
             </>
@@ -794,29 +685,24 @@ export const getTableColumns = ({
                 placeholder="查询条码"
                 allowClear
                 style={{ width: "100%" }}
-                defaultValue={text}
-                value={currentEquipment?.[index]?.equipmentId}
+                value={text}
                 loading={options?.equipmentOptionsLoading}
                 onClear={() => {
-                  const _currentEquipment = cloneDeep(currentEquipment);
-                  _currentEquipment[index] = {
-                    equipmentName: "",
-                    equipmentId: "",
-                  };
-                  setCurrentEquipment(_currentEquipment);
                   delete record.equipmentBarcode;
                   delete record.equipmentName;
-                  setErrors({
-                    ...errors,
-                    equipmentBarcode: {
-                      ...errors?.equipmentBarcode,
-                      [index]: validateField("设备条码", ""),
-                    },
-                    equipmentName: {
-                      ...errors.equipmentName,
-                      [index]: validateField("设备名称", ""),
-                    },
-                  });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].equipmentBarcode = validateField(
+                    "设备条码",
+                    ""
+                  );
+                  cloneErrors[index].equipmentName = validateField(
+                    "设备名称",
+                    ""
+                  );
+                  setErrors(cloneErrors);
                 }}
                 onSelect={(e) => {
                   record.equipmentBarcode = e;
@@ -825,36 +711,24 @@ export const getTableColumns = ({
                       return item.equipmentId === e;
                     }
                   );
-                  if (itemIndex !== -1) {
-                    const _currentEquipment = cloneDeep(currentEquipment);
-                    _currentEquipment[index] =
-                      options?.equipmentOptions[itemIndex];
-                    record.equipmentName =
-                      _currentEquipment?.[index]?.equipmentName;
-                    setCurrentEquipment(_currentEquipment);
-                    setErrors({
-                      ...errors,
-                      equipmentBarcode: {
-                        ...errors?.equipmentBarcode,
-                        [index]: validateField("设备条码", e),
-                      },
-                      equipmentName: {
-                        ...errors.equipmentName,
-                        [index]: validateField(
-                          "设备名称",
-                          record.equipmentName
-                        ),
-                      },
-                    });
-                  } else {
-                    setErrors({
-                      ...errors,
-                      equipmentBarcode: {
-                        ...errors?.equipmentBarcode,
-                        [index]: validateField("设备条码", e),
-                      },
-                    });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
                   }
+                  cloneErrors[index].equipmentBarcode = validateField(
+                    "设备条码",
+                    e
+                  );
+
+                  if (itemIndex !== -1) {
+                    record.equipmentName =
+                      options?.equipmentOptions[itemIndex]?.equipmentName;
+                    cloneErrors[index].equipmentName = validateField(
+                      "设备名称",
+                      record.equipmentName
+                    );
+                  }
+                  setErrors(cloneErrors);
                 }}
                 showSearch
                 onSearch={(e) => {
@@ -874,9 +748,9 @@ export const getTableColumns = ({
                   }
                 )}
               </Select>
-              {errors["equipmentBarcode"]?.[index] && (
+              {errors[index]?.equipmentBarcode && (
                 <span style={{ color: "red" }}>
-                  {errors["equipmentBarcode"]?.[index]}
+                  {errors[index]?.equipmentBarcode}
                 </span>
               )}
             </>
@@ -896,69 +770,51 @@ export const getTableColumns = ({
                 placeholder="查询名称"
                 allowClear
                 style={{ width: "100%" }}
-                defaultValue={text}
-                value={currentEquipment?.[index]?.equipmentName}
+                value={text}
                 loading={options?.equipmentOptionsLoading}
                 onClear={() => {
-                  const _currentEquipment = cloneDeep(currentEquipment);
-                  _currentEquipment[index] = {
-                    equipmentName: "",
-                    equipmentId: "",
-                  };
-                  setCurrentEquipment(_currentEquipment);
                   delete record.equipmentBarcode;
                   delete record.equipmentName;
-
-                  setErrors({
-                    ...errors,
-                    equipmentName: {
-                      ...errors.equipmentName,
-                      [index]: validateField("设备名称", ""),
-                    },
-                    equipmentBarcode: {
-                      ...errors?.equipmentBarcode,
-                      [index]: validateField("设备条码", ""),
-                    },
-                  });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].equipmentBarcode = validateField(
+                    "设备条码",
+                    ""
+                  );
+                  cloneErrors[index].equipmentName = validateField(
+                    "设备名称",
+                    ""
+                  );
+                  setErrors(cloneErrors);
                 }}
                 onSelect={(e: string, _record: any) => {
-                  record.equipmentName = _record.children;
-
+                  record.equipmentName = e;
                   const itemIndex = options?.equipmentOptions?.findIndex(
                     (item: { equipmentId: string; equipmentName: string }) => {
                       return item.equipmentId === _record?.key;
                     }
                   );
-                  if (itemIndex !== -1) {
-                    const _currentEquipment = cloneDeep(currentEquipment);
-                    _currentEquipment[index] =
-                      options?.equipmentOptions[itemIndex];
-                    record.equipmentBarcode =
-                      _currentEquipment?.[index]?.equipmentId;
-                    setCurrentEquipment(_currentEquipment);
-                    setErrors({
-                      ...errors,
-                      equipmentName: {
-                        ...errors?.equipmentName,
-                        [index]: validateField("设备名称", e),
-                      },
-                      equipmentBarcode: {
-                        ...errors?.equipmentBarcode,
-                        [index]: validateField(
-                          "设备条码",
-                          record.equipmentBarcode
-                        ),
-                      },
-                    });
-                  } else {
-                    setErrors({
-                      ...errors,
-                      equipmentName: {
-                        ...errors?.equipmentName,
-                        [index]: validateField("设备名称", e),
-                      },
-                    });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
                   }
+
+                  cloneErrors[index].equipmentName = validateField(
+                    "设备名称",
+                    e
+                  );
+                  setErrors(cloneErrors);
+                  if (itemIndex !== -1) {
+                    record.equipmentBarcode =
+                      options?.equipmentOptions[itemIndex]?.equipmentId;
+                    cloneErrors[index].equipmentBarcode = validateField(
+                      "设备条码",
+                      record.equipmentBarcode
+                    );
+                  }
+                  setErrors(cloneErrors);
                 }}
                 showSearch
                 onSearch={(e) => {
@@ -978,9 +834,9 @@ export const getTableColumns = ({
                   }
                 )}
               </Select>
-              {errors["equipmentName"]?.[index] && (
+              {errors[index]?.equipmentName && (
                 <span style={{ color: "red" }}>
-                  {errors["equipmentName"]?.[index]}
+                  {errors[index]?.equipmentName}
                 </span>
               )}
             </>
@@ -991,28 +847,28 @@ export const getTableColumns = ({
         title: "产量(公斤)",
         dataIndex: "produceNumber",
         key: "produceNumber",
-        width: 80,
+        width: 120,
         needValidate: true,
         render: (text: string, record: any, index: number) => {
           return (
             <>
               <InputNumber
-                defaultValue={text}
+                placeholder="请输入产量"
+                value={text}
                 controls={false}
                 onChange={(e) => {
                   record.produceNumber = e;
-                  setErrors({
-                    ...errors,
-                    produceNumber: {
-                      ...errors?.produceNumber,
-                      [index]: validateField("产量", e),
-                    },
-                  });
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].produceNumber = validateField("产量", e);
+                  setErrors(cloneErrors);
                 }}
               ></InputNumber>
-              {errors?.["produceNumber"]?.[index] && (
+              {errors[index]?.produceNumber && (
                 <span style={{ color: "red" }}>
-                  {errors?.["produceNumber"]?.[index]}
+                  {errors[index]?.produceNumber}
                 </span>
               )}
             </>
@@ -1030,7 +886,14 @@ export const getTableColumns = ({
               type="primary"
               size="middle"
               onClick={() => {
-                handleSave({ record, columns: columns.flowCard, index });
+                handleSave({
+                  record,
+                  columns: columns.flowCard,
+                  index,
+                  errors,
+                  setErrors,
+                  data,
+                });
               }}
             >
               保存
@@ -1040,6 +903,704 @@ export const getTableColumns = ({
       },
     ],
     print: [],
+    rework: [
+      {
+        title: "工序",
+        dataIndex: "processName",
+        key: "processName",
+        width: 140,
+        needValidate: true,
+        render: (text: string, record: any, index: number) => {
+          return queryFlowCardApi === "queryQR" ? (
+            <>
+              <Input
+                style={{ width: "100%" }}
+                value={text}
+                placeholder="请输入工序"
+                onChange={(e) => {
+                  record.processName = e?.target?.value;
+
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].processName = validateField(
+                    "工序",
+                    e?.target?.value
+                  );
+                  setErrors(cloneErrors);
+                }}
+              ></Input>
+              {errors[index]?.processName && (
+                <span style={{ color: "red" }}>
+                  {errors[index]?.processName}
+                </span>
+              )}
+            </>
+          ) : (
+            text
+          );
+        },
+      },
+
+      {
+        title: "检验等级",
+        dataIndex: "inspectionLevel",
+        key: "inspectionLevel",
+        width: 140,
+        needValidate: true,
+        render: (text: any, record: any, index: number) => {
+          return (
+            <>
+              <Select
+                placeholder="选择等级"
+                allowClear
+                style={{ width: "100%" }}
+                value={text}
+                onSelect={(e) => {
+                  record.inspectionLevel = e;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+
+                  cloneErrors[index].inspectionLevel = validateField(
+                    "检验等级",
+                    e
+                  );
+                  setErrors(cloneErrors);
+                }}
+                onClear={() => {
+                  delete record.inspectionLevel;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].inspectionLevel = validateField(
+                    "检验等级",
+                    ""
+                  );
+                  setErrors(cloneErrors);
+                }}
+                options={[
+                  { value: "A+", label: "A+", key: "A+" },
+                  { value: "A", label: "A", key: "A" },
+                  { value: "B", label: "B", key: "B" },
+                  { value: "C", label: "C", key: "C" },
+                  { value: "D", label: "D", key: "D" },
+                ]}
+              ></Select>
+              {errors[index]?.inspectionLevel && (
+                <span style={{ color: "red" }}>
+                  {errors[index]?.inspectionLevel}
+                </span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "检验员条码",
+        dataIndex: "verifierBarcode",
+        key: "verifierBarcode",
+        width: 160,
+        needValidate: true,
+        render: (text: any, record: any, index: number) => {
+          return (
+            <>
+              <Select
+                placeholder="查询条码"
+                allowClear
+                style={{ width: "100%" }}
+                value={text}
+                loading={options?.inspectorOptionsLoading}
+                onClear={() => {
+                  delete record.verifierBarcode;
+                  delete record.verifierName;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].verifierBarcode = validateField(
+                    "检验员条码",
+                    ""
+                  );
+                  cloneErrors[index].verifierName = validateField("检验员", "");
+                  setErrors(cloneErrors);
+                }}
+                onSelect={(e) => {
+                  record.verifierBarcode = e;
+                  const itemIndex = options?.inspectorOptions?.findIndex(
+                    (item: { testId: string; testName: string }) => {
+                      return item.testId === e;
+                    }
+                  );
+                  record.verifierName =
+                    options?.inspectorOptions?.[itemIndex]?.testName;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].verifierBarcode = validateField(
+                    "检验员条码",
+                    e
+                  );
+                  if (itemIndex !== -1) {
+                    cloneErrors[index].verifierName = validateField(
+                      "检验员",
+                      record.verifierName
+                    );
+                  }
+                  setErrors(cloneErrors);
+                }}
+                showSearch
+                onSearch={(e) => {
+                  debounceGetInspector(e);
+                }}
+              >
+                {options?.inspectorOptions?.map(
+                  (item: { testId: string; testName: string }) => {
+                    return (
+                      <Select.Option value={item?.testId} key={item?.testId}>
+                        {item?.testId}
+                      </Select.Option>
+                    );
+                  }
+                )}
+              </Select>
+              {errors[index]?.verifierBarcode && (
+                <span style={{ color: "red" }}>
+                  {errors[index]?.verifierBarcode}
+                </span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "检验员",
+        dataIndex: "verifierName",
+        key: "verifierName",
+        width: 120,
+        needValidate: true,
+        render: (text: any, record: any, index: number) => {
+          return (
+            <>
+              <Select
+                allowClear
+                placeholder="查询姓名"
+                value={text}
+                style={{ width: "100%" }}
+                onClear={() => {
+                  delete record.verifierBarcode;
+                  delete record.verifierName;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].verifierBarcode = validateField(
+                    "检验员条码",
+                    ""
+                  );
+                  cloneErrors[index].verifierName = validateField("检验员", "");
+                  setErrors(cloneErrors);
+                }}
+                onSelect={(e, a) => {
+                  record.verifierName = e;
+                  const itemIndex = options?.inspectorOptions?.findIndex(
+                    (item: { testId: string; testName: string }) => {
+                      return item.testName === e;
+                    }
+                  );
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].verifierName = validateField("检验员", e);
+                  if (itemIndex !== -1) {
+                    record.verifierBarcode =
+                      options?.inspectorOptions[itemIndex].testId;
+
+                    cloneErrors[index].verifierBarcode = validateField(
+                      "检验员条码",
+                      record.verifierBarcode
+                    );
+                  }
+                  setErrors(cloneErrors);
+                }}
+                showSearch
+                onSearch={(e) => {
+                  debounceGetInspectorByName(e);
+                }}
+              >
+                {options?.inspectorOptions?.map(
+                  (item: { testId: string; testName: string }) => {
+                    return (
+                      <Select.Option value={item?.testName} key={item?.testId}>
+                        {item.testName}
+                      </Select.Option>
+                    );
+                  }
+                )}
+              </Select>
+              {errors[index]?.verifierName && (
+                <span style={{ color: "red" }}>
+                  {errors[index]?.verifierName}
+                </span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "操作工条码",
+        dataIndex: "operatorBarcode",
+        key: "operatorBarcode",
+        width: 150,
+        needValidate: true,
+        render: (text: any, record: any, index: number) => {
+          return (
+            <>
+              <Select
+                placeholder="查询条码"
+                allowClear
+                style={{ width: "100%" }}
+                value={text}
+                loading={options?.operatorOptionsLoading}
+                onClear={() => {
+                  delete record.operatorBarcode;
+                  delete record.operatorName;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].operatorBarcode = validateField(
+                    "操作工条码",
+                    ""
+                  );
+                  cloneErrors[index].operatorName = validateField("操作工", "");
+                  setErrors(cloneErrors);
+                }}
+                onSelect={(e) => {
+                  record.operatorBarcode = e;
+                  const itemIndex = options?.operatorOptions?.findIndex(
+                    (item: { operationId: string; operationName: string }) => {
+                      return item.operationId === e;
+                    }
+                  );
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].operatorBarcode = validateField(
+                    "操作工条码",
+                    e
+                  );
+
+                  if (itemIndex !== -1) {
+                    record.operatorName =
+                      options?.operatorOptions[itemIndex].operationName;
+                    cloneErrors[index].operatorName = validateField(
+                      "操作工",
+                      e
+                    );
+                  }
+                  setErrors(cloneErrors);
+                }}
+                showSearch
+                onSearch={(e) => {
+                  debounceGetOperator(e);
+                }}
+              >
+                {options?.operatorOptions?.map(
+                  (item: { operationId: string; operationName: string }) => {
+                    return (
+                      <Select.Option
+                        value={item.operationId}
+                        key={item?.operationId}
+                      >
+                        {item.operationId}
+                      </Select.Option>
+                    );
+                  }
+                )}
+              </Select>
+              {errors[index]?.operatorBarcode && (
+                <span style={{ color: "red" }}>
+                  {errors[index]?.operatorBarcode}
+                </span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "操作工",
+        dataIndex: "operatorName",
+        key: "operatorName",
+        width: 120,
+        needValidate: true,
+        render: (text: any, record: any, index: number) => {
+          return (
+            <>
+              <Select
+                placeholder="查询姓名"
+                allowClear
+                style={{ width: "100%" }}
+                value={text}
+                loading={options?.operatorOptionsLoading}
+                onClear={() => {
+                  delete record.operatorName;
+                  delete record.operatorBarcode;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].operatorBarcode = validateField(
+                    "操作工条码",
+                    ""
+                  );
+                  cloneErrors[index].operatorName = validateField("操作工", "");
+                  setErrors(cloneErrors);
+                }}
+                onSelect={(e) => {
+                  record.operatorName = e;
+                  const itemIndex = options?.operatorOptions?.findIndex(
+                    (item: { operationId: string; operationName: string }) => {
+                      return item.operationName === e;
+                    }
+                  );
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+
+                  cloneErrors[index].operatorName = validateField("操作工", e);
+
+                  if (itemIndex !== -1) {
+                    record.operatorBarcode =
+                      options?.operatorOptions[itemIndex].operationId;
+                    cloneErrors[index].operatorBarcode = validateField(
+                      "操作工条码",
+                      record.operatorBarcode
+                    );
+                  }
+                  setErrors(cloneErrors);
+                }}
+                showSearch
+                onSearch={(e) => {
+                  debounceGetOperatorByName(e);
+                }}
+              >
+                {options?.operatorOptions?.map(
+                  (item: { operationId: string; operationName: string }) => {
+                    return (
+                      <Select.Option
+                        value={item.operationName}
+                        key={item?.operationId}
+                      >
+                        {item.operationName}
+                      </Select.Option>
+                    );
+                  }
+                )}
+              </Select>
+              {errors[index]?.operatorName && (
+                <span style={{ color: "red" }}>
+                  {errors[index]?.operatorName}
+                </span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "完成日期",
+        dataIndex: "finishTime",
+        key: "finishTime",
+        width: 220,
+        needValidate: true,
+        render: (text: string, record: any, index: number) => {
+          return (
+            <>
+              <DatePicker
+                showTime
+                value={text ? dayjs(text) : null}
+                onChange={(e, date) => {
+                  record.finishTime = date;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].finishTime = validateField(
+                    "完成日期",
+                    date as string
+                  );
+
+                  setErrors(cloneErrors);
+                }}
+              />
+              {errors[index]?.finishTime && (
+                <span style={{ color: "red" }}>
+                  {errors[index]?.finishTime}
+                </span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "设备条码",
+        dataIndex: "equipmentBarcode",
+        key: "equipmentBarcode",
+        width: 150,
+        needValidate: true,
+        render: (text: any, record: any, index: number) => {
+          return (
+            <>
+              <Select
+                placeholder="查询条码"
+                allowClear
+                style={{ width: "100%" }}
+                value={text}
+                loading={options?.equipmentOptionsLoading}
+                onClear={() => {
+                  delete record.equipmentBarcode;
+                  delete record.equipmentName;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].equipmentBarcode = validateField(
+                    "设备条码",
+                    ""
+                  );
+                  cloneErrors[index].equipmentName = validateField(
+                    "设备名称",
+                    ""
+                  );
+                  setErrors(cloneErrors);
+                }}
+                onSelect={(e) => {
+                  record.equipmentBarcode = e;
+                  const itemIndex = options?.equipmentOptions?.findIndex(
+                    (item: { equipmentId: string; equipmentName: string }) => {
+                      return item.equipmentId === e;
+                    }
+                  );
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].equipmentBarcode = validateField(
+                    "设备条码",
+                    e
+                  );
+
+                  if (itemIndex !== -1) {
+                    record.equipmentName =
+                      options?.equipmentOptions[itemIndex]?.equipmentName;
+                    cloneErrors[index].equipmentName = validateField(
+                      "设备名称",
+                      record.equipmentName
+                    );
+                  }
+                  setErrors(cloneErrors);
+                }}
+                showSearch
+                onSearch={(e) => {
+                  debounceGetEquipment(e);
+                }}
+              >
+                {options?.equipmentOptions?.map(
+                  (item: { equipmentId: string; equipmentName: string }) => {
+                    return (
+                      <Select.Option
+                        value={item?.equipmentId || item?.equipmentName}
+                        key={item?.equipmentId || item?.equipmentName}
+                      >
+                        {item?.equipmentId || item?.equipmentName}
+                      </Select.Option>
+                    );
+                  }
+                )}
+              </Select>
+              {errors[index]?.equipmentBarcode && (
+                <span style={{ color: "red" }}>
+                  {errors[index]?.equipmentBarcode}
+                </span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "设备名称",
+        dataIndex: "equipmentName",
+        key: "equipmentName",
+        needValidate: true,
+        width: 150,
+        render: (text: any, record: any, index: number) => {
+          return (
+            <>
+              <Select
+                placeholder="查询名称"
+                allowClear
+                style={{ width: "100%" }}
+                value={text}
+                loading={options?.equipmentOptionsLoading}
+                onClear={() => {
+                  delete record.equipmentBarcode;
+                  delete record.equipmentName;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].equipmentBarcode = validateField(
+                    "设备条码",
+                    ""
+                  );
+                  cloneErrors[index].equipmentName = validateField(
+                    "设备名称",
+                    ""
+                  );
+                  setErrors(cloneErrors);
+                }}
+                onSelect={(e: string, _record: any) => {
+                  record.equipmentName = e;
+                  const itemIndex = options?.equipmentOptions?.findIndex(
+                    (item: { equipmentId: string; equipmentName: string }) => {
+                      return item.equipmentId === _record?.key;
+                    }
+                  );
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+
+                  cloneErrors[index].equipmentName = validateField(
+                    "设备名称",
+                    e
+                  );
+                  setErrors(cloneErrors);
+                  if (itemIndex !== -1) {
+                    record.equipmentBarcode =
+                      options?.equipmentOptions[itemIndex]?.equipmentId;
+                    cloneErrors[index].equipmentBarcode = validateField(
+                      "设备条码",
+                      record.equipmentBarcode
+                    );
+                  }
+                  setErrors(cloneErrors);
+                }}
+                showSearch
+                onSearch={(e) => {
+                  debounceGetEquipmentByName(e);
+                }}
+              >
+                {options?.equipmentOptions?.map(
+                  (item: { equipmentId: string; equipmentName: string }) => {
+                    return (
+                      <Select.Option
+                        value={item.equipmentName + "#" + item?.equipmentId}
+                        key={item?.equipmentId}
+                      >
+                        {item.equipmentName}
+                      </Select.Option>
+                    );
+                  }
+                )}
+              </Select>
+              {errors[index]?.equipmentName && (
+                <span style={{ color: "red" }}>
+                  {errors[index]?.equipmentName}
+                </span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "产量(公斤)",
+        dataIndex: "produceNumber",
+        key: "produceNumber",
+        width: 140,
+        needValidate: true,
+        render: (text: string, record: any, index: number) => {
+          return (
+            <>
+              <InputNumber
+                placeholder="请输入产量"
+                style={{ width: "100%" }}
+                value={text}
+                controls={false}
+                onChange={(e) => {
+                  record.produceNumber = e;
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].produceNumber = validateField("产量", e);
+                  setErrors(cloneErrors);
+                }}
+              ></InputNumber>
+              {errors[index]?.produceNumber && (
+                <span style={{ color: "red" }}>
+                  {errors[index]?.produceNumber}
+                </span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "操作",
+        dataIndex: "operate",
+        key: "operate",
+        width: 70,
+        render: (text: string, record: any, index: number) => {
+          return queryFlowCardApi === "queryQR" ? (
+            <Popconfirm
+              title="确认移除"
+              description="你确定要移除这条记录吗？"
+              onConfirm={() => {
+                // 清除这行的数据和报错
+                const cloneData = cloneDeep(tableData);
+                cloneData.splice(index, 1);
+                setTableData(cloneData);
+                const cloneErrors = cloneDeep(errors);
+                cloneErrors.splice(index, 1);
+                setErrors(cloneErrors);
+              }}
+              onCancel={() => {}}
+              okText="确认"
+              cancelText="取消"
+            >
+              <Button type="dashed" danger size="middle">
+                移除
+              </Button>
+            </Popconfirm>
+          ) : (
+            <Button
+              type="primary"
+              size="middle"
+              onClick={() => {
+                handleSave({
+                  flowCardType,
+                  record,
+                  columns: columns.flowCard,
+                  index,
+                  errors,
+                  setErrors,
+                });
+              }}
+            >
+              保存
+            </Button>
+          );
+        },
+      },
+    ],
   };
   return columns[flowCardType || "common"];
 };
@@ -1052,6 +1613,8 @@ interface IGetParams {
   isKg: boolean;
   flowCardType: ITableConfig["flowCardType"];
   remark?: string;
+  dataString?: string;
+  tableData: any[];
 }
 export const getParams = ({
   form,
@@ -1061,6 +1624,8 @@ export const getParams = ({
   isKg,
   flowCardType,
   remark,
+  dataString,
+  tableData,
 }: IGetParams) => {
   const params = {
     common: {
@@ -1139,11 +1704,13 @@ export const getParams = ({
       //优先顺序
       priorityOrder: values.priority,
       //零件流转时间
-      tranferTime: values.transferTime,
+      tranferTime: formatTime(values.transferTime),
       //工艺
       process: data?.processList,
-      //
+      // pNumber
       pNumber: form.getFieldValue("pnumber"),
+      // parentID
+      parentId: data?.id,
     },
     outsourcing: {
       //零件类型
@@ -1207,6 +1774,8 @@ export const getParams = ({
       process: data?.processList,
       //行号
       lineNumber: values?.u9LineNo,
+      // parentID
+      parentId: data?.id,
     },
     flowCard: {
       // id
@@ -1223,6 +1792,45 @@ export const getParams = ({
       priorityOrder: values?.priorityOrderpriorityOrder,
     },
     print: {},
+    rework: {
+      //物料类型
+      productType: values?.productType,
+      //返工类型
+      reworkType: values?.reworkType,
+      //流转卡编号
+      transferCardCode: values?.transferCardCode,
+      //返工流转卡编号
+      reworkTransferCardCode: dataString || data?.reworkTransferCardCode,
+      // 追溯单号
+      traceabilityNumber: values?.traceabilityNumber,
+      //评审单号
+      reworkNumber: values?.reworkNumber,
+      //料号
+      partNumber: values?.partNumber,
+      // 品名
+      name: values?.name,
+      //规格
+      spec: values?.spec,
+      //返工流程
+      reworkFlow: values?.reworkFlow,
+      //开单人
+      drawer: values?.drawer,
+      //返工数量
+      reworkQuantity: values?.reworkQuantity,
+      //返工单位
+      reworkUnit: values?.reworkUnit,
+      //材质
+      material: values?.material,
+      //商标
+      trademark: values?.trademark,
+      //工序
+      detailProcesses: tableData.map((item, index) => {
+        return {
+          ...item,
+          processSeq: index + 1,
+        };
+      }),
+    },
   };
 
   return params[flowCardType || "common"];

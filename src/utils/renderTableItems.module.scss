@@ -1,5 +1,14 @@
+$color-red: #ff4d4f;
 .input-container {
-  box-shadow: inset 0px 0px 0px 1px #000;
+  background-color: rgba(48, 79, 255, 0.11);
+
+  input,
+  span,
+  div,
+  textarea {
+    background-color: rgba(0, 0, 0, 0) !important;
+    box-shadow: none !important;
+  }
   :global {
     .ant-form-item {
       margin-bottom: 0;
@@ -26,7 +35,27 @@
         border: none;
         box-shadow: none;
       }
+      .ant-input-number-group-addon {
+        border: none !important;
+      }
+      .ant-input-number-outlined {
+        border: none !important;
+      }
     }
+  }
+
+  // 校验失败边框变红
+  &:has(:global(.ant-input-status-error)) {
+    box-shadow: inset 0px 0px 0px 2px $color-red !important;
+  }
+  &:has(:global(.ant-picker-status-error)) {
+    box-shadow: inset 0px 0px 0px 2px $color-red !important;
+  }
+  &:has(:global(.ant-select-status-error)) {
+    box-shadow: inset 0px 0px 0px 2px $color-red !important;
+  }
+  &:has(:global(.ant-input-number-status-error)) {
+    box-shadow: inset 0px 0px 0px 2px $color-red !important;
   }
 }
 .input-container:focus-within {
@@ -35,6 +64,7 @@
 
 .input-container-locked {
   box-shadow: inset 0px 0px 0px 0px #000;
+  background-color: #fff !important;
 }
 .input-container-locked:focus-within {
   box-shadow: inset 0px 0px 0px 0px #000;
@@ -46,7 +76,7 @@
       border: none !important;
       outline: none;
       box-shadow: none !important;
-      padding: 0;
+      padding: 0 !important;
     }
     .ant-form-item-control-input-content {
       height: 22px;
@@ -59,7 +89,7 @@
     }
     .ant-select-selection-search {
       top: 0;
-      left: 0;
+      left: 0 !important;
       & > input {
         height: 22px !important;
         width: 100%;
@@ -73,7 +103,7 @@
     .ant-picker {
       padding: 0;
       width: 100%;
-      border: none;
+      border: none !important;
       box-shadow: none;
     }
   }

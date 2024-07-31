@@ -2,6 +2,7 @@ import { getFlatMenuList } from "@/constants";
 import { IMenuItem } from "@/constants/constantsType";
 import { useRootStore } from "@/store";
 import { Breadcrumb } from "antd";
+
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -30,6 +31,8 @@ const RenderBreadCrumb = () => {
       return item.key === location.pathname;
     });
     if (_pageTitle) {
+      // 使用 runInAction 包裹状态修改
+
       setPageTitle(_pageTitle);
     }
   }, [location.pathname, menu]);

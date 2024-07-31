@@ -6,6 +6,7 @@ import { IAuthRoute, IRes } from "./AuthRouteType";
 import { useEffect, useState } from "react";
 import { Skeleton, message } from "antd";
 import { removeToken } from "@/utils";
+import { TOKEN_ERROR } from "@/constants";
 
 const AuthRoute = ({ children }: IAuthRoute) => {
   const [allowLogin, setAllowLogin] = useState<boolean | null>(null);
@@ -21,7 +22,7 @@ const AuthRoute = ({ children }: IAuthRoute) => {
           setAllowLogin(true);
         } else {
           setAllowLogin(false);
-          message.error("登录已过期或者服务器连接失败");
+          message.error(TOKEN_ERROR);
           removeToken();
         }
       })

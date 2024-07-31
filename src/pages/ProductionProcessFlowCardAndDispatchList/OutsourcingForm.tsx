@@ -2,20 +2,19 @@ import {
   EditAbleInput,
   ReadOnlyInput,
   RenderQRCode,
-  transFormToKg,
-  transFormToPcs,
+  validateNotZero,
 } from "@/utils";
 import { FormInstance } from "antd";
 import { IData } from "./indexType";
 
 import styles from "./index.module.scss";
 import { useEffect, useState } from "react";
+import { DEFAULT_RED } from "@/constants/constants";
 
 interface IProps {
   data: IData;
   isKg: boolean;
   form: FormInstance<any>;
-
   mainsize: any;
 }
 const OutsourcingForm = (props: IProps) => {
@@ -29,48 +28,42 @@ const OutsourcingForm = (props: IProps) => {
     form.setFieldValue("traceabilityNumberQRcode", data.traceabilityNumber);
     form.setFieldValue("rukuQRcode", data.itmid);
     form.setFieldValue("lingliaoQRcode", data.mItmID);
-    form.setFieldValue(
-      "huancount",
-      data?.newsupcount && data?.parseWeight
-        ? isKg
-          ? transFormToPcs(data?.newsupcount, data?.parseWeight)
-          : transFormToKg(data?.newsupcount, data?.parseWeight)
-        : ""
-    );
+
     form.setFieldValue("transferCardCode", data.transferCardCode);
 
     // 给流转数量初始值 产量-已使用
     if (isKg) {
-      if (data?.newsupcount && data?.parseWeight) {
-        const liucount = (
+      if (data?.newsupcount) {
+        const liucountMax = (
           parseFloat(data?.newsupcount) -
           parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
         ).toFixed(2);
-        const liuhuancount = (
-          parseFloat(data?.newsupcount) / parseFloat(data?.parseWeight) -
-          parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
-        ).toFixed(2);
+        // 推荐流转数量KG
+        const liucountKG =
+          data?.transferNumberKG &&
+          parseFloat(data?.transferNumberKG) <= parseFloat(liucountMax)
+            ? data?.transferNumberKG
+            : liucountMax;
 
-        form.setFieldValue("liucount", liucount);
-        setLiuMaxKg(parseFloat(liucount));
-        setLiuMaxPCS(parseFloat(liuhuancount));
-        form.setFieldValue("liuhuancount", liuhuancount);
+        setLiuMaxKg(parseFloat(liucountMax));
+        form.setFieldValue("liucount", liucountKG);
       }
     } else {
-      if (data?.newsupcount && data?.parseWeight) {
-        const liucount = (
+      if (data?.newsupcount) {
+        const liucountMax = (
           parseFloat(data?.newsupcount) -
           parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
         ).toFixed(2);
-        const liuhuancount = (
-          parseFloat(data?.newsupcount) * parseFloat(data?.parseWeight) -
-          parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
-        ).toFixed(2);
 
-        setLiuMaxKg(parseFloat(liuhuancount));
-        setLiuMaxPCS(parseFloat(liucount));
-        form.setFieldValue("liucount", liucount);
-        form.setFieldValue("liuhuancount", liuhuancount);
+        const transferNumberPCS = parseFloat(data?.transferNumberPCS || "0");
+
+        const liucountPCS =
+          data?.transferNumberKG && transferNumberPCS <= parseFloat(liucountMax)
+            ? transferNumberPCS
+            : liucountMax;
+
+        setLiuMaxPCS(parseFloat(liucountMax));
+        form.setFieldValue("liucount", liucountPCS);
       }
     }
   }, [data]);
@@ -81,6 +74,7 @@ const OutsourcingForm = (props: IProps) => {
           title="生产订单条码"
           name="orderid"
           titleStyle={{ color: "red" }}
+          required
         />
         <ReadOnlyInput title="料号" name="itmid" />
         <ReadOnlyInput title="品名" name="name" />
@@ -104,54 +98,25 @@ const OutsourcingForm = (props: IProps) => {
       </tr>
       <tr>
         <ReadOnlyInput
-          title="生产数量（公斤）"
-          name={isKg ? "newsupcount" : "huancount"}
+          title={`生产数量${data?.uomname ? `（${data?.uomname}）` : ""}`}
+          name="newsupcount"
         />
         <EditAbleInput
-          title="流转数量（公斤）"
+          title={`流转数量${data?.uomname ? `（${data?.uomname}）` : ""}`}
           isNumber
-          name={isKg ? "liucount" : "liuhuancount"}
-          max={liuMaxKg}
-          onChange={(e: number) => {
-            const valueKg = e;
-            const valuePCS =
-              data?.parseWeight && valueKg
-                ? transFormToPcs(valueKg, data?.parseWeight)
-                : "";
-            if (isKg) {
-              form.setFieldValue("liuhuancount", valuePCS.toString());
-            } else {
-              form.setFieldValue("liucount", valuePCS.toString());
-            }
-          }}
+          name="liucount"
+          max={isKg ? liuMaxKg : liuMaxPCS}
+          addonAfter={
+            <span style={{ color: DEFAULT_RED }}>
+              剩余：{isKg ? liuMaxKg : liuMaxPCS}
+            </span>
+          }
+          rules={[{ validator: validateNotZero }]}
         />
-        <ReadOnlyInput
-          title="生产数量（PCS）"
-          name={isKg ? "huancount" : "newsupcount"}
-        />
-        <EditAbleInput
-          title="流转数量（PCS）"
-          isNumber
-          max={liuMaxPCS}
-          name={isKg ? "liuhuancount" : "liucount"}
-          onChange={(e: number) => {
-            const valuePCS = e;
-            const valueKg =
-              data?.parseWeight && valuePCS
-                ? transFormToKg(valuePCS, data?.parseWeight)
-                : "";
-            if (!isKg) {
-              form.setFieldValue("liuhuancount", valueKg.toString());
-            } else {
-              form.setFieldValue("liucount", valuePCS.toString());
-            }
-          }}
-        />
-      </tr>
-      <tr>
         <ReadOnlyInput title="行号" name="u9LineNo" />
         <ReadOnlyInput title="图号" name="itmTEID" colSpan={5} />
       </tr>
+      <tr></tr>
       <tr>
         <ReadOnlyInput
           title="供方/炉批号"

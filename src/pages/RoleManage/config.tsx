@@ -42,6 +42,12 @@ import {
   IRole,
   IRoleItem,
 } from "./RoleManageType";
+import {
+  ADD_SUCCESS,
+  ERROR_MESSAGE,
+  GET_MENU_OR_PERMISSION_FAILED,
+} from "@/constants";
+import { UPDATE_SUCCESS } from "@/constants/constants";
 
 const validateSpace = (rule: any, value: string) => {
   if (!value) {
@@ -199,8 +205,13 @@ const formConfig: IFormConfig = {
   formTitle: "操作",
   formExtend: true,
   buttons: (props: IButtons) => {
-    const { selectedRowKeys, setRefreshFlag, buttonLoading, setButtonLoading } =
-      props;
+    const {
+      selectedRowKeys,
+      setRefreshFlag,
+      buttonLoading,
+      setButtonLoading,
+      loading,
+    } = props;
 
     return [
       <Button
@@ -208,6 +219,7 @@ const formConfig: IFormConfig = {
         htmlType="submit"
         key="search"
         style={{ marginRight: 5 }}
+        loading={loading}
       >
         <SearchOutlined />
         查询
@@ -238,6 +250,7 @@ const formConfig: IFormConfig = {
 
       <Button
         style={{ marginRight: 5 }}
+        type="dashed"
         loading={buttonLoading.insertButton}
         onClick={async () => {
           setButtonLoading((prevData: IButtonLoadingChildren) => {
@@ -259,10 +272,10 @@ const formConfig: IFormConfig = {
               permission: values.permissionDto,
             }).then((res) => {
               if (res?.data.code === 601) {
-                message.success("添加成功");
+                message.success(res?.data?.data || ADD_SUCCESS);
                 setRefreshFlag((flag) => !flag);
               } else {
-                message.error(res?.data?.data || "无法连接到服务器");
+                message.error(res?.data?.data || ERROR_MESSAGE);
               }
             });
           };
@@ -278,7 +291,7 @@ const formConfig: IFormConfig = {
             }
           });
           if (!allPermission || !allMenu) {
-            message.error("获取权限和菜单时发生错误");
+            message.error(GET_MENU_OR_PERMISSION_FAILED);
             return;
           }
 
@@ -398,7 +411,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   }
                 });
                 if (!roles || !allPermission || !allMenu) {
-                  message.error(res?.message || "无法连接到服务器");
+                  message.error(res?.message || ERROR_MESSAGE);
                   setSearchedData((prevData: any[]) =>
                     prevData.map((item) =>
                       item.id === record.id ? { ...item, loading: false } : item
@@ -417,10 +430,10 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                     permission: permissionDto || [],
                   }).then((res) => {
                     if (res?.status === 200) {
-                      message.success("更新成功");
+                      message.success(UPDATE_SUCCESS);
                       setRefreshFlag((flag) => !flag);
                     } else {
-                      message.error(res?.message || "无法连接到服务器");
+                      message.error(res?.message || ERROR_MESSAGE);
                     }
                   });
                 };

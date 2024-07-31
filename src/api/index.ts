@@ -35,12 +35,32 @@ import { queryEquipmentInfo } from "./queryEquipmentInfo";
 import { insertSaveTransferCard } from "./insertSaveTransferCard";
 import { queryProcessByItemId } from "./queryProcessByItemId";
 import { queryTransferStore } from "./queryTransferStore";
+import { queryOutsourcedPurchased } from "./queryOutsourcedPurchased";
+import { queryRework } from "./queryRework";
+import { queryHeatTreatment } from "./queryHeatTreatment";
+import { updateHeatTreatmentStatus } from "./updateHeatTreatmentStatus";
+import { queryFurnaceChange } from "./queryFurnaceChange";
+import { queryRawMaterial } from "./queryRawMaterial";
+import { queryUnfinishCard } from "./queryUnfinishCard";
+import { queryUnfinishCardToStore } from "./queryUnfinishCardToStore";
+import { queryQR } from "./queryQR";
+import { insertRework } from "./insertRework";
+import { queryReworkInfoById } from "./queryReworkInfoById";
+import { deletePermissionById } from "./deletePermissionById";
+import { insertPermission } from "./insertPermission";
+import { updatePermissionById } from "./updatePermissionById";
+import { updateReworkDetailById } from "./updateReworkDetailById";
+import { updateReworkInfoById } from "./updateReworkInfoById";
+import { insertSaveTransferCardDetail } from "./insertSaveTransferCardDetail";
+import { changeFurnacePlatformById } from "./changeFurnacePlatformById";
 export {
   countProductType,
   clickTransferCard,
+  changeFurnacePlatformById,
   deleteUsers,
   deleteRoleInfoByRoleId,
   deleteMenuById,
+  deletePermissionById,
   getMenu,
   getUserInfo,
   getUserList,
@@ -49,6 +69,9 @@ export {
   insertRole,
   insertMenu,
   insertSaveTransferCard,
+  insertSaveTransferCardDetail,
+  insertRework,
+  insertPermission,
   loginRequest,
   logoutRequest,
   registerRequest,
@@ -70,16 +93,31 @@ export {
   queryEquipmentInfo,
   queryProcessByItemId,
   queryTransferStore,
+  queryOutsourcedPurchased,
+  queryRework,
+  queryHeatTreatment,
+  queryFurnaceChange,
+  queryRawMaterial,
+  queryUnfinishCard,
+  queryUnfinishCardToStore,
+  queryQR,
+  queryReworkInfoById,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
+  updateHeatTreatmentStatus,
+  updatePermissionById,
+  updateReworkDetailById,
+  updateReworkInfoById,
 };
 const apis = {
   countProductType,
   clickTransferCard,
+  changeFurnacePlatformById,
   deleteUsers,
   deleteRoleInfoByRoleId,
   deleteMenuById,
+  deletePermissionById,
   getMenu,
   getUserInfo,
   getUserList,
@@ -87,7 +125,10 @@ const apis = {
   insertUser,
   insertRole,
   insertMenu,
+  insertRework,
+  insertPermission,
   insertSaveTransferCard,
+  insertSaveTransferCardDetail,
   loginRequest,
   logoutRequest,
   registerRequest,
@@ -109,9 +150,22 @@ const apis = {
   queryEquipmentInfo,
   queryProcessByItemId,
   queryTransferStore,
+  queryOutsourcedPurchased,
+  queryRework,
+  queryHeatTreatment,
+  queryFurnaceChange,
+  queryRawMaterial,
+  queryUnfinishCard,
+  queryUnfinishCardToStore,
+  queryQR,
+  queryReworkInfoById,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
+  updateHeatTreatmentStatus,
+  updatePermissionById,
+  updateReworkDetailById,
+  updateReworkInfoById,
 };
 /**
  * 用于formConfig的api

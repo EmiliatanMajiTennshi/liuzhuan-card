@@ -22,12 +22,12 @@
           flex-direction: column;
           .ant-table-body {
             flex: 1;
-            overflow-y: auto !important;
+            // overflow-y: auto !important;
             max-height: max-content !important;
           }
           .ant-table-body::-webkit-scrollbar {
             width: 6px; /* 滚动条的宽度 */
-            height: 12px; /* 滚动条的高度，对水平滚动条有效 */
+            height: 10px; /* 滚动条的高度，对水平滚动条有效 */
             background-color: #f9f9fd; /* 滚动条的背景颜色 */
           }
           .ant-table-body::-webkit-scrollbar-track {

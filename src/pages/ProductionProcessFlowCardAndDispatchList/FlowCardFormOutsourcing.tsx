@@ -24,8 +24,7 @@ const FlowCardFormOutsourcing = (props: IProps) => {
   // const [liuMaxKg, setLiuMaxKg] = useState(0);
   // const [liuMaxPCS, setLiuMaxPCS] = useState(0);
 
-  const isFinished = data?.partNumber?.substring(0, 2) === "31";
-  console.log(data?.partNumber, 213, isFinished);
+  // const isFinished = data?.partNumber?.substring(0, 2) === FINISHED_CODE;
 
   useEffect(() => {
     // 二维码不手动设置值会出现奇怪的bug
@@ -95,9 +94,16 @@ const FlowCardFormOutsourcing = (props: IProps) => {
           // }
           // placeholder="请选择商标"
         />
-
-        <ReadOnlyInput title="生产数量(PCS)" name="productionPcs" />
-        <ReadOnlyInput title="生产数量(KG)" name="productionKg" />
+        <ReadOnlyInput
+          title={isKg ? "生产数量(KG)" : "生产数量(PCS)"}
+          name={isKg ? "productionKg" : "productionPcs"}
+        />
+        <ReadOnlyInput
+          title={isKg ? "流转数量(KG)" : "流转数量(PCS)"}
+          name={isKg ? "transferKg" : "transferPcs"}
+          // max={liuMaxPCS}
+          // step={0.01}
+        />
       </tr>
       <tr>
         <EditAbleInput
@@ -106,32 +112,19 @@ const FlowCardFormOutsourcing = (props: IProps) => {
           titleStyle={{ color: "red" }}
         />
 
+        <ReadOnlyInput title="图号" name="drawingNumber" />
+        <ReadOnlyInput title="追溯单号" name="traceabilityNumber" />
         <ReadOnlyInput title="完成日期" name="finishTime" />
+      </tr>
 
-        <ReadOnlyInput
-          title="流转数量(PCS)"
-          name="transferPcs"
-          // max={liuMaxPCS}
-          // step={0.01}
-        />
-        <ReadOnlyInput
-          title="流转数量(KG)"
-          name="transferKg"
-          // max={liuMaxKg}
-          // step={0.01}
-        />
-      </tr>
-      <tr>
-        <ReadOnlyInput title="追溯单号" name="traceabilityNumber" colSpan={3} />
-        <ReadOnlyInput title="图号" name="drawingNumber" colSpan={3} />
-      </tr>
       <tr>
         <EditAbleInput
           title="炉批号"
           name="furnaceNo"
           titleStyle={{ color: "red" }}
+          colSpan={2}
         />
-        <ReadOnlyInput title="行号" name="lineNumber" colSpan={2} />
+        <ReadOnlyInput title="行号" name="lineNumber" />
         <th colSpan={3} style={{ textAlign: "center" }}>
           生产入库扫描条码
         </th>
@@ -177,27 +170,6 @@ const FlowCardFormOutsourcing = (props: IProps) => {
         <ReadOnlyInput title={data?.project5Name || ""} name="project5Item" />
         <ReadOnlyInput title={data?.project6Name || ""} name="project6Item" />
       </tr>
-      {/* {isFinished && (
-        <tr>
-          <ReadOnlyInput
-            title="热处理炉台"
-            name="heatTreatmentFurnacePlatform"
-            titleStyle={{ color: "red" }}
-            colSpan={1}
-            labelColSpan={2}
-          />
-          <RenderSelect
-            title="优先顺序"
-            name="priority"
-            options={Array.from({ length: 50 }, (item, index) => ({
-              value: index + 1,
-              label: index + 1,
-            }))}
-            placeholder="请选择优先顺序"
-          />
-          <ReadOnlyInput title="流转时间" name="tranferTime" colSpan={2} />
-        </tr>
-      )} */}
     </tbody>
   );
 };

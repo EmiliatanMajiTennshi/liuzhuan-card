@@ -1,4 +1,5 @@
 import { TApi } from "@/api";
+import { AnyObject } from "antd/es/_util/type";
 import { ColumnsType } from "antd/es/table";
 
 export interface ITableItem {
@@ -16,7 +17,8 @@ export interface ITableConfig {
   columns: ColumnsType<RecordType>;
   selectAble?: boolean;
   queryFlowCardApi?: TApi;
-  flowCardType?: "common" | "outsourcing" | "flowCard" | "print";
+  flowCardType?: "common" | "outsourcing" | "flowCard" | "print" | "rework";
+  optionList?: TApi[];
 }
 
 /**
@@ -74,4 +76,6 @@ export interface ITableConfigProps {
   setIssueModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIssueID: React.Dispatch<React.SetStateAction<number>>;
   setPrintModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  tableOptions: AnyObject;
+  setTableOptions: React.Dispatch<React.SetStateAction<AnyObject>>;
 }

@@ -11,6 +11,7 @@ import { IData } from "./indexType";
 
 import styles from "./index.module.scss";
 import { useEffect } from "react";
+import { FINISHED_CODE } from "@/constants";
 // import { getHeatTreatmentFurnacePlatformsList } from "@/api";
 
 interface IProps {
@@ -25,7 +26,7 @@ const FlowCardForm = (props: IProps) => {
   // const [liuMaxKg, setLiuMaxKg] = useState(0);
   // const [liuMaxPCS, setLiuMaxPCS] = useState(0);
 
-  const isFinished = data?.partNumber?.substring(0, 2) === "31";
+  const isFinished = data?.partNumber?.substring(0, 2) === FINISHED_CODE;
 
   useEffect(() => {
     // 二维码不手动设置值会出现奇怪的bug

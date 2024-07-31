@@ -16,6 +16,11 @@
     label::after {
       content: "" !important;
     }
+    :global {
+      .ant-select-selector {
+        padding: 0;
+      }
+    }
   }
 }
 
@@ -93,5 +98,15 @@
         margin-bottom: 0 !important;
       }
     }
+  }
+}
+
+.flowCardTable {
+  overflow-x: auto;
+  td {
+    padding: 16px 8px !important;
+  }
+  & > div {
+    min-width: 1450px;
   }
 }

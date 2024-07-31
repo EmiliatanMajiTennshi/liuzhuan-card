@@ -15,6 +15,7 @@ import { ITableConfig } from "@/components/AdvancedSearchTable/AdvancedSearchTab
 import { deleteMenuById, updateMenuById } from "@/api";
 import { IInsertMenu, insertMenu } from "@/api/insertMenu";
 import React, { ReactNode } from "react";
+import { ERROR_MESSAGE } from "@/constants";
 
 type FieldType = {
   icon: string;
@@ -148,7 +149,7 @@ const formConfig: IFormConfig = {
   formTitle: "操作",
   formExtend: true,
   buttons: (props: IButtons) => {
-    const { selectedRowKeys, setRefreshFlag } = props;
+    const { selectedRowKeys, setRefreshFlag, loading } = props;
 
     return [
       <Button
@@ -156,13 +157,14 @@ const formConfig: IFormConfig = {
         htmlType="submit"
         key="search"
         style={{ marginRight: 5 }}
+        loading={loading}
       >
         <SearchOutlined />
         查询
       </Button>,
       <Popconfirm
         title="确认删除"
-        description="你确定要删除选中菜单嘛"
+        description="你确定要删除选中菜单吗"
         onConfirm={() => {
           deleteMenuById(selectedRowKeys).then((res) => {
             setRefreshFlag((flag) => !flag);
@@ -186,6 +188,7 @@ const formConfig: IFormConfig = {
 
       <Button
         style={{ marginRight: 5 }}
+        type="dashed"
         onClick={async () => {
           const onCancel = () => {};
           const onFinish = (values: IInsertMenu) => {
@@ -297,7 +300,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                       setRefreshFlag((flag) => !flag);
                       modal.destroy();
                     } else {
-                      message.error("更新失败，连接超时");
+                      message.error(ERROR_MESSAGE);
                     }
                   });
 
@@ -311,7 +314,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   //       setRefreshFlag((flag) => !flag);
                   //       modal.destroy();
                   //     } else {
-                  //       message.error("更新失败，连接超时");
+                  //       message.error(ERROR_MESSAGE);
                   //     }
                   //   });
                 };

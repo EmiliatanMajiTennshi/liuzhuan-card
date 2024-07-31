@@ -1,3 +1,5 @@
+import { AnyObject } from "antd/es/_util/type";
+
 export interface IData {
   partNumber?: string;
   orderid?: string;
@@ -67,6 +69,10 @@ export interface IData {
   materialPartNumber?: string;
   id?: number;
   remark?: string;
+  transferNumberKG?: string;
+  transferNumberPCS?: string;
+  reworkTransferCardCode?: string;
+  detailProcesses?: any[];
 }
 
 export interface IFormFields {

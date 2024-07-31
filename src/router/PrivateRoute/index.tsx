@@ -29,31 +29,19 @@ const Login = React.lazy(() =>
 const Home = React.lazy(() =>
   import("@/pages/Home").then((res) => ({ default: res.Home }))
 );
-const AddPartFlowCard = React.lazy(() =>
-  import("@/pages/AddPartFlowCard").then((res) => ({
-    default: res.AddPartFlowCard,
-  }))
-);
+
 const AddAssemblyFlowCard = React.lazy(() =>
   import("@/pages/AddAssemblyFlowCard").then((res) => ({
     default: res.AddAssemblyFlowCard,
   }))
 );
-const FlowCardQuery = React.lazy(() =>
-  import("@/pages/FlowCardQuery").then((res) => ({
-    default: res.FlowCardQuery,
-  }))
-);
+
 const OperatorSimpleTask = React.lazy(() =>
   import("@/pages/OperatorSimpleTask").then((res) => ({
     default: res.OperatorSimpleTask,
   }))
 );
-const FlowCardCancel = React.lazy(() =>
-  import("@/pages/FlowCardCancel").then((res) => ({
-    default: res.FlowCardCancel,
-  }))
-);
+
 const AddEmployeeInfo = React.lazy(() =>
   import("@/pages/AddEmployeeInfo").then((res) => ({
     default: res.AddEmployeeInfo,
@@ -71,11 +59,6 @@ const StandardProductTransferCard = React.lazy(() =>
     default: res.StandardProductTransferCard,
   }))
 );
-const IssueRollerNestSemiFinishedPartFlowCard = React.lazy(() =>
-  import("@/pages/IssueRollerNestSemiFinishedPartFlowCard").then((res) => ({
-    default: res.IssueRollerNestSemiFinishedPartFlowCard,
-  }))
-);
 
 /**非标准品流转卡下发 */
 const NoStandardProductTransferCard = React.lazy(() =>
@@ -83,16 +66,7 @@ const NoStandardProductTransferCard = React.lazy(() =>
     default: res.NoStandardProductTransferCard,
   }))
 );
-const IssueOutsourcingFlowCard = React.lazy(() =>
-  import("@/pages/IssueOutsourcingFlowCard").then((res) => ({
-    default: res.IssueOutsourcingFlowCard,
-  }))
-);
-const IssueReplenishmentOrderFlowCard = React.lazy(() =>
-  import("@/pages/IssueReplenishmentOrderFlowCard").then((res) => ({
-    default: res.IssueReplenishmentOrderFlowCard,
-  }))
-);
+
 const PartFlowCardQuery = React.lazy(() =>
   import("@/pages/PartFlowCardQuery").then((res) => ({
     default: res.PartFlowCardQuery,
@@ -123,11 +97,7 @@ const MaterialReworkProcessCard = React.lazy(() =>
     default: res.MaterialReworkProcessCard,
   }))
 );
-const HeavyIndustryProcessCard = React.lazy(() =>
-  import("@/pages/HeavyIndustryProcessCard").then((res) => ({
-    default: res.HeavyIndustryProcessCard,
-  }))
-);
+
 const LogisticsHeatTreatmentIngredients = React.lazy(() =>
   import("@/pages/LogisticsHeatTreatmentIngredients").then((res) => ({
     default: res.LogisticsHeatTreatmentIngredients,
@@ -148,11 +118,7 @@ const UpdateDeburringRoundingFurnace = React.lazy(() =>
     default: res.UpdateDeburringRoundingFurnace,
   }))
 );
-const QueryRawMaterialInventoryInquiry = React.lazy(() =>
-  import("@/pages/QueryRawMaterialInventoryInquiry").then((res) => ({
-    default: res.QueryRawMaterialInventoryInquiry,
-  }))
-);
+
 const QueryProcessIncomplete = React.lazy(() =>
   import("@/pages/QueryProcessIncomplete").then((res) => ({
     default: res.QueryProcessIncomplete,
@@ -189,8 +155,14 @@ const MenuManage = React.lazy(() =>
     default: res.MenuManage,
   }))
 );
+/**权限管理 */
+const PermissionManage = React.lazy(() =>
+  import("@/pages/PermissionManage").then((res) => ({
+    default: res.PermissionManage,
+  }))
+);
 
-/**外协流转卡下发*/
+/**外协外购流转卡下发*/
 const OutsourcingProductTransferCard = React.lazy(() =>
   import("@/pages/OutsourcingProductTransferCard").then((res) => ({
     default: res.OutsourcingProductTransferCard,
@@ -226,29 +198,49 @@ const OutsourcedPurchasedInspectionTesting = React.lazy(() =>
     default: res.OutsourcedPurchasedInspectionTesting,
   }))
 );
+/**返工流转卡管理 */
+const ReworkTransferCard = React.lazy(() =>
+  import("@/pages/ReworkTransferCard").then((res) => ({
+    default: res.ReworkTransferCard,
+  }))
+);
+/**甩毛刺-甩圆角-炉台变更 */
+const ChangeFurnaceTable = React.lazy(() =>
+  import("@/pages/ChangeFurnaceTable").then((res) => ({
+    default: res.ChangeFurnaceTable,
+  }))
+);
+/**生料库存查询 */
+const QueryRawMaterial = React.lazy(() =>
+  import("@/pages/QueryRawMaterial").then((res) => ({
+    default: res.QueryRawMaterial,
+  }))
+);
+/**流转卡工序未完成(未完成) */
+const TransferCardUnfinish = React.lazy(() =>
+  import("@/pages/TransferCardUnfinish").then((res) => ({
+    default: res.TransferCardUnfinish,
+  }))
+);
+/**流转卡工序未完成(已完成) */
+const TransferCardUnfinishToStore = React.lazy(() =>
+  import("@/pages/TransferCardUnfinishToStore").then((res) => ({
+    default: res.TransferCardUnfinishToStore,
+  }))
+);
 
 /**路由 */
 const routeMap = [
   {
-    path: "/add_part_flow_card",
-    element: <AddPartFlowCard />,
-  },
-  {
     path: "/add_assembly_flow_card",
     element: <AddAssemblyFlowCard />,
   },
-  {
-    path: "/flow_card_query",
-    element: <FlowCardQuery />,
-  },
+
   {
     path: "/operator_simple_task",
     element: <OperatorSimpleTask />,
   },
-  {
-    path: "/flow_card_cancel",
-    element: <FlowCardCancel />,
-  },
+
   {
     path: "/add_employee_info",
     element: <AddEmployeeInfo />,
@@ -261,22 +253,12 @@ const routeMap = [
     path: "/standard_product_transfer_card",
     element: <StandardProductTransferCard />,
   },
-  {
-    path: "/issue_rollernest_semi_finished_part_flow_card",
-    element: <IssueRollerNestSemiFinishedPartFlowCard />,
-  },
+
   {
     path: "/nostandard_product_transfer_card",
     element: <NoStandardProductTransferCard />,
   },
-  {
-    path: "/issue_outsourcing_flow_card",
-    element: <IssueOutsourcingFlowCard />,
-  },
-  {
-    path: "/issue_replenishment_order_flow_card",
-    element: <IssueReplenishmentOrderFlowCard />,
-  },
+
   {
     path: "/part_flow_card_query",
     element: <PartFlowCardQuery />,
@@ -302,10 +284,7 @@ const routeMap = [
     path: "/material_rework_process_card",
     element: <MaterialReworkProcessCard />,
   },
-  {
-    path: "/heavy_industry_process_card",
-    element: <HeavyIndustryProcessCard />,
-  },
+
   {
     path: "/logistics_heat_treatment_ingredients",
     element: <LogisticsHeatTreatmentIngredients />,
@@ -322,10 +301,7 @@ const routeMap = [
     path: "/update_deburring_rounding_furnace",
     element: <UpdateDeburringRoundingFurnace />,
   },
-  {
-    path: "/query_raw_material_inventory_inquiry",
-    element: <QueryRawMaterialInventoryInquiry />,
-  },
+
   {
     path: "/query_process_incomplete",
     element: <QueryProcessIncomplete />,
@@ -338,6 +314,7 @@ const routeMap = [
   { path: "/user_manage", element: <UserManage /> },
   { path: "/role_manage", element: <RoleManage /> },
   { path: "/menu_manage", element: <MenuManage /> },
+  { path: "/permission_manage", element: <PermissionManage /> },
   {
     path: "/outsourcing_product_transfer_card",
     element: <OutsourcingProductTransferCard />,
@@ -361,6 +338,26 @@ const routeMap = [
   {
     path: "/outsourced_purchased_inspection_testing",
     element: <OutsourcedPurchasedInspectionTesting />,
+  },
+  {
+    path: "/rework_transfer_card",
+    element: <ReworkTransferCard />,
+  },
+  {
+    path: "/change_furnace_table",
+    element: <ChangeFurnaceTable />,
+  },
+  {
+    path: "/query_raw_material",
+    element: <QueryRawMaterial />,
+  },
+  {
+    path: "/transfer_card_unfinish",
+    element: <TransferCardUnfinish />,
+  },
+  {
+    path: "/transfer_card_unfinish_to_store",
+    element: <TransferCardUnfinishToStore />,
   },
 ];
 

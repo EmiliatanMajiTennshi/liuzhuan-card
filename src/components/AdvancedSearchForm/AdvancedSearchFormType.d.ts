@@ -25,6 +25,7 @@ export interface IButtons {
   setButtonLoading: React.Dispatch<
     React.SetStateAction<IButtonLoadingChildren>
   >;
+  loading?: boolean;
 }
 
 interface IOptions {
@@ -45,7 +46,8 @@ export interface IFormConfig {
   formTitle?: string;
   buttons?: Button[] | ((props: IButtons) => Button[]);
   formExtend?: boolean;
-  handleData?: (value) => any;
+  handleDate?: boolean;
+  name?: string;
 }
 
 /**

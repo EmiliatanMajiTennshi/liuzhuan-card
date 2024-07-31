@@ -6,7 +6,9 @@ import {
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { checkProcess, formatTime } from "@/utils";
+import { checkProcess, formatDate } from "@/utils";
+import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
+import { sumTransferNumberRender } from "@/utils/tableRender";
 
 const formConfig: (form: any) => IFormConfig = (form) => {
   return {
@@ -43,8 +45,8 @@ const formConfig: (form: any) => IFormConfig = (form) => {
           <Select
             allowClear
             options={[
-              { value: "32", label: "半成品" },
-              { value: "31", label: "成品" },
+              { value: SEMI_FINISHED_CODE, label: "半成品" },
+              { value: FINISHED_CODE, label: "成品" },
             ]}
           ></Select>
         ),
@@ -122,17 +124,7 @@ const formConfig: (form: any) => IFormConfig = (form) => {
         ],
       },
     ],
-    handleData: (values: any) => {
-      if (values?.finishTimeEnd) {
-        const _tempTime = formatTime(values?.finishTimeEnd);
-        values.finishTimeEnd = _tempTime;
-      }
-      if (values?.finishTimeStart) {
-        const _tempTime = formatTime(values?.finishTimeStart);
-        values.finishTimeStart = _tempTime;
-      }
-      return values;
-    },
+    handleDate: true,
   };
 };
 
@@ -142,6 +134,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "queryUnHalfTransferCard",
     queryFlowCardApi: "queryUnFlowCardInfoById",
     flowCardType: "common",
+    rowKey: "id",
     columns: [
       {
         title: "零件类型",
@@ -166,7 +159,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "品名",
         dataIndex: "name",
         key: "name",
-        width: 100,
+        width: 140,
       },
       {
         title: "规格",
@@ -198,15 +191,14 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "number",
         width: 100,
       },
-      // {
-      //   title: "流转数量累积",
-      //   dataIndex: "sumTransferNumberList",
-      //   key: "sumTransferNumberList",
-      //   render: (data: any[]) => {
-      //     return data?.[0]?.sumTransferKg;
-      //   },
-      //   width: 120,
-      // },
+      {
+        title: "流转数量累积",
+        dataIndex: "sumTransferNumberList",
+        key: "sumTransferNumberList",
+        render: sumTransferNumberRender,
+        width: 120,
+      },
+
       // {
       //   title: "查看工艺",
       //   dataIndex: "processList",

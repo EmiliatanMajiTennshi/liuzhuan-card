@@ -6,7 +6,8 @@ import {
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { formatTime } from "@/utils";
+import { formatDate } from "@/utils";
+import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -34,8 +35,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           <Select
             allowClear
             options={[
-              { value: "32", label: "半成品" },
-              { value: "31", label: "成品" },
+              { value: SEMI_FINISHED_CODE, label: "半成品" },
+              { value: FINISHED_CODE, label: "成品" },
             ]}
           ></Select>
         ),
@@ -125,17 +126,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         ],
       },
     ],
-    handleData: (values: any) => {
-      if (values?.finishTimeEnd) {
-        const _tempTime = formatTime(values?.finishTimeEnd);
-        values.finishTimeEnd = _tempTime;
-      }
-      if (values?.finishTimeStart) {
-        const _tempTime = formatTime(values?.finishTimeStart);
-        values.finishTimeStart = _tempTime;
-      }
-      return values;
-    },
+    handleDate: true,
   };
 };
 

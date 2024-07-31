@@ -5,9 +5,15 @@ import {
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
-import { formatTime } from "@/utils";
-import { kgArr } from "@/constants";
+import { formatDate } from "@/utils";
+import {
+  FINISHED_CODE,
+  SEMI_FINISHED_CODE,
+  SUCCESS_CODE,
+  kgArr,
+} from "@/constants";
 import { countProductType, getHeatTreatmentFurnacePlatformsList } from "@/api";
+import { sumTransferNumberRender } from "@/utils/tableRender";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -15,7 +21,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       if (!options.type) {
         countProductType().then((res) => {
           //   零件类型;
-          if (res?.data?.code === 20000) {
+          if (res?.data?.code === SUCCESS_CODE) {
             const typeOptions = res?.data?.data?.map((item: string) => ({
               value: item,
               label: item,
@@ -27,7 +33,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       if (!options.heatTreatmentFurnacePlatforms) {
         getHeatTreatmentFurnacePlatformsList().then((res) => {
           // 热处理炉台号
-          if (res?.data?.code === 20000) {
+          if (res?.data?.code === SUCCESS_CODE) {
             const platformsOptions = res?.data?.data?.map(
               (item: { id: string; name: string }) => ({
                 value: item?.name,
@@ -159,8 +165,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
             <Select
               allowClear
               options={[
-                { value: "32", label: "半品" },
-                { value: "31", label: "成品" },
+                { value: SEMI_FINISHED_CODE, label: "半品" },
+                { value: FINISHED_CODE, label: "成品" },
               ]}
             ></Select>
           ),
@@ -259,25 +265,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         },
       ];
     },
-    handleData: (values: any) => {
-      if (values?.finishTimeEnd) {
-        const _tempTime = formatTime(values?.finishTimeEnd);
-        values.finishTimeEnd = _tempTime;
-      }
-      if (values?.finishTimeStart) {
-        const _tempTime = formatTime(values?.finishTimeStart);
-        values.finishTimeStart = _tempTime;
-      }
-      if (values?.createTimeEnd) {
-        const _tempTime = formatTime(values?.createTimeEnd);
-        values.createTimeEnd = _tempTime;
-      }
-      if (values?.createTimeStart) {
-        const _tempTime = formatTime(values?.createTimeStart);
-        values.createTimeStart = _tempTime;
-      }
-      return values;
-    },
+    handleDate: true,
   };
 };
 
@@ -395,13 +383,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转数量累积",
         dataIndex: "sumTransferNumberList",
         key: "sumTransferNumberList",
-        render: (data: any[], record) => {
-          const unit = record?.unit;
-          if (kgArr.indexOf(unit) !== -1) {
-            return data?.[0]?.sumTransferKg;
-          }
-          return data?.[0]?.sumTransferPcs;
-        },
+        render: sumTransferNumberRender,
         width: 120,
       },
       // {

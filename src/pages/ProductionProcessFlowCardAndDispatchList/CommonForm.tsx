@@ -10,11 +10,19 @@ import {
   RenderSelect,
   transFormToKg,
   transFormToPcs,
+  validateNotZero,
 } from "@/utils";
 import { FormInstance, message } from "antd";
 import { IData } from "./indexType";
 import { useEffect, useState } from "react";
 import styles from "./index.module.scss";
+import { FINISHED_CODE, GET_FURNACE_ERROR } from "@/constants";
+import { GET_MATERIAL_ERROR, GET_MATERIAL_SUCCESS } from "@/constants";
+import {
+  DEFAULT_RED,
+  NO_OPTIONS_DATA,
+  SUCCESS_CODE,
+} from "@/constants/constants";
 
 interface IProps {
   data: IData;
@@ -26,30 +34,20 @@ interface IProps {
   mainsize: any;
 }
 const CommonForm = (props: IProps) => {
-  const {
-    data,
-    isKg,
-    form,
-
-    mItmID,
-    setMItemId,
-    mainsize,
-  } = props;
-  console.log(mainsize, 124);
+  const { data, isKg, form, mItmID, setMItemId, mainsize } = props;
 
   // 热处理炉台
   const [heatTreatmentFurnaces, setHeatTreatmentFurnaces] = useState<any[]>([]);
   // 最大流转数量
   const [liuMaxKg, setLiuMaxKg] = useState(0);
   const [liuMaxPCS, setLiuMaxPCS] = useState(0);
+
+  const isFinished = data?.itmid?.substring(0, 2) === FINISHED_CODE;
   useEffect(() => {
-    if (
-      data?.itmid?.substring(0, 2) === "31" &&
-      heatTreatmentFurnaces.length === 0
-    ) {
+    if (isFinished && heatTreatmentFurnaces.length === 0) {
       getHeatTreatmentFurnacePlatformsList()
         .then((res: any) => {
-          if (res?.data?.code === 20000) {
+          if (res?.data?.code === SUCCESS_CODE) {
             setHeatTreatmentFurnaces(
               res?.data?.data.map((item: any) => ({
                 value: item.name,
@@ -59,7 +57,7 @@ const CommonForm = (props: IProps) => {
           }
         })
         .catch((err) => {
-          message.error("请求热处理炉台数据失败");
+          message.error(GET_FURNACE_ERROR);
           console.log(err);
         });
     }
@@ -83,35 +81,61 @@ const CommonForm = (props: IProps) => {
 
     if (isKg) {
       if (data?.newsupcount && data?.parseWeight) {
-        const liucount = (
+        const liucountMax = (
           parseFloat(data?.newsupcount) -
           parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
         ).toFixed(2);
-        const liuhuancount = (
-          parseFloat(data?.newsupcount) / parseFloat(data?.parseWeight) -
-          parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
-        ).toFixed(2);
+        const liuhuancountMax = transFormToPcs(liucountMax, data?.parseWeight);
 
-        form.setFieldValue("liucount", liucount);
-        setLiuMaxKg(parseFloat(liucount));
-        setLiuMaxPCS(parseFloat(liuhuancount));
-        form.setFieldValue("liuhuancount", liuhuancount);
+        // 推荐流转数量KG
+        const liucountKG =
+          data?.transferNumberKG &&
+          parseFloat(data?.transferNumberKG) <= parseFloat(liucountMax)
+            ? data?.transferNumberKG
+            : liucountMax;
+
+        const transferNumberPCS =
+          parseFloat(data?.transferNumberKG || "0") /
+          parseFloat(data?.parseWeight);
+        // 推荐流转数量PCS
+        const liucountPCS =
+          data?.transferNumberKG &&
+          transferNumberPCS <= parseFloat(liuhuancountMax)
+            ? transferNumberPCS
+            : liuhuancountMax;
+
+        setLiuMaxKg(parseFloat(liucountMax));
+        setLiuMaxPCS(parseFloat(liuhuancountMax));
+        form.setFieldValue("liucount", liucountKG);
+        form.setFieldValue("liuhuancount", liucountPCS);
       }
     } else {
       if (data?.newsupcount && data?.parseWeight) {
-        const liucount = (
+        const liucountMax = (
           parseFloat(data?.newsupcount) -
           parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
         ).toFixed(2);
-        const liuhuancount = (
-          parseFloat(data?.newsupcount) * parseFloat(data?.parseWeight) -
-          parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
-        ).toFixed(2);
+        const liuhuancountMax = transFormToKg(liucountMax, data?.parseWeight);
+        // 推荐流转数量KG
+        const liucountKG =
+          data?.transferNumberKG &&
+          parseFloat(data?.transferNumberKG) <= parseFloat(liuhuancountMax)
+            ? data?.transferNumberKG
+            : liuhuancountMax;
 
-        setLiuMaxKg(parseFloat(liuhuancount));
-        setLiuMaxPCS(parseFloat(liucount));
-        form.setFieldValue("liucount", liucount);
-        form.setFieldValue("liuhuancount", liuhuancount);
+        const transferNumberPCS =
+          parseFloat(data?.transferNumberKG || "0") /
+          parseFloat(data?.parseWeight);
+        // 推荐流转数量PCS
+        const liucountPCS =
+          data?.transferNumberKG && transferNumberPCS <= parseFloat(liucountMax)
+            ? transferNumberPCS
+            : liucountMax;
+
+        setLiuMaxKg(parseFloat(liuhuancountMax));
+        setLiuMaxPCS(parseFloat(liucountMax));
+        form.setFieldValue("liucount", liucountPCS);
+        form.setFieldValue("liuhuancount", liucountKG);
       }
     }
   }, [data]);
@@ -123,6 +147,7 @@ const CommonForm = (props: IProps) => {
           title="生产订单条码"
           name="orderid"
           titleStyle={{ color: "red" }}
+          required
         />
         <ReadOnlyInput title="料号" name="itmid" />
         <ReadOnlyInput title="品名" name="name" />
@@ -140,7 +165,11 @@ const CommonForm = (props: IProps) => {
               pnumber: item?.pnumber,
             })) || []
           }
-          placeholder="请选择商标"
+          placeholder={
+            !data?.trademarkList || data?.trademarkList?.length === 0
+              ? NO_OPTIONS_DATA
+              : "请选择商标"
+          }
           onSelect={(e: any, record: any) => {
             const pnumber = record?.pnumber;
 
@@ -168,6 +197,9 @@ const CommonForm = (props: IProps) => {
           isNumber
           name={isKg ? "liucount" : "liuhuancount"}
           max={liuMaxKg}
+          addonAfter={
+            <span style={{ color: DEFAULT_RED }}>剩余：{liuMaxKg}</span>
+          }
           onChange={(e: number) => {
             const valueKg = e;
             const valuePCS =
@@ -176,10 +208,13 @@ const CommonForm = (props: IProps) => {
                 : "";
             if (isKg) {
               form.setFieldValue("liuhuancount", valuePCS.toString());
+              form.validateFields(["liuhuancount"]);
             } else {
               form.setFieldValue("liucount", valuePCS.toString());
+              form.validateFields(["liucount"]);
             }
           }}
+          rules={[{ validator: validateNotZero }]}
         />
         <ReadOnlyInput
           title="生产数量（PCS）"
@@ -190,6 +225,10 @@ const CommonForm = (props: IProps) => {
           isNumber
           max={liuMaxPCS}
           name={isKg ? "liuhuancount" : "liucount"}
+          dependencies={isKg ? ["liucount"] : ["liuhuancount"]}
+          addonAfter={
+            <span style={{ color: DEFAULT_RED }}>剩余：{liuMaxPCS}</span>
+          }
           onChange={(e: number) => {
             const valuePCS = e;
             const valueKg =
@@ -198,10 +237,13 @@ const CommonForm = (props: IProps) => {
                 : "";
             if (!isKg) {
               form.setFieldValue("liuhuancount", valueKg.toString());
+              form.validateFields(["liuhuancount"]);
             } else {
               form.setFieldValue("liucount", valueKg.toString());
+              form.validateFields(["liucount"]);
             }
           }}
+          rules={[{ validator: validateNotZero }]}
         />
       </tr>
       <tr>
@@ -216,8 +258,8 @@ const CommonForm = (props: IProps) => {
             setMItemId(currentId);
             queryMaterialByItemid({ itemid: currentId }).then((res) => {
               const data = res?.data?.data?.[0];
-              if (res?.data?.code !== 20000 || !data) {
-                message.error("获取材料数据失败");
+              if (res?.data?.code !== SUCCESS_CODE || !data) {
+                message.error(GET_MATERIAL_ERROR);
                 form.setFieldValue("mName", "");
                 form.setFieldValue("mspec", "");
                 form.setFieldValue("mItmTDID", "");
@@ -227,7 +269,7 @@ const CommonForm = (props: IProps) => {
               form.setFieldValue("mName", data.mName);
               form.setFieldValue("mspec", data.mformat);
               form.setFieldValue("mItmTDID", data.mtexture);
-              message.success("材料数据更新成功");
+              message.success(GET_MATERIAL_SUCCESS);
             });
           }}
         />
@@ -333,7 +375,7 @@ const CommonForm = (props: IProps) => {
           form={form}
         />
       </tr>
-      {data?.itmid?.substring(0, 2) === "31" && (
+      {isFinished && (
         <tr>
           <RenderSelect
             title="热处理炉台"
@@ -343,6 +385,7 @@ const CommonForm = (props: IProps) => {
             colSpan={1}
             labelColSpan={2}
             placeholder="请选择炉台"
+            required
           />
           <RenderSelect
             title="优先顺序"
@@ -353,7 +396,13 @@ const CommonForm = (props: IProps) => {
             }))}
             placeholder="请选择优先顺序"
           />
-          <RenderDatePicker title="流转时间" name="transferTime" colSpan={2} />
+          <RenderDatePicker
+            title="流转时间"
+            name="transferTime"
+            colSpan={2}
+            required
+            showTime
+          />
         </tr>
       )}
     </tbody>

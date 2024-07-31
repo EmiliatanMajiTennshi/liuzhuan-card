@@ -48,7 +48,7 @@ const redLabel = {
 const PrintFlowCardFormOutsourcing = (props: IProps) => {
   const { data, isKg, form } = props;
 
-  //   const isFinished = data?.partNumber?.substring(0, 2) === "31";
+  //   const isFinished = data?.partNumber?.substring(0, 2) === FINISHED_CODE;
 
   useEffect(() => {
     // 二维码不手动设置值会出现奇怪的bug
@@ -185,51 +185,24 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
       </tr>
       <tr>
         <ReadOnlyInput
-          title="生产数量(kg)"
-          name="productionKg"
+          title={isKg ? "生产数量(KG)" : "生产数量(PCS)"}
+          name={isKg ? "productionKg" : "productionPcs"}
           labelColSpan={2}
           colSpan={2}
           titleStyle={normalStyle}
           style={boldValue}
         />
         <ReadOnlyInput
-          title="生产数量(pcs)"
-          name="productionPcs"
+          title={isKg ? "流转数量(KG)" : "流转数量(PCS)"}
+          name={isKg ? "transferKg" : "transferPcs"}
           labelColSpan={2}
           colSpan={2}
           titleStyle={normalStyle}
           style={boldValue}
         />
       </tr>
-      <tr>
-        <ReadOnlyInput
-          title="流转数量(kg)"
-          name="transferKg"
-          labelColSpan={2}
-          colSpan={2}
-          titleStyle={normalStyle}
-          style={boldValue}
-        />
-        <ReadOnlyInput
-          title="流转数量(pcs)"
-          name="transferPcs"
-          labelColSpan={2}
-          colSpan={2}
-          titleStyle={normalStyle}
-          style={boldValue}
-        />
-      </tr>
+      <tr></tr>
 
-      <tr>
-        {/* <ReadOnlyInput
-          title="热处理炉台"
-          name="heatTreatmentFurnacePlatform"
-          labelColSpan={2}
-          colSpan={6}
-          style={boldValue}
-          titleStyle={redLabel}
-        /> */}
-      </tr>
       <tr>
         {/* <ReadOnlyInput title="行号" name="u9LineNo" colSpan={2} /> */}
         <th colSpan={8} style={{ textAlign: "center", ...boldValue }}>
@@ -277,7 +250,7 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
         />
       </tr> */}
       <tr>
-        <th rowSpan={3} style={redLabel} colSpan={2}>
+        <th rowSpan={3} style={{ ...redLabel, height: 90 }} colSpan={2}>
           主要尺寸
         </th>
         <ReadOnlyInput
@@ -337,15 +310,23 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
         <td colSpan={8} className={styles.noPadding}>
           <table>
             <thead>
-              <th style={{ ...boldValue, padding: "5px 5px" }} colSpan={4}>
-                工序
-              </th>
-              <th style={boldValue} colSpan={4}>
-                检验员盖章
-              </th>
+              <tr>
+                <th
+                  style={{ ...boldValue, padding: "5px 5px", width: "50%" }}
+                  colSpan={4}
+                >
+                  工序
+                </th>
+                <th style={boldValue} colSpan={4}>
+                  检验员盖章
+                </th>
+              </tr>
             </thead>
             <tbody>
               {data?.detailProcessesList?.map((item) => {
+                if (!item.processName) {
+                  return <></>;
+                }
                 return (
                   <tr>
                     <th
@@ -362,27 +343,6 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
           </table>
         </td>
       </tr>
-      {/* {isFinished && (
-          <tr>
-            <ReadOnlyInput
-              title="热处理炉台"
-              name="heatTreatmentFurnacePlatform"
-              titleStyle={{ color: "red" }}
-              colSpan={1}
-              labelColSpan={2}
-            />
-            <RenderSelect
-              title="优先顺序"
-              name="priority"
-              options={Array.from({ length: 50 }, (item, index) => ({
-                value: index + 1,
-                label: index + 1,
-              }))}
-              placeholder="请选择优先顺序"
-            />
-            <ReadOnlyInput title="流转时间" name="tranferTime" colSpan={2} />
-          </tr>
-        )} */}
     </tbody>
   );
 };

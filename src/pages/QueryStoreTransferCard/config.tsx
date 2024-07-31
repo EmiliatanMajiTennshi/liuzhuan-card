@@ -7,7 +7,7 @@ import { DatePicker, Input } from "antd";
 import { RuleObject } from "antd/es/form";
 
 import { kgArr } from "@/constants";
-import { formatTime } from "@/utils";
+import { formatDate } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -105,17 +105,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         ],
       },
     ],
-    handleData: (values: any) => {
-      if (values?.finishTimeEnd) {
-        const _tempTime = formatTime(values?.finishTimeEnd);
-        values.finishTimeEnd = _tempTime;
-      }
-      if (values?.finishTimeStart) {
-        const _tempTime = formatTime(values?.finishTimeStart);
-        values.finishTimeStart = _tempTime;
-      }
-      return values;
-    },
+    handleDate: true,
   };
 };
 
@@ -184,7 +174,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "字样",
         dataIndex: "trademark",
         key: "trademark",
-        width: 120,
+        width: 150,
       },
       {
         title: "完成时间",
@@ -282,7 +272,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "入库时间",
         dataIndex: "caddtime",
         key: "caddtime",
-        width: 160,
+        width: 180,
       },
       // {
       //   title: "查看工艺",

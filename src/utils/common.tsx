@@ -1,7 +1,14 @@
-import { queryProcessByItemId } from "@/api";
-import { Modal } from "antd";
+import {
+  insertSaveTransferCard,
+  insertSaveTransferCardDetail,
+  queryProcessByItemId,
+  updateReworkDetailById,
+} from "@/api";
+import { SUCCESS_CODE, VALIDATION_FAILED } from "@/constants";
+import { UPDATE_FAILED } from "@/constants";
+import { Modal, message } from "antd";
 import dayjs from "dayjs";
-import { sortBy } from "lodash";
+import { cloneDeep, sortBy } from "lodash";
 /**
  * 追溯单号 年月日+时间戳后八位
  * @returns
@@ -49,8 +56,13 @@ const getLZCardNumber = () => {
 };
 
 /** 把时间格式化成YYYY-MM-DD */
-const formatTime = (time: any) => {
+const formatDate = (time: any) => {
   return dayjs(time).format("YYYY-MM-DD");
+};
+
+/** 把时间格式化成YYYY-MM-DD HH:mm:ss*/
+const formatTime = (time: any) => {
+  return dayjs(time).format("YYYY-MM-DD HH:mm:ss");
 };
 
 /**psc转kg */
@@ -105,12 +117,108 @@ const checkProcess = async (partNumber: string) => {
     console.log("error", err);
   }
 };
+
+// 校验
+const validateField = (field: string, value: string | number | null) => {
+  if (!value && value !== 0) {
+    return `请输入${field}`;
+  }
+  return "";
+};
+// 保存时手动校验
+const handleSave = ({
+  flowCardType,
+  record,
+  columns,
+  index,
+  errors,
+  setErrors,
+  data,
+}: any) => {
+  const cloneErrors = cloneDeep(errors);
+  if (!cloneErrors[index]) {
+    cloneErrors[index] = {};
+  }
+  columns.forEach((item: any) => {
+    if (item.needValidate) {
+      const error = validateField(item.title, record[item.key]);
+
+      if (!error) {
+        delete cloneErrors[index][item.key];
+      } else {
+        cloneErrors[index][item.key] = error;
+      }
+    }
+  });
+  setErrors(cloneErrors);
+  if (Object.keys(cloneErrors[index]).length === 0) {
+    console.log("Record saved:", record);
+    if (flowCardType === "rework") {
+      updateReworkDetailById(record).then((res) => {
+        if (res?.data?.code === SUCCESS_CODE) {
+          message.success(res?.data?.data);
+        } else {
+          message.error(res?.data?.data || UPDATE_FAILED);
+        }
+      });
+    } else {
+      insertSaveTransferCardDetail({
+        ...record,
+        hunit: "公斤",
+        id: data?.id,
+      }).then((res) => {
+        if (res?.data?.code === SUCCESS_CODE) {
+          message.success(res?.data?.data);
+        } else {
+          message.error(res?.data?.data || UPDATE_FAILED);
+        }
+      });
+    }
+  } else {
+    message.error(VALIDATION_FAILED);
+  }
+};
+
+/**非0必输校验 */
+const validateNotZero = (_: any, value: string | number) => {
+  if (value === "0" || Number(value) === 0 || value === 0) {
+    return Promise.reject(new Error("该字段必输且不可以为0"));
+  }
+
+  return Promise.resolve();
+};
+
+/** 日期格式转换 */
+const transformDateToString = (values: any) => {
+  if (values?.finishTimeEnd) {
+    const _tempTime = formatDate(values?.finishTimeEnd);
+    values.finishTimeEnd = _tempTime;
+  }
+  if (values?.finishTimeStart) {
+    const _tempTime = formatDate(values?.finishTimeStart);
+    values.finishTimeStart = _tempTime;
+  }
+  if (values?.createTimeEnd) {
+    const _tempTime = formatDate(values?.createTimeEnd);
+    values.createTimeEnd = _tempTime;
+  }
+  if (values?.createTimeStart) {
+    const _tempTime = formatDate(values?.createTimeStart);
+    values.createTimeStart = _tempTime;
+  }
+  return values;
+};
 export {
   getTrackingNumber,
   getLZCardNumber,
+  formatDate,
   formatTime,
   transFormToKg,
   transFormToPcs,
   limitDecimals,
   checkProcess,
+  validateField,
+  handleSave,
+  validateNotZero,
+  transformDateToString,
 };

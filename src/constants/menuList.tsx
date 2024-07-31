@@ -1,5 +1,6 @@
 import { SettingOutlined, ProfileOutlined } from "@ant-design/icons";
 import { IMenuItem } from "./constantsType";
+import { cloneDeep } from "lodash";
 const menuList = [
   {
     icon: <SettingOutlined />,
@@ -82,9 +83,9 @@ const nonMenuItems = [
 ];
 
 /**获取扁平菜单 */
-const getFlatMenuList = (menu: IMenuItem[]) => {
+const getFlatMenuList = (_menu: IMenuItem[]) => {
   const flatMenuList: IMenuItem[] = [];
-
+  const menu = cloneDeep(_menu);
   menu.forEach((item) => {
     if (item?.children) {
       item?.children.forEach((subItem: IMenuItem) => {

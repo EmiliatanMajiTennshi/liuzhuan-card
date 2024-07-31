@@ -2,6 +2,7 @@ import { request } from "@/utils";
 interface IQueryTransferCard {
   pageNum?: number;
   pageSize?: number;
+  transfCardNo?: string;
 }
 
 /**

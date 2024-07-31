@@ -128,7 +128,7 @@ const RenderSider = () => {
         })}
         collapsible
         collapsed={collapsed}
-        width={245}
+        width={250}
         style={{
           background: colorBgContainer,
           borderRadius: borderRadiusLG,

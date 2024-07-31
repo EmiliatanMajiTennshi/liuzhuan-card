@@ -9,6 +9,7 @@ import { IData } from "./indexType";
 
 import styles from "./index.module.scss";
 import { useEffect } from "react";
+import { boldValue, fontSize18, normalStyle, redLabel } from "./styles";
 // import { getHeatTreatmentFurnacePlatformsList } from "@/api";
 
 interface IProps {
@@ -16,34 +17,6 @@ interface IProps {
   isKg: boolean;
   form: FormInstance<any>;
 }
-const normalWeight = {
-  fontWeight: 400,
-};
-const boldWeight = {
-  fontWeight: 700,
-};
-const fontSize18 = {
-  fontSize: 18,
-};
-
-const fontColorRed = {
-  color: "red",
-};
-
-const normalStyle = {
-  ...normalWeight,
-  ...fontSize18,
-};
-const boldValue = {
-  ...fontSize18,
-  ...boldWeight,
-};
-
-const redLabel = {
-  ...normalWeight,
-  ...fontColorRed,
-  ...boldValue,
-};
 
 const PrintFlowCardForm = (props: IProps) => {
   const { data, isKg, form } = props;
@@ -266,7 +239,7 @@ const PrintFlowCardForm = (props: IProps) => {
         />
       </tr>
       <tr>
-        <th rowSpan={3} style={redLabel} colSpan={2}>
+        <th rowSpan={3} style={{ ...redLabel, height: 90 }} colSpan={2}>
           主要尺寸
         </th>
         <ReadOnlyInput
@@ -326,12 +299,17 @@ const PrintFlowCardForm = (props: IProps) => {
         <td colSpan={8} className={styles.noPadding}>
           <table>
             <thead>
-              <th style={{ ...boldValue, padding: "5px 5px" }} colSpan={4}>
-                工序
-              </th>
-              <th style={boldValue} colSpan={4}>
-                检验员盖章
-              </th>
+              <tr>
+                <th
+                  style={{ ...boldValue, padding: "5px 5px", width: "50%" }}
+                  colSpan={4}
+                >
+                  工序
+                </th>
+                <th style={boldValue} colSpan={4}>
+                  检验员盖章
+                </th>
+              </tr>
             </thead>
             <tbody>
               {data?.detailProcessesList?.map((item) => {
@@ -351,27 +329,6 @@ const PrintFlowCardForm = (props: IProps) => {
           </table>
         </td>
       </tr>
-      {/* {isFinished && (
-        <tr>
-          <ReadOnlyInput
-            title="热处理炉台"
-            name="heatTreatmentFurnacePlatform"
-            titleStyle={{ color: "red" }}
-            colSpan={1}
-            labelColSpan={2}
-          />
-          <RenderSelect
-            title="优先顺序"
-            name="priority"
-            options={Array.from({ length: 50 }, (item, index) => ({
-              value: index + 1,
-              label: index + 1,
-            }))}
-            placeholder="请选择优先顺序"
-          />
-          <ReadOnlyInput title="流转时间" name="tranferTime" colSpan={2} />
-        </tr>
-      )} */}
     </tbody>
   );
 };
