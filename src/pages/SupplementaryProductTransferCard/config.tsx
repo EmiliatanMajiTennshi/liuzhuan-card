@@ -5,12 +5,12 @@ import {
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
-import { checkProcess } from "@/utils";
 import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    formExtend: true,
     formItems: [
       {
         key: "barCode",
@@ -121,6 +121,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "querySupplementaryOrder",
     queryFlowCardApi: "querySupplementaryOrderById",
     flowCardType: "common",
+
     columns: [
       //   {
       //     title: "零件类型",
@@ -169,7 +170,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "单位",
         dataIndex: "unit",
         key: "unit",
-        width: 100,
+        width: 60,
       },
       {
         title: "数量",
@@ -182,6 +183,24 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "sumTransferNumberList",
         key: "sumTransferNumberList",
         render: sumTransferNumberRender,
+        width: 120,
+      },
+      {
+        title: "第一道工艺",
+        dataIndex: "firstProcess",
+        key: "firstProcess",
+        render: (text, record) => {
+          return record?.processList?.[0]?.processName;
+        },
+        width: 120,
+      },
+      {
+        title: "第二道工艺",
+        dataIndex: "secondProcess",
+        key: "secondProcess",
+        render: (text, record) => {
+          return record?.processList?.[1]?.processName;
+        },
         width: 120,
       },
       // {
@@ -210,14 +229,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               <Button
                 type="primary"
                 size="small"
-                style={{ marginRight: 10 }}
-                onClick={() => checkProcess(record?.partNumber)}
-              >
-                查看工艺
-              </Button>
-              <Button
-                type="primary"
-                size="small"
                 onClick={() => {
                   setIssueModalOpen(true);
                   setIssueID(record?.id);
@@ -228,7 +239,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
             </>
           );
         },
-        width: 180,
+        width: 80,
         fixed: "right",
       },
     ],

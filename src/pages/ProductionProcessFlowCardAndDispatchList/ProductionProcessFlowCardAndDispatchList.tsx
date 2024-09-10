@@ -17,10 +17,20 @@ import getApi, {
   TApi,
   insertRework,
   insertSaveTransferCard,
+  printSaveCard,
+  queryOperationInfo,
+  queryTestInfo,
+  updateHeatTreatmentPrintStatus,
+  updatePrintStatus,
   updateReworkInfoById,
 } from "@/api";
-import { RenderQRCode, validateField } from "@/utils";
-import { IData, IFormFields } from "./indexType";
+import {
+  getErrorMessage,
+  handleSave,
+  RenderQRCode,
+  validateField,
+} from "@/utils";
+import { IData, IFormFields, IOperationItem, IVerifierItem } from "./indexType";
 import CommonForm from "./CommonForm";
 import OutsourcingForm from "./OutsourcingForm";
 import { ITableConfig } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
@@ -30,7 +40,7 @@ import {
   VALIDATION_FAILED,
   kgArr,
 } from "@/constants";
-import { getParams, getTableColumns } from "./config";
+import { getParams, useTableColumns } from "./config";
 import FlowCardForm from "./FlowCardForm";
 import { AnyObject } from "antd/es/_util/type";
 import PrintFlowCardForm from "./PrintFlowCardForm";
@@ -47,8 +57,21 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   queryFlowCardApi?: TApi;
   flowCardType: ITableConfig["flowCardType"];
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
+  name?: string;
+  setReworkModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setIssueModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setPrintModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { issueID, queryFlowCardApi, flowCardType, setRefreshFlag } = props;
+  const {
+    issueID,
+    queryFlowCardApi,
+    flowCardType,
+    setRefreshFlag,
+    name: pageName,
+    setReworkModalOpen,
+    setIssueModalOpen,
+    setPrintModalOpen,
+  } = props;
   // 数据
   const [data, setData] = useState<IData>({});
   const [dataString, setDataString] = useState<string>("");
@@ -60,7 +83,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const [tableData, setTableData] = useState<any[]>([]);
   // 选项合集
   const [options, setOptions] = useState<AnyObject>({});
-
   // 校验
   const [errors, setErrors] = useState<any>([]);
 
@@ -69,10 +91,32 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   // 用来打印
   const printRef = useRef<HTMLDivElement>(null);
 
+  // 操作员列表
+  const [operatorList, setOperatorList] = useState<IOperationItem[]>([]);
+  // 检验员列表
+  const [verifierList, setVerifierList] = useState<IVerifierItem[]>([]);
+  console.log(props, data, 1245);
+
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
-    pageStyle: "",
+    onAfterPrint: () => {
+      if (pageName === "HeatTreatmentFurnaceOperationQuery") {
+        updateHeatTreatmentPrintStatus({ id: data?.id }).then((res) => {
+          setRefreshFlag((flag) => !flag);
+        });
+      } else if (isRework) {
+        updatePrintStatus({ id: data?.id }).then((res) => {
+          setRefreshFlag((flag) => !flag);
+        });
+      } else {
+        printSaveCard({ id: data?.id }).then((res) => {
+          setRefreshFlag((flag) => !flag);
+        });
+      }
+      setPrintModalOpen?.(false);
+    },
   });
+
   /**
    * 获取工序列表
    * @param flowCardType
@@ -82,11 +126,49 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     flowCardType: ITableConfig["flowCardType"],
     data: IData
   ) => {
+    // 需要加工数据格式
     switch (flowCardType) {
       case "flowCard":
-        return data?.detailProcessesList;
+        const cloneProcessesFlowCard = cloneDeep(data?.detailProcessesList);
+        cloneProcessesFlowCard?.forEach((item) => {
+          const { operationInfoList = [], verifierInfoList = [] } = item || {};
+          item.verifierBarcode = [];
+          item.verifierName = [];
+          item.operatorName = [];
+          item.operatorBarcode = [];
+          item.operateDepartment = [];
+          operationInfoList.forEach((subItem: IOperationItem) => {
+            item.operatorName.push(subItem?.operationName);
+            item.operatorBarcode.push(subItem?.operationId);
+            item.operateDepartment.push(subItem?.operateDepartment);
+          });
+          verifierInfoList.forEach((subItem: any) => {
+            item.verifierBarcode.push(subItem?.verifierBarcode);
+            item.verifierName.push(subItem?.verifierName);
+          });
+        });
+        return cloneProcessesFlowCard;
       case "rework":
-        return data?.detailProcesses;
+        const cloneProcessesRework = cloneDeep(data?.detailProcesses);
+        cloneProcessesRework?.forEach((item) => {
+          const { operationInfoList = [], verifierInfoList = [] } = item || {};
+          item.verifierBarcode = [];
+          item.verifierName = [];
+          item.operatorName = [];
+          item.operatorBarcode = [];
+          item.operateDepartment = [];
+          operationInfoList.forEach((subItem: IOperationItem) => {
+            item.operatorName.push(subItem?.operationName);
+            item.operatorBarcode.push(subItem?.operationId);
+            item.operateDepartment.push(subItem?.operateDepartment);
+          });
+          verifierInfoList.forEach((subItem: any) => {
+            item.verifierBarcode.push(subItem?.verifierBarcode);
+            item.verifierName.push(subItem?.verifierName);
+          });
+        });
+
+        return cloneProcessesRework;
       default:
         return data?.processList || data?.detailProcesses;
     }
@@ -123,13 +205,52 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       setLoading(false);
     }
   };
+  // 请求table选项数据
+  const fetchOperatorData = async () => {
+    try {
+      const res = await queryOperationInfo();
+      const operationInfo = res?.data?.data;
+      if (res?.data?.code === SUCCESS_CODE && operationInfo) {
+        if (Array.isArray(operationInfo)) {
+          setOperatorList(operationInfo);
+        }
+      }
+    } catch (error: any) {
+      message.error(error.message);
+      console.error("请求数据时发生错误", error);
+    }
+  };
+  const fetchVerifierData = async () => {
+    try {
+      const res = await queryTestInfo();
+      const verifierInfo = res?.data?.data;
+      if (res?.data?.code === SUCCESS_CODE && verifierInfo) {
+        if (Array.isArray(verifierInfo)) {
+          setVerifierList(verifierInfo);
+        }
+      }
+    } catch (error: any) {
+      message.error(error.message);
+      console.error("请求数据时发生错误", error);
+    }
+  };
   useEffect(() => {
     /**加载数据 */
 
     if (issueID || queryFlowCardApi) {
       fetchData();
     }
+    if (flowCardType === "flowCard" || flowCardType === "rework") {
+      fetchOperatorData();
+      fetchVerifierData();
+    }
   }, [issueID, queryFlowCardApi]);
+
+  useEffect(() => {
+    if (flowCardType === "rework" && tableData.length === 0) {
+      setTableData([...tableData, {}]);
+    }
+  }, []);
   // useEffect(() => {
   //   formFooter.setFieldValue("remark", data?.remark);
   // }, [data]);
@@ -157,7 +278,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const unit = data?.uomname || "";
   const isKg = kgArr.indexOf(unit) !== -1;
 
-  const onFinish = (values: IFormFields) => {
+  const onFinish = async (values: IFormFields) => {
     const params: any = getParams({
       form,
       data,
@@ -168,20 +289,71 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       dataString,
       tableData,
     });
-    if (flowCardType === "rework" && isViewRework) {
-      if (params?.detailProcesses) delete params?.detailProcesses;
-      params.id = data?.id;
-      updateReworkInfoById(params).then((res) => {
-        if (res?.data?.code === SUCCESS_CODE) {
-          message.success(res?.data?.data);
 
-          setRefreshFlag((flag) => !flag);
-        } else {
-          message.error(SAVE_FAILED);
+    if (flowCardType === "rework") {
+      const cloneErrors = cloneDeep(errors);
+      let errorFlag = false;
+      // 对table进行校验
+      tableData.forEach((item, index: number) => {
+        if (!cloneErrors[index]) {
+          cloneErrors[index] = {};
         }
+        columns.forEach((subItem: any) => {
+          if (subItem.needValidate) {
+            const error = validateField(subItem.title, item[subItem.key]);
+            if (!error) {
+              delete cloneErrors[index][subItem.key];
+            } else {
+              cloneErrors[index][subItem.key] = error;
+              if (errorFlag === false) {
+                errorFlag = true;
+              }
+            }
+          }
+        });
       });
+      setErrors(cloneErrors);
+      if (errorFlag) {
+        message.error(VALIDATION_FAILED);
+        return;
+      }
+      if (isViewRework) {
+        // 查看页面
+        if (params?.detailProcesses) delete params?.detailProcesses;
+        params.id = data?.id;
+        params.type = data?.type;
+        updateReworkInfoById(params).then(async (res) => {
+          if (res?.data?.code === SUCCESS_CODE) {
+            message.success(res?.data?.data);
+          } else {
+            message.error(SAVE_FAILED);
+          }
+          for (const index in tableData) {
+            await handleSave({
+              flowCardType,
+              record: tableData[index],
+              data,
+              index,
+            });
+          }
+          fetchData();
+          setRefreshFlag((flag) => !flag);
+        });
+      }
+      if (!isViewRework) {
+        // 添加页面
+        insertRework(params as any).then((res) => {
+          if (res?.data?.code === SUCCESS_CODE) {
+            message.success(res?.data?.data);
+            setRefreshFlag((flag) => !flag);
+          } else {
+            message.error(getErrorMessage(res, SAVE_FAILED));
+          }
+        });
+      }
     }
-    if (flowCardType === "rework" && !isViewRework) {
+
+    if (flowCardType === "flowCard") {
       const cloneErrors = cloneDeep(errors);
       let errorFlag = false;
       // 对table进行校验
@@ -208,26 +380,28 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         message.error(VALIDATION_FAILED);
         return;
       } else {
-        insertRework(params as any).then((res) => {
-          if (res?.data?.code === SUCCESS_CODE) {
-            message.success(res?.data?.data);
-            setRefreshFlag((flag) => !flag);
-          } else {
-            message.error(SAVE_FAILED);
+        // 页面大保存
+        const finialSave = async () => {
+          insertSaveTransferCard(params).then((res) => {
+            if (res?.data?.code === SUCCESS_CODE) {
+              message.success(res?.data?.data);
+            } else {
+              message.error(res?.data?.data || SAVE_FAILED);
+            }
+          });
+          for (const index in tableData) {
+            await handleSave({
+              flowCardType,
+              record: tableData[index],
+              data,
+              index,
+            });
           }
-        });
-      }
-    }
-    if (flowCardType === "flowCard") {
-      insertSaveTransferCard(params).then((res) => {
-        if (res?.data?.code === SUCCESS_CODE) {
-          message.success(res?.data?.data);
           fetchData();
           setRefreshFlag((flag) => !flag);
-        } else {
-          message.error(res?.data?.data || SAVE_FAILED);
-        }
-      });
+        };
+        finialSave();
+      }
     }
 
     if (flowCardType === "common" || flowCardType === "outsourcing") {
@@ -267,6 +441,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     data,
     isKg,
     form,
+    reworkUnit: data?.reworkUnit,
   };
   // 流转卡
   const reworkCardFormProps = {
@@ -276,14 +451,8 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     setOptions,
   };
 
-  // const components = {
-  //   body: {
-  //     row: EditableRow,
-  //     cell: EditableCell,
-  //   },
-  // };
-
-  const columns = getTableColumns({
+  // 列
+  const columns = useTableColumns({
     flowCardType,
     options,
     setOptions,
@@ -293,52 +462,9 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     setTableData,
     queryFlowCardApi,
     data,
+    operatorList,
+    verifierList,
   });
-
-  // useEffect(() => {
-  //   const handleBeforePrint = () => {
-  //     debugger;
-  //     console.log("打印预览已打开");
-  //     // 在这里添加打开打印预览时需要执行的逻辑
-  //   };
-
-  //   const handleAfterPrint = () => {
-  //     console.log("打印预览已关闭");
-  //     // 在这里添加关闭打印预览时需要执行的逻辑
-  //   };
-
-  //   window.addEventListener("beforeprint", handleBeforePrint);
-  //   window.addEventListener("afterprint", handleAfterPrint);
-
-  //   // 清理事件监听器
-  //   return () => {
-  //     window.removeEventListener("beforeprint", handleBeforePrint);
-  //     window.removeEventListener("afterprint", handleAfterPrint);
-  //   };
-  // }, []);
-  // const handleSave = (row: Item) => {
-  //   const newData = [...tableData];
-  //   const index = newData.findIndex((item) => row.key === item.key);
-  //   const item = newData[index];
-  //   newData.splice(index, 1, { ...item, ...row });
-  //   setTableData(newData);
-  // };
-
-  // const mergedColumns = columns.map((col: any) => {
-  //   if (!col?.editable) {
-  //     return col;
-  //   }
-  //   return {
-  //     ...col,
-  //     onCell: (record: Item) => ({
-  //       record,
-  //       editable: col.editable,
-  //       dataIndex: col.dataIndex,
-  //       title: col.title,
-  //       handleSave,
-  //     }),
-  //   };
-  // });
 
   return (
     <>
@@ -371,7 +497,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                       name="reworkTransferCardCode"
                       value={dataString || data?.reworkTransferCardCode || ""}
                       noTd={true}
-                      size={88}
+                      size={96}
                     />
                   </>
                 )}
@@ -386,12 +512,12 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                       name="transferCardCode"
                       value={data?.transferCardCode || data?.transferCard || ""}
                       noTd={true}
-                      size={88}
+                      size={96}
                     />
                   </>
                 )}
               </div>
-              <table>
+              <table style={{ overflow: "hidden", tableLayout: "fixed" }}>
                 {/* 标品/非标 */}
                 {flowCardType === "common" && (
                   <CommonForm {...commonFormProps} />

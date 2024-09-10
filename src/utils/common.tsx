@@ -8,7 +8,7 @@ import { SUCCESS_CODE, VALIDATION_FAILED } from "@/constants";
 import { UPDATE_FAILED } from "@/constants";
 import { Modal, message } from "antd";
 import dayjs from "dayjs";
-import { cloneDeep, sortBy } from "lodash";
+import { cloneDeep, isArray, sortBy } from "lodash";
 /**
  * 追溯单号 年月日+时间戳后八位
  * @returns
@@ -73,9 +73,12 @@ const transFormToKg = (number: number | string, weight: number | string) => {
 };
 /**kg转psc */
 const transFormToPcs = (number: number | string, weight: number | string) => {
+  if (parseFloat(weight.toString()) === 0) {
+    return "没有单重，无法计算";
+  }
   return (
     parseFloat(number.toString()) / parseFloat(weight.toString())
-  ).toFixed(2);
+  ).toFixed(0);
 };
 /**限制小数位数 */
 const limitDecimals = (value: string | number | undefined): string => {
@@ -120,69 +123,150 @@ const checkProcess = async (partNumber: string) => {
 
 // 校验
 const validateField = (field: string, value: string | number | null) => {
-  if (!value && value !== 0) {
+  if ((!value && value !== 0) || (isArray(value) && value?.length === 0)) {
     return `请输入${field}`;
   }
   return "";
 };
-// 保存时手动校验
-const handleSave = ({
-  flowCardType,
+
+// 校验
+const handleValidate = async ({
   record,
   columns,
-  index,
   errors,
   setErrors,
-  data,
+  index,
 }: any) => {
   const cloneErrors = cloneDeep(errors);
-  if (!cloneErrors[index]) {
+  if (!cloneErrors?.[index]) {
     cloneErrors[index] = {};
   }
   columns.forEach((item: any) => {
     if (item.needValidate) {
       const error = validateField(item.title, record[item.key]);
-
       if (!error) {
-        delete cloneErrors[index][item.key];
+        delete cloneErrors?.[index][item.key];
       } else {
         cloneErrors[index][item.key] = error;
       }
     }
   });
-  setErrors(cloneErrors);
-  if (Object.keys(cloneErrors[index]).length === 0) {
-    console.log("Record saved:", record);
+  setErrors((prevErrors: any) => ({
+    ...prevErrors,
+    [index]: cloneErrors[index],
+  }));
+
+  if (Object.keys(cloneErrors?.[index]).length !== 0) {
+    return "error";
+  }
+
+  return "done";
+};
+
+// 保存
+const handleSave = async ({ flowCardType, record, data, index }: any) => {
+  // 没有错误
+  const verifierInfoList =
+    record?.verifierBarcode?.map((item: string, index: number) => {
+      return {
+        verifierBarcode: item,
+        verifierName: record?.verifierName?.[index],
+      };
+    }) || [];
+  const operationInfoList =
+    record?.operatorBarcode?.map((item: string, index: number) => {
+      return {
+        operationId: item,
+        operationName: record?.operatorName?.[index],
+        operateDepartment: record?.operateDepartment?.[index],
+      };
+    }) || [];
+
+  const cloneRecord = cloneDeep(record);
+  delete cloneRecord?.verifierBarcode;
+  delete cloneRecord?.verifierName;
+  delete cloneRecord?.operatorBarcode;
+  delete cloneRecord?.operatorName;
+  delete cloneRecord?.operateDepartment;
+
+  const {
+    processName = "",
+    inspectionLevel = "",
+    hid = "",
+    finishTime = "",
+    equipmentBarcode = "",
+    equipmentName = "",
+    produceNumber = "",
+  } = cloneRecord;
+
+  try {
+    // 返工
     if (flowCardType === "rework") {
-      updateReworkDetailById(record).then((res) => {
-        if (res?.data?.code === SUCCESS_CODE) {
-          message.success(res?.data?.data);
-        } else {
-          message.error(res?.data?.data || UPDATE_FAILED);
-        }
-      });
+      const params = {
+        processName,
+        inspectionLevel,
+        hid,
+        finishTime,
+        equipmentBarcode,
+        equipmentName,
+        produceNumber,
+        verifierInfoList,
+        operationInfoList,
+      };
+      const res = await updateReworkDetailById(params);
+      if (res?.data?.code === SUCCESS_CODE) {
+      } else {
+        message.error(
+          `第${parseFloat(index) + 1}道工序 ${record.processName} 保存失败(${
+            res?.data?.data || UPDATE_FAILED
+          })`
+        );
+      }
     } else {
-      insertSaveTransferCardDetail({
-        ...record,
+      const params = {
+        processName,
+        inspectionLevel,
+        hid,
+        finishTime,
+        equipmentBarcode,
+        equipmentName,
+        produceNumber,
+        verifierInfoList,
+        operationInfoList,
         hunit: "公斤",
         id: data?.id,
-      }).then((res) => {
-        if (res?.data?.code === SUCCESS_CODE) {
-          message.success(res?.data?.data);
+      };
+
+      // 流转卡零件管理
+      const res = await insertSaveTransferCardDetail(params);
+      if (res?.data?.code === SUCCESS_CODE) {
+      } else {
+        const retryRes = await insertSaveTransferCardDetail(params);
+        if (retryRes?.data?.code === SUCCESS_CODE) {
         } else {
-          message.error(res?.data?.data || UPDATE_FAILED);
+          message.error(
+            `第${parseFloat(index) + 1}道工序 ${record.processName} 保存失败(${
+              retryRes?.data?.data || UPDATE_FAILED
+            })`
+          );
         }
-      });
+      }
     }
-  } else {
-    message.error(VALIDATION_FAILED);
+  } catch (err: any) {
+    message.error(`Error: ${err.message}`);
   }
 };
 
 /**非0必输校验 */
 const validateNotZero = (_: any, value: string | number) => {
-  if (value === "0" || Number(value) === 0 || value === 0) {
-    return Promise.reject(new Error("该字段必输且不可以为0"));
+  if (
+    !value ||
+    value === "0" ||
+    Number(value) === 0 ||
+    value === 0 ||
+    Number(value) < 0
+  ) {
+    return Promise.reject(new Error("该字段必输且大于等于0"));
   }
 
   return Promise.resolve();
@@ -208,6 +292,33 @@ const transformDateToString = (values: any) => {
   }
   return values;
 };
+
+//两数相除取百分比%并保留两位小数
+function percentage(number1: number, number2: number) {
+  // 小数点后两位百分比
+  return Math.round((number1 / number2) * 10000) / 100.0;
+}
+
+const getErrorMessage = (res: any, errorMessage: string) => {
+  return (
+    res?.data?.msg ||
+    res?.data?.message ||
+    res?.response?.data?.msg ||
+    res?.data?.data ||
+    errorMessage
+  );
+};
+/** 数组去重*/
+const uniqueArray = (arr: any[], key: string) => {
+  const map = new Map();
+  arr?.forEach((item) => {
+    if (!map.has(item[key])) {
+      map.set(item[key], item);
+    }
+  });
+  return Array.from(map.values());
+};
+
 export {
   getTrackingNumber,
   getLZCardNumber,
@@ -221,4 +332,8 @@ export {
   handleSave,
   validateNotZero,
   transformDateToString,
+  percentage,
+  getErrorMessage,
+  uniqueArray,
+  handleValidate,
 };

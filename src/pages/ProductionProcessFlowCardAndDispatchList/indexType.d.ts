@@ -35,6 +35,9 @@ export interface IData {
     hid?: number;
     processName?: string;
     traceabilityNumber: string;
+    operationInfoList: any;
+    verifierInfoList: any;
+    [key: string]: any;
   }[];
   transferCardCode?: string;
   orderCode?: string;
@@ -42,6 +45,7 @@ export interface IData {
   pickingCode?: string;
   traceabilityNumber?: string;
   trademarkList?: any[];
+  trademarkList1?: any[];
   type?: string;
   alreadySend?: {
     alreaySendNumKG?: string;
@@ -73,6 +77,11 @@ export interface IData {
   transferNumberPCS?: string;
   reworkTransferCardCode?: string;
   detailProcesses?: any[];
+  reworkUnit?: string;
+  pCodeList?: ang[];
+  parseitmid?: string;
+  parsePartNumber?: string;
+  pNumber?: string;
 }
 
 export interface IFormFields {
@@ -104,4 +113,15 @@ export interface IFormFields {
   heatTreatmentFurnace: string;
   priority: string;
   transferTime: string;
+}
+
+export interface IOperationItem {
+  operationId: string;
+  operationName: string;
+  operateDepartment: string;
+}
+export interface IVerifierItem {
+  testId: string;
+  testName: string;
+  testDepartment: string;
 }

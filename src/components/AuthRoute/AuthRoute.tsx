@@ -4,21 +4,22 @@ import { useRootStore } from "@/store";
 import { Navigate, useNavigate } from "react-router-dom";
 import { IAuthRoute, IRes } from "./AuthRouteType";
 import { useEffect, useState } from "react";
-import { Skeleton, message } from "antd";
+import { Skeleton } from "antd";
 import { removeToken } from "@/utils";
-import { TOKEN_ERROR } from "@/constants";
 
 const AuthRoute = ({ dashboardFlag, children }: IAuthRoute) => {
-  console.log(dashboardFlag, 1241);
-
   const [allowLogin, setAllowLogin] = useState<boolean | null>(null);
   const store = useRootStore();
   const userStore = store.user;
   const setUserInfo = userStore.setUserInfo;
 
   const navigate = useNavigate();
+  console.log(window.location.hash, 142);
 
-  if (dashboardFlag && window.location.hash === "#/") {
+  if (
+    dashboardFlag &&
+    (window.location.hash === "#/" || window.location.hash === "")
+  ) {
     navigate("/dashboard");
   }
 
@@ -30,7 +31,7 @@ const AuthRoute = ({ dashboardFlag, children }: IAuthRoute) => {
           setAllowLogin(true);
         } else {
           setAllowLogin(false);
-          message.error(TOKEN_ERROR);
+
           removeToken();
         }
       })

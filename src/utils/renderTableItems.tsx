@@ -1,12 +1,15 @@
 import { DatePicker, Form, Input, InputNumber, Select, Spin } from "antd";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode.react";
 import styles from "./renderTableItems.module.scss";
 import { limitDecimals } from "./common";
 import { MyTooltip } from "@/components/MyTooltip";
 import TextArea from "antd/es/input/TextArea";
 import ReadOnlyFormItem from "@/components/ReadOnlyFormItem/ReadOnlyFormItem";
-import { Rule } from "antd/es/form";
+import { FormInstance, Rule } from "antd/es/form";
+const RequiredDot = () => {
+  return <span style={{ color: "red" }}>{" *"}</span>;
+};
 const RenderQRCode = ({
   title,
   footer,
@@ -17,27 +20,31 @@ const RenderQRCode = ({
   noTd,
   size,
   notInForm,
+  form,
 }: {
   title?: string;
   footer?: string | React.ReactNode;
   name: string;
-  value: string;
+  value?: string;
   rowSpan?: number;
   colSpan?: number;
   noTd?: boolean;
   size?: number;
   notInForm?: boolean;
+  form?: FormInstance<any>;
 }) => {
-  // form.setFieldValue(name, value);
-
-  console.log(value);
-  const qrCode = value ? (
-    <QRCode value={value} size={size || 72} />
-  ) : (
-    <Spin>
-      <QRCode value="二维码努力生成中~" size={size || 72} />
-    </Spin>
-  );
+  if (form) {
+    form.setFieldValue(name, value);
+  }
+  const qrCode = useMemo(() => {
+    return value ? (
+      <QRCode value={value} size={size || 72} />
+    ) : (
+      <Spin>
+        <QRCode value="二维码努力生成中~" size={size || 72} />
+      </Spin>
+    );
+  }, [value]);
   const renderQRcode = !notInForm ? (
     <div style={{ textAlign: "center", margin: "0 5px" }} title={value}>
       {title && <div>{title}</div>}
@@ -79,8 +86,12 @@ const ReadOnlyInput = ({
   labelColSpan,
   form,
   style,
+  placeholder,
+  addonAfter,
+  isNumber,
+  render,
 }: {
-  title: string;
+  title: string | React.ReactNode;
   name: string;
   defaultValue?: string; //穿了defaultValue 必须传form
   colSpan?: number;
@@ -89,15 +100,20 @@ const ReadOnlyInput = ({
   titleStyle?: React.CSSProperties;
   tdStyle?: React.CSSProperties;
   form?: any;
+  placeholder?: string;
+  addonAfter?: string | React.ReactNode;
+  isNumber?: boolean;
+  render?: React.ReactNode | (() => React.ReactNode);
 }) => {
   useEffect(() => {
     if (form && defaultValue) {
       form.setFieldValue(name, defaultValue);
     }
   }, [defaultValue]);
+  const customRender = typeof render === "function" ? render() : render;
   return (
     <>
-      <th style={titleStyle} colSpan={labelColSpan}>
+      <th style={{ ...titleStyle, lineHeight: "110%" }} colSpan={labelColSpan}>
         {title}
       </th>
       <td
@@ -105,19 +121,29 @@ const ReadOnlyInput = ({
           styles["input-container-locked"],
           styles["input-container"],
         ].join(" ")}
-        style={{ ...tdStyle, minWidth: 150 }}
+        style={{ ...tdStyle, minWidth: 150, minHeight: 24 }}
         colSpan={colSpan}
       >
         <Form.Item name={name}>
-          <MyTooltip>
-            {/* <Input
+          {render ? (
+            customRender
+          ) : (
+            <MyTooltip>
+              {/* <Input
               className={styles.input}
               style={{ ...style, border: "none" }}
               autoComplete="off"
               readOnly
             ></Input> */}
-            <ReadOnlyFormItem style={style}></ReadOnlyFormItem>
-          </MyTooltip>
+
+              <ReadOnlyFormItem
+                style={style}
+                placeholder={placeholder}
+                addonAfter={addonAfter}
+                isNumber={isNumber}
+              ></ReadOnlyFormItem>
+            </MyTooltip>
+          )}
         </Form.Item>
       </td>
     </>
@@ -138,6 +164,8 @@ const EditAbleInput = ({
   required,
   dependencies,
   addonAfter,
+  precision,
+  placeholder,
 }: {
   title: string;
   name: string;
@@ -149,15 +177,19 @@ const EditAbleInput = ({
   isNumber?: boolean;
   colSpan?: number;
   max?: number;
+  precision?: number;
   step?: number;
   rules?: Rule[];
   required?: boolean;
   dependencies?: string[];
   addonAfter?: React.ReactNode;
+  placeholder?: string;
 }) => {
   return (
     <>
-      <th style={titleStyle}>{title}</th>
+      <th style={titleStyle}>
+        {title} {required && <RequiredDot />}
+      </th>
       <td className={styles["input-container"]} colSpan={colSpan}>
         <Form.Item
           name={name}
@@ -177,9 +209,11 @@ const EditAbleInput = ({
               controls={false}
               max={max}
               step={step}
+              precision={precision}
               formatter={limitDecimals}
               parser={limitDecimals as any}
               addonAfter={addonAfter}
+              placeholder={placeholder}
             ></InputNumber>
           ) : (
             <Input
@@ -189,6 +223,7 @@ const EditAbleInput = ({
               onChange={onChange}
               onBlur={onBlur}
               addonAfter={addonAfter}
+              placeholder={placeholder}
             ></Input>
           )}
         </Form.Item>
@@ -217,6 +252,7 @@ const EditAbleTextArea = ({
   tdStyle?: React.CSSProperties;
   readOnly?: boolean;
 }) => {
+  const [textLen, setTextLen] = useState(0);
   return (
     <>
       <th style={titleStyle} colSpan={labelColSpan}>
@@ -226,7 +262,7 @@ const EditAbleTextArea = ({
         className={`${styles["input-container"]} ${
           readOnly ? styles["input-container-locked"] : ""
         }`}
-        style={tdStyle}
+        style={{ ...tdStyle, position: "relative" }}
         colSpan={colSpan}
       >
         <Form.Item name={name}>
@@ -236,8 +272,23 @@ const EditAbleTextArea = ({
             style={{ ...style, border: "none" }}
             autoComplete="off"
             readOnly={readOnly}
+            onChange={(e) => {
+              setTextLen(e?.target?.value.length);
+            }}
           ></TextArea>
         </Form.Item>
+        {maxLength && (
+          <span
+            style={{
+              position: "absolute",
+              right: 30,
+              bottom: 2,
+              color: "#666",
+            }}
+          >
+            {textLen}/{maxLength}
+          </span>
+        )}
       </td>
     </>
   );
@@ -257,6 +308,7 @@ const RenderSelect = ({
   notFoundContent,
   loading,
   required,
+  disabled,
 }: {
   title: string;
   name: string;
@@ -272,11 +324,12 @@ const RenderSelect = ({
   notFoundContent?: React.ReactNode;
   loading?: boolean;
   required?: boolean;
+  disabled?: boolean;
 }) => {
   return (
     <>
       <th style={titleStyle} colSpan={labelColSpan}>
-        {title}
+        {title} {required && <RequiredDot />}
       </th>
       <td
         colSpan={colSpan}
@@ -296,6 +349,7 @@ const RenderSelect = ({
             notFoundContent={notFoundContent}
             loading={loading}
             allowClear
+            disabled={disabled}
           ></Select>
         </Form.Item>
       </td>

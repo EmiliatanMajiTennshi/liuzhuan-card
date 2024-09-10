@@ -1,8 +1,6 @@
 import { request } from "@/utils";
 
-interface IUpdateReworkDetailById {
-  id: number;
-}
+interface IUpdateReworkDetailById {}
 
 /**
  * 通过id更新返工流转卡工序

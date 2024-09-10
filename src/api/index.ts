@@ -35,7 +35,7 @@ import { queryEquipmentInfo } from "./queryEquipmentInfo";
 import { insertSaveTransferCard } from "./insertSaveTransferCard";
 import { queryProcessByItemId } from "./queryProcessByItemId";
 import { queryTransferStore } from "./queryTransferStore";
-import { queryOutsourcedPurchased } from "./queryOutsourcedPurchased";
+import { queryOutsourcedPurchasedCheck } from "./queryOutsourcedPurchasedCheck";
 import { queryRework } from "./queryRework";
 import { queryHeatTreatment } from "./queryHeatTreatment";
 import { updateHeatTreatmentStatus } from "./updateHeatTreatmentStatus";
@@ -54,10 +54,19 @@ import { updateReworkInfoById } from "./updateReworkInfoById";
 import { insertSaveTransferCardDetail } from "./insertSaveTransferCardDetail";
 import { changeFurnacePlatformById } from "./changeFurnacePlatformById";
 import { countOrderCompletionStatus } from "./countOrderCompletionStatus";
+import { queryReviewFormNumber } from "./queryReviewFormNumber";
+import { queryProcess } from "./queryProcess";
+import { updateCheckById } from "./udpateCheckById";
+import { printSaveCard } from "./printSaveCard";
+import { updatePrintStatus } from "./updatePrintStatus";
+import { updateHeatTreatmentPrintStatus } from "./updateHeatTreatmentPrintStatus";
+import { queryReformInfoByItemId } from "./queryReformInfoByItemId";
+import { countUnfinishTransferToStore } from "./countUnfinishTransferToStore";
 export {
   countProductType,
   countOrderCompletionStatus,
   clickTransferCard,
+  countUnfinishTransferToStore,
   changeFurnacePlatformById,
   deleteUsers,
   deleteRoleInfoByRoleId,
@@ -77,6 +86,7 @@ export {
   loginRequest,
   logoutRequest,
   registerRequest,
+  printSaveCard,
   queryPermission,
   queryAllMenu,
   queryRole,
@@ -95,7 +105,7 @@ export {
   queryEquipmentInfo,
   queryProcessByItemId,
   queryTransferStore,
-  queryOutsourcedPurchased,
+  queryOutsourcedPurchasedCheck,
   queryRework,
   queryHeatTreatment,
   queryFurnaceChange,
@@ -104,6 +114,9 @@ export {
   queryUnfinishCardToStore,
   queryQR,
   queryReworkInfoById,
+  queryReviewFormNumber,
+  queryProcess,
+  queryReformInfoByItemId,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
@@ -111,10 +124,14 @@ export {
   updatePermissionById,
   updateReworkDetailById,
   updateReworkInfoById,
+  updateCheckById,
+  updatePrintStatus,
+  updateHeatTreatmentPrintStatus,
 };
 const apis = {
   countProductType,
   countOrderCompletionStatus,
+  countUnfinishTransferToStore,
   clickTransferCard,
   changeFurnacePlatformById,
   deleteUsers,
@@ -135,6 +152,7 @@ const apis = {
   loginRequest,
   logoutRequest,
   registerRequest,
+  printSaveCard,
   queryPermission,
   queryAllMenu,
   queryRole,
@@ -153,7 +171,7 @@ const apis = {
   queryEquipmentInfo,
   queryProcessByItemId,
   queryTransferStore,
-  queryOutsourcedPurchased,
+  queryOutsourcedPurchasedCheck,
   queryRework,
   queryHeatTreatment,
   queryFurnaceChange,
@@ -162,6 +180,9 @@ const apis = {
   queryUnfinishCardToStore,
   queryQR,
   queryReworkInfoById,
+  queryReviewFormNumber,
+  queryProcess,
+  queryReformInfoByItemId,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
@@ -169,6 +190,9 @@ const apis = {
   updatePermissionById,
   updateReworkDetailById,
   updateReworkInfoById,
+  updateCheckById,
+  updatePrintStatus,
+  updateHeatTreatmentPrintStatus,
 };
 /**
  * 用于formConfig的api

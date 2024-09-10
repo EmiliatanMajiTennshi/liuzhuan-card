@@ -11,6 +11,7 @@ import { IRes } from "./RenderSiderType";
 import { useRootStore } from "@/store";
 import { observer } from "mobx-react-lite";
 import { IMenuItem } from "@/constants/constantsType";
+import { MENULIST } from "@/constants/constants";
 
 /**
  * 把menu里的icon从字符串转成元素
@@ -48,6 +49,7 @@ const RenderSider = () => {
 
   const handleMenu = (menu: any) => {
     if (menu) {
+      localStorage.setItem(MENULIST, JSON.stringify(menu));
       const _menu = handleIcon(menu);
       _setMenu(_menu);
     } else {

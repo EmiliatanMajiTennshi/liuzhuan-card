@@ -9,6 +9,14 @@ import { IData } from "./indexType";
 
 import styles from "./index.module.scss";
 import { useEffect } from "react";
+import {
+  bold24,
+  bold32,
+  boldValue,
+  fontSize22,
+  normalStyle,
+  redLabel,
+} from "./styles";
 // import { getHeatTreatmentFurnacePlatformsList } from "@/api";
 
 interface IProps {
@@ -16,34 +24,6 @@ interface IProps {
   isKg: boolean;
   form: FormInstance<any>;
 }
-const normalWeight = {
-  fontWeight: 400,
-};
-const boldWeight = {
-  fontWeight: 700,
-};
-const fontSize18 = {
-  fontSize: 18,
-};
-
-const fontColorRed = {
-  color: "red",
-};
-
-const normalStyle = {
-  ...normalWeight,
-  ...fontSize18,
-};
-const boldValue = {
-  ...fontSize18,
-  ...boldWeight,
-};
-
-const redLabel = {
-  ...normalWeight,
-  ...fontColorRed,
-  ...boldValue,
-};
 
 const PrintFlowCardFormOutsourcing = (props: IProps) => {
   const { data, isKg, form } = props;
@@ -78,46 +58,44 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
         <ReadOnlyInput
           title="订单号"
           name="barCode"
-          titleStyle={{ ...redLabel, width: "18%" }}
-          tdStyle={{ width: "82%" }}
-          style={fontSize18}
-          labelColSpan={2}
-          colSpan={6}
+          titleStyle={redLabel}
+          style={fontSize22}
+          labelColSpan={4}
+          colSpan={18}
         />
       </tr>
       <tr>
         <ReadOnlyInput
           title="料号"
           name="partNumber"
-          labelColSpan={2}
-          colSpan={2}
-          titleStyle={{ ...normalStyle, width: "18%" }}
-          tdStyle={{ width: "32%" }}
-          style={fontSize18}
+          labelColSpan={4}
+          colSpan={7}
+          titleStyle={{ ...normalStyle }}
+          style={fontSize22}
         />
         <ReadOnlyInput
           title="行号"
           name="lineNumber"
-          labelColSpan={2}
-          colSpan={2}
-          titleStyle={{ ...normalStyle, width: "18%" }}
-          style={fontSize18}
+          labelColSpan={4}
+          colSpan={7}
+          titleStyle={{ ...normalStyle }}
+          style={fontSize22}
         />
       </tr>
       <tr>
         <ReadOnlyInput
           title="品名"
           name="name"
-          labelColSpan={2}
-          colSpan={2}
+          labelColSpan={4}
+          colSpan={7}
           titleStyle={normalStyle}
           style={boldValue}
         />
         <ReadOnlyInput
           title="规格"
           name="specs"
-          labelColSpan={2}
-          colSpan={2}
+          labelColSpan={4}
+          colSpan={7}
           titleStyle={normalStyle}
           style={boldValue}
         />
@@ -126,16 +104,16 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
         <ReadOnlyInput
           title="材质"
           name="material"
-          labelColSpan={2}
-          colSpan={2}
+          labelColSpan={4}
+          colSpan={7}
           titleStyle={normalStyle}
           style={normalStyle}
         />
         <ReadOnlyInput
           title="商标"
           name="trademark"
-          labelColSpan={2}
-          colSpan={2}
+          labelColSpan={4}
+          colSpan={7}
           titleStyle={normalStyle}
           style={normalStyle}
           // options={
@@ -151,16 +129,16 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
         <ReadOnlyInput
           title="图号"
           name="drawingNumber"
-          labelColSpan={2}
-          colSpan={2}
+          labelColSpan={4}
+          colSpan={7}
           titleStyle={normalStyle}
           style={normalStyle}
         />
         <ReadOnlyInput
           title="供方"
           name="supplierName"
-          labelColSpan={2}
-          colSpan={2}
+          labelColSpan={4}
+          colSpan={7}
           titleStyle={normalStyle}
           style={normalStyle}
         />
@@ -169,71 +147,93 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
         <ReadOnlyInput
           title="追溯单号"
           name="traceabilityNumber"
-          labelColSpan={2}
-          colSpan={2}
+          labelColSpan={4}
+          colSpan={7}
           titleStyle={normalStyle}
           style={boldValue}
         />
         <ReadOnlyInput
           title="完成日期"
           name="finishTime"
-          labelColSpan={2}
-          colSpan={2}
+          labelColSpan={4}
+          colSpan={7}
           titleStyle={normalStyle}
           style={normalStyle}
         />
       </tr>
       <tr>
         <ReadOnlyInput
-          title={isKg ? "生产数量(KG)" : "生产数量(PCS)"}
+          title={
+            isKg ? (
+              <>
+                生产数量<div>(公斤)</div>
+              </>
+            ) : (
+              <>
+                生产数量<div>(PCS)</div>
+              </>
+            )
+          }
           name={isKg ? "productionKg" : "productionPcs"}
-          labelColSpan={2}
-          colSpan={2}
+          labelColSpan={4}
+          colSpan={7}
           titleStyle={normalStyle}
-          style={boldValue}
+          style={bold32}
+          isNumber
         />
         <ReadOnlyInput
-          title={isKg ? "流转数量(KG)" : "流转数量(PCS)"}
+          title={
+            isKg ? (
+              <>
+                流转数量<div>(公斤)</div>
+              </>
+            ) : (
+              <>
+                流转数量<div>(PCS)</div>
+              </>
+            )
+          }
           name={isKg ? "transferKg" : "transferPcs"}
-          labelColSpan={2}
-          colSpan={2}
+          labelColSpan={4}
+          colSpan={7}
           titleStyle={normalStyle}
-          style={boldValue}
+          style={bold32}
+          isNumber
         />
       </tr>
       <tr></tr>
 
       <tr>
         {/* <ReadOnlyInput title="行号" name="u9LineNo" colSpan={2} /> */}
-        <th colSpan={8} style={{ textAlign: "center", ...boldValue }}>
+        <th colSpan={22} style={{ textAlign: "center", ...boldValue }}>
           生产入库扫描条码
         </th>
       </tr>
       <tr>
-        <td colSpan={8}>
+        <td colSpan={22}>
           <div className={styles.QRcodes} style={{ padding: "10px 0" }}>
             <RenderQRCode
               title="订单号"
               name="orderQRcode"
-              colSpan={3}
+              colSpan={7}
               value={data?.barCode || "没有数据"}
-              size={88}
+              size={96}
               noTd
             />
 
             <RenderQRCode
               title="追溯单号"
               name="traceabilityNumberQRCode"
-              colSpan={2}
-              size={88}
+              colSpan={8}
+              size={96}
               value={data?.traceabilityNumber || "没有数据"}
               noTd
             />
             <RenderQRCode
               title="入库二维码"
               name="rukuQRcode"
-              colSpan={3}
-              size={88}
+              colSpan={7}
+              size={96}
               value={data.partNumber || "没有数据"}
               noTd
             />
@@ -245,7 +245,7 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
           title="领料二维码"
           name="lingliaoQRcode"
           colSpan={4}
-          size={88}
+          size={96}
           value={data.mItmID || "没有数据"}
         />
       </tr> */}
@@ -256,16 +256,16 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
         <ReadOnlyInput
           title={data?.project1Name || ""}
           name="project1Item"
-          labelColSpan={1}
-          colSpan={2}
+          labelColSpan={3}
+          colSpan={7}
           titleStyle={{ ...normalStyle, width: "12.5%" }}
           style={normalStyle}
         />
         <ReadOnlyInput
           title={data?.project2Name || ""}
           name="project1Item"
-          labelColSpan={1}
-          colSpan={2}
+          labelColSpan={3}
+          colSpan={7}
           titleStyle={{ ...normalStyle, width: "12.5%" }}
           style={normalStyle}
         />
@@ -274,16 +274,16 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
         <ReadOnlyInput
           title={data?.project3Name || ""}
           name="project3Item"
-          labelColSpan={1}
-          colSpan={2}
+          labelColSpan={3}
+          colSpan={7}
           titleStyle={normalStyle}
           style={normalStyle}
         />
         <ReadOnlyInput
           title={data?.project4Name || ""}
           name="project4Item"
-          labelColSpan={1}
-          colSpan={2}
+          labelColSpan={3}
+          colSpan={7}
           titleStyle={normalStyle}
           style={normalStyle}
         />
@@ -292,32 +292,32 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
         <ReadOnlyInput
           title={data?.project5Name || ""}
           name="project5Item"
-          labelColSpan={1}
-          colSpan={2}
+          labelColSpan={3}
+          colSpan={7}
           titleStyle={normalStyle}
           style={normalStyle}
         />
         <ReadOnlyInput
           title={data?.project6Name || ""}
           name="project6Item"
-          labelColSpan={1}
-          colSpan={2}
+          labelColSpan={3}
+          colSpan={7}
           titleStyle={normalStyle}
           style={normalStyle}
         />
       </tr>
       <tr>
-        <td colSpan={8} className={styles.noPadding}>
-          <table>
+        <td colSpan={22} className={styles.noPadding}>
+          <table style={{ border: "none" }}>
             <thead>
               <tr>
                 <th
                   style={{ ...boldValue, padding: "5px 5px", width: "50%" }}
-                  colSpan={4}
+                  colSpan={11}
                 >
                   工序
                 </th>
-                <th style={boldValue} colSpan={4}>
+                <th style={boldValue} colSpan={11}>
                   检验员盖章
                 </th>
               </tr>
@@ -331,11 +331,11 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
                   <tr>
                     <th
                       style={{ ...normalStyle, padding: "5px 5px" }}
-                      colSpan={4}
+                      colSpan={11}
                     >
                       {item.processName}
                     </th>
-                    <td colSpan={4}></td>
+                    <td colSpan={11}></td>
                   </tr>
                 );
               })}

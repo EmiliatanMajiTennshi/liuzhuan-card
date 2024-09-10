@@ -68,8 +68,13 @@ const getModalConfig = ({
 };
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    formExtend: true,
     formItems: ({ options, setOptions }) => {
       if (!options.heatTreatmentFurnacePlatforms) {
+        setOptions({
+          ...options,
+          heatTreatmentFurnacePlatforms: [{}],
+        });
         getHeatTreatmentFurnacePlatformsList().then((res) => {
           // 热处理炉台号
           if (res?.data?.code === SUCCESS_CODE) {
@@ -404,67 +409,27 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "operate",
         key: "operate",
         fixed: "right",
-        width: 190,
+        width: 100,
         render: (text, record) => {
           return (
-            <div style={{ display: "flex" }}>
-              <Button
-                disabled={record?.heatTreatmentDelivery === "1"}
-                type="primary"
-                size="small"
-                onClick={async () => {
-                  const res = await updateHeatTreatmentStatus({
-                    id: record?.id,
-                  });
-                  if (res?.data?.code === SUCCESS_CODE) {
-                    message.success(res?.data?.data);
-                    setRefreshFlag((flag) => !flag);
-                  } else {
-                    message.error(ERROR_MESSAGE);
-                  }
-                }}
-              >
-                配送
-              </Button>
-              <ConfigProvider
-                theme={{
-                  token: {
-                    colorPrimary: DEFAULT_ORANGE,
-                  },
-                }}
-              >
-                <Button
-                  type="primary"
-                  size="small"
-                  style={{ marginLeft: 10 }}
-                  onClick={() => {
-                    setIssueModalOpen(true);
-                    setIssueID(record?.id);
-                  }}
-                >
-                  查看
-                </Button>
-              </ConfigProvider>
-              <ConfigProvider
-                theme={{
-                  token: {
-                    colorPrimary: "#87d068",
-                  },
-                }}
-              >
-                <Button
-                  type="primary"
-                  size="small"
-                  style={{ marginLeft: 10 }}
-                  onClick={() => {
-                    setPrintModalOpen(true);
-                    setIssueID(record?.id);
-                  }}
-                >
-                  打印
-                </Button>
-              </ConfigProvider>
-            </div>
+            <Button
+              disabled={record?.heatTreatmentDelivery === "1"}
+              type="primary"
+              size="small"
+              onClick={async () => {
+                const res = await updateHeatTreatmentStatus({
+                  id: record?.id,
+                });
+                if (res?.data?.code === SUCCESS_CODE) {
+                  message.success(res?.data?.data);
+                  setRefreshFlag((flag) => !flag);
+                } else {
+                  message.error(res?.response?.data?.msg || ERROR_MESSAGE);
+                }
+              }}
+            >
+              配送
+            </Button>
           );
         },
       },

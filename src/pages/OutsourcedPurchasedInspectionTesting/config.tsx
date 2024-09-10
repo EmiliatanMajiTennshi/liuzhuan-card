@@ -3,13 +3,16 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { DatePicker, Input } from "antd";
+import { Button, DatePicker, Input, message, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { kgArr } from "@/constants";
+import { ERROR_MESSAGE, kgArr, SUCCESS_CODE } from "@/constants";
+import { updateCheckById } from "@/api";
+import { getErrorMessage } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    formExtend: true,
     formItems: [
       {
         key: "transferCardCode",
@@ -30,7 +33,18 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         children: <Input></Input>,
         rules: [],
       },
-
+      {
+        key: "name",
+        name: "品名",
+        children: <Input></Input>,
+        rules: [],
+      },
+      {
+        key: "traceabilityNumber",
+        name: "追溯单号",
+        children: <Input></Input>,
+        rules: [],
+      },
       {
         key: "specs",
         name: "规格",
@@ -39,27 +53,27 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       },
 
       {
-        key: "finishTimeStart",
-        name: "完成时间开始",
+        key: "createTimeStart",
+        name: "创建时间开始",
         children: (
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
               if (form) {
-                form.validateFields(["finishTimeEnd"]);
+                form.validateFields(["createTimeEnd"]);
               }
             }}
           ></DatePicker>
         ),
         rules: [
           (form: any) => {
-            const finishTimeStart = form.getFieldValue("finishTimeStart");
-            const finishTimeEnd = form.getFieldValue("finishTimeEnd");
+            const createTimeStart = form.getFieldValue("createTimeStart");
+            const createTimeEnd = form.getFieldValue("createTimeEnd");
 
             if (
-              finishTimeEnd &&
-              finishTimeStart &&
-              finishTimeEnd < finishTimeStart
+              createTimeEnd &&
+              createTimeStart &&
+              createTimeEnd < createTimeStart
             ) {
               return {
                 validator: true,
@@ -71,27 +85,26 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         ],
       },
       {
-        key: "finishTimeEnd",
-        name: "完成时间结束",
+        key: "createTimeEnd",
+        name: "创建时间结束",
         children: (
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
               if (form) {
-                form.validateFields(["finishTimeStart"]);
+                form.validateFields(["createTimeStart"]);
               }
             }}
           ></DatePicker>
         ),
         rules: [
           (form: any) => {
-            const finishTimeStart = form.getFieldValue("finishTimeStart");
-            const finishTimeEnd = form.getFieldValue("finishTimeEnd");
-
+            const createTimeStart = form.getFieldValue("createTimeStart");
+            const createTimeEnd = form.getFieldValue("createTimeEnd");
             if (
-              finishTimeEnd &&
-              finishTimeStart &&
-              finishTimeEnd < finishTimeStart
+              createTimeEnd &&
+              createTimeStart &&
+              createTimeEnd < createTimeStart
             ) {
               return {
                 validator: true,
@@ -109,9 +122,11 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
+  const { setRefreshFlag } = props;
   return {
     rowKey: "id", // 唯一标识
-    api: "queryOutsourcedPurchased",
+    api: "queryOutsourcedPurchasedCheck",
+    defaultParam: { inspectionStatus: "0" },
     columns: [
       //   {
       //     title: "流转卡类型",
@@ -133,6 +148,13 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         width: 240,
       },
       {
+        title: "追溯单号",
+        dataIndex: "traceabilityNumber",
+        key: "traceabilityNumber",
+        width: 110,
+      },
+
+      {
         title: "生产订单号",
         dataIndex: "barCode",
         key: "barCode",
@@ -144,11 +166,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "partNumber",
         width: 130,
       },
+
       {
-        title: "追溯单号",
-        dataIndex: "traceabilityNumber",
-        key: "traceabilityNumber",
-        width: 110,
+        title: "行号",
+        dataIndex: "lineNumber",
+        key: "lineNumber",
+        width: 80,
       },
       {
         title: "品名",
@@ -156,6 +179,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "name",
         width: 150,
       },
+
       {
         title: "规格",
         dataIndex: "specs",
@@ -168,16 +192,11 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "material",
         width: 100,
       },
+
       {
-        title: "字样",
-        dataIndex: "trademark",
-        key: "trademark",
-        width: 150,
-      },
-      {
-        title: "完成时间",
-        dataIndex: "finishTime",
-        key: "finishTime",
+        title: "下发时间",
+        dataIndex: "createTime",
+        key: "createTime",
         width: 160,
       },
       //   {
@@ -229,10 +248,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
           return isKg ? record?.productionKg : record?.productionPcs;
         },
       },
+
       {
-        title: "流转数量",
+        title: "流转数量累积",
         dataIndex: "alreadySend",
         key: "alreadySend",
+        width: 120,
         render: (data: any, record) => {
           const unit = record?.unit;
           if (kgArr.indexOf(unit) !== -1) {
@@ -240,37 +261,67 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
           }
           return data?.alreaySendNumPCS;
         },
+      },
+
+      {
+        title: "流转桶数",
+        dataIndex: "barrelCount",
+        key: "barrelCount",
         width: 120,
+        render: (barrelCount: any) => {
+          return barrelCount?.countBarrel;
+        },
       },
       {
-        title: "单桶数量",
-        dataIndex: "produceNumber",
-        key: "produceNumber",
-        width: 100,
+        title: "单桶流转数量",
+        dataIndex: "singleNumber",
+        key: "singleNumber",
+        width: 110,
+        render: (text, record) => {
+          const isKg = kgArr.indexOf(record?.unit) !== -1;
+          return isKg ? record?.transferKg : record?.transferPcs;
+        },
       },
       {
-        title: "入库数量",
-        dataIndex: "ctotal",
-        key: "ctotal",
-        width: 100,
+        title: "检验状态",
+        dataIndex: "inspectionStatus",
+        key: "inspectionStatus",
+        width: 80,
+        fixed: "right",
+        render: (text) =>
+          text === "0" ? (
+            <Tag color="red">未检</Tag>
+          ) : (
+            <Tag color="green">已检</Tag>
+          ),
       },
+
       {
-        title: "入库单位",
-        dataIndex: "cunit",
-        key: "cunit",
-        width: 100,
-      },
-      {
-        title: "入库名",
-        dataIndex: "bname",
-        key: "bname",
-        width: 160,
-      },
-      {
-        title: "入库时间",
-        dataIndex: "caddtime",
-        key: "caddtime",
-        width: 180,
+        title: "操作",
+        dataIndex: "operate",
+        key: "operate",
+        width: 120,
+        fixed: "right",
+        render: (text, record) => {
+          return (
+            <Button
+              type="primary"
+              size="small"
+              disabled={record?.inspectionStatus === "1"}
+              onClick={async () => {
+                const res = await updateCheckById({ id: record?.id });
+                if (res?.data?.code === SUCCESS_CODE) {
+                  message.success(res?.data?.data);
+                  setRefreshFlag((flag) => !flag);
+                } else {
+                  message.error(getErrorMessage(res, ERROR_MESSAGE));
+                }
+              }}
+            >
+              检验确认
+            </Button>
+          );
+        },
       },
       // {
       //   title: "查看工艺",

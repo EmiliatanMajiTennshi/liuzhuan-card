@@ -167,6 +167,7 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
             flowCardType="rework"
             queryFlowCardApi="queryQR"
             setRefreshFlag={setRefreshFlag}
+            setReworkModalOpen={setReworkModalOpen}
           />
         </Modal>
       )}

@@ -1,39 +1,75 @@
 .dashboard {
-  height: 100%;
+  height: calc(100% - 54px);
+
   .container {
     height: 100%;
-    display: grid;
-    gap: 18px 18px;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-areas:
-      "block1 block2 block3 block4"
-      "block5 block5 block5 block5"
-      "block5 block5 block5 block5"
-      "block6 block6 block6 block6"
-      "block6 block6 block6 block6"
-      "block7 block7 block7 block7"
-      "block7 block7 block7 block7";
+    display: flex;
+    flex-direction: column;
+    // display: grid;
+    // gap: 18px 18px;
+    // grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    // grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    // grid-template-areas:
+    //   "block1 block1 block2 block2 block3 block3 block4 block4 block5 block5"
+    //   "block1 block1 block2 block2 block3 block3 block4 block4 block5 block5"
+    //   "block1 block1 block2 block2 block3 block3 block4 block4 block5 block5"
+    //   "block1 block1 block2 block2 block3 block3 block4 block4 block5 block5"
+    //   "block1 block1 block2 block2 block3 block3 block4 block4 block5 block5"
+    //   "block1 block1 block2 block2 block3 block3 block4 block4 block5 block5"
+    //   "block6 block6 block6 block6 block6 block7 block7 block7 block7 block7"
+    //   "block6 block6 block6 block6 block6 block7 block7 block7 block7 block7"
+    //   "block6 block6 block6 block6 block6 block7 block7 block7 block7 block7"
+    //   "block6 block6 block6 block6 block6 block7 block7 block7 block7 block7"
+    //   "block6 block6 block6 block6 block6 block7 block7 block7 block7 block7"
+    //   "block6 block6 block6 block6 block6 block7 block7 block7 block7 block7"
+    //   "block6 block6 block6 block6 block6 block7 block7 block7 block7 block7"
+    //   "block6 block6 block6 block6 block6 block7 block7 block7 block7 block7"
+    //   "block6 block6 block6 block6 block6 block7 block7 block7 block7 block7"
+    //   "block6 block6 block6 block6 block6 block7 block7 block7 block7 block7";
+    .topCards {
+      display: flex;
+      margin-bottom: 16px;
+      .block {
+        flex: 1;
+        min-width: 0;
+      }
+      .block:not(:last-child) {
+        margin-right: 16px;
+      }
+      .topCard {
+        width: 100%;
+      }
+    }
+    .charts {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      .block {
+        flex: 1;
+      }
+    }
+  }
+  .block {
+    min-height: 0;
   }
   .block1 {
-    grid-area: block1;
+    max-height: 304px;
   }
   .block2 {
-    grid-area: block2;
+    max-height: 304px;
   }
   .block3 {
-    grid-area: block3;
+    max-height: 304px;
   }
   .block4 {
-    grid-area: block4;
+    max-height: 304px;
   }
   .block5 {
-    grid-area: block5;
+    max-height: 304px;
   }
   .block6 {
-    grid-area: block6;
+    margin-right: 16px;
   }
   .block7 {
-    grid-area: block7;
   }
 }

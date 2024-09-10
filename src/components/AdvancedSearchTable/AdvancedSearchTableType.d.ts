@@ -12,13 +12,19 @@ export interface ITableItem {
  * tableConfig的参数
  */
 export interface ITableConfig {
+  name?: string;
   api: TApi;
   rowKey?: string;
   columns: ColumnsType<RecordType>;
+  // 是否可选
   selectAble?: boolean;
+  // 下发 编辑的页面的api
   queryFlowCardApi?: TApi;
+  // 流转卡类型
   flowCardType?: "common" | "outsourcing" | "flowCard" | "print" | "rework";
   optionList?: TApi[];
+  // 默认参数
+  defaultParam?: { [key: string]: string };
 }
 
 /**

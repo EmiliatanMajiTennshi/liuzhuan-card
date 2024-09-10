@@ -100,21 +100,12 @@ const MaterialReworkProcessCard = React.lazy(() =>
   }))
 );
 
-const LogisticsHeatTreatmentIngredients = React.lazy(() =>
-  import("@/pages/LogisticsHeatTreatmentIngredients").then((res) => ({
-    default: res.LogisticsHeatTreatmentIngredients,
-  }))
-);
 const QualityInspectionOutsourcingInspection = React.lazy(() =>
   import("@/pages/QualityInspectionOutsourcingInspection").then((res) => ({
     default: res.QualityInspectionOutsourcingInspection,
   }))
 );
-const HeatTreatmentFurnaceOperation = React.lazy(() =>
-  import("@/pages/HeatTreatmentFurnaceOperation").then((res) => ({
-    default: res.HeatTreatmentFurnaceOperation,
-  }))
-);
+
 const UpdateDeburringRoundingFurnace = React.lazy(() =>
   import("@/pages/UpdateDeburringRoundingFurnace").then((res) => ({
     default: res.UpdateDeburringRoundingFurnace,
@@ -230,6 +221,24 @@ const TransferCardUnfinishToStore = React.lazy(() =>
     default: res.TransferCardUnfinishToStore,
   }))
 );
+/**	外购外协已检查询 */
+const OutsourcedPurchasedCheckedQuery = React.lazy(() =>
+  import("@/pages/OutsourcedPurchasedCheckedQuery").then((res) => ({
+    default: res.OutsourcedPurchasedCheckedQuery,
+  }))
+);
+/**热处理炉台作业查询 */
+const HeatTreatmentFurnaceOperationQuery = React.lazy(() =>
+  import("@/pages/HeatTreatmentFurnaceOperationQuery").then((res) => ({
+    default: res.HeatTreatmentFurnaceOperationQuery,
+  }))
+);
+/**物流-热处理配料查询 */
+const LogisticsHeatTreatmentIngredients = React.lazy(() =>
+  import("@/pages/LogisticsHeatTreatmentIngredients").then((res) => ({
+    default: res.LogisticsHeatTreatmentIngredients,
+  }))
+);
 
 /**路由 */
 const routeMap = [
@@ -296,8 +305,8 @@ const routeMap = [
     element: <QualityInspectionOutsourcingInspection />,
   },
   {
-    path: "/heat_treatment_furnace_operation",
-    element: <HeatTreatmentFurnaceOperation />,
+    path: "/heat_treatment_furnace_operation_query",
+    element: <HeatTreatmentFurnaceOperationQuery />,
   },
   {
     path: "/update_deburring_rounding_furnace",
@@ -364,6 +373,10 @@ const routeMap = [
     path: "/transfer_card_unfinish_to_store",
     element: <TransferCardUnfinishToStore />,
   },
+  {
+    path: "/outsourced_purchased_checked_query",
+    element: <OutsourcedPurchasedCheckedQuery />,
+  },
 ];
 
 // 转成对象
@@ -374,7 +387,11 @@ const routeMapObj = routeMap.reduce((acc: AnyObject, route) => {
 
 /** 路由组件*/
 const PrivateRoute = () => {
-  const menu = useRootStore().menu.menu || [];
+  const storeMenu = useRootStore().menu.menu;
+  const menu =
+    storeMenu.length === 0
+      ? JSON.parse(localStorage.getItem(MENULIST) || "[]")
+      : storeMenu;
   let dashboardFlag = false;
   const childrenArr: IMenuItem[] = [];
   const findAllChildren = (menu: IMenuItem[]) => {
@@ -393,7 +410,7 @@ const PrivateRoute = () => {
   };
 
   const children = findAllChildren(menu) || [];
-  console.log(dashboardFlag, menu, 123);
+  console.log(dashboardFlag, menu, menu.length, 123);
 
   const routeConfig = [
     {

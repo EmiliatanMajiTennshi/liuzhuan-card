@@ -6,11 +6,12 @@ import {
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { formatDate } from "@/utils";
 import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
+import { sumTransferNumberRender } from "@/utils/tableRender";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    formExtend: true,
     formItems: [
       {
         key: "category",
@@ -191,13 +192,20 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "单位",
         dataIndex: "unit",
         key: "unit",
-        width: 100,
+        width: 60,
       },
       {
         title: "数量",
         dataIndex: "number",
         key: "number",
         width: 100,
+      },
+      {
+        title: "流转数量累积",
+        dataIndex: "sumTransferNumberList",
+        key: "sumTransferNumberList",
+        render: sumTransferNumberRender,
+        width: 120,
       },
       // {
       //   title: "流转数量累积",
@@ -244,7 +252,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
             </>
           );
         },
-        width: 180,
+        width: 80,
         fixed: "right",
       },
     ],

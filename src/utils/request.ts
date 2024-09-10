@@ -1,9 +1,18 @@
 import axios from "axios";
 import { getToken } from "./token";
+import { message } from "antd";
+import { TOKEN_ERROR } from "@/constants";
+import { debounce, indexOf } from "lodash";
+import { startTransition } from "react";
 
+const redirectToLogin = debounce(function () {
+  startTransition(() => {
+    window.location.href = "/#/login";
+  });
+}, 1000);
 // axios的配置文件, 可以在这里去区分开发环境和生产环境等全局一些配置
 const devBaseUrl = "target/";
-const proBaseUrl = "http://desktop-44ime94:7800/lzcard/v1";
+const proBaseUrl = "http://192.168.20.65:8081/api";
 
 // process.env返回的是一个包含用户的环境信息,它可以去区分是开发环境还是生产环境
 export const BASE_URL =
@@ -26,6 +35,7 @@ request.interceptors.request.use(
     const token = getToken();
     if (token) {
       config.headers.Authorization = token;
+    } else {
     }
     return config;
   },
@@ -40,6 +50,17 @@ request.interceptors.response.use(
   },
   (error) => {
     //对响应的错误做点什么
+    console.log(error?.response, 123);
+
+    if (
+      error?.response?.data?.code === 401 &&
+      (error?.response?.data?.msg ===
+        "无权访问(Unauthorized):当前Subject是匿名Subject，请先登录(This subject is anonymous.)" ||
+        error?.response?.data?.msg?.indexOf("Token已过期") !== -1)
+    ) {
+      message.error(TOKEN_ERROR);
+      redirectToLogin();
+    }
     return Promise.reject(error);
   }
 );

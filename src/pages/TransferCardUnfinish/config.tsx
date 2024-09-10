@@ -8,6 +8,7 @@ import { RuleObject } from "antd/es/form";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    formExtend: true,
     formItems: [
       {
         key: "barCode",
@@ -22,7 +23,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         rules: [],
       },
       {
-        key: "transferCardCode",
+        key: "transferCard",
         name: "流转卡编号",
         children: <Input></Input>,
         rules: [],
@@ -190,6 +191,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "department",
         key: "department",
         width: 120,
+        render: (text: string, record: any) => {
+          return record?.detailProcessesList?.[0]?.department;
+        },
       },
       {
         title: "流转卡编号",
@@ -248,11 +252,70 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       //   },
 
       {
-        title: "单位",
-        dataIndex: "unit",
-        key: "unit",
+        title: "序号",
+        dataIndex: "processSeq",
+        key: "processSeq",
+        width: 60,
+        render: (text: string, record: any) => {
+          return record?.detailProcessesList?.[0]?.processSeq;
+        },
+      },
+      {
+        title: "工艺步骤",
+        dataIndex: "currentProcess",
+        key: "currentProcess",
         width: 100,
       },
+      {
+        title: "序号",
+        dataIndex: "processSeq",
+        key: "processSeq",
+        width: 60,
+        render: (text: string, record: any) => {
+          return record?.detailProcessesList?.[0]?.processSeq;
+        },
+      },
+      {
+        title: "检验员",
+        dataIndex: "verifier",
+        key: "verifier",
+        width: 120,
+        fixed: "right",
+        render: (text: string, record: any) => {
+          return record?.detailProcessesList?.[0]?.verifierInfoList?.map(
+            (item: any) => {
+              return (
+                <div>{`${item?.verifierName}-${item?.verifierBarcode}`}</div>
+              );
+            }
+          );
+        },
+      },
+      {
+        title: "操作工",
+        dataIndex: "operator",
+        key: "operator",
+        width: 120,
+        fixed: "right",
+        render: (text: string, record: any) => {
+          return record?.detailProcessesList?.[0]?.operationInfoList?.map(
+            (item: any) => {
+              return <div>{`${item?.operationName}-${item?.operationId}`}</div>;
+            }
+          );
+        },
+      },
+      {
+        title: "产量",
+        dataIndex: "operator",
+        key: "operator",
+        width: 120,
+        fixed: "right",
+        render: (text: string, record: any) => {
+          return record?.detailProcessesList?.[0]?.produceNumber;
+        },
+      },
+
       //   {
       //     title: "商标",
       //     dataIndex: "trademark",

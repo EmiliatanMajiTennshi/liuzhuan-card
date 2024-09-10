@@ -7,9 +7,10 @@
     justify-content: center;
     flex-direction: column;
     width: 50vw;
-    height: 100vh h2 {
-      text-align: center;
+    & > :global(.ant-card) {
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 10px 0px;
     }
+    height: 100vh;
     :global {
       .ant-form-item-label {
         padding-bottom: 0px;

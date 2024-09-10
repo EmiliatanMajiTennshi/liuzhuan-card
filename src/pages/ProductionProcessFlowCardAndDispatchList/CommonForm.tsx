@@ -35,6 +35,11 @@ interface IProps {
 }
 const CommonForm = (props: IProps) => {
   const { data, isKg, form, mItmID, setMItemId, mainsize } = props;
+  const itmid = data?.itmid;
+  // 半成品
+
+  const isSemiFinished = itmid?.startsWith("32");
+  console.log(data, itmid, isSemiFinished, 124);
 
   // 热处理炉台
   const [heatTreatmentFurnaces, setHeatTreatmentFurnaces] = useState<any[]>([]);
@@ -64,11 +69,6 @@ const CommonForm = (props: IProps) => {
   }, [data]);
 
   useEffect(() => {
-    // 二维码不手动设置值会出现奇怪的bug
-    form.setFieldValue("orderQRcode", data.orderid);
-    form.setFieldValue("traceabilityNumberQRcode", data.traceabilityNumber);
-    form.setFieldValue("rukuQRcode", data.itmid);
-    form.setFieldValue("lingliaoQRcode", data.mItmID);
     form.setFieldValue(
       "huancount",
       data?.newsupcount && data?.parseWeight
@@ -78,6 +78,7 @@ const CommonForm = (props: IProps) => {
         : ""
     );
     form.setFieldValue("transferCardCode", data.transferCardCode);
+    form.setFieldValue("trademark", data?.pCodeList?.[0]?.pCode);
 
     if (isKg) {
       if (data?.newsupcount && data?.parseWeight) {
@@ -94,27 +95,33 @@ const CommonForm = (props: IProps) => {
             ? data?.transferNumberKG
             : liucountMax;
 
-        const transferNumberPCS =
-          parseFloat(data?.transferNumberKG || "0") /
-          parseFloat(data?.parseWeight);
+        const transferNumberPCS = data?.parseWeight
+          ? transFormToPcs(data?.transferNumberKG || 0, data?.parseWeight)
+          : "没有单重，无法计算";
+
         // 推荐流转数量PCS
         const liucountPCS =
           data?.transferNumberKG &&
-          transferNumberPCS <= parseFloat(liuhuancountMax)
+          parseFloat(transferNumberPCS) <= parseFloat(liuhuancountMax)
             ? transferNumberPCS
             : liuhuancountMax;
 
         setLiuMaxKg(parseFloat(liucountMax));
         setLiuMaxPCS(parseFloat(liuhuancountMax));
-        form.setFieldValue("liucount", liucountKG);
-        form.setFieldValue("liuhuancount", liucountPCS);
+        if (data?.transferNumberKG) {
+          form.setFieldValue("liucount", liucountKG);
+          form.setFieldValue("liuhuancount", liucountPCS);
+        } else {
+          form.setFieldValue("liucount", 0);
+          form.setFieldValue("liuhuancount", 0);
+        }
       }
     } else {
       if (data?.newsupcount && data?.parseWeight) {
         const liucountMax = (
           parseFloat(data?.newsupcount) -
           parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
-        ).toFixed(2);
+        ).toFixed(0);
         const liuhuancountMax = transFormToKg(liucountMax, data?.parseWeight);
         // 推荐流转数量KG
         const liucountKG =
@@ -123,19 +130,25 @@ const CommonForm = (props: IProps) => {
             ? data?.transferNumberKG
             : liuhuancountMax;
 
-        const transferNumberPCS =
-          parseFloat(data?.transferNumberKG || "0") /
-          parseFloat(data?.parseWeight);
-        // 推荐流转数量PCS
+        const transferNumberPCS = transFormToPcs(
+          data?.transferNumberKG || 0,
+          data?.parseWeight
+        );
         const liucountPCS =
-          data?.transferNumberKG && transferNumberPCS <= parseFloat(liucountMax)
+          data?.transferNumberKG &&
+          parseFloat(transferNumberPCS) <= parseFloat(liucountMax)
             ? transferNumberPCS
             : liucountMax;
 
         setLiuMaxKg(parseFloat(liuhuancountMax));
         setLiuMaxPCS(parseFloat(liucountMax));
-        form.setFieldValue("liucount", liucountPCS);
-        form.setFieldValue("liuhuancount", liucountKG);
+        if (data?.transferNumberKG) {
+          form.setFieldValue("liucount", liucountPCS);
+          form.setFieldValue("liuhuancount", liucountKG);
+        } else {
+          form.setFieldValue("liucount", 0);
+          form.setFieldValue("liuhuancount", 0);
+        }
       }
     }
   }, [data]);
@@ -149,22 +162,43 @@ const CommonForm = (props: IProps) => {
           titleStyle={{ color: "red" }}
           required
         />
-        <ReadOnlyInput title="料号" name="itmid" />
-        <ReadOnlyInput title="品名" name="name" />
-        <ReadOnlyInput title="规格" name="spec" />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="料号"
+          name="itmid"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="品名"
+          name="name"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="规格"
+          name="spec"
+        />
       </tr>
       <tr>
-        <ReadOnlyInput title="材质" name="itmtdid" />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="材质"
+          name="itmtdid"
+        />
         <RenderSelect
           title="商标"
           name="trademark"
-          options={
-            data?.trademarkList?.map((item) => ({
+          options={[
+            ...(data?.trademarkList1?.map((item) => ({
               value: item.trademark,
               label: item.trademark,
               pnumber: item?.pnumber,
-            })) || []
-          }
+            })) || []),
+            ...(data?.trademarkList?.map((item) => ({
+              value: item.trademark,
+              label: item.trademark,
+              pnumber: item?.pnumber,
+            })) || []),
+          ]}
           placeholder={
             !data?.trademarkList || data?.trademarkList?.length === 0
               ? NO_OPTIONS_DATA
@@ -178,17 +212,41 @@ const CommonForm = (props: IProps) => {
             }
           }}
         />
-        <ReadOnlyInput title="追溯单号" name="traceabilityNumber" />
-        <EditAbleInput title="追溯单号（半品）" name="orderCatchHalf" />
-      </tr>
-      <tr>
-        <ReadOnlyInput title="客户订单号" name="ordernum" />
-        <ReadOnlyInput title="表面处理" name="itmtcid" />
-        <ReadOnlyInput title="图号" name="itmTEID" />
-        <ReadOnlyInput title="完成日期" name="ljFinDate" />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="追溯单号"
+          name="traceabilityNumber"
+          colSpan={isSemiFinished ? 3 : 1}
+        />
+        {!isSemiFinished && (
+          <EditAbleInput title="追溯单号（半品）" name="orderCatchHalf" />
+        )}
       </tr>
       <tr>
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="客户订单号"
+          name="ordernum"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="表面处理"
+          name="itmtcid"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="图号"
+          name="itmTEID"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="完成日期"
+          name="ljFinDate"
+        />
+      </tr>
+      <tr>
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title="生产数量（公斤）"
           name={isKg ? "newsupcount" : "huancount"}
         />
@@ -217,6 +275,7 @@ const CommonForm = (props: IProps) => {
           rules={[{ validator: validateNotZero }]}
         />
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title="生产数量（PCS）"
           name={isKg ? "huancount" : "newsupcount"}
         />
@@ -244,6 +303,7 @@ const CommonForm = (props: IProps) => {
             }
           }}
           rules={[{ validator: validateNotZero }]}
+          precision={0}
         />
       </tr>
       <tr>
@@ -279,6 +339,7 @@ const CommonForm = (props: IProps) => {
       </tr>
       <tr>
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title="供方/炉批号"
           name="furnaceNo"
           colSpan={4}
@@ -296,6 +357,7 @@ const CommonForm = (props: IProps) => {
           主要尺寸
         </th>
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title={mainsize?.project1 || ""}
           name={mainsize?.project1 || ""}
           defaultValue={mainsize?.projectitem1 || ""}
@@ -303,6 +365,7 @@ const CommonForm = (props: IProps) => {
           form={form}
         />
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title={mainsize?.project2 || ""}
           name={mainsize?.project2 || ""}
           defaultValue={mainsize?.projectitem2 || ""}
@@ -318,6 +381,7 @@ const CommonForm = (props: IProps) => {
               rowSpan={3}
               value={data.orderid || "没有数据"}
               noTd
+              form={form}
             />
             <RenderQRCode
               title="追溯单号"
@@ -325,13 +389,18 @@ const CommonForm = (props: IProps) => {
               rowSpan={3}
               value={data?.traceabilityNumber || "没有数据"}
               noTd
+              form={form}
             />
             <RenderQRCode
               title="入库二维码"
               name="rukuQRcode"
               rowSpan={3}
-              value={data?.itmid || "没有数据"}
+              value={
+                `${data.parseitmid}${data?.pCodeList?.[0]?.pnumber || ""}` ||
+                "没有数据"
+              }
               noTd
+              form={form}
             />
             <RenderQRCode
               title="领料二维码"
@@ -339,12 +408,14 @@ const CommonForm = (props: IProps) => {
               rowSpan={3}
               value={data?.mItmID || "没有数据"}
               noTd
+              form={form}
             />
           </div>
         </td>
       </tr>
       <tr>
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title={mainsize?.project3 || ""}
           name={mainsize?.project3 || ""}
           defaultValue={mainsize?.projectitem3 || ""}
@@ -352,6 +423,7 @@ const CommonForm = (props: IProps) => {
           form={form}
         />
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title={mainsize?.project4 || ""}
           name={mainsize?.project4 || ""}
           defaultValue={mainsize?.projectitem4 || ""}
@@ -361,6 +433,7 @@ const CommonForm = (props: IProps) => {
       </tr>
       <tr>
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title={mainsize?.project5 || ""}
           name={mainsize?.project5 || ""}
           defaultValue={mainsize?.projectitem5 || ""}
@@ -368,6 +441,7 @@ const CommonForm = (props: IProps) => {
           form={form}
         />
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title={mainsize?.project6 || ""}
           name={mainsize?.project6 || ""}
           defaultValue={mainsize?.projectitem6 || ""}
@@ -389,6 +463,7 @@ const CommonForm = (props: IProps) => {
           />
           <RenderSelect
             title="优先顺序"
+            required
             name="priority"
             options={Array.from({ length: 50 }, (item, index) => ({
               value: index + 1,

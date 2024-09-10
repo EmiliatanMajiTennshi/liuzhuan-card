@@ -52,10 +52,11 @@
   }
 }
 .flow-card {
+  padding: 0 1px;
   .printForm {
     th,
     td {
-      padding: 1px 5px;
+      padding: 0px 2px;
       // width: 25%; /* 设置每个单元格的宽度为表格宽度的25% */
     }
     // th[colspan="2"],
@@ -108,5 +109,10 @@
   }
   & > div {
     min-width: 1450px;
+  }
+  :global {
+    .ant-input-number {
+      width: 100%;
+    }
   }
 }

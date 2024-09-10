@@ -12,6 +12,7 @@ import { IData } from "./indexType";
 import styles from "./index.module.scss";
 import { useEffect } from "react";
 import { FINISHED_CODE } from "@/constants";
+
 // import { getHeatTreatmentFurnacePlatformsList } from "@/api";
 
 interface IProps {
@@ -22,6 +23,9 @@ interface IProps {
 const FlowCardForm = (props: IProps) => {
   const { data, isKg, form } = props;
 
+  const isSemiFinished = data?.parsePartNumber?.startsWith("32");
+  // 需要同步操作工和检验员的工艺列表
+
   // // 最大流转数量
   // const [liuMaxKg, setLiuMaxKg] = useState(0);
   // const [liuMaxPCS, setLiuMaxPCS] = useState(0);
@@ -29,11 +33,6 @@ const FlowCardForm = (props: IProps) => {
   const isFinished = data?.partNumber?.substring(0, 2) === FINISHED_CODE;
 
   useEffect(() => {
-    // 二维码不手动设置值会出现奇怪的bug
-    form.setFieldValue("orderQRcode", data.barCode);
-    form.setFieldValue("traceabilityNumberQRcode", data.traceabilityNumber);
-    form.setFieldValue("rukuQRcode", data.partNumber);
-    form.setFieldValue("lingliaoQRcode", data.materialPartNumber);
     form.setFieldValue(
       "huancount",
       data?.newsupcount && data?.parseWeight
@@ -76,17 +75,35 @@ const FlowCardForm = (props: IProps) => {
     <tbody>
       <tr>
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title="生产订单条码"
           name="barCode"
           titleStyle={{ color: "red" }}
         />
-        <ReadOnlyInput title="料号" name="partNumber" />
-        <ReadOnlyInput title="品名" name="name" />
-        <ReadOnlyInput title="规格" name="specs" />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="料号"
+          name="partNumber"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="品名"
+          name="name"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="规格"
+          name="specs"
+        />
       </tr>
       <tr>
-        <ReadOnlyInput title="材质" name="material" />
         <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="材质"
+          name="material"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
           title="商标"
           name="trademark"
           // options={
@@ -97,20 +114,59 @@ const FlowCardForm = (props: IProps) => {
           // }
           // placeholder="请选择商标"
         />
-        <ReadOnlyInput title="追溯单号" name="traceabilityNumber" />
-        <EditAbleInput title="追溯单号(半品)" name="orderCatchHalf" />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="追溯单号"
+          name="traceabilityNumber"
+          colSpan={isSemiFinished ? 3 : 1}
+        />
+        {!isSemiFinished && (
+          <EditAbleInput title="追溯单号(半品)" name="orderCatchHalf" />
+        )}
       </tr>
       <tr>
-        <ReadOnlyInput title="客户订单号" name="customerOrderNo" />
-        <ReadOnlyInput title="表面处理" name="surfaceTreatment" />
-        <ReadOnlyInput title="生产数量(KG)" name="productionKg" />
-        <ReadOnlyInput title="生产数量(PCS)" name="productionPcs" />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="客户订单号"
+          name="customerOrderNo"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="表面处理"
+          name="surfaceTreatment"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="生产数量(KG)"
+          name="productionKg"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="生产数量(PCS)"
+          name="productionPcs"
+        />
       </tr>
       <tr>
-        <ReadOnlyInput title="图号" name="drawingNumber" />
-        <ReadOnlyInput title="完成日期" name="finishTime" />
-        <ReadOnlyInput title="流转数量(KG)" name="transferKg" />
-        <ReadOnlyInput title="流转数量(PCS)" name="transferPcs" />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="图号"
+          name="drawingNumber"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="完成日期"
+          name="finishTime"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="流转数量(KG)"
+          name="transferKg"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="流转数量(PCS)"
+          name="transferPcs"
+        />
       </tr>
       <tr>
         <EditAbleInput
@@ -133,8 +189,16 @@ const FlowCardForm = (props: IProps) => {
         <th rowSpan={3} style={{ color: "red" }}>
           主要尺寸
         </th>
-        <ReadOnlyInput title={data?.project1Name || ""} name="project1Item" />
-        <ReadOnlyInput title={data?.project2Name || ""} name="project1Item" />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title={data?.project1Name || ""}
+          name="project1Item"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title={data?.project2Name || ""}
+          name="project1Item"
+        />
 
         <td rowSpan={3} colSpan={3}>
           <div className={styles.QRcodes}>
@@ -144,6 +208,7 @@ const FlowCardForm = (props: IProps) => {
               rowSpan={3}
               value={data?.barCode || "没有数据"}
               noTd
+              form={form}
             />
             <RenderQRCode
               title="追溯单号"
@@ -151,13 +216,17 @@ const FlowCardForm = (props: IProps) => {
               rowSpan={3}
               value={data?.traceabilityNumber || "没有数据"}
               noTd
+              form={form}
             />
             <RenderQRCode
               title="入库二维码"
               name="rukuQRcode"
               rowSpan={3}
-              value={data.partNumber || "没有数据"}
+              value={
+                `${data.parsePartNumber}${data.pNumber || ""}` || "没有数据"
+              }
               noTd
+              form={form}
             />
             <RenderQRCode
               title="领料二维码"
@@ -165,21 +234,39 @@ const FlowCardForm = (props: IProps) => {
               rowSpan={3}
               value={data.materialPartNumber || "没有数据"}
               noTd
+              form={form}
             />
           </div>
         </td>
       </tr>
       <tr>
-        <ReadOnlyInput title={data?.project3Name || ""} name="project3Item" />
-        <ReadOnlyInput title={data?.project4Name || ""} name="project4Item" />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title={data?.project3Name || ""}
+          name="project3Item"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title={data?.project4Name || ""}
+          name="project4Item"
+        />
       </tr>
       <tr>
-        <ReadOnlyInput title={data?.project5Name || ""} name="project5Item" />
-        <ReadOnlyInput title={data?.project6Name || ""} name="project6Item" />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title={data?.project5Name || ""}
+          name="project5Item"
+        />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title={data?.project6Name || ""}
+          name="project6Item"
+        />
       </tr>
       {isFinished && (
         <tr>
           <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
             title="热处理炉台"
             name="heatTreatmentFurnacePlatform"
             titleStyle={{ color: "red" }}
@@ -188,6 +275,7 @@ const FlowCardForm = (props: IProps) => {
           />
           <RenderSelect
             title="优先顺序"
+            required
             name="priorityOrder"
             options={Array.from({ length: 50 }, (item, index) => ({
               value: index + 1,
@@ -195,7 +283,12 @@ const FlowCardForm = (props: IProps) => {
             }))}
             placeholder="请选择优先顺序"
           />
-          <ReadOnlyInput title="流转时间" name="tranferTime" colSpan={2} />
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="流转时间"
+            name="tranferTime"
+            colSpan={2}
+          />
         </tr>
       )}
     </tbody>

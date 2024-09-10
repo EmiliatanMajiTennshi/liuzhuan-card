@@ -21,8 +21,13 @@ import {
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    formExtend: true,
     formItems: ({ options, setOptions }) => {
       if (!options.heatTreatmentFurnacePlatforms) {
+        setOptions({
+          ...options,
+          heatTreatmentFurnacePlatforms: [{}],
+        });
         getHeatTreatmentFurnacePlatformsList().then((res) => {
           // 热处理炉台号
           if (res?.data?.code === SUCCESS_CODE) {
@@ -259,7 +264,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "单位",
         dataIndex: "unit",
         key: "unit",
-        width: 100,
+        width: 60,
       },
       {
         title: "派工数量",
@@ -283,14 +288,14 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "heatTreatmentFurnacePlatform",
         key: "heatTreatmentFurnacePlatform",
         fixed: "right",
-        width: 120,
+        width: 130,
       },
       {
         title: "炉台-变更",
         dataIndex: "furnaceChange",
         key: "furnaceChange",
         fixed: "right",
-        width: 150,
+        width: 180,
         render: (text, record) => {
           return (
             <Select
@@ -315,7 +320,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "operate",
         key: "operate",
         fixed: "right",
-        width: 120,
+        width: 80,
         render: (text, record) => {
           return (
             <Button

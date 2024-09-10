@@ -14,8 +14,13 @@ import { sumTransferNumberRender } from "@/utils/tableRender";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    formExtend: true,
     formItems: ({ options, setOptions }) => {
       if (!options.heatTreatmentFurnacePlatforms) {
+        setOptions({
+          ...options,
+          heatTreatmentFurnacePlatforms: [{}],
+        });
         getHeatTreatmentFurnacePlatformsList().then((res) => {
           // 热处理炉台号
           if (res?.data?.code === SUCCESS_CODE) {
@@ -327,7 +332,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   message.success(res?.data?.data);
                   setRefreshFlag((flag) => !flag);
                 } else {
-                  message.error(ERROR_MESSAGE);
+                  message.error(res?.data?.msg || ERROR_MESSAGE);
                 }
               }}
             >

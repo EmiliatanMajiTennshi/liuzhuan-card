@@ -3,10 +3,9 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Flex, Input, Select } from "antd";
+import { Button, ConfigProvider, DatePicker, Flex, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { formatDate } from "@/utils";
 import { countProductType } from "@/api";
 import { FINISHED_CODE, SEMI_FINISHED_CODE, SUCCESS_CODE } from "@/constants";
 
@@ -16,6 +15,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
     formExtend: true,
     formItems: ({ options, setOptions }) => {
       if (!options.type) {
+        setOptions({ ...options, type: [{}] });
         countProductType().then((res) => {
           //   零件类型;
           if (res?.data?.code === SUCCESS_CODE) {
@@ -55,14 +55,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         },
 
         {
-          key: "barCode",
-          name: "订单号",
-          children: <Input></Input>,
-          rules: [],
-        },
-
-        {
-          key: "specs",
+          key: "spec",
           name: "规格",
           children: <Input></Input>,
           rules: [],
@@ -255,7 +248,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "操作",
         dataIndex: "operate",
         key: "operate",
-        width: 180,
+        width: 150,
         fixed: "right",
         render: (text, record) => {
           return (
@@ -270,17 +263,26 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               >
                 查看
               </Button>
-              <Button
-                type="primary"
-                size="small"
-                style={{ marginLeft: "10px" }}
-                onClick={() => {
-                  setPrintModalOpen(true);
-                  setIssueID(record?.id);
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorPrimary: "#87d068",
+                  },
                 }}
               >
-                打印
-              </Button>
+                <Button
+                  type="primary"
+                  size="small"
+                  style={{ marginLeft: "10px" }}
+                  onClick={() => {
+                    setPrintModalOpen(true);
+                    setIssueID(record?.id);
+                  }}
+                  disabled={parseFloat(record?.printStatus) === 1}
+                >
+                  打印
+                </Button>
+              </ConfigProvider>
             </div>
           );
         },

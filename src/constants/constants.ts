@@ -11,7 +11,7 @@ export const pcsArr = ["pcs", "PCS", "条", "根"];
 export const ERROR_MESSAGE = "请求失败";
 
 /** 登陆失效错误信息*/
-export const TOKEN_ERROR = "登录已过期或连接服务器失败";
+export const TOKEN_ERROR = "登录已过期,请重新登录";
 
 /**请求热处理炉台数据失败 */
 export const GET_FURNACE_ERROR = "请求热处理炉台数据失败";

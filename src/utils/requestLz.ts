@@ -3,7 +3,7 @@ import { getToken } from "./token";
 
 // axios的配置文件, 可以在这里去区分开发环境和生产环境等全局一些配置
 const devBaseUrl = "apiLz/";
-const proBaseUrl = "http://china-20240408x:7800/lzcard/v1/";
+const proBaseUrl = "http://192.168.20.65:8081/api/";
 
 // process.env返回的是一个包含用户的环境信息,它可以去区分是开发环境还是生产环境
 export const BASE_URL =

@@ -13,6 +13,10 @@ import {
   validateNotZero,
   transformDateToString,
   formatTime,
+  percentage,
+  getErrorMessage,
+  uniqueArray,
+  handleValidate,
 } from "./common";
 import { setToken, getToken, removeToken } from "./token";
 import {
@@ -47,4 +51,8 @@ export {
   validateNotZero,
   transformDateToString,
   formatTime,
+  percentage,
+  getErrorMessage,
+  uniqueArray,
+  handleValidate,
 };

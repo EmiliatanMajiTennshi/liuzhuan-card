@@ -7,6 +7,7 @@ import { Input } from "antd";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    formExtend: true,
     formItems: [
       {
         key: "partNumber",
@@ -60,6 +61,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "材质",
         dataIndex: "material",
         key: "material",
+        width: 100,
+      },
+      {
+        title: "表面处理",
+        dataIndex: "surfaceTreatment",
+        key: "surfaceTreatment",
         width: 100,
       },
       {

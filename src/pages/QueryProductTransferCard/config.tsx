@@ -3,9 +3,8 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Select } from "antd";
+import { Button, ConfigProvider, DatePicker, Input, Select, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
-import { formatDate } from "@/utils";
 import {
   FINISHED_CODE,
   SEMI_FINISHED_CODE,
@@ -17,8 +16,11 @@ import { sumTransferNumberRender } from "@/utils/tableRender";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    formExtend: true,
     formItems: ({ options, setOptions }) => {
       if (!options.type) {
+        setOptions({ ...options, type: [{}] });
+        setOptions({ ...options, type: [{}] });
         countProductType().then((res) => {
           //   零件类型;
           if (res?.data?.code === SUCCESS_CODE) {
@@ -31,6 +33,11 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         });
       }
       if (!options.heatTreatmentFurnacePlatforms) {
+        setOptions({
+          ...options,
+          heatTreatmentFurnacePlatforms: [{}],
+        });
+
         getHeatTreatmentFurnacePlatformsList().then((res) => {
           // 热处理炉台号
           if (res?.data?.code === SUCCESS_CODE) {
@@ -190,8 +197,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
             <Select
               allowClear
               options={[
-                { value: 0, label: "完工" },
-                { value: 1, label: "未完工" },
+                { value: 1, label: "完工" },
+                { value: 0, label: "未完工" },
                 // { value: 2, label: "不合格报表" },
               ]}
             ></Select>
@@ -306,7 +313,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "生产订单条码",
         dataIndex: "barCode",
         key: "barCode",
-        width: 160,
+        width: 180,
       },
       {
         title: "零件料号",
@@ -386,40 +393,57 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         render: sumTransferNumberRender,
         width: 120,
       },
-      // {
-      //   title: "查看工艺",
-      //   dataIndex: "processList",
-      //   key: "processList",
-      //   render: (data: any[]) => {
-      //     console.log(data, 1112);
-
-      //     return (
-
-      //     );
-      //   },
-      //   width: 100,
-      //   fixed: "right",
-      // },
+      {
+        title: "流转桶数",
+        dataIndex: "barrelCount",
+        key: "barrelCount",
+        width: 120,
+        render: (barrelCount: any) => {
+          return barrelCount?.countBarrel;
+        },
+      },
+      {
+        title: "单桶流转数量",
+        dataIndex: "singleNumber",
+        key: "singleNumber",
+        width: 110,
+        render: (text, record) => {
+          const isKg = kgArr.indexOf(record?.unit) !== -1;
+          return isKg ? record?.transferKg : record?.transferPcs;
+        },
+      },
+      {
+        title: "当前工艺",
+        dataIndex: "currentProcess",
+        key: "currentProcess",
+        width: 120,
+      },
+      {
+        title: "完工状态",
+        dataIndex: "completionStatus",
+        key: "completionStatus",
+        width: 80,
+        fixed: "right",
+        render: (text: number) => {
+          if (text === 0) {
+            return <Tag color="red">未完工</Tag>;
+          }
+          if (text === 1) {
+            return <Tag color="green">完工</Tag>;
+          }
+          return text;
+        },
+      },
       {
         title: "操作",
         dataIndex: "processList",
         key: "processList",
         render: (data: any, record: any, index: number) => {
           // 这里后面要
+          console.log(record);
 
           return (
             <>
-              <Button
-                type="primary"
-                size="small"
-                style={{ marginRight: 10 }}
-                onClick={() => {
-                  setPrintModalOpen(true);
-                  setIssueID(record?.id);
-                }}
-              >
-                打印流转卡
-              </Button>
               <Button
                 type="primary"
                 size="small"
@@ -430,6 +454,26 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               >
                 编辑
               </Button>
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorPrimary: "#87d068",
+                  },
+                }}
+              >
+                <Button
+                  type="primary"
+                  size="small"
+                  style={{ marginLeft: 10 }}
+                  onClick={() => {
+                    setPrintModalOpen(true);
+                    setIssueID(record?.id);
+                  }}
+                  disabled={parseFloat(record?.printStatus) === 1}
+                >
+                  打印流转卡
+                </Button>
+              </ConfigProvider>
             </>
           );
         },

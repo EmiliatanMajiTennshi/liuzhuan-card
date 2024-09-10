@@ -5,9 +5,11 @@ import { request } from "@/utils";
  * @param params
  * @returns
  */
-export const countOrderCompletionStatus = async () => {
+export const countOrderCompletionStatus = async (params: any) => {
   try {
-    const res = await request.get("count/countOrderCompletionStatus");
+    const res = await request.get("count/countOrderCompletionStatus", {
+      params,
+    });
     return res;
   } catch (err: any) {
     console.log(err);

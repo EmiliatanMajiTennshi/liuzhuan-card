@@ -46,6 +46,7 @@ export interface IFormConfig {
   formTitle?: string;
   buttons?: Button[] | ((props: IButtons) => Button[]);
   formExtend?: boolean;
+  /** 处理时间数据*/
   handleDate?: boolean;
   name?: string;
 }

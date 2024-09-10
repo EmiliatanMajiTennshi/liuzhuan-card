@@ -3,6 +3,7 @@ import { DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
 const formConfig: IFormConfig = {
+  formExtend: true,
   formItems: [
     {
       key: "orderid",

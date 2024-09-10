@@ -1,15 +1,20 @@
-import { queryTransferCard } from "@/api";
+import {
+  queryReformInfoByItemId,
+  queryReviewFormNumber,
+  queryTransferCard,
+} from "@/api";
 import { SUCCESS_CODE } from "@/constants";
 import {
   EditAbleInput,
   EditAbleTextArea,
   ReadOnlyInput,
   RenderSelect,
+  uniqueArray,
 } from "@/utils";
 import { FormInstance, Spin } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import { debounce } from "lodash";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface IProps {
   dataString: string;
@@ -24,8 +29,13 @@ const CommonForm = (props: IProps) => {
     form.setFieldValue("productType", "老料");
     form.setFieldValue("reworkType", "返工");
   }, [dataString]);
+  const [transferCardRequired, setTransferCardRequired] = useState(false);
+
+  // 是否是改制 改制要多一些字段
+  const [isGaizhi, setIsGaizhi] = useState(false);
+
   // 防抖
-  // 检验员
+  // 流转卡
   const debounceGetTransferCard = debounce(async function (e) {
     try {
       setOptions({ ...options, transferCardOptionsLoading: true });
@@ -43,6 +53,59 @@ const CommonForm = (props: IProps) => {
       console.log(err);
     }
   }, 500);
+  const debounceGetReworkNumber = debounce(async function (e) {
+    try {
+      setOptions({ ...options, reworkNumberOptionsLoading: true });
+      const res = await queryReviewFormNumber({ number: e });
+      if (res?.data?.code === SUCCESS_CODE) {
+        const reworkNumberData = res?.data?.data || [];
+        const _options = {
+          ...options,
+          reworkNumberOptions: reworkNumberData,
+          reworkNumberOptionsLoading: false,
+        };
+        setOptions(_options);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, 500);
+  const debounceGetReformPartNumber = debounce(async function (e) {
+    try {
+      setOptions({ ...options, reformPartNumberOptionsLoading: true });
+      const res = await queryReformInfoByItemId({ itemId: e });
+      if (res?.data?.code === SUCCESS_CODE) {
+        const reformPartNumberData = res?.data?.data || [];
+        const _options = {
+          ...options,
+          reformPartNumberOptions: reformPartNumberData,
+          reformPartNumberOptionsLoading: false,
+        };
+        setOptions(_options);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, 500);
+  const debounceGetPartNumber = debounce(async function (e) {
+    try {
+      setOptions({ ...options, partNumberOptionsLoading: true });
+      const res = await queryTransferCard({ partNumber: e });
+      if (res?.data?.code === SUCCESS_CODE) {
+        const partNumberData = res?.data?.data || [];
+        console.log(partNumberData, 123);
+
+        const _options = {
+          ...options,
+          partNumberOptions: partNumberData,
+          partNumberOptionsLoading: false,
+        };
+        setOptions(_options);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, 500);
   return (
     <tbody>
       <tr>
@@ -53,6 +116,18 @@ const CommonForm = (props: IProps) => {
             { value: "老料", label: "老料" },
             { value: "新料", label: "新料" },
           ]}
+          required
+          onSelect={(e: string) => {
+            setTransferCardRequired(e === "新料");
+
+            form.setFieldValue("transferCardCode", undefined);
+            form.setFieldValue("partNumber", undefined);
+            form.setFieldValue("traceabilityNumber", undefined);
+            form.setFieldValue("name", undefined);
+            form.setFieldValue("specs", undefined);
+            form.setFieldValue("material", undefined);
+            form.setFieldValue("trademark", undefined);
+          }}
         ></RenderSelect>
         <RenderSelect
           title="返工类型"
@@ -61,98 +136,247 @@ const CommonForm = (props: IProps) => {
             { value: "返工", label: "返工" },
             { value: "改制", label: "改制" },
           ]}
+          required
+          onSelect={(e: string) => {
+            setIsGaizhi(e === "改制");
+          }}
         ></RenderSelect>
+        {transferCardRequired ? (
+          <RenderSelect
+            title="流转卡编号"
+            name="transferCardCode"
+            placeholder="请输入流转卡编号进行搜索"
+            required={true}
+            options={
+              options?.transferCardOptions?.map((item: any) => {
+                return {
+                  value: item?.transfCardNo,
+                  label: item?.transfCardNo,
+                  partNumber: item?.partNumber,
+                  traceabilityNumber: item?.traceabilityNumber,
+                  name: item?.name,
+                  specs: item?.specs,
+                  materialTexture: item?.materialTexture,
+                  trademark: item?.trademark,
+                };
+              }) || []
+            }
+            titleStyle={{ color: "red" }}
+            colSpan={3}
+            showSearch
+            loading={options?.transferCardOptionsLoading}
+            onSearch={debounceGetTransferCard}
+            onSelect={(e: any, record: any) => {
+              const {
+                partNumber,
+                specs,
+                traceabilityNumber,
+                name,
+                materialTexture,
+                trademark,
+              } = record;
+              form.setFieldValue("partNumber", partNumber);
+              form.setFieldValue("specs", specs);
+              form.setFieldValue("traceabilityNumber", traceabilityNumber);
+              form.setFieldValue("name", name);
+              form.setFieldValue("material", materialTexture);
+              form.setFieldValue("trademark", trademark || "");
+            }}
+            notFoundContent={
+              options?.transferCardOptionsLoading ? <Spin size="small" /> : null
+            }
+          ></RenderSelect>
+        ) : (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="流转卡编号"
+            name="transferCardCode"
+            titleStyle={{ color: "red" }}
+            colSpan={3}
+            placeholder="选择老料时无法选择流转卡编号"
+          />
+        )}
+      </tr>
+      <tr>
+        {transferCardRequired ? (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="料号"
+            name="partNumber"
+            placeholder="输入流转卡编号后自动填写"
+          />
+        ) : (
+          <RenderSelect
+            title="料号"
+            name="partNumber"
+            placeholder="请输入料号进行搜索"
+            required
+            options={
+              uniqueArray(options?.partNumberOptions, "partNumber")?.map(
+                (item: any) => {
+                  return {
+                    value: item?.partNumber,
+                    label: item?.partNumber,
+                    traceabilityNumber: item?.traceabilityNumber,
+                    name: item?.name,
+                    specs: item?.specs,
+                    materialTexture: item?.materialTexture,
+                    trademark: item?.trademark,
+                  };
+                }
+              ) || []
+            }
+            titleStyle={{ color: "red" }}
+            showSearch
+            loading={options?.partNumberOptionsLoading}
+            onSearch={debounceGetPartNumber}
+            onSelect={(e: any, record: any) => {
+              const {
+                specs,
+                traceabilityNumber,
+                name,
+                materialTexture,
+                trademark,
+              } = record;
+
+              form.setFieldValue("specs", specs);
+              form.setFieldValue("traceabilityNumber", traceabilityNumber);
+              form.setFieldValue("name", name);
+              form.setFieldValue("material", materialTexture);
+              form.setFieldValue("trademark", trademark || "");
+            }}
+            notFoundContent={
+              options?.partNumberOptionsLoading ? <Spin size="small" /> : null
+            }
+          />
+        )}
+        {transferCardRequired ? (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="追溯单号"
+            name="traceabilityNumber"
+            placeholder="输入流转卡编号后自动填写"
+          />
+        ) : (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="追溯单号"
+            name="traceabilityNumber"
+            placeholder="输入料号后自动填写"
+          />
+        )}
+
         <RenderSelect
-          title="流转卡编号"
-          name="transferCardCode"
-          placeholder="请输入流转卡编号进行搜索"
+          title="评审单号"
+          name="reworkNumber"
+          placeholder="请输入评审单号进行搜索"
+          required
           options={
-            options?.transferCardOptions?.map((item: any) => {
+            options?.reworkNumberOptions?.map((item: any) => {
               return {
-                value: item?.transfCardNo,
-                label: item?.transfCardNo,
-                partNumber: item?.partNumber,
-                traceabilityNumber: item?.traceabilityNumber,
-                name: item?.name,
-                specs: item?.specs,
-                materialTexture: item?.materialTexture,
-                trademark: item?.trademark,
+                value: item?.number,
+                label: item?.number,
+                useName: item?.userName,
               };
             }) || []
           }
-          titleStyle={{ color: "red" }}
           colSpan={3}
+          titleStyle={{ color: "red" }}
           showSearch
-          loading={options?.transferCardOptionsLoading}
-          onSearch={debounceGetTransferCard}
+          loading={options?.reworkNumberOptionsLoading}
+          onSearch={debounceGetReworkNumber}
           onSelect={(e: any, record: any) => {
-            const {
-              partNumber,
-              specs,
-              traceabilityNumber,
-              name,
-              materialTexture,
-              trademark,
-            } = record;
-            form.setFieldValue("partNumber", partNumber);
-            form.setFieldValue("specs", specs);
-            form.setFieldValue("traceabilityNumber", traceabilityNumber);
-            form.setFieldValue("name", name);
-            form.setFieldValue("material", materialTexture);
-            form.setFieldValue("trademark", trademark);
+            const { useName } = record;
+            form.setFieldValue("drawer", useName);
           }}
           notFoundContent={
-            options?.transferCardOptionsLoading ? <Spin size="small" /> : null
+            options?.reworkNumberOptionsLoading ? <Spin size="small" /> : null
           }
         ></RenderSelect>
       </tr>
       <tr>
-        <EditAbleInput
-          title="料号"
-          name="partNumber"
-          // onBlur={(e) => {
-          //     const currentId = e.target.value;
-          //     if (currentId === mItmID) {
-          //       return;
-          //     }
-          //     setMItemId(currentId);
-          //     queryMaterialByItemid({ itemid: currentId }).then((res) => {
-          //       const data = res?.data?.data?.[0];
-          //       if (res?.data?.code !== SUCCESS_CODE || !data) {
-          //         message.error(GET_MATERIAL_ERROR);
-          //         form.setFieldValue("mName", "");
-          //         form.setFieldValue("mspec", "");
-          //         form.setFieldValue("mItmTDID", "");
-          //         return;
-          //       }
-
-          //       form.setFieldValue("mName", data.mName);
-          //       form.setFieldValue("mspec", data.mformat);
-          //       form.setFieldValue("mItmTDID", data.mtexture);
-          //       message.success(GET_MATERIAL_SUCCESS);
-          //     });
-          //   }}
-        />
-        <EditAbleInput title="追溯单号" name="traceabilityNumber" />
-        <EditAbleInput title="评审单号" name="reworkNumber" />
-        <ReadOnlyInput title="品名" name="name" />
-      </tr>
-      <tr>
-        <ReadOnlyInput title="规格" name="spec" />
-        <ReadOnlyInput title="材质" name="material" />
-        <ReadOnlyInput title="商标" name="trademark" colSpan={3} />
+        {transferCardRequired ? (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="品名"
+            name="name"
+            placeholder="输入流转卡编号后自动填写"
+          />
+        ) : (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="品名"
+            name="name"
+            placeholder="输入料号后自动填写"
+          />
+        )}
+        {transferCardRequired ? (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="规格"
+            name="specs"
+            placeholder="输入流转卡编号后自动填写"
+          />
+        ) : (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="规格"
+            name="specs"
+            placeholder="输入料号后自动填写"
+          />
+        )}
+        {transferCardRequired ? (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="材质"
+            name="material"
+            placeholder="输入流转卡编号后自动填写"
+          />
+        ) : (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="材质"
+            name="material"
+            placeholder="输入料号后自动填写"
+          />
+        )}
+        {transferCardRequired ? (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="商标"
+            name="trademark"
+            placeholder="输入流转卡编号后自动填写"
+          />
+        ) : (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="商标"
+            name="trademark"
+            placeholder="输入料号后自动填写"
+          />
+        )}
       </tr>
       <tr>
         <EditAbleTextArea
           title="返工流程"
           name="reworkFlow"
-          colSpan={8}
+          colSpan={7}
           maxLength={100}
         />
       </tr>
       <tr>
-        <EditAbleInput title="开单人" name="drawer" />
-        <EditAbleInput title="返工数量" name="reworkQuantity" isNumber />
+        <ReadOnlyInput
+          style={{ lineHeight: "24px" }}
+          title="开单人"
+          name="drawer"
+          placeholder="输入评审单号后自动填写"
+        />
+        <EditAbleInput
+          title="返工数量"
+          name="reworkQuantity"
+          isNumber
+          required
+        />
         <RenderSelect
           title="单位"
           name="reworkUnit"
@@ -161,8 +385,64 @@ const CommonForm = (props: IProps) => {
             { value: "pcs", label: "pcs" },
           ]}
           colSpan={3}
+          required
         ></RenderSelect>
       </tr>
+      {isGaizhi && (
+        <tr>
+          <RenderSelect
+            title="改制料号"
+            name="reformPartNumber"
+            placeholder="请输入改制料号进行搜索"
+            required
+            options={
+              options?.reformPartNumberOptions?.map((item: any) => {
+                return {
+                  value: item?.partNumber,
+                  label: item?.partNumber,
+                  name: item?.name,
+                  specs: item?.specs,
+                  material: item?.material,
+                };
+              }) || []
+            }
+            titleStyle={{ color: "red" }}
+            showSearch
+            loading={options?.reformPartNumberOptionsLoading}
+            onSearch={debounceGetReformPartNumber}
+            onSelect={(e: any, record: any) => {
+              const { name, specs, material } = record;
+              form.setFieldValue("reformName", name);
+              form.setFieldValue("reformSpec", specs);
+              form.setFieldValue("reformMaterial", material);
+            }}
+            notFoundContent={
+              options?.reformPartNumberOptionsLoading ? (
+                <Spin size="small" />
+              ) : null
+            }
+          ></RenderSelect>
+
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="品名"
+            name="reformName"
+            placeholder="输入改制料号后自动填写"
+          />
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="规格"
+            name="reformSpec"
+            placeholder="输入改制料号后自动填写"
+          ></ReadOnlyInput>
+          <ReadOnlyInput
+            style={{ lineHeight: "24px" }}
+            title="材质"
+            name="reformMaterial"
+            placeholder="输入改制料号后自动填写"
+          ></ReadOnlyInput>
+        </tr>
+      )}
     </tbody>
   );
 };

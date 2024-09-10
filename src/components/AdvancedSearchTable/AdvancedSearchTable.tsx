@@ -16,6 +16,7 @@ import {
 
 import { AnyObject } from "antd/es/_util/type";
 import { cloneDeep } from "lodash";
+import { getErrorMessage } from "@/utils";
 
 const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const {
@@ -76,11 +77,20 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     queryFlowCardApi,
     flowCardType,
     optionList,
+    defaultParam,
+    name,
   } = _tableConfig;
 
   // 获取当前页面table数据的请求
   const currentRequest = getApi(api);
-  const params = { ...searchParams, pageSize: pageSize, pageNum: currentPage };
+  const params = {
+    // 默认参数
+    ...defaultParam,
+    // 搜索参数
+    ...searchParams,
+    pageSize: pageSize,
+    pageNum: currentPage,
+  };
   useEffect(() => {
     //请求数据
     const fetchData = async () => {
@@ -99,13 +109,13 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           });
           setSearchedData([]);
         } else {
-          throw new Error(`${ERROR_MESSAGE}，${res?.message || ""}`);
+          throw new Error(`${getErrorMessage(res, ERROR_MESSAGE)}`);
         }
       } catch (error: any) {
         console.error(ERROR_MESSAGE, error);
         message.error({
           content: error?.message,
-          style: { marginTop: "40vh" },
+          style: { marginTop: "40px" },
         });
         setSearchedData([]);
       } finally {
@@ -240,6 +250,8 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
             queryFlowCardApi={queryFlowCardApi}
             flowCardType={flowCardType}
             setRefreshFlag={setRefreshFlag}
+            name={name}
+            setIssueModalOpen={setIssueModalOpen}
           />
         </Modal>
       )}
@@ -248,13 +260,15 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           open={printModalOpen}
           onCancel={() => setPrintModalOpen(false)}
           footer={null}
-          width={800}
+          width={590}
         >
           <ProductionProcessFlowCardAndDispatchList
             issueID={issueID}
             queryFlowCardApi={queryFlowCardApi}
             flowCardType="print"
             setRefreshFlag={setRefreshFlag}
+            name={name}
+            setPrintModalOpen={setPrintModalOpen}
           />
         </Modal>
       )}

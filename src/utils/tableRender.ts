@@ -5,7 +5,7 @@ import { kgArr } from "@/constants";
  * @param value
  */
 export const emptyRender = (value: unknown) => {
-  return !value && !(value === 0 || value === false) ? "—" : value;
+  return !value && !(value === 0 || value === false) ? "-" : value;
 };
 
 export const isEmptyField = (value: unknown) => {

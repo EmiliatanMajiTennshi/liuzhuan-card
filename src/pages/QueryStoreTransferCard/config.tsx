@@ -11,9 +11,10 @@ import { formatDate } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    formExtend: true,
     formItems: [
       {
-        key: "transfCardNo",
+        key: "transfCardCode",
         name: "流转卡编号",
         children: <Input></Input>,
         rules: [],
@@ -111,9 +112,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   return {
-    rowKey: "id", // 唯一标识
+    rowKey: "key", // 唯一标识
     api: "queryTransferStore",
-
     columns: [
       //   {
       //     title: "流转卡类型",
@@ -232,9 +232,10 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         },
       },
       {
-        title: "流转数量",
+        title: "流转数量累积",
         dataIndex: "alreadySend",
         key: "alreadySend",
+        width: 120,
         render: (data: any, record) => {
           const unit = record?.unit;
           if (kgArr.indexOf(unit) !== -1) {
@@ -242,13 +243,16 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
           }
           return data?.alreaySendNumPCS;
         },
-        width: 120,
       },
       {
         title: "单桶数量",
-        dataIndex: "produceNumber",
-        key: "produceNumber",
-        width: 100,
+        dataIndex: "singleNumber",
+        key: "singleNumber",
+        width: 110,
+        render: (text, record) => {
+          const isKg = kgArr.indexOf(record?.unit) !== -1;
+          return isKg ? record?.transferKg : record?.transferPcs;
+        },
       },
       {
         title: "入库数量",
@@ -266,7 +270,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "入库名",
         dataIndex: "bname",
         key: "bname",
-        width: 160,
+        width: 120,
       },
       {
         title: "入库时间",
