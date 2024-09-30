@@ -118,7 +118,7 @@ const getModalConfig = ({
         >
           <Input placeholder="昵称" style={{ width: 350 }} />
         </Form.Item>
-        <Form.Item<FieldType>
+        {/* <Form.Item<FieldType>
           label="部门"
           name="department"
           style={{ marginBottom: 10 }}
@@ -130,7 +130,7 @@ const getModalConfig = ({
             <Select.Option value={"扶梯链事业部"}>扶梯链事业部</Select.Option>
             <Select.Option value={"零件事业部"}>零件事业部</Select.Option>
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item<FieldType>
           label="密码"
           name="password"
@@ -318,12 +318,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "username",
         render: emptyRender,
       },
-      {
-        title: "部门",
-        dataIndex: "department",
-        key: "department",
-        render: emptyRender,
-      },
+      // {
+      //   title: "部门",
+      //   dataIndex: "department",
+      //   key: "department",
+      //   render: emptyRender,
+      // },
       {
         title: "性别",
         dataIndex: "sex",

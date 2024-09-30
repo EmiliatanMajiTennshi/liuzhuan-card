@@ -8,7 +8,6 @@ import { Button, Dropdown, MenuProps, Space } from "antd";
 import styles from "./index.module.scss";
 import { useRootStore } from "@/store";
 import { DEFAULT_ORANGE } from "@/constants";
-import { DownOutlined, SmileOutlined } from "@ant-design/icons";
 /**
  * 页面的header
  * @returns

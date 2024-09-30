@@ -25,9 +25,14 @@ export interface IData {
     projectitem3?: string;
     project4?: string;
     projectitem4?: string;
+    project5?: string;
+    projectitem5?: string;
+    project6?: string;
+    projectitem6?: string;
     allID?: string;
   }[];
   processList?: {
+    [key: string]: any;
     seq?: number;
     processName?: string;
   }[];
@@ -82,6 +87,10 @@ export interface IData {
   parseitmid?: string;
   parsePartNumber?: string;
   pNumber?: string;
+  productKg?: string;
+  productPcs?: string;
+  transferNumber?: string;
+  reformPartNumber?: string;
 }
 
 export interface IFormFields {
@@ -124,4 +133,8 @@ export interface IVerifierItem {
   testId: string;
   testName: string;
   testDepartment: string;
+}
+export interface IEquipmentItem {
+  equipmentId: string;
+  equipmentName: string;
 }

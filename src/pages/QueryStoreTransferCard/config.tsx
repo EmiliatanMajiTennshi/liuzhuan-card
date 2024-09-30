@@ -14,7 +14,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
     formExtend: true,
     formItems: [
       {
-        key: "transfCardCode",
+        key: "transferCardCode",
         name: "流转卡编号",
         children: <Input></Input>,
         rules: [],
@@ -113,7 +113,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   return {
     rowKey: "key", // 唯一标识
-    api: "queryTransferStore",
+    api: "queryTransferCardToStoreNew",
     columns: [
       //   {
       //     title: "流转卡类型",
@@ -132,13 +132,13 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转卡编号",
         dataIndex: "transferCardCode",
         key: "transferCardCode",
-        width: 240,
+        width: 260,
       },
       {
         title: "生产订单号",
         dataIndex: "barCode",
         key: "barCode",
-        width: 160,
+        width: 170,
       },
       {
         title: "零件料号",
@@ -156,7 +156,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "品名",
         dataIndex: "name",
         key: "name",
-        width: 150,
+        width: 100,
       },
       {
         title: "规格",
@@ -180,7 +180,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "完成时间",
         dataIndex: "finishTime",
         key: "finishTime",
-        width: 160,
+        width: 120,
       },
       //   {
       //     title: "入库料号",
@@ -193,7 +193,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "单位",
         dataIndex: "unit",
         key: "unit",
-        width: 100,
+        width: 60,
       },
       //   {
       //     title: "商标",
@@ -223,36 +223,21 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
 
       {
         title: "订单数量",
-        dataIndex: "production",
-        key: "production",
-        width: 110,
-        render: (text, record) => {
-          const isKg = kgArr.indexOf(record?.unit) !== -1;
-          return isKg ? record?.productionKg : record?.productionPcs;
-        },
+        dataIndex: "orderNumber",
+        key: "orderNumber",
+        width: 100,
       },
       {
         title: "流转数量累积",
-        dataIndex: "alreadySend",
-        key: "alreadySend",
+        dataIndex: "sumTransfer",
+        key: "sumTransfer",
         width: 120,
-        render: (data: any, record) => {
-          const unit = record?.unit;
-          if (kgArr.indexOf(unit) !== -1) {
-            return data?.alreaySendNumKG;
-          }
-          return data?.alreaySendNumPCS;
-        },
       },
       {
         title: "单桶数量",
-        dataIndex: "singleNumber",
-        key: "singleNumber",
-        width: 110,
-        render: (text, record) => {
-          const isKg = kgArr.indexOf(record?.unit) !== -1;
-          return isKg ? record?.transferKg : record?.transferPcs;
-        },
+        dataIndex: "produceNumber",
+        key: "produceNumber",
+        width: 100,
       },
       {
         title: "入库数量",
@@ -277,6 +262,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "caddtime",
         key: "caddtime",
         width: 180,
+        render: (text) => text?.slice(0, 19),
       },
       // {
       //   title: "查看工艺",

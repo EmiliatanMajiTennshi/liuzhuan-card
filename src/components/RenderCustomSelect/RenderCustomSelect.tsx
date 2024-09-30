@@ -46,6 +46,7 @@ interface IRenderCustomSelectProps {
   columns: any[];
   processList?: string[];
   isAddNewCard?: boolean;
+  mode?: string;
 }
 const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
   const {
@@ -65,6 +66,7 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
     columns,
     processList,
     isAddNewCard,
+    mode,
   } = props;
   const {
     name,
@@ -86,29 +88,30 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
   columns?.forEach((item: { key: string }) => {
     columnsObj[item?.key] = item;
   });
-
+  // 多选
+  const isMuti = !needSync && mode !== "single";
   return (
     <>
       {isAddNewCard ? (
         <Select
-          placeholder={type === "barcode" ? "查询条码" : "查询姓名"}
+          placeholder={type === "barcode" ? "查询条码" : "查询名称"}
           disabled
           style={{ width: "100%" }}
         ></Select>
       ) : (
         <Select
-          placeholder={type === "barcode" ? "查询条码" : "查询姓名"}
+          placeholder={type === "barcode" ? "查询条码" : "查询名称"}
           allowClear
           style={{ width: "100%" }}
           value={text}
-          mode={!needSync ? "tags" : undefined}
+          mode={isMuti ? "tags" : undefined}
           onClear={() => {
             // 清空选项
             delete record?.[barcode];
             delete record?.[name];
 
             // 有些不需要部门
-            if (departmentName && name === "operatorName") {
+            if (departmentName && name === "operateName") {
               delete record?.[departmentName];
             }
 
@@ -143,12 +146,11 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
               const prevNameList = record?.[name];
               // 当前姓名为e
               record[name] =
-                isArray(record?.[name]) && !needSync
-                  ? [...prevNameList, e]
-                  : [e];
+                isArray(record?.[name]) && isMuti ? [...prevNameList, e] : [e];
 
               // 当前选择的数据
               const currentData = dataListObjectName[e];
+              console.log(currentData, 12311, dataListObjectName, e);
 
               // 先前的条码列表
               const prevBarcodeList = record?.[barcode];
@@ -156,15 +158,15 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
 
               const currentBarcode = currentData?.[resId];
               record[barcode] =
-                isArray(prevBarcodeList) && !needSync
+                isArray(prevBarcodeList) && isMuti
                   ? [...prevBarcodeList, currentBarcode]
                   : [currentBarcode];
 
-              if (needSync && syncName && syncBarcode) {
+              if (!isMuti && syncName && syncBarcode) {
                 record[syncName] = [e];
                 record[syncBarcode] = [currentBarcode];
               }
-              if (departmentName && name === "operatorName") {
+              if (departmentName && name === "operateName") {
                 // 先前的部门列表
                 const prevDepartmentList = record?.[departmentName];
                 // 当前选择的部门
@@ -209,7 +211,7 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
               const prevBarcodeList = record?.[barcode];
               // 当前选择的条码为e
               record[barcode] =
-                isArray(prevBarcodeList) && !needSync
+                isArray(prevBarcodeList) && isMuti
                   ? [...prevBarcodeList, e]
                   : [e];
 
@@ -221,15 +223,15 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
               // 当前选择的姓名
               const currentName = currentData?.[resName];
               record[name] =
-                isArray(prevNameList) && !needSync
+                isArray(prevNameList) && isMuti
                   ? [...prevNameList, currentName]
                   : [currentName];
 
-              if (needSync && syncName && syncBarcode) {
+              if (!isMuti && syncName && syncBarcode) {
                 record[syncName] = [currentName];
                 record[syncBarcode] = [e];
               }
-              if (departmentName && name === "operatorName") {
+              if (departmentName && name === "operateName") {
                 // 先前的部门列表
                 const prevDepartmentList = record?.[departmentName];
                 // 当前选择的部门
@@ -294,7 +296,7 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
               (item: string, index: number) => index !== deleteIndex
             );
             // 删除对应部门
-            if (departmentName && name === "operatorName") {
+            if (departmentName && name === "operateName") {
               record[departmentName] = record?.[departmentName]?.filter(
                 (item: string, index: number) => index !== deleteIndex
               );
@@ -334,14 +336,20 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
           {type === "barcode"
             ? dataList?.map((item: any) => {
                 return (
-                  <Select.Option value={item?.[resId]} key={item?.[resId]}>
+                  <Select.Option
+                    value={item?.[resId]}
+                    key={item?.[resId] + item?.[resName]}
+                  >
                     {item?.[resId]}
                   </Select.Option>
                 );
               })
             : dataList?.map((item: any) => {
                 return (
-                  <Select.Option value={item?.[resName]} key={item?.[resId]}>
+                  <Select.Option
+                    value={item?.[resName]}
+                    key={item?.[resId] + item?.[resName]}
+                  >
                     {item?.[resName]}
                   </Select.Option>
                 );

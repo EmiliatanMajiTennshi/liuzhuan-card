@@ -10,6 +10,7 @@ import {
   RenderSelect,
   transFormToKg,
   transFormToPcs,
+  uniqueArray,
   validateNotZero,
 } from "@/utils";
 import { FormInstance, message } from "antd";
@@ -23,6 +24,8 @@ import {
   NO_OPTIONS_DATA,
   SUCCESS_CODE,
 } from "@/constants/constants";
+import { AnyObject } from "antd/es/_util/type";
+import { debounce } from "lodash";
 
 interface IProps {
   data: IData;
@@ -32,27 +35,48 @@ interface IProps {
   mItmID: string;
   setMItemId: React.Dispatch<React.SetStateAction<string>>;
   mainsize: any;
+  needIssueFinished?: boolean;
+  notSelfIssue?: boolean;
+  setFinishedData32to31?: React.Dispatch<React.SetStateAction<AnyObject>>;
+  finishedData32to31?: AnyObject;
 }
 const CommonForm = (props: IProps) => {
-  const { data, isKg, form, mItmID, setMItemId, mainsize } = props;
+  const {
+    data,
+    isKg,
+    form,
+    mItmID,
+    setMItemId,
+    mainsize,
+    needIssueFinished,
+    notSelfIssue,
+    setFinishedData32to31,
+    finishedData32to31,
+  } = props;
   const itmid = data?.itmid;
   // 半成品
-
   const isSemiFinished = itmid?.startsWith("32");
-  console.log(data, itmid, isSemiFinished, 124);
-
+  // 32下发31 32半品
+  const isUnfinished32to31 = needIssueFinished;
+  // 32下发31 31成品
+  const isFinished32to31 = notSelfIssue;
   // 热处理炉台
   const [heatTreatmentFurnaces, setHeatTreatmentFurnaces] = useState<any[]>([]);
   // 最大流转数量
   const [liuMaxKg, setLiuMaxKg] = useState(0);
   const [liuMaxPCS, setLiuMaxPCS] = useState(0);
 
+  const [pNum, setPNum] = useState();
+  const [partNumberOptions, setPartNumberOPtions] = useState({
+    options: [],
+    loading: false,
+  });
   const isFinished = data?.itmid?.substring(0, 2) === FINISHED_CODE;
   useEffect(() => {
     if (isFinished && heatTreatmentFurnaces.length === 0) {
       getHeatTreatmentFurnacePlatformsList()
         .then((res: any) => {
-          if (res?.data?.code === SUCCESS_CODE) {
+          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
             setHeatTreatmentFurnaces(
               res?.data?.data.map((item: any) => ({
                 value: item.name,
@@ -69,90 +93,110 @@ const CommonForm = (props: IProps) => {
   }, [data]);
 
   useEffect(() => {
-    form.setFieldValue(
-      "huancount",
-      data?.newsupcount && data?.parseWeight
-        ? isKg
-          ? transFormToPcs(data?.newsupcount, data?.parseWeight)
-          : transFormToKg(data?.newsupcount, data?.parseWeight)
-        : ""
-    );
+    // form.setFieldValue(
+    //   "huancount",
+    //   data?.newsupcount && data?.weight
+    //     ? isKg
+    //       ? transFormToPcs(data?.newsupcount, data?.weight)
+    //       : transFormToKg(data?.newsupcount, data?.weight)
+    //     : ""
+    // );
     form.setFieldValue("transferCardCode", data.transferCardCode);
-    form.setFieldValue("trademark", data?.pCodeList?.[0]?.pCode);
+    // form.setFieldValue("trademark", data?.pCodeList?.[0]?.pCode);
 
-    if (isKg) {
-      if (data?.newsupcount && data?.parseWeight) {
-        const liucountMax = (
-          parseFloat(data?.newsupcount) -
-          parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
-        ).toFixed(2);
-        const liuhuancountMax = transFormToPcs(liucountMax, data?.parseWeight);
+    // if (isKg) {
+    if (data?.productKg && data?.weight) {
+      const transferKgMax = (
+        parseFloat(data?.productKg) -
+        parseFloat(
+          isKg
+            ? data?.transferNumber || "0"
+            : transFormToKg(data?.transferNumber || "0", data?.weight)
+        )
+      ).toFixed(2);
+      const transferPcsMax = transFormToPcs(transferKgMax, data?.weight);
 
-        // 推荐流转数量KG
-        const liucountKG =
-          data?.transferNumberKG &&
-          parseFloat(data?.transferNumberKG) <= parseFloat(liucountMax)
-            ? data?.transferNumberKG
-            : liucountMax;
+      // 推荐流转数量KG
+      const transferKg =
+        data?.transferNumberKG &&
+        parseFloat(data?.transferNumberKG) <= parseFloat(transferKgMax)
+          ? data?.transferNumberKG
+          : transferKgMax;
 
-        const transferNumberPCS = data?.parseWeight
-          ? transFormToPcs(data?.transferNumberKG || 0, data?.parseWeight)
-          : "没有单重，无法计算";
+      const transferNumberPCS = data?.weight
+        ? transFormToPcs(data?.transferNumberKG || "0", data?.weight)
+        : "没有单重，无法计算";
 
-        // 推荐流转数量PCS
-        const liucountPCS =
-          data?.transferNumberKG &&
-          parseFloat(transferNumberPCS) <= parseFloat(liuhuancountMax)
-            ? transferNumberPCS
-            : liuhuancountMax;
+      // 推荐流转数量PCS
+      const transferPcs =
+        data?.transferNumberKG &&
+        parseFloat(transferNumberPCS) <= parseFloat(transferPcsMax)
+          ? transferNumberPCS
+          : transferPcsMax;
 
-        setLiuMaxKg(parseFloat(liucountMax));
-        setLiuMaxPCS(parseFloat(liuhuancountMax));
+      setLiuMaxKg(parseFloat(transferKgMax));
+      setLiuMaxPCS(parseFloat(transferPcsMax));
+      if (!notSelfIssue) {
         if (data?.transferNumberKG) {
-          form.setFieldValue("liucount", liucountKG);
-          form.setFieldValue("liuhuancount", liucountPCS);
+          form.setFieldValue("transferKg", transferKg);
+          form.setFieldValue("transferPcs", transferPcs);
         } else {
-          form.setFieldValue("liucount", 0);
-          form.setFieldValue("liuhuancount", 0);
+          form.setFieldValue("transferKg", 0);
+          form.setFieldValue("transferPcs", 0);
         }
       }
-    } else {
-      if (data?.newsupcount && data?.parseWeight) {
-        const liucountMax = (
-          parseFloat(data?.newsupcount) -
-          parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
-        ).toFixed(0);
-        const liuhuancountMax = transFormToKg(liucountMax, data?.parseWeight);
-        // 推荐流转数量KG
-        const liucountKG =
-          data?.transferNumberKG &&
-          parseFloat(data?.transferNumberKG) <= parseFloat(liuhuancountMax)
-            ? data?.transferNumberKG
-            : liuhuancountMax;
+      // }
+      // } else {
+      //   if (data?.newsupcount && data?.parseWeight) {
+      //     const liucountMax = (
+      //       parseFloat(data?.newsupcount) -
+      //       parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
+      //     ).toFixed(0);
+      //     const liuhuancountMax = transFormToKg(liucountMax, data?.parseWeight);
+      //     // 推荐流转数量KG
+      //     const liucountKG =
+      //       data?.transferNumberKG &&
+      //       parseFloat(data?.transferNumberKG) <= parseFloat(liuhuancountMax)
+      //         ? data?.transferNumberKG
+      //         : liuhuancountMax;
 
-        const transferNumberPCS = transFormToPcs(
-          data?.transferNumberKG || 0,
-          data?.parseWeight
-        );
-        const liucountPCS =
-          data?.transferNumberKG &&
-          parseFloat(transferNumberPCS) <= parseFloat(liucountMax)
-            ? transferNumberPCS
-            : liucountMax;
+      //     const transferNumberPCS = transFormToPcs(
+      //       data?.transferNumberKG || 0,
+      //       data?.parseWeight
+      //     );
+      //     const liucountPCS =
+      //       data?.transferNumberKG &&
+      //       parseFloat(transferNumberPCS) <= parseFloat(liucountMax)
+      //         ? transferNumberPCS
+      //         : liucountMax;
 
-        setLiuMaxKg(parseFloat(liuhuancountMax));
-        setLiuMaxPCS(parseFloat(liucountMax));
-        if (data?.transferNumberKG) {
-          form.setFieldValue("liucount", liucountPCS);
-          form.setFieldValue("liuhuancount", liucountKG);
-        } else {
-          form.setFieldValue("liucount", 0);
-          form.setFieldValue("liuhuancount", 0);
-        }
-      }
+      //     setLiuMaxKg(parseFloat(liuhuancountMax));
+      //     setLiuMaxPCS(parseFloat(liucountMax));
+      //     if (data?.transferNumberKG) {
+      //       form.setFieldValue("liucount", liucountPCS);
+      //       form.setFieldValue("liuhuancount", liucountKG);
+      //     } else {
+      //       form.setFieldValue("liucount", 0);
+      //       form.setFieldValue("liuhuancount", 0);
+      //     }
+      //   }
     }
   }, [data]);
 
+  const debounceGetPartNumber = debounce(async function (e) {
+    try {
+      setPartNumberOPtions({ options: [], loading: true });
+      const res = await queryMaterialByItemid({ itemid: e });
+
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+        const partNumberData = res?.data?.data;
+
+        setPartNumberOPtions({ options: partNumberData, loading: false });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, 500);
   return (
     <tbody>
       <tr>
@@ -184,34 +228,42 @@ const CommonForm = (props: IProps) => {
           title="材质"
           name="itmtdid"
         />
-        <RenderSelect
-          title="商标"
-          name="trademark"
-          options={[
-            ...(data?.trademarkList1?.map((item) => ({
-              value: item.trademark,
-              label: item.trademark,
-              pnumber: item?.pnumber,
-            })) || []),
-            ...(data?.trademarkList?.map((item) => ({
-              value: item.trademark,
-              label: item.trademark,
-              pnumber: item?.pnumber,
-            })) || []),
-          ]}
-          placeholder={
-            !data?.trademarkList || data?.trademarkList?.length === 0
-              ? NO_OPTIONS_DATA
-              : "请选择商标"
-          }
-          onSelect={(e: any, record: any) => {
-            const pnumber = record?.pnumber;
-
-            if (pnumber) {
-              form.setFieldValue("pnumber", pnumber);
+        {isFinished32to31 ? (
+          <ReadOnlyInput
+            title="商标"
+            name="trademark"
+            style={{ lineHeight: "24px" }}
+          ></ReadOnlyInput>
+        ) : (
+          <RenderSelect
+            title="商标"
+            name="trademark"
+            options={[
+              ...(data?.trademarkList1?.map((item) => ({
+                value: item.trademark,
+                label: item.trademark,
+                pnumber: item?.pnumber,
+              })) || []),
+              ...(data?.trademarkList?.map((item) => ({
+                value: item.trademark,
+                label: item.trademark,
+                pnumber: item?.pnumber,
+              })) || []),
+            ]}
+            placeholder={
+              !data?.trademarkList || data?.trademarkList?.length === 0
+                ? NO_OPTIONS_DATA
+                : "请选择商标"
             }
-          }}
-        />
+            onSelect={(e: any, record: any) => {
+              const pnumber = record?.pnumber;
+              if (pnumber) {
+                setPNum(pnumber);
+                form.setFieldValue("pnumber", pnumber);
+              }
+            }}
+          />
+        )}
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="追溯单号"
@@ -248,90 +300,138 @@ const CommonForm = (props: IProps) => {
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="生产数量（公斤）"
-          name={isKg ? "newsupcount" : "huancount"}
+          name={"productKg"}
         />
-        <EditAbleInput
-          title="流转数量（公斤）"
-          isNumber
-          name={isKg ? "liucount" : "liuhuancount"}
-          max={liuMaxKg}
-          addonAfter={
-            <span style={{ color: DEFAULT_RED }}>剩余：{liuMaxKg}</span>
-          }
-          onChange={(e: number) => {
-            const valueKg = e;
-            const valuePCS =
-              data?.parseWeight && valueKg
-                ? transFormToPcs(valueKg, data?.parseWeight)
-                : "";
-            if (isKg) {
-              form.setFieldValue("liuhuancount", valuePCS.toString());
-              form.validateFields(["liuhuancount"]);
-            } else {
-              form.setFieldValue("liucount", valuePCS.toString());
-              form.validateFields(["liucount"]);
+        {isFinished32to31 ? (
+          <ReadOnlyInput
+            title="流转数量（公斤）"
+            isNumber
+            name={"transferKg"}
+            style={{ lineHeight: "24px" }}
+            addonAfter={
+              <span style={{ color: DEFAULT_RED }}>剩余：{liuMaxKg}</span>
             }
-          }}
-          rules={[{ validator: validateNotZero }]}
-        />
+          />
+        ) : (
+          <EditAbleInput
+            title="流转数量（公斤）"
+            isNumber
+            name={"transferKg"}
+            dependencies={["transferPcs"]}
+            max={liuMaxKg}
+            addonAfter={
+              <span style={{ color: DEFAULT_RED }}>剩余：{liuMaxKg}</span>
+            }
+            onChange={(e: number) => {
+              const valueKg = e;
+              const valuePCS =
+                data?.weight && valueKg
+                  ? transFormToPcs(valueKg, data?.weight)
+                  : "";
+
+              form.setFieldValue("transferPcs", valuePCS);
+              form.validateFields(["transferPcs"]);
+            }}
+            rules={[{ validator: validateNotZero }]}
+          />
+        )}
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="生产数量（PCS）"
-          name={isKg ? "huancount" : "newsupcount"}
+          name={"productPcs"}
         />
-        <EditAbleInput
-          title="流转数量（PCS）"
-          isNumber
-          max={liuMaxPCS}
-          name={isKg ? "liuhuancount" : "liucount"}
-          dependencies={isKg ? ["liucount"] : ["liuhuancount"]}
-          addonAfter={
-            <span style={{ color: DEFAULT_RED }}>剩余：{liuMaxPCS}</span>
-          }
-          onChange={(e: number) => {
-            const valuePCS = e;
-            const valueKg =
-              data?.parseWeight && valuePCS
-                ? transFormToKg(valuePCS, data?.parseWeight)
-                : "";
-            if (!isKg) {
-              form.setFieldValue("liuhuancount", valueKg.toString());
-              form.validateFields(["liuhuancount"]);
-            } else {
-              form.setFieldValue("liucount", valueKg.toString());
-              form.validateFields(["liucount"]);
+        {isFinished32to31 ? (
+          <ReadOnlyInput
+            title="流转数量（PCS）"
+            style={{ lineHeight: "24px" }}
+            isNumber
+            name={"transferPcs"}
+            addonAfter={
+              <span style={{ color: DEFAULT_RED }}>剩余：{liuMaxPCS}</span>
             }
-          }}
-          rules={[{ validator: validateNotZero }]}
-          precision={0}
-        />
+          />
+        ) : (
+          <EditAbleInput
+            title="流转数量（PCS）"
+            isNumber
+            max={liuMaxPCS}
+            name={"transferPcs"}
+            dependencies={["transferKg"]}
+            addonAfter={
+              <span style={{ color: DEFAULT_RED }}>剩余：{liuMaxPCS}</span>
+            }
+            onChange={(e: number) => {
+              const valuePCS = e;
+              const valueKg =
+                data?.weight && valuePCS
+                  ? transFormToKg(valuePCS, data?.weight)
+                  : "";
+              // if (
+              //   isUnfinished32to31 &&
+              //   setFinishedData32to31 &&
+              //   finishedData32to31
+              // ) {
+              //   const cloneData = cloneDeep(finishedData32to31);
+              //   setFinishedData32to31({
+              //     ...cloneData,
+              //     transferKg: valueKg,
+              //     transferPcs: e,
+              //   });
+              // }
+              form.setFieldValue("transferKg", valueKg);
+              form.validateFields(["transferKg"]);
+            }}
+            rules={[{ validator: validateNotZero }]}
+            precision={0}
+          />
+        )}
       </tr>
       <tr>
-        <EditAbleInput
+        <RenderSelect
           title="材料料号"
           name="mItmID"
-          onBlur={(e) => {
-            const currentId = e.target.value;
-            if (currentId === mItmID) {
-              return;
+          options={uniqueArray(partNumberOptions.options, "mcode")?.map(
+            (item: any) => {
+              return {
+                value: item?.mcode,
+                label: item?.mcode,
+                mName: item?.mName,
+                mformat: item?.mformat,
+                mtexture: item?.mtexture,
+              };
             }
-            setMItemId(currentId);
-            queryMaterialByItemid({ itemid: currentId }).then((res) => {
-              const data = res?.data?.data?.[0];
-              if (res?.data?.code !== SUCCESS_CODE || !data) {
-                message.error(GET_MATERIAL_ERROR);
-                form.setFieldValue("mName", "");
-                form.setFieldValue("mspec", "");
-                form.setFieldValue("mItmTDID", "");
-                return;
-              }
-
-              form.setFieldValue("mName", data.mName);
-              form.setFieldValue("mspec", data.mformat);
-              form.setFieldValue("mItmTDID", data.mtexture);
-              message.success(GET_MATERIAL_SUCCESS);
-            });
+          )}
+          loading={partNumberOptions.loading}
+          onSearch={debounceGetPartNumber}
+          onSelect={(e: string, record: any) => {
+            const { mName, mformat, mtexture } = record || {};
+            form.setFieldValue("mName", mName);
+            form.setFieldValue("mspec", mformat);
+            form.setFieldValue("mItmTDID", mtexture);
           }}
+          showSearch={true}
+          // onBlur={(e) => {
+          //   const currentId = e.target.value;
+          //   if (currentId === mItmID) {
+          //     return;
+          //   }
+          //   setMItemId(currentId);
+          //   queryMaterialByItemid({ itemid: currentId }).then((res) => {
+          //     const data = res?.data?.data?.[0];
+          //     if (res?.data?.code !== SUCCESS_CODE || !data) {
+          //       message.error(GET_MATERIAL_ERROR);
+          //       form.setFieldValue("mName", "");
+          //       form.setFieldValue("mspec", "");
+          //       form.setFieldValue("mItmTDID", "");
+          //       return;
+          //     }
+
+          //     form.setFieldValue("mName", data.mName);
+          //     form.setFieldValue("mspec", data.mformat);
+          //     form.setFieldValue("mItmTDID", data.mtexture);
+          //     message.success(GET_MATERIAL_SUCCESS);
+          //   });
+          // }}
         />
         <EditAbleInput title="材料品名" name="mName" />
         <EditAbleInput title="材料规格" name="mspec" />
@@ -395,10 +495,7 @@ const CommonForm = (props: IProps) => {
               title="入库二维码"
               name="rukuQRcode"
               rowSpan={3}
-              value={
-                `${data.parseitmid}${data?.pCodeList?.[0]?.pnumber || ""}` ||
-                "没有数据"
-              }
+              value={`${data.parseitmid}${pNum || ""}` || "没有数据"}
               noTd
               form={form}
             />
@@ -406,7 +503,7 @@ const CommonForm = (props: IProps) => {
               title="领料二维码"
               name="lingliaoQRcode"
               rowSpan={3}
-              value={data?.mItmID || "没有数据"}
+              value={data?.pickingCode || data?.mItmID || "没有数据"}
               noTd
               form={form}
             />

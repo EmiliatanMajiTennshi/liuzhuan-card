@@ -4,6 +4,7 @@ interface IQueryTransferCard {
   pageSize?: number;
   transfCardNo?: string;
   partNumber?: string;
+  itmid?: string;
 }
 
 /**

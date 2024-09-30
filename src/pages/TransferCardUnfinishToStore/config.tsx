@@ -3,7 +3,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { DatePicker, Input } from "antd";
+import { DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
@@ -37,7 +37,24 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       {
         key: "department",
         name: "事业部",
-        children: <Input></Input>,
+        children: (
+          <Select
+            allowClear
+            options={[
+              { value: "品管部", label: "品管部" },
+              { value: "冲压事业部", label: "冲压事业部" },
+              { value: "零件事业部", label: "零件事业部" },
+              { value: "热处理事业部", label: "热处理事业部" },
+              { value: "扶梯链事业部", label: "扶梯链事业部" },
+              { value: "物流科", label: "物流科" },
+              { value: "机模部", label: "机模部" },
+              { value: "输送链事业部", label: "输送链事业部" },
+              { value: "轴承事业部-磨床", label: "轴承事业部-磨床" },
+              { value: "设备部", label: "设备部" },
+              { value: "品管部", label: "品管部" },
+            ]}
+          ></Select>
+        ),
         rules: [],
       },
       {
@@ -184,16 +201,13 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   return {
     rowKey: "id", // 唯一标识
-    api: "queryUnfinishCardToStore",
+    api: "queryProcessUnfinishToStoreNew",
     columns: [
       {
         title: "事业部",
         dataIndex: "department",
         key: "department",
-        width: 120,
-        render: (text: string, record: any) => {
-          return record?.detailProcessesList?.[0]?.department;
-        },
+        width: 130,
       },
       {
         title: "流转卡编号",
@@ -236,6 +250,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "createTime",
         key: "createTime",
         width: 160,
+        render: (text) => text?.slice(0, 19),
       },
 
       {
@@ -259,52 +274,49 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "序号",
-        dataIndex: "processSeq",
-        key: "processSeq",
+        dataIndex: "seq",
+        key: "seq",
         width: 60,
-        render: (text: string, record: any) => {
-          return record?.detailProcessesList?.[0]?.processSeq;
-        },
       },
       {
         title: "检验员",
-        dataIndex: "verifier",
-        key: "verifier",
+        dataIndex: "verifyId",
+        key: "verifyId",
         width: 120,
         fixed: "right",
-        render: (text: string, record: any) => {
-          return record?.detailProcessesList?.[0]?.verifierInfoList?.map(
-            (item: any) => {
-              return (
-                <div>{`${item?.verifierName}-${item?.verifierBarcode}`}</div>
-              );
-            }
-          );
-        },
+        // render: (text: string, record: any) => {
+        //   return record?.detailProcessesList?.[0]?.verifierInfoList?.map(
+        //     (item: any) => {
+        //       return (
+        //         <div>{`${item?.verifyName}-${item?.verifyId}`}</div>
+        //       );
+        //     }
+        //   );
+        // },
       },
       {
         title: "操作工",
-        dataIndex: "operator",
-        key: "operator",
+        dataIndex: "operateId",
+        key: "operateId",
         width: 120,
         fixed: "right",
-        render: (text: string, record: any) => {
-          return record?.detailProcessesList?.[0]?.operationInfoList?.map(
-            (item: any) => {
-              return <div>{`${item?.operationName}-${item?.operationId}`}</div>;
-            }
-          );
-        },
+        // render: (text: string, record: any) => {
+        //   return record?.detailProcessesList?.[0]?.operationInfoList?.map(
+        //     (item: any) => {
+        //       return <div>{`${item?.operationName}-${item?.operationId}`}</div>;
+        //     }
+        //   );
+        // },
       },
       {
         title: "产量",
-        dataIndex: "operator",
-        key: "operator",
+        dataIndex: "productionNumber",
+        key: "productionNumber",
         width: 120,
         fixed: "right",
-        render: (text: string, record: any) => {
-          return record?.detailProcessesList?.[0]?.produceNumber;
-        },
+        // render: (text: string, record: any) => {
+        //   return record?.detailProcessesList?.[0]?.produceNumber;
+        // },
       },
       //   {
       //     title: "商标",

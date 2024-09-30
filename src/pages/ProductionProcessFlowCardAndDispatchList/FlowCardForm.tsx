@@ -17,13 +17,13 @@ import { FINISHED_CODE } from "@/constants";
 
 interface IProps {
   data: IData;
-  isKg: boolean;
   form: FormInstance<any>;
+  mainsize: any;
 }
 const FlowCardForm = (props: IProps) => {
-  const { data, isKg, form } = props;
+  const { data, form, mainsize } = props;
 
-  const isSemiFinished = data?.parsePartNumber?.startsWith("32");
+  const isSemiFinished = data?.itmid?.startsWith("32");
   // 需要同步操作工和检验员的工艺列表
 
   // // 最大流转数量
@@ -33,16 +33,15 @@ const FlowCardForm = (props: IProps) => {
   const isFinished = data?.partNumber?.substring(0, 2) === FINISHED_CODE;
 
   useEffect(() => {
-    form.setFieldValue(
-      "huancount",
-      data?.newsupcount && data?.parseWeight
-        ? isKg
-          ? transFormToPcs(data?.newsupcount, data?.parseWeight)
-          : transFormToKg(data?.newsupcount, data?.parseWeight)
-        : ""
-    );
-    form.setFieldValue("transferCardCode", data?.transferCard);
-
+    // form.setFieldValue(
+    //   "huancount",
+    //   data?.newsupcount && data?.parseWeight
+    //     ? isKg
+    //       ? transFormToPcs(data?.newsupcount, data?.parseWeight)
+    //       : transFormToKg(data?.newsupcount, data?.parseWeight)
+    //     : ""
+    // );
+    // form.setFieldValue("transferCardCode", data?.transferCard);
     // 给流转数量初始值 产量-已使用
     // if (isKg) {
     //   if (data?.productionKg) {
@@ -60,7 +59,6 @@ const FlowCardForm = (props: IProps) => {
     //       parseFloat(data?.productionPcs) -
     //       parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
     //     ).toFixed(2);
-
     //     setLiuMaxPCS(parseFloat(transferPcs));
     //     form.setFieldValue("transferPcs", transferPcs);
     //   }
@@ -77,13 +75,13 @@ const FlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="生产订单条码"
-          name="barCode"
+          name="orderid"
           titleStyle={{ color: "red" }}
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="料号"
-          name="partNumber"
+          name="itmid"
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
@@ -93,14 +91,14 @@ const FlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="规格"
-          name="specs"
+          name="spec"
         />
       </tr>
       <tr>
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="材质"
-          name="material"
+          name="itmtdid"
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
@@ -128,44 +126,44 @@ const FlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="客户订单号"
-          name="customerOrderNo"
+          name="ordernum"
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="表面处理"
-          name="surfaceTreatment"
+          name="itmtcid"
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="生产数量(KG)"
-          name="productionKg"
+          name="productKg"
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="生产数量(PCS)"
-          name="productionPcs"
+          name="productPcs"
         />
       </tr>
       <tr>
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="图号"
-          name="drawingNumber"
+          name="itmTEID"
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="完成日期"
-          name="finishTime"
+          name="ljFinDate"
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="流转数量(KG)"
-          name="transferKg"
+          name="transferNumberKG"
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
           title="流转数量(PCS)"
-          name="transferPcs"
+          name="transferNumberPCS"
         />
       </tr>
       <tr>
@@ -179,6 +177,8 @@ const FlowCardForm = (props: IProps) => {
           name="furnaceNo"
           titleStyle={{ color: "red" }}
           colSpan={2}
+          form={form}
+          defaultValue={mainsize?.allID || ""}
         />
         <th colSpan={3} style={{ textAlign: "center" }}>
           生产入库扫描条码
@@ -191,22 +191,27 @@ const FlowCardForm = (props: IProps) => {
         </th>
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
-          title={data?.project1Name || ""}
-          name="project1Item"
+          title={mainsize?.project1 || ""}
+          name={mainsize?.project1 || ""}
+          defaultValue={mainsize?.projectitem1 || ""}
+          colSpan={1}
+          form={form}
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
-          title={data?.project2Name || ""}
-          name="project1Item"
+          title={mainsize?.project2 || ""}
+          name={mainsize?.project2 || ""}
+          defaultValue={mainsize?.projectitem2 || ""}
+          colSpan={1}
+          form={form}
         />
-
         <td rowSpan={3} colSpan={3}>
           <div className={styles.QRcodes}>
             <RenderQRCode
               title="订单号"
               name="orderQRcode"
               rowSpan={3}
-              value={data?.barCode || "没有数据"}
+              value={data?.orderid || "没有数据"}
               noTd
               form={form}
             />
@@ -222,9 +227,7 @@ const FlowCardForm = (props: IProps) => {
               title="入库二维码"
               name="rukuQRcode"
               rowSpan={3}
-              value={
-                `${data.parsePartNumber}${data.pNumber || ""}` || "没有数据"
-              }
+              value={`${data.parseitmid}` || "没有数据"}
               noTd
               form={form}
             />
@@ -232,7 +235,7 @@ const FlowCardForm = (props: IProps) => {
               title="领料二维码"
               name="lingliaoQRcode"
               rowSpan={3}
-              value={data.materialPartNumber || "没有数据"}
+              value={data?.pickingCode || data?.mItmID || "没有数据"}
               noTd
               form={form}
             />
@@ -242,25 +245,37 @@ const FlowCardForm = (props: IProps) => {
       <tr>
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
-          title={data?.project3Name || ""}
-          name="project3Item"
+          title={mainsize?.project3 || ""}
+          name={mainsize?.project3 || ""}
+          defaultValue={mainsize?.projectitem3 || ""}
+          colSpan={1}
+          form={form}
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
-          title={data?.project4Name || ""}
-          name="project4Item"
+          title={mainsize?.project4 || ""}
+          name={mainsize?.project4 || ""}
+          defaultValue={mainsize?.projectitem4 || ""}
+          colSpan={1}
+          form={form}
         />
       </tr>
       <tr>
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
-          title={data?.project5Name || ""}
-          name="project5Item"
+          title={mainsize?.project5 || ""}
+          name={mainsize?.project5 || ""}
+          defaultValue={mainsize?.projectitem5 || ""}
+          colSpan={1}
+          form={form}
         />
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
-          title={data?.project6Name || ""}
-          name="project6Item"
+          title={mainsize?.project6 || ""}
+          name={mainsize?.project6 || ""}
+          defaultValue={mainsize?.projectitem6 || ""}
+          colSpan={1}
+          form={form}
         />
       </tr>
       {isFinished && (

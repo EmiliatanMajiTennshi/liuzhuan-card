@@ -8,7 +8,7 @@ const proBaseUrl = "http://192.168.20.65:8081/api/";
 // process.env返回的是一个包含用户的环境信息,它可以去区分是开发环境还是生产环境
 export const BASE_URL =
   process.env.NODE_ENV === "development" ? devBaseUrl : proBaseUrl;
-export const TIMEOUT = 50000;
+export const TIMEOUT = 500000;
 
 var requestLz = axios.create({
   baseURL: BASE_URL, //基准地址

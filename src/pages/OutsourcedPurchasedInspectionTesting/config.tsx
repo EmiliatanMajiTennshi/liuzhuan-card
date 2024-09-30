@@ -122,11 +122,12 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setRefreshFlag } = props;
+  const { setRefreshFlag, setIssueModalOpen, setIssueID } = props;
   return {
     rowKey: "id", // 唯一标识
-    api: "queryOutsourcedPurchasedCheck",
-    defaultParam: { inspectionStatus: "0" },
+    api: "queryQualityInspectionNew",
+    queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
+    flowCardType: "flowCard",
     columns: [
       //   {
       //     title: "流转卡类型",
@@ -145,7 +146,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转卡编号",
         dataIndex: "transferCardCode",
         key: "transferCardCode",
-        width: 240,
+        width: 260,
       },
       {
         title: "追溯单号",
@@ -184,7 +185,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "规格",
         dataIndex: "specs",
         key: "specs",
-        width: 100,
+        width: 120,
       },
       {
         title: "材质",
@@ -198,6 +199,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "createTime",
         key: "createTime",
         width: 160,
+        render: (text) => text?.slice(0, 19),
       },
       //   {
       //     title: "入库料号",
@@ -240,47 +242,44 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
 
       {
         title: "订单数量",
-        dataIndex: "production",
-        key: "production",
+        dataIndex: "orderNumber",
+        key: "orderNumber",
         width: 110,
-        render: (text, record) => {
-          const isKg = kgArr.indexOf(record?.unit) !== -1;
-          return isKg ? record?.productionKg : record?.productionPcs;
-        },
+        // render: (text, record) => {
+        //   const isKg = kgArr.indexOf(record?.unit) !== -1;
+        //   return isKg ? record?.productionKg : record?.productionPcs;
+        // },
       },
 
       {
         title: "流转数量累积",
-        dataIndex: "alreadySend",
-        key: "alreadySend",
+        dataIndex: "transfer",
+        key: "transfer",
         width: 120,
-        render: (data: any, record) => {
-          const unit = record?.unit;
-          if (kgArr.indexOf(unit) !== -1) {
-            return data?.alreaySendNumKG;
-          }
-          return data?.alreaySendNumPCS;
-        },
+        // render: (data: any, record) => {
+        //   const unit = record?.unit;
+        //   if (kgArr.indexOf(unit) !== -1) {
+        //     return data?.alreaySendNumKG;
+        //   }
+        //   return data?.alreaySendNumPCS;
+        // },
       },
 
       {
         title: "流转桶数",
-        dataIndex: "barrelCount",
-        key: "barrelCount",
+        dataIndex: "barrelNumber",
+        key: "barrelNumber",
         width: 120,
-        render: (barrelCount: any) => {
-          return barrelCount?.countBarrel;
-        },
       },
       {
         title: "单桶流转数量",
-        dataIndex: "singleNumber",
-        key: "singleNumber",
+        dataIndex: "singleTransferNumber",
+        key: "singleTransferNumber",
         width: 110,
-        render: (text, record) => {
-          const isKg = kgArr.indexOf(record?.unit) !== -1;
-          return isKg ? record?.transferKg : record?.transferPcs;
-        },
+        // render: (text, record) => {
+        //   const isKg = kgArr.indexOf(record?.unit) !== -1;
+        //   return isKg ? record?.transferKg : record?.transferPcs;
+        // },
       },
       {
         title: "检验状态",
@@ -288,12 +287,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "inspectionStatus",
         width: 80,
         fixed: "right",
-        render: (text) =>
-          text === "0" ? (
-            <Tag color="red">未检</Tag>
-          ) : (
-            <Tag color="green">已检</Tag>
-          ),
+        render: (text) => (
+          <Tag color={text === "已检" ? "green" : "red"}>{text}</Tag>
+        ),
       },
 
       {
@@ -308,14 +304,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               type="primary"
               size="small"
               disabled={record?.inspectionStatus === "1"}
-              onClick={async () => {
-                const res = await updateCheckById({ id: record?.id });
-                if (res?.data?.code === SUCCESS_CODE) {
-                  message.success(res?.data?.data);
-                  setRefreshFlag((flag) => !flag);
-                } else {
-                  message.error(getErrorMessage(res, ERROR_MESSAGE));
-                }
+              onClick={() => {
+                setIssueModalOpen(true);
+                setIssueID({ transferCardCode: record?.transferCardCode });
               }}
             >
               检验确认

@@ -28,30 +28,6 @@ interface IProps {
 const PrintFlowCardFormOutsourcing = (props: IProps) => {
   const { data, isKg, form } = props;
 
-  //   const isFinished = data?.partNumber?.substring(0, 2) === FINISHED_CODE;
-
-  useEffect(() => {
-    // 二维码不手动设置值会出现奇怪的bug
-    form.setFieldValue("orderQRcode", data.barCode);
-    form.setFieldValue("traceabilityNumberQRcode", data.traceabilityNumber);
-    form.setFieldValue("rukuQRcode", data.partNumber);
-    form.setFieldValue("lingliaoQRcode", data.mItmID);
-    form.setFieldValue(
-      "huancount",
-      data?.newsupcount && data?.parseWeight
-        ? isKg
-          ? transFormToPcs(data?.newsupcount, data?.parseWeight)
-          : transFormToKg(data?.newsupcount, data?.parseWeight)
-        : ""
-    );
-    form.setFieldValue("transferCardCode", data?.transferCard);
-  }, [data]);
-  useEffect(() => {
-    // if(isKg){
-    //     form
-    // }
-  }, [data]);
-
   return (
     <tbody className={styles.printForm}>
       <tr>

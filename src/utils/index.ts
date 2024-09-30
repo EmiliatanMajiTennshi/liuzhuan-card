@@ -17,6 +17,8 @@ import {
   getErrorMessage,
   uniqueArray,
   handleValidate,
+  convertArraysToString,
+  convertStringToArray,
 } from "./common";
 import { setToken, getToken, removeToken } from "./token";
 import {
@@ -55,4 +57,6 @@ export {
   getErrorMessage,
   uniqueArray,
   handleValidate,
+  convertArraysToString,
+  convertStringToArray,
 };

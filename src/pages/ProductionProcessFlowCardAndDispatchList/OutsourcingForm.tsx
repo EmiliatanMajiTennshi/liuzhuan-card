@@ -24,61 +24,26 @@ const OutsourcingForm = (props: IProps) => {
   // 最大流转数量
   const [liuMaxKg, setLiuMaxKg] = useState(0);
   const [liuMaxPCS, setLiuMaxPCS] = useState(0);
-  const hasWeight = data?.parseWeight && parseFloat(data?.parseWeight || "0");
+  // const hasWeight = data?.parseWeight && parseFloat(data?.parseWeight || "0");
   useEffect(() => {
-    // 二维码不手动设置值会出现奇怪的bug
-    form.setFieldValue("orderQRcode", data.orderid);
-    form.setFieldValue("traceabilityNumberQRcode", data.traceabilityNumber);
-    form.setFieldValue("rukuQRcode", data.itmid);
-    form.setFieldValue("lingliaoQRcode", data.mItmID);
-
-    form.setFieldValue("transferCardCode", data.transferCardCode);
-
     // 给流转数量初始值 产量-已使用
     if (isKg) {
       if (data?.newsupcount) {
-        const liucountMax = (
+        const transferKgMax = (
           parseFloat(data?.newsupcount) -
-          parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
+          parseFloat(data?.transferNumber || "0")
         ).toFixed(2);
-        // 推荐流转数量KG
-        // const liucountKG =
-        //   data?.transferNumberKG &&
-        //   parseFloat(data?.transferNumberKG) <= parseFloat(liucountMax)
-        //     ? data?.transferNumberKG
-        //     : liucountMax;
 
-        // // 没单重就传一样的
-        // const liucountPCS =
-        //   data?.parseWeight && parseFloat(data?.parseWeight || "0")
-        //     ? transFormToPcs(liucountKG, data?.parseWeight)
-        //     : liucountKG;
-        setLiuMaxKg(parseFloat(liucountMax));
-        // form.setFieldValue("liucount", liucountKG);
-        // form.setFieldValue("liuhuancount", liucountPCS);
+        setLiuMaxKg(parseFloat(transferKgMax));
       }
     } else {
       if (data?.newsupcount) {
-        const liucountMax = (
+        const transferPcsMax = (
           parseFloat(data?.newsupcount) -
-          parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
+          parseFloat(data?.transferNumber || "0")
         ).toFixed(2);
 
-        // const transferNumberPCS = parseFloat(data?.transferNumberPCS || "0");
-
-        // const liucountPCS =
-        //   data?.transferNumberKG && transferNumberPCS <= parseFloat(liucountMax)
-        //     ? transferNumberPCS
-        //     : liucountMax;
-
-        // // 没单重就传一样的
-        // const liucountKG =
-        //   data?.parseWeight && parseFloat(data?.parseWeight || "0")
-        //     ? transFormToKg(liucountPCS, data?.parseWeight)
-        //     : liucountPCS;
-        setLiuMaxPCS(parseFloat(liucountMax));
-        // form.setFieldValue("liucount", liucountPCS);
-        // form.setFieldValue("liuhuancount", liucountKG);
+        setLiuMaxPCS(parseFloat(transferPcsMax));
       }
     }
   }, [data]);
@@ -139,11 +104,11 @@ const OutsourcingForm = (props: IProps) => {
       <tr>
         <ReadOnlyInput
           style={{ lineHeight: "24px" }}
-          title={`生产数量${data?.uomname ? `（${data?.uomname}）` : ""}`}
+          title={`生产数量${data?.unit ? `（${data?.unit}）` : ""}`}
           name="newsupcount"
         />
         <EditAbleInput
-          title={`流转数量${data?.uomname ? `（${data?.uomname}）` : ""}`}
+          title={`流转数量${data?.unit ? `（${data?.unit}）` : ""}`}
           isNumber
           name="liucount"
           precision={isKg ? 2 : 0}
@@ -220,6 +185,7 @@ const OutsourcingForm = (props: IProps) => {
               rowSpan={3}
               value={data.orderid || "没有数据"}
               noTd
+              form={form}
             />
             <RenderQRCode
               title="追溯单号"
@@ -227,6 +193,7 @@ const OutsourcingForm = (props: IProps) => {
               rowSpan={3}
               value={data.traceabilityNumber || "没有数据"}
               noTd
+              form={form}
             />
             <RenderQRCode
               title="入库二维码"
@@ -234,6 +201,7 @@ const OutsourcingForm = (props: IProps) => {
               rowSpan={3}
               value={data.itmid || "没有数据"}
               noTd
+              form={form}
             />
           </div>
         </td>

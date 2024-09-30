@@ -26,16 +26,24 @@ const ReadOnlyFormItem = (props: {
         whiteSpace: "normal",
         lineHeight: style?.lineHeight || "110%",
         wordBreak: breakWord ? "break-word" : "break-all",
-        display: "inline-block",
+        display: "flex",
+        justifyContent: "space-between",
         minHeight: "24px",
       }}
     >
-      {isNumber && value ? parseFloat(value) : value}
-      {addonAfter}
+      <span> {isNumber && value ? parseFloat(value) : value}</span>
+      <span>{addonAfter}</span>
     </span>
   ) : (
-    <span style={{ color: "#ddd", display: "inline-block" }}>
-      {placeholder || " "}
+    <span
+      style={{
+        color: "#ddd",
+        display: "flex",
+        justifyContent: "space-between",
+      }}
+    >
+      <span>{placeholder || " "}</span>
+      <span>{addonAfter}</span>
     </span>
   );
 };

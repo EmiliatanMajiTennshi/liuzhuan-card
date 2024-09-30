@@ -23,7 +23,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         });
         getHeatTreatmentFurnacePlatformsList().then((res) => {
           // 热处理炉台号
-          if (res?.data?.code === SUCCESS_CODE) {
+          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
             const platformsOptions = res?.data?.data?.map(
               (item: { id: string; name: string }) => ({
                 value: item?.name,
@@ -328,7 +328,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               size="small"
               onClick={async () => {
                 const res = await updateHeatTreatmentStatus({ id: record?.id });
-                if (res?.data?.code === SUCCESS_CODE) {
+                if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
                   message.success(res?.data?.data);
                   setRefreshFlag((flag) => !flag);
                 } else {

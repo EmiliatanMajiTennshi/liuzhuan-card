@@ -36,6 +36,7 @@ const RenderQRCode = ({
   if (form) {
     form.setFieldValue(name, value);
   }
+
   const qrCode = useMemo(() => {
     return value ? (
       <QRCode value={value} size={size || 72} />
@@ -45,6 +46,7 @@ const RenderQRCode = ({
       </Spin>
     );
   }, [value]);
+
   const renderQRcode = !notInForm ? (
     <div style={{ textAlign: "center", margin: "0 5px" }} title={value}>
       {title && <div>{title}</div>}
@@ -166,6 +168,8 @@ const EditAbleInput = ({
   addonAfter,
   precision,
   placeholder,
+  defaultValue,
+  form,
 }: {
   title: string;
   name: string;
@@ -184,7 +188,13 @@ const EditAbleInput = ({
   dependencies?: string[];
   addonAfter?: React.ReactNode;
   placeholder?: string;
+  form?: any;
 }) => {
+  useEffect(() => {
+    if (form && defaultValue) {
+      form.setFieldValue(name, defaultValue);
+    }
+  }, [defaultValue]);
   return (
     <>
       <th style={titleStyle}>

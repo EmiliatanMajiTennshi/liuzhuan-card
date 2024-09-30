@@ -240,6 +240,27 @@ const LogisticsHeatTreatmentIngredients = React.lazy(() =>
   }))
 );
 
+///////////////////////////// new //////////////////////////////////
+
+/**半品流转卡下发 */
+const UnfinishedProductsTransferCard = React.lazy(() =>
+  import("@/pages/UnfinishedProductsTransferCard").then((res) => ({
+    default: res.UnfinishedProductsTransferCard,
+  }))
+);
+/**成品流转卡下发 */
+const FinishedProductsTransferCard = React.lazy(() =>
+  import("@/pages/FinishedProductsTransferCard").then((res) => ({
+    default: res.FinishedProductsTransferCard,
+  }))
+);
+/**半品下发成品 */
+const UnfinishedIssueFinished = React.lazy(() =>
+  import("@/pages/UnfinishedIssueFinished").then((res) => ({
+    default: res.UnfinishedIssueFinished,
+  }))
+);
+
 /**路由 */
 const routeMap = [
   {
@@ -261,13 +282,13 @@ const routeMap = [
     element: <FullInspectionDefectRate />,
   },
   {
-    path: "/standard_product_transfer_card",
-    element: <StandardProductTransferCard />,
+    path: "/unfinished_products_transfer_card",
+    element: <UnfinishedProductsTransferCard />,
   },
 
   {
-    path: "/nostandard_product_transfer_card",
-    element: <NoStandardProductTransferCard />,
+    path: "/finished_products_transfer_card",
+    element: <FinishedProductsTransferCard />,
   },
 
   {
@@ -377,6 +398,10 @@ const routeMap = [
     path: "/outsourced_purchased_checked_query",
     element: <OutsourcedPurchasedCheckedQuery />,
   },
+  {
+    path: "/unfinished_issue_finished",
+    element: <UnfinishedIssueFinished />,
+  },
 ];
 
 // 转成对象
@@ -410,7 +435,6 @@ const PrivateRoute = () => {
   };
 
   const children = findAllChildren(menu) || [];
-  console.log(dashboardFlag, menu, menu.length, 123);
 
   const routeConfig = [
     {

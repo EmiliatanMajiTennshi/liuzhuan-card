@@ -6,9 +6,6 @@ import {
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
-import { sumTransferNumberRender } from "@/utils/tableRender";
-
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
@@ -20,10 +17,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           <Select
             allowClear
             options={[
-              { value: "2PO14", label: "外协件" },
-              { value: "2PO012", label: "外购件" },
-              { value: "2PO032", label: "五金" },
-              { value: "240", label: "苏州采购" },
+              { value: "半品", label: "半品" },
+              { value: "成品", label: "成品" },
             ]}
           ></Select>
         ),
@@ -31,13 +26,15 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       },
       {
         key: "type",
-        name: "类别",
+        name: "类型",
         children: (
           <Select
             allowClear
             options={[
-              { value: SEMI_FINISHED_CODE, label: "半成品" },
-              { value: FINISHED_CODE, label: "成品" },
+              { value: "外协件", label: "外协件" },
+              { value: "外购件", label: "外购件" },
+              { value: "五金", label: "五金" },
+              { value: "苏州采购", label: "苏州采购" },
             ]}
           ></Select>
         ),
@@ -134,8 +131,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setIssueModalOpen, setIssueID } = props;
   return {
-    api: "queryOutsourcingPurchasing",
-    queryFlowCardApi: "queryFlowCardInfoByOrderNo",
+    api: "getOutsourcingPurchasing",
+    queryFlowCardApi: "queryoutsourcingPurchasingByOI",
     flowCardType: "outsourcing",
     columns: [
       {
@@ -202,9 +199,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "流转数量累积",
-        dataIndex: "sumTransferNumberList",
-        key: "sumTransferNumberList",
-        render: sumTransferNumberRender,
+        dataIndex: "transferNumber",
+        key: "transferNumber",
+        // render: sumTransferNumberRender,
         width: 120,
       },
       // {
@@ -241,10 +238,11 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 type="primary"
                 size="small"
                 onClick={() => {
-                  console.log(record, 12313);
-
                   setIssueModalOpen(true);
-                  setIssueID(record?.uid);
+                  setIssueID({
+                    orderid: record?.barCode,
+                    itmid: record?.partNumber,
+                  });
                 }}
               >
                 下发

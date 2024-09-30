@@ -10,6 +10,9 @@ export const pcsArr = ["pcs", "PCS", "条", "根"];
 /** 请求失败错误信息*/
 export const ERROR_MESSAGE = "请求失败";
 
+/** 获取成品信息失败*/
+export const ERROR_UNFINISHED_ISSUE_FINISHED = "获取成品信息失败";
+
 /** 登陆失效错误信息*/
 export const TOKEN_ERROR = "登录已过期,请重新登录";
 
@@ -62,4 +65,7 @@ export const DEFAULT_ORANGE = "#ffa940";
 export const GET_TABLE_OPTIONS_ERROR = "获取列表下拉数据失败";
 
 /**请求成功CODE */
-export const SUCCESS_CODE = 20000 || 200;
+export const SUCCESS_CODE = [20000, 200, 601, 604];
+
+/**需要自检的页面 */
+export const SELF_CHECK_LIST = ["flowCard"];

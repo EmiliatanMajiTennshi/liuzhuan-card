@@ -18,6 +18,7 @@ import { RuleObject } from "antd/es/form";
 import { RenderQRCode } from "@/utils";
 import {
   getHeatTreatmentFurnacePlatformsList,
+  insertDeliveryNew,
   updateHeatTreatmentStatus,
 } from "@/api";
 import {
@@ -38,7 +39,7 @@ const getModalConfig = ({
 }: IGetModalConfigProps) => {
   return {
     title: "二维码",
-    width: 600,
+    width: 500,
     closable: true,
     icon: null,
 
@@ -51,7 +52,11 @@ const getModalConfig = ({
           noTd
           name="barCode"
           value={barCode}
-          footer={<span>订单号：{barCode}</span>}
+          footer={
+            <span>
+              订单号：<div>{barCode}</div>
+            </span>
+          }
           notInForm
         />
         <RenderQRCode
@@ -59,7 +64,11 @@ const getModalConfig = ({
           noTd
           name="transferCardCode"
           value={transferCardCode}
-          footer={<>流转卡编号：{transferCardCode}</>}
+          footer={
+            <>
+              流转卡编号：<div>{transferCardCode}</div>
+            </>
+          }
           notInForm
         />
       </div>
@@ -77,7 +86,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         });
         getHeatTreatmentFurnacePlatformsList().then((res) => {
           // 热处理炉台号
-          if (res?.data?.code === SUCCESS_CODE) {
+          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
             const platformsOptions = res?.data?.data?.map(
               (item: { id: string; name: string }) => ({
                 value: item?.name,
@@ -208,8 +217,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
             <Select
               allowClear
               options={[
-                { value: "1", label: "完成" },
-                { value: "0", label: "未完成" },
+                { value: "完成", label: "完成" },
+                { value: "未完成", label: "未完成" },
               ]}
             ></Select>
           ),
@@ -226,7 +235,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     props;
   return {
     rowKey: "id", // 唯一标识
-    api: "queryHeatTreatment",
+    api: "queryLogisticsNew",
     queryFlowCardApi: "clickTransferCard",
     flowCardType: "flowCard",
     columns: [
@@ -266,7 +275,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转卡编号",
         dataIndex: "transferCardCode",
         key: "transferCardCode",
-        width: 240,
+        width: 260,
       },
       {
         title: "生产订单条码",
@@ -280,8 +289,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               size="small"
               style={{ fontWeight: "bold" }}
               onClick={() => {
-                console.log(record);
-
                 Modal.info(
                   getModalConfig({
                     barCode: record?.barCode,
@@ -307,7 +314,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "品名",
         dataIndex: "name",
         key: "name",
-        width: 180,
+        width: 120,
       },
       {
         title: "规格",
@@ -344,6 +351,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "createTime",
         key: "createTime",
         width: 160,
+        render: (text) => text?.slice(0, 19),
       },
       {
         title: "单位",
@@ -356,37 +364,37 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "production",
         key: "production",
         width: 110,
-        render: (text, record) => {
-          const isKg = kgArr.indexOf(record?.unit) !== -1;
-          return isKg ? record?.productionKg : record?.productionPcs;
-        },
+        // render: (text, record) => {
+        //   const isKg = kgArr.indexOf(record?.unit) !== -1;
+        //   return isKg ? record?.productionKg : record?.productionPcs;
+        // },
       },
       {
         title: "流转数量累积",
-        dataIndex: "sumTransferNumberList",
-        key: "sumTransferNumberList",
-        render: sumTransferNumberRender,
+        dataIndex: "transfer",
+        key: "transfer",
+        // render: sumTransferNumberRender,
         width: 120,
       },
 
       {
         title: "流转桶数",
-        dataIndex: "barrelCount",
-        key: "barrelCount",
-        width: 120,
-        render: (barrelCount: any) => {
-          return barrelCount?.countBarrel;
-        },
+        dataIndex: "barrelNumber",
+        key: "barrelNumber",
+        width: 100,
+        // render: (barrelCount: any) => {
+        //   return barrelCount?.countBarrel;
+        // },
       },
       {
         title: "单桶数量",
-        dataIndex: "singleNumber",
-        key: "singleNumber",
+        dataIndex: "singleBarrelNumber",
+        key: "singleBarrelNumber",
         width: 110,
-        render: (text, record) => {
-          const isKg = kgArr.indexOf(record?.unit) !== -1;
-          return isKg ? record?.transferKg : record?.transferPcs;
-        },
+        // render: (text, record) => {
+        //   const isKg = kgArr.indexOf(record?.unit) !== -1;
+        //   return isKg ? record?.transferKg : record?.transferPcs;
+        // },
       },
       {
         title: "配送状态",
@@ -394,15 +402,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "heatTreatmentDelivery",
         width: 80,
         fixed: "right",
-        render: (text: string) => {
-          if (text === "0") {
-            return <Tag color="red">未完成</Tag>;
-          }
-          if (text === "1") {
-            return <Tag color="green">完成</Tag>;
-          }
-          return text;
-        },
+        render: (text: string) => (
+          <Tag color={text === "完成" ? "green" : "red"}>{text}</Tag>
+        ),
       },
       {
         title: "操作",
@@ -417,10 +419,19 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               type="primary"
               size="small"
               onClick={async () => {
-                const res = await updateHeatTreatmentStatus({
-                  id: record?.id,
+                const {
+                  transferCardCode,
+                  barCode,
+                  partNumber,
+                  storePartNumber,
+                } = record;
+                const res = await insertDeliveryNew({
+                  transferCardCode,
+                  barCode,
+                  partNumber,
+                  storePartNumber,
                 });
-                if (res?.data?.code === SUCCESS_CODE) {
+                if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
                   message.success(res?.data?.data);
                   setRefreshFlag((flag) => !flag);
                 } else {

@@ -1,5 +1,13 @@
-import { ITableConfig } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { IData, IOperationItem, IVerifierItem } from "./indexType";
+import {
+  ITableConfig,
+  TFlowCardType,
+} from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import {
+  IData,
+  IEquipmentItem,
+  IOperationItem,
+  IVerifierItem,
+} from "./indexType";
 import {
   Button,
   DatePicker,
@@ -16,10 +24,18 @@ import { cloneDeep } from "lodash";
 import dayjs from "dayjs";
 
 import { formatTime, handleSave, validateField } from "@/utils";
-import { SUCCESS_CODE } from "@/constants";
+import { SELF_CHECK_LIST, SUCCESS_CODE } from "@/constants";
 import { RenderCustomSelect } from "@/components/RenderCustomSelect";
 import { useEffect, useState } from "react";
-
+const getRealType = (flowCardType?: TFlowCardType) => {
+  switch (flowCardType) {
+    case "unfinished":
+    case "finished":
+      return "common";
+    default:
+      return flowCardType;
+  }
+};
 export const useTableColumns = ({
   flowCardType,
   options,
@@ -32,6 +48,7 @@ export const useTableColumns = ({
   data,
   operatorList,
   verifierList,
+  equipmentList,
 }: {
   flowCardType: ITableConfig["flowCardType"];
   options: AnyObject;
@@ -44,58 +61,60 @@ export const useTableColumns = ({
   data?: IData;
   operatorList?: IOperationItem[];
   verifierList?: IVerifierItem[];
+  equipmentList?: IEquipmentItem[];
 }) => {
-  // 防抖
   // 检验员
   const [processList, setProcessList] = useState<string[]>([]);
   useEffect(() => {
-    if (flowCardType === "flowCard") {
+    if (SELF_CHECK_LIST.indexOf(flowCardType || "") !== -1) {
       queryProcess().then((res) => {
-        if (res?.data?.code === SUCCESS_CODE) {
+        if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
           setProcessList([...res?.data?.data]);
         }
       });
     }
   }, []);
-  const debounceGetEquipment = debounce(async function (e) {
-    try {
-      setOptions({ ...options, equipmentOptionsLoading: true });
-      const res = await queryEquipmentInfo({ id: e });
-      if (res?.data?.code === SUCCESS_CODE) {
-        const equipmentData = res?.data?.data || [];
-        const _options = {
-          ...options,
-          equipmentOptions: equipmentData,
-          equipmentOptionsLoading: false,
-        };
-        setOptions(_options);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }, 500);
-  const debounceGetEquipmentByName = debounce(async function (e) {
-    try {
-      setOptions({ ...options, equipmentOptionsLoading: true });
-      const res = await queryEquipmentInfo({ name: e });
-      if (res?.data?.code === SUCCESS_CODE) {
-        const equipmentData = res?.data?.data || [];
-        const _options = {
-          ...options,
-          equipmentOptions: equipmentData,
-          equipmentOptionsLoading: false,
-        };
-        setOptions(_options);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }, 500);
+  // const debounceGetEquipment = debounce(async function (e) {
+  //   try {
+  //     setOptions({ ...options, equipmentOptionsLoading: true });
+  //     const res = await queryEquipmentInfo({ id: e });
+  //     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+  //       const equipmentData = res?.data?.data || [];
+  //       const _options = {
+  //         ...options,
+  //         equipmentOptions: equipmentData,
+  //         equipmentOptionsLoading: false,
+  //       };
+  //       setOptions(_options);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }, 500);
+  // const debounceGetEquipmentByName = debounce(async function (e) {
+  //   try {
+  //     setOptions({ ...options, equipmentOptionsLoading: true });
+  //     const res = await queryEquipmentInfo({ name: e });
+  //     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+  //       const equipmentData = res?.data?.data || [];
+  //       const _options = {
+  //         ...options,
+  //         equipmentOptions: equipmentData,
+  //         equipmentOptionsLoading: false,
+  //       };
+  //       setOptions(_options);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }, 500);
   // 将数组转成对象
   const operatorListObject: { [key: string]: IOperationItem } = {};
   const operatorListObjectName: { [key: string]: IOperationItem } = {};
   const verifierListObject: { [key: string]: IVerifierItem } = {};
   const verifierListObjectName: { [key: string]: IVerifierItem } = {};
+  const equipmentListObject: { [key: string]: IEquipmentItem } = {};
+  const equipmentListObjectName: { [key: string]: IEquipmentItem } = {};
   if (operatorList) {
     operatorList.forEach((item) => {
       operatorListObject[item.operationId] = item; // 假设每个item有唯一的id
@@ -106,6 +125,12 @@ export const useTableColumns = ({
     verifierList.forEach((item) => {
       verifierListObject[item.testId] = item; // 假设每个item有唯一的id
       verifierListObjectName[item.testName] = item;
+    });
+  }
+  if (equipmentList) {
+    equipmentList.forEach((item) => {
+      equipmentListObject[item.equipmentId] = item;
+      equipmentListObjectName[item.equipmentName] = item;
     });
   }
 
@@ -292,8 +317,8 @@ export const useTableColumns = ({
       },
       {
         title: "检验员条码",
-        dataIndex: "verifierBarcode",
-        key: "verifierBarcode",
+        dataIndex: "verifyId",
+        key: "verifyId",
         width: 160,
         render: (text: any, record: any, index: number) => {
           const props = {
@@ -310,8 +335,8 @@ export const useTableColumns = ({
             dataListObjectName: verifierListObjectName,
             themeTitle: "检验员",
             config: {
-              name: "verifierName",
-              barcode: "verifierBarcode",
+              name: "verifyName",
+              barcode: "verifyId",
               resName: "testName",
               resId: "testId",
             },
@@ -323,8 +348,8 @@ export const useTableColumns = ({
       },
       {
         title: "检验员",
-        dataIndex: "verifierName",
-        key: "verifierName",
+        dataIndex: "verifyName",
+        key: "verifyName",
         width: 130,
         render: (text: any, record: any, index: number) => {
           const props = {
@@ -341,8 +366,8 @@ export const useTableColumns = ({
             dataListObjectName: verifierListObjectName,
             themeTitle: "检验员",
             config: {
-              name: "verifierName",
-              barcode: "verifierBarcode",
+              name: "verifyName",
+              barcode: "verifyId",
               resName: "testName",
               resId: "testId",
             },
@@ -355,8 +380,8 @@ export const useTableColumns = ({
       // 操作工
       {
         title: "操作工条码",
-        dataIndex: "operatorBarcode",
-        key: "operatorBarcode",
+        dataIndex: "operateId",
+        key: "operateId",
         width: 150,
         render: (text: any, record: any, index: number) => {
           const props = {
@@ -373,13 +398,13 @@ export const useTableColumns = ({
             dataListObjectName: operatorListObjectName,
             themeTitle: "操作工",
             config: {
-              name: "operatorName",
-              barcode: "operatorBarcode",
+              name: "operateName",
+              barcode: "operateId",
               resName: "operationName",
               resId: "operationId",
               departmentName: "operateDepartment",
-              syncName: "verifierName",
-              syncBarcode: "verifierBarcode",
+              syncName: "verifyName",
+              syncBarcode: "verifyId",
             },
             type: "barcode",
             processList,
@@ -389,8 +414,8 @@ export const useTableColumns = ({
       },
       {
         title: "操作工",
-        dataIndex: "operatorName",
-        key: "operatorName",
+        dataIndex: "operateName",
+        key: "operateName",
         width: 130,
         render: (text: any, record: any, index: number) => {
           const props = {
@@ -407,13 +432,13 @@ export const useTableColumns = ({
             dataListObjectName: operatorListObjectName,
             themeTitle: "操作工",
             config: {
-              name: "operatorName",
-              barcode: "operatorBarcode",
+              name: "operateName",
+              barcode: "operateId",
               resName: "operationName",
               resId: "operationId",
               departmentName: "operateDepartment",
-              syncName: "verifierName",
-              syncBarcode: "verifierBarcode",
+              syncName: "verifyName",
+              syncBarcode: "verifyId",
             },
             type: "name",
             processList,
@@ -457,86 +482,38 @@ export const useTableColumns = ({
       },
       {
         title: "设备条码",
-        dataIndex: "equipmentBarcode",
-        key: "equipmentBarcode",
+        dataIndex: "equipmentId",
+        key: "equipmentId",
         width: 150,
         render: (text: any, record: any, index: number) => {
-          return (
-            <>
-              <Select
-                placeholder="查询条码"
-                allowClear
-                style={{ width: "100%" }}
-                value={text}
-                loading={options?.equipmentOptionsLoading}
-                onClear={() => {
-                  delete record.equipmentBarcode;
-                  delete record.equipmentName;
-                  const cloneErrors = cloneDeep(errors);
-                  // if (!cloneErrors[index]) {
-                  //   cloneErrors[index] = {};
-                  // }
-                  // cloneErrors[index].equipmentBarcode = validateField(
-                  //   "设备条码",
-                  //   ""
-                  // );
-                  // cloneErrors[index].equipmentName = validateField(
-                  //   "设备名称",
-                  //   ""
-                  // );
-                  setErrors(cloneErrors);
-                }}
-                onSelect={(e) => {
-                  record.equipmentBarcode = e;
-                  const itemIndex = options?.equipmentOptions?.findIndex(
-                    (item: { equipmentId: string; equipmentName: string }) => {
-                      return item.equipmentId === e;
-                    }
-                  );
-                  const cloneErrors = cloneDeep(errors);
-                  // if (!cloneErrors[index]) {
-                  //   cloneErrors[index] = {};
-                  // }
-                  // cloneErrors[index].equipmentBarcode = validateField(
-                  //   "设备条码",
-                  //   e
-                  // );
-
-                  if (itemIndex !== -1) {
-                    record.equipmentName =
-                      options?.equipmentOptions[itemIndex]?.equipmentName;
-                    // cloneErrors[index].equipmentName = validateField(
-                    //   "设备名称",
-                    //   record.equipmentName
-                    // );
-                  }
-                  setErrors(cloneErrors);
-                }}
-                showSearch
-                onSearch={(e) => {
-                  debounceGetEquipment(e);
-                }}
-              >
-                {options?.equipmentOptions?.map(
-                  (item: { equipmentId: string; equipmentName: string }) => {
-                    return (
-                      <Select.Option
-                        value={item?.equipmentId || item?.equipmentName}
-                        key={item?.equipmentId || item?.equipmentName}
-                      >
-                        {item?.equipmentId || item?.equipmentName}
-                      </Select.Option>
-                    );
-                  }
-                )}
-              </Select>
-              {errors[index]?.equipmentBarcode && (
-                <span style={{ color: "red" }}>
-                  {errors[index]?.equipmentBarcode}
-                </span>
-              )}
-            </>
-          );
+          //
+          const props = {
+            text,
+            columns: columns.flowCard,
+            index,
+            errors,
+            setErrors,
+            record,
+            tableData,
+            setTableData,
+            dataList: equipmentList,
+            dataListObject: equipmentListObject,
+            dataListObjectName: equipmentListObjectName,
+            themeTitle: "设备条码",
+            config: {
+              name: "equipmentName",
+              barcode: "equipmentId",
+              resName: "equipmentName",
+              resId: "equipmentId",
+              // departmentName: "operateDepartment",
+              // syncName: "verifyName",
+              // syncBarcode: "verifyId",
+            },
+            type: "barcode",
+            processList,
+            mode: "single",
+          };
+          return <RenderCustomSelect {...props} />;
         },
       },
       {
@@ -545,89 +522,113 @@ export const useTableColumns = ({
         key: "equipmentName",
         width: 150,
         render: (text: any, record: any, index: number) => {
-          return (
-            <>
-              <Select
-                placeholder="查询名称"
-                allowClear
-                style={{ width: "100%" }}
-                value={text}
-                loading={options?.equipmentOptionsLoading}
-                onClear={() => {
-                  delete record.equipmentBarcode;
-                  delete record.equipmentName;
-                  const cloneErrors = cloneDeep(errors);
-                  // if (!cloneErrors[index]) {
-                  //   cloneErrors[index] = {};
-                  // }
-                  // cloneErrors[index].equipmentBarcode = validateField(
-                  //   "设备条码",
-                  //   ""
-                  // );
-                  // cloneErrors[index].equipmentName = validateField(
-                  //   "设备名称",
-                  //   ""
-                  // );
-                  setErrors(cloneErrors);
-                }}
-                onSelect={(e: string, _record: any) => {
-                  record.equipmentName = e;
-                  const itemIndex = options?.equipmentOptions?.findIndex(
-                    (item: { equipmentId: string; equipmentName: string }) => {
-                      return item.equipmentId === _record?.key;
-                    }
-                  );
-                  const cloneErrors = cloneDeep(errors);
-                  // if (!cloneErrors[index]) {
-                  //   cloneErrors[index] = {};
-                  // }
+          // return (
+          //   <>
+          //     <Select
+          //       placeholder="查询名称"
+          //       allowClear
+          //       style={{ width: "100%" }}
+          //       value={text}
+          //       loading={options?.equipmentOptionsLoading}
+          //       onClear={() => {
+          //         delete record.equipmentId;
+          //         delete record.equipmentName;
+          //         const cloneErrors = cloneDeep(errors);
+          //         // if (!cloneErrors[index]) {
+          //         //   cloneErrors[index] = {};
+          //         // }
+          //         // cloneErrors[index].equipmentId = validateField(
+          //         //   "设备条码",
+          //         //   ""
+          //         // );
+          //         // cloneErrors[index].equipmentName = validateField(
+          //         //   "设备名称",
+          //         //   ""
+          //         // );
+          //         setErrors(cloneErrors);
+          //       }}
+          //       onSelect={(e: string, _record: any) => {
+          //         record.equipmentName = e;
+          //         const itemIndex = options?.equipmentOptions?.findIndex(
+          //           (item: { equipmentId: string; equipmentName: string }) => {
+          //             return item.equipmentId === _record?.key;
+          //           }
+          //         );
+          //         const cloneErrors = cloneDeep(errors);
+          //         // if (!cloneErrors[index]) {
+          //         //   cloneErrors[index] = {};
+          //         // }
 
-                  // cloneErrors[index].equipmentName = validateField(
-                  //   "设备名称",
-                  //   e
-                  // );
+          //         // cloneErrors[index].equipmentName = validateField(
+          //         //   "设备名称",
+          //         //   e
+          //         // );
 
-                  if (itemIndex !== -1) {
-                    record.equipmentBarcode =
-                      options?.equipmentOptions[itemIndex]?.equipmentId;
-                    // cloneErrors[index].equipmentBarcode = validateField(
-                    //   "设备条码",
-                    //   record.equipmentBarcode
-                    // );
-                  }
-                  setErrors(cloneErrors);
-                }}
-                showSearch
-                onSearch={(e) => {
-                  debounceGetEquipmentByName(e);
-                }}
-              >
-                {options?.equipmentOptions?.map(
-                  (item: { equipmentId: string; equipmentName: string }) => {
-                    return (
-                      <Select.Option
-                        value={item.equipmentName + "#" + item?.equipmentId}
-                        key={item?.equipmentId}
-                      >
-                        {item.equipmentName}
-                      </Select.Option>
-                    );
-                  }
-                )}
-              </Select>
-              {errors[index]?.equipmentName && (
-                <span style={{ color: "red" }}>
-                  {errors[index]?.equipmentName}
-                </span>
-              )}
-            </>
-          );
+          //         if (itemIndex !== -1) {
+          //           record.equipmentId =
+          //             options?.equipmentOptions[itemIndex]?.equipmentId;
+          //           // cloneErrors[index].equipmentId = validateField(
+          //           //   "设备条码",
+          //           //   record.equipmentId
+          //           // );
+          //         }
+          //         setErrors(cloneErrors);
+          //       }}
+          //       showSearch
+          //     >
+          //       {options?.equipmentOptions?.map(
+          //         (item: { equipmentId: string; equipmentName: string }) => {
+          //           return (
+          //             <Select.Option
+          //               value={item.equipmentName + "#" + item?.equipmentId}
+          //               key={item?.equipmentId}
+          //             >
+          //               {item.equipmentName}
+          //             </Select.Option>
+          //           );
+          //         }
+          //       )}
+          //     </Select>
+          //     {errors[index]?.equipmentName && (
+          //       <span style={{ color: "red" }}>
+          //         {errors[index]?.equipmentName}
+          //       </span>
+          //     )}
+          //   </>
+          // );
+          const props = {
+            text,
+            columns: columns.flowCard,
+            index,
+            errors,
+            setErrors,
+            record,
+            tableData,
+            setTableData,
+            dataList: equipmentList,
+            dataListObject: equipmentListObject,
+            dataListObjectName: equipmentListObjectName,
+            themeTitle: "设备名称",
+            config: {
+              name: "equipmentName",
+              barcode: "equipmentId",
+              resName: "equipmentName",
+              resId: "equipmentId",
+              // departmentName: "operateDepartment",
+              // syncName: "verifyName",
+              // syncBarcode: "verifyId",
+            },
+            type: "name",
+            processList,
+            mode: "single",
+          };
+          return <RenderCustomSelect {...props} />;
         },
       },
       {
         title: "产量",
-        dataIndex: "produceNumber",
-        key: "produceNumber",
+        dataIndex: "productNumber",
+        key: "productNumber",
         width: 150,
         render: (text: string, record: any, index: number) => {
           return (
@@ -637,7 +638,7 @@ export const useTableColumns = ({
                 value={text}
                 controls={false}
                 onChange={(e) => {
-                  record.produceNumber = e;
+                  record.productNumber = e;
                   const cloneErrors = cloneDeep(errors);
                   // if (!cloneErrors[index]) {
                   //   cloneErrors[index] = {};
@@ -646,9 +647,9 @@ export const useTableColumns = ({
                   setErrors(cloneErrors);
                 }}
               ></InputNumber>
-              {errors[index]?.produceNumber && (
+              {errors[index]?.productNumber && (
                 <span style={{ color: "red" }}>
-                  {errors[index]?.produceNumber}
+                  {errors[index]?.productNumber}
                 </span>
               )}
             </>
@@ -779,8 +780,8 @@ export const useTableColumns = ({
       },
       {
         title: "检验员条码",
-        dataIndex: "verifierBarcode",
-        key: "verifierBarcode",
+        dataIndex: "verifyId",
+        key: "verifyId",
         width: isAddNewCard ? 100 : 160,
 
         render: (text: any, record: any, index: number) => {
@@ -799,8 +800,8 @@ export const useTableColumns = ({
             dataListObjectName: verifierListObjectName,
             themeTitle: "检验员",
             config: {
-              name: "verifierName",
-              barcode: "verifierBarcode",
+              name: "verifyName",
+              barcode: "verifyId",
               resName: "testName",
               resId: "testId",
             },
@@ -814,8 +815,8 @@ export const useTableColumns = ({
 
       {
         title: "检验员",
-        dataIndex: "verifierName",
-        key: "verifierName",
+        dataIndex: "verifyName",
+        key: "verifyName",
         width: isAddNewCard ? 80 : 130,
 
         render: (text: any, record: any, index: number) => {
@@ -833,8 +834,8 @@ export const useTableColumns = ({
             dataListObjectName: verifierListObjectName,
             themeTitle: "检验员",
             config: {
-              name: "verifierName",
-              barcode: "verifierBarcode",
+              name: "verifyName",
+              barcode: "verifyId",
               resName: "testName",
               resId: "testId",
             },
@@ -846,8 +847,8 @@ export const useTableColumns = ({
       },
       {
         title: "操作工条码",
-        dataIndex: "operatorBarcode",
-        key: "operatorBarcode",
+        dataIndex: "operateId",
+        key: "operateId",
         width: isAddNewCard ? 100 : 160,
 
         render: (text: any, record: any, index: number) => {
@@ -865,8 +866,8 @@ export const useTableColumns = ({
             dataListObjectName: operatorListObjectName,
             themeTitle: "操作工",
             config: {
-              name: "operatorName",
-              barcode: "operatorBarcode",
+              name: "operateName",
+              barcode: "operateId",
               resName: "operationName",
               resId: "operationId",
               departmentName: "operateDepartment",
@@ -879,8 +880,8 @@ export const useTableColumns = ({
       },
       {
         title: "操作工",
-        dataIndex: "operatorName",
-        key: "operatorName",
+        dataIndex: "operateName",
+        key: "operateName",
         width: isAddNewCard ? 80 : 130,
 
         render: (text: any, record: any, index: number) => {
@@ -898,8 +899,8 @@ export const useTableColumns = ({
             dataListObjectName: operatorListObjectName,
             themeTitle: "操作工",
             config: {
-              name: "operatorName",
-              barcode: "operatorBarcode",
+              name: "operateName",
+              barcode: "operateId",
               resName: "operationName",
               resId: "operationId",
               departmentName: "operateDepartment",
@@ -948,181 +949,81 @@ export const useTableColumns = ({
       },
       {
         title: "设备条码",
-        dataIndex: "equipmentBarcode",
-        key: "equipmentBarcode",
+        dataIndex: "equipmentId",
+        key: "equipmentId",
         width: isAddNewCard ? 100 : 150,
 
         render: (text: any, record: any, index: number) => {
-          return (
-            <>
-              <Select
-                disabled={isAddNewCard}
-                placeholder="查询条码"
-                allowClear
-                style={{ width: "100%" }}
-                value={text}
-                loading={options?.equipmentOptionsLoading}
-                onClear={() => {
-                  delete record.equipmentBarcode;
-                  delete record.equipmentName;
-                  const cloneErrors = cloneDeep(errors);
-                  // if (!cloneErrors[index]) {
-                  //   cloneErrors[index] = {};
-                  // }
-                  // cloneErrors[index].equipmentBarcode = validateField(
-                  //   "设备条码",
-                  //   ""
-                  // );
-                  // cloneErrors[index].equipmentName = validateField(
-                  //   "设备名称",
-                  //   ""
-                  // );
-                  setErrors(cloneErrors);
-                }}
-                onSelect={(e) => {
-                  record.equipmentBarcode = e;
-                  const itemIndex = options?.equipmentOptions?.findIndex(
-                    (item: { equipmentId: string; equipmentName: string }) => {
-                      return item.equipmentId === e;
-                    }
-                  );
-                  const cloneErrors = cloneDeep(errors);
-                  // if (!cloneErrors[index]) {
-                  //   cloneErrors[index] = {};
-                  // }
-                  // cloneErrors[index].equipmentBarcode = validateField(
-                  //   "设备条码",
-                  //   e
-                  // );
-
-                  if (itemIndex !== -1) {
-                    record.equipmentName =
-                      options?.equipmentOptions[itemIndex]?.equipmentName;
-                    // cloneErrors[index].equipmentName = validateField(
-                    //   "设备名称",
-                    //   record.equipmentName
-                    // );
-                  }
-                  setErrors(cloneErrors);
-                }}
-                showSearch
-                onSearch={(e) => {
-                  debounceGetEquipment(e);
-                }}
-              >
-                {options?.equipmentOptions?.map(
-                  (item: { equipmentId: string; equipmentName: string }) => {
-                    return (
-                      <Select.Option
-                        value={item?.equipmentId || item?.equipmentName}
-                        key={item?.equipmentId || item?.equipmentName}
-                      >
-                        {item?.equipmentId || item?.equipmentName}
-                      </Select.Option>
-                    );
-                  }
-                )}
-              </Select>
-              {errors[index]?.equipmentBarcode && (
-                <span style={{ color: "red" }}>
-                  {errors[index]?.equipmentBarcode}
-                </span>
-              )}
-            </>
-          );
+          const props = {
+            text,
+            columns: columns.flowCard,
+            index,
+            errors,
+            setErrors,
+            record,
+            tableData,
+            setTableData,
+            dataList: equipmentList,
+            dataListObject: equipmentListObject,
+            dataListObjectName: equipmentListObjectName,
+            themeTitle: "设备条码",
+            config: {
+              name: "equipmentName",
+              barcode: "equipmentId",
+              resName: "equipmentName",
+              resId: "equipmentId",
+              // departmentName: "operateDepartment",
+              // syncName: "verifyName",
+              // syncBarcode: "verifyId",
+            },
+            type: "barcode",
+            processList,
+            mode: "single",
+            isAddNewCard,
+          };
+          return <RenderCustomSelect {...props} />;
         },
       },
       {
         title: "设备名称",
         dataIndex: "equipmentName",
         key: "equipmentName",
-
         width: isAddNewCard ? 100 : 150,
         render: (text: any, record: any, index: number) => {
-          return (
-            <>
-              <Select
-                placeholder="查询名称"
-                allowClear
-                disabled={isAddNewCard}
-                style={{ width: "100%" }}
-                value={text}
-                loading={options?.equipmentOptionsLoading}
-                onClear={() => {
-                  delete record.equipmentBarcode;
-                  delete record.equipmentName;
-                  const cloneErrors = cloneDeep(errors);
-                  // if (!cloneErrors[index]) {
-                  //   cloneErrors[index] = {};
-                  // }
-                  // cloneErrors[index].equipmentBarcode = validateField(
-                  //   "设备条码",
-                  //   ""
-                  // );
-                  // cloneErrors[index].equipmentName = validateField(
-                  //   "设备名称",
-                  //   ""
-                  // );
-                  setErrors(cloneErrors);
-                }}
-                onSelect={(e: string, _record: any) => {
-                  record.equipmentName = e;
-                  const itemIndex = options?.equipmentOptions?.findIndex(
-                    (item: { equipmentId: string; equipmentName: string }) => {
-                      return item.equipmentId === _record?.key;
-                    }
-                  );
-                  // const cloneErrors = cloneDeep(errors);
-                  // if (!cloneErrors[index]) {
-                  //   cloneErrors[index] = {};
-                  // }
-
-                  // cloneErrors[index].equipmentName = validateField(
-                  //   "设备名称",
-                  //   e
-                  // );
-                  // setErrors(cloneErrors);
-                  if (itemIndex !== -1) {
-                    record.equipmentBarcode =
-                      options?.equipmentOptions[itemIndex]?.equipmentId;
-                    // cloneErrors[index].equipmentBarcode = validateField(
-                    //   "设备条码",
-                    //   record.equipmentBarcode
-                    // );
-                  }
-                  // setErrors(cloneErrors);
-                }}
-                showSearch
-                onSearch={(e) => {
-                  debounceGetEquipmentByName(e);
-                }}
-              >
-                {options?.equipmentOptions?.map(
-                  (item: { equipmentId: string; equipmentName: string }) => {
-                    return (
-                      <Select.Option
-                        value={item.equipmentName + "#" + item?.equipmentId}
-                        key={item?.equipmentId}
-                      >
-                        {item.equipmentName}
-                      </Select.Option>
-                    );
-                  }
-                )}
-              </Select>
-              {errors[index]?.equipmentName && (
-                <span style={{ color: "red" }}>
-                  {errors[index]?.equipmentName}
-                </span>
-              )}
-            </>
-          );
+          const props = {
+            text,
+            columns: columns.flowCard,
+            index,
+            errors,
+            setErrors,
+            record,
+            tableData,
+            setTableData,
+            dataList: equipmentList,
+            dataListObject: equipmentListObject,
+            dataListObjectName: equipmentListObjectName,
+            themeTitle: "设备名称",
+            config: {
+              name: "equipmentName",
+              barcode: "equipmentId",
+              resName: "equipmentName",
+              resId: "equipmentId",
+              // departmentName: "operateDepartment",
+              // syncName: "verifyName",
+              // syncBarcode: "verifyId",
+            },
+            type: "name",
+            processList,
+            mode: "single",
+            isAddNewCard,
+          };
+          return <RenderCustomSelect {...props} />;
         },
       },
       {
         title: "产量",
-        dataIndex: "produceNumber",
-        key: "produceNumber",
+        dataIndex: "productNumber",
+        key: "productNumber",
         width: isAddNewCard ? 100 : 140,
 
         render: (text: string, record: any, index: number) => {
@@ -1135,7 +1036,7 @@ export const useTableColumns = ({
                 value={text}
                 controls={false}
                 onChange={(e) => {
-                  record.produceNumber = e;
+                  record.productNumber = e;
                   const cloneErrors = cloneDeep(errors);
                   // if (!cloneErrors[index]) {
                   //   cloneErrors[index] = {};
@@ -1144,9 +1045,9 @@ export const useTableColumns = ({
                   setErrors(cloneErrors);
                 }}
               ></InputNumber>
-              {errors[index]?.produceNumber && (
+              {errors[index]?.productNumber && (
                 <span style={{ color: "red" }}>
-                  {errors[index]?.produceNumber}
+                  {errors[index]?.productNumber}
                 </span>
               )}
             </>
@@ -1186,7 +1087,7 @@ export const useTableColumns = ({
       },
     ],
   };
-  return columns[flowCardType || "common"];
+  return columns[getRealType(flowCardType) || "common"];
 };
 
 interface IGetParams {
@@ -1214,7 +1115,7 @@ export const getParams = ({
   if (!values) {
     return {};
   }
-  console.log(values, 1223);
+  console.log(values, 22122);
 
   const params = {
     common: {
@@ -1247,13 +1148,13 @@ export const getParams = ({
       //图号
       drawingNumber: values.itmTEID,
       //生产公斤数
-      productionKg: isKg ? values.newsupcount : values.huancount,
+      productionKg: values.productKg,
       //流转公斤数
-      transferKg: isKg ? values.liucount : values.liuhuancount,
+      transferKg: values.transferKg,
       //生产PCS数
-      productionPcs: !isKg ? values.newsupcount : values.huancount,
+      productionPcs: values.productPcs,
       //流转PCS数
-      transferPcs: !isKg ? values.liucount : values.liuhuancount,
+      transferPcs: values.transferPcs,
       //供方/炉批号
       furnaceNo: values.furnaceNo,
       //材料料号
@@ -1371,18 +1272,20 @@ export const getParams = ({
     },
     flowCard: {
       // id
-      id: data.id,
-      barCode: values.barCode,
+      // id: data.id,
+      // barCode: values.barCode,
       // 炉批号
       furnaceNo: values.furnaceNo,
       // 供方
       supplierName: values.supplierName,
       // 追溯单号(半品)
-      orderCatchHalf: values.orderCatchHalf,
+      // orderCatchHalf: values.orderCatchHalf,
       // 备注
       remark: values.remark,
       // 优先顺序
-      priorityOrder: values.priorityOrderpriorityOrder,
+      // priorityOrder: values.priorityOrderpriorityOrder,
+
+      transferCardCode: data?.transferCardCode,
     },
     print: {},
     rework: {
@@ -1391,7 +1294,7 @@ export const getParams = ({
       //返工类型
       reworkType: values.reworkType,
       //流转卡编号
-      transferCardCode: values.transferCardCode,
+      transferCardCode: dataString || data?.reworkTransferCardCode,
       //返工流转卡编号
       reworkTransferCardCode: dataString || data?.reworkTransferCardCode,
       // 追溯单号
@@ -1416,53 +1319,58 @@ export const getParams = ({
       material: values.material,
       //商标
       trademark: values.trademark,
-      //工序
-      detailProcesses: tableData.map((item, index) => {
-        const {
-          processName = "",
-          inspectionLevel = "",
-          verifierBarcode = [],
-          verifierName = [],
-          operatorBarcode = [],
-          operatorName = [],
-          finishTime = "",
-          equipmentBarcode = "",
-          equipmentName = "",
-          produceNumber = "",
-          operateDepartment = [],
-          unit = "",
-        } = item || {};
-        const verifierInfoList =
-          verifierBarcode?.map((item: string, index: number) => {
-            return {
-              verifierBarcode: item,
-              verifierName: verifierName?.[index],
-            };
-          }) || [];
-        const operationInfoList =
-          operatorBarcode?.map((item: string, index: number) => {
-            return {
-              operationId: item,
-              operationName: operatorName?.[index],
-              operateDepartment: operateDepartment?.[index],
-            };
-          }) || [];
+      //改制
+      reformMaterial: values.reformMaterial,
+      reformName: values.reformName,
+      reformPartNumber: values.reformPartNumber,
+      reformSpec: values.reformSpec,
+      // //工序
+      // detailProcesses: tableData.map((item, index) => {
+      //   const {
+      //     processName = "",
+      //     inspectionLevel = "",
+      //     verifyId = [],
+      //     verifyName = [],
+      //     operateId = [],
+      //     operateName = [],
+      //     finishTime = "",
+      //     equipmentId = "",
+      //     equipmentName = "",
+      //     produceNumber = "",
+      //     operateDepartment = [],
+      //     unit = "",
+      //   } = item || {};
+      //   const verifierInfoList =
+      //     verifyId?.map((item: string, index: number) => {
+      //       return {
+      //         verifyId: item,
+      //         verifyName: verifyName?.[index],
+      //       };
+      //     }) || [];
+      //   const operationInfoList =
+      //     operateId?.map((item: string, index: number) => {
+      //       return {
+      //         operationId: item,
+      //         operationName: operateName?.[index],
+      //         operateDepartment: operateDepartment?.[index],
+      //       };
+      //     }) || [];
 
-        return {
-          processName,
-          inspectionLevel,
-          verifierInfoList,
-          operationInfoList,
-          finishTime,
-          equipmentBarcode,
-          equipmentName,
-          produceNumber,
-          unit,
-          processSeq: index + 1,
-        };
-      }),
+      //   return {
+      //     processName,
+      //     inspectionLevel,
+      //     verifierInfoList,
+      //     operationInfoList,
+      //     finishTime,
+      //     equipmentId,
+      //     equipmentName,
+      //     produceNumber,
+      //     unit,
+      //     processSeq: index + 1,
+      //   };
+      // }),
     },
   };
 
-  return params[flowCardType || "common"];
+  return params[getRealType(flowCardType) || "common"];
 };

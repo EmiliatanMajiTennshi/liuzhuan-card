@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "./token";
 import { message } from "antd";
 import { TOKEN_ERROR } from "@/constants";
-import { debounce, indexOf } from "lodash";
+import { debounce } from "lodash";
 import { startTransition } from "react";
 
 const redirectToLogin = debounce(function () {
@@ -12,12 +12,12 @@ const redirectToLogin = debounce(function () {
 }, 1000);
 // axios的配置文件, 可以在这里去区分开发环境和生产环境等全局一些配置
 const devBaseUrl = "target/";
-const proBaseUrl = "http://192.168.20.65:8081/api";
+const proBaseUrl = "http://192.168.2.67:8081/api";
 
 // process.env返回的是一个包含用户的环境信息,它可以去区分是开发环境还是生产环境
 export const BASE_URL =
   process.env.NODE_ENV === "development" ? devBaseUrl : proBaseUrl;
-export const TIMEOUT = 50000;
+export const TIMEOUT = 500009;
 
 /**
  * 请求
@@ -50,8 +50,6 @@ request.interceptors.response.use(
   },
   (error) => {
     //对响应的错误做点什么
-    console.log(error?.response, 123);
-
     if (
       error?.response?.data?.code === 401 &&
       (error?.response?.data?.msg ===

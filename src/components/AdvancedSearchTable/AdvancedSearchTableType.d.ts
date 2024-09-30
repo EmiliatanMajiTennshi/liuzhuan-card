@@ -8,6 +8,14 @@ export interface ITableItem {
   key: string;
 }
 
+export type TFlowCardType =
+  | "common"
+  | "outsourcing"
+  | "flowCard"
+  | "print"
+  | "rework"
+  | "unfinished"
+  | "finished";
 /**
  * tableConfig的参数
  */
@@ -21,10 +29,13 @@ export interface ITableConfig {
   // 下发 编辑的页面的api
   queryFlowCardApi?: TApi;
   // 流转卡类型
-  flowCardType?: "common" | "outsourcing" | "flowCard" | "print" | "rework";
+  flowCardType?: TFlowCardType;
+
   optionList?: TApi[];
   // 默认参数
   defaultParam?: { [key: string]: string };
+  // 是否下发成品
+  needIssueFinished?: boolean;
 }
 
 /**
@@ -80,8 +91,15 @@ export interface ITableConfigProps {
   setSearchedData: React.Dispatch<React.SetStateAction<any[]>>;
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
   setIssueModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIssueID: React.Dispatch<React.SetStateAction<number>>;
+  setIssueID: React.Dispatch<React.SetStateAction<IIssueID>>;
   setPrintModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   tableOptions: AnyObject;
   setTableOptions: React.Dispatch<React.SetStateAction<AnyObject>>;
+  setFinishedParams: React.Dispatch<React.SetStateAction<AnyObject>>;
+}
+
+export interface IIssueID {
+  orderid?: string;
+  itmid?: string;
+  transferCardCode?: string;
 }

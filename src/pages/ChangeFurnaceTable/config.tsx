@@ -9,6 +9,7 @@ import { RuleObject } from "antd/es/form";
 import {
   changeFurnacePlatformById,
   getHeatTreatmentFurnacePlatformsList,
+  insertFurnaceChange,
 } from "@/api";
 import { kgArr } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
@@ -30,7 +31,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         });
         getHeatTreatmentFurnacePlatformsList().then((res) => {
           // 热处理炉台号
-          if (res?.data?.code === SUCCESS_CODE) {
+          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
             const platformsOptions = res?.data?.data?.map(
               (item: { id: string; name: string }) => ({
                 value: item?.name,
@@ -162,12 +163,11 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setRefreshFlag, tableOptions } = props;
-  console.log(12313);
   // 获取炉台
   const furnaceOptionsApi = "getHeatTreatmentFurnacePlatformsList";
   return {
     rowKey: "id", // 唯一标识
-    api: "queryFurnaceChange",
+    api: "queryFurnaceChangeNew",
     optionList: [furnaceOptionsApi],
     columns: [
       //   {
@@ -187,27 +187,27 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转卡编号",
         dataIndex: "transferCardCode",
         key: "transferCardCode",
-        width: 240,
+        width: 260,
       },
 
       {
         title: "工艺",
-        dataIndex: "processList",
-        key: "processList",
+        dataIndex: "process",
+        key: "process",
         width: 100,
-        render: (list: any[]) => {
-          return (
-            <span
-              style={{
-                fontWeight: "bold",
-                color: DEFAULT_ORANGE,
-                fontSize: 16,
-              }}
-            >
-              {list[0]?.processName}
-            </span>
-          );
-        },
+        // render: (list: any[]) => {
+        //   return (
+        //     <span
+        //       style={{
+        //         fontWeight: "bold",
+        //         color: DEFAULT_ORANGE,
+        //         fontSize: 16,
+        //       }}
+        //     >
+        //       {list[0]?.processName}
+        //     </span>
+        //   );
+        // },
       },
       {
         title: "生产订单条码",
@@ -259,6 +259,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "createTime",
         key: "createTime",
         width: 160,
+        render: (text) => text?.slice(0, 19),
       },
       {
         title: "单位",
@@ -268,18 +269,14 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "派工数量",
-        dataIndex: "production",
-        key: "production",
+        dataIndex: "dispatchWorkNumber",
+        key: "dispatchWorkNumber",
         width: 110,
-        render: (text, record) => {
-          const isKg = kgArr.indexOf(record?.unit) !== -1;
-          return isKg ? record?.productionKg : record?.productionPcs;
-        },
       },
       {
         title: "完工数量",
-        dataIndex: "sumTransferNumberList",
-        key: "sumTransferNumberList",
+        dataIndex: "finishedNumber",
+        key: "finishedNumber",
         render: sumTransferNumberRender,
         width: 120,
       },
@@ -327,11 +324,13 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               type="primary"
               size="small"
               onClick={() => {
-                changeFurnacePlatformById({
-                  id: record?.id,
-                  name: record?.furnaceChange,
+                insertFurnaceChange({
+                  transferCardCode: record?.transferCardCode,
+                  heatTreatmentFurnacePlatform: record?.furnaceChange,
+                  // id: record?.id,
+                  // name: record?.furnaceChange,
                 }).then((res) => {
-                  if (res?.data?.code === SUCCESS_CODE) {
+                  if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
                     message.success(res?.data?.data || UPDATE_SUCCESS);
                     setRefreshFlag((flag) => !flag);
                   } else {

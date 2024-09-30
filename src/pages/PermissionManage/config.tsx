@@ -165,7 +165,7 @@ const formConfig: IFormConfig = {
           const onCancel = () => {};
           const onFinish = (values: any) => {
             insertPermission(values).then((res) => {
-              if (res?.data?.code === SUCCESS_CODE) {
+              if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
                 message.success(res?.data?.data || ADD_SUCCESS);
                 setRefreshFlag((flag) => !flag);
               } else {
@@ -236,7 +236,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   updatePermissionById({
                     ...value,
                   }).then((res) => {
-                    if (res?.data?.code === SUCCESS_CODE) {
+                    if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
                       message.success(res?.data?.data);
                       setRefreshFlag((flag) => !flag);
                       modal.destroy();

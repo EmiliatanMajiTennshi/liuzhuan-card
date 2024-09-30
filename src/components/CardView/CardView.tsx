@@ -5,18 +5,18 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./index.module.scss";
 import { CountUp } from "countup.js";
 import { DEFAULT_ORANGE } from "@/constants";
-import { emptyRender, isEmptyField } from "@/utils/tableRender";
+import { emptyRender } from "@/utils/tableRender";
+import { useRafInterval } from "ahooks";
 
 const CardView = (props: { data: AnyObject }) => {
   const { data } = props;
+
   const [percent, setPercent] = useState<number>(0);
   const countupRef = useRef(null);
   const countupRefYesterDay = useRef(null);
   useEffect(() => {
-    const result = percentage(
-      data?.orderCompletedQuantity?.orderCompletedQuantity,
-      data?.orderQuantity?.orderQuantity
-    );
+    const result = percentage(data?.finishOrderNumber, data?.orderNumber);
+
     const timer = setTimeout(() => {
       if (result >= percent + 1) {
         setPercent((percent) => percent + 1);
@@ -31,21 +31,20 @@ const CardView = (props: { data: AnyObject }) => {
   }, [percent]);
 
   const initCountUp = () => {
-    const value = data?.orderCompletedQuantity?.orderCompletedQuantity;
+    const value = data?.finishOrderNumber;
     if (!countupRef.current || !value) return;
-    const countUpAnim = new CountUp(
-      countupRef.current,
-      data?.orderCompletedQuantity?.orderCompletedQuantity,
-      {
-        duration: 1,
-      }
-    );
+    const countUpAnim = new CountUp(countupRef.current, value, {
+      duration: 1,
+    });
     if (!countUpAnim.error) {
       countUpAnim.start();
     } else {
       console.error(countUpAnim.error);
     }
   };
+  useRafInterval(() => {
+    initCountUp();
+  }, 5000);
   const initCountUpYesterday = () => {
     const value =
       data?.YesterDayData?.orderCompletedQuantity?.orderCompletedQuantity;
@@ -84,7 +83,7 @@ const CardView = (props: { data: AnyObject }) => {
         </h3>
       </Tooltip>
       <div>
-        <h4 style={{ margin: "8px 0" }}>当年</h4>
+        {/* <h4 style={{ margin: "8px 0" }}>当年</h4> */}
         <div
           style={{
             display: "flex",
@@ -105,14 +104,10 @@ const CardView = (props: { data: AnyObject }) => {
                 fontWeight: 700,
               }}
             >
-              <>
-                {emptyRender(
-                  data?.orderCompletedQuantity?.orderCompletedQuantity
-                )}
-              </>
+              <>{emptyRender(data?.finishOrderNumber)}</>
             </span>
             <span>
-              / <>{emptyRender(data?.orderQuantity?.orderQuantity)}</>
+              / <>{emptyRender(data?.orderNumber)}</>
             </span>
           </span>
         </div>
@@ -131,6 +126,11 @@ const CardView = (props: { data: AnyObject }) => {
             children
             percent={percent}
             size={[300, 20]}
+            strokeColor={{
+              "0%": "#ff4d4f",
+              "20%": "#FAAD14",
+              "60%": "#52c41a",
+            }}
           />
         </div>
       </div>
@@ -140,9 +140,9 @@ const CardView = (props: { data: AnyObject }) => {
           padding: "16px 30px 0",
         }}
       >
-        <div style={{ borderTop: "1px solid #ccc" }}></div>
+        {/* <div style={{ borderTop: "1px solid #ccc" }}></div> */}
       </div>
-      <div>
+      {/* <div>
         <h4 style={{ margin: "8px 0" }}>昨日</h4>
         <div
           style={{
@@ -196,7 +196,7 @@ const CardView = (props: { data: AnyObject }) => {
             size={[300, 20]}
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

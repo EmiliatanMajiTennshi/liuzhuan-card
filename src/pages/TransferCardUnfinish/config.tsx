@@ -184,22 +184,19 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   return {
     rowKey: "id", // 唯一标识
-    api: "queryUnfinishCard",
+    api: "queryProcessUnfinishNew",
     columns: [
       {
         title: "事业部",
         dataIndex: "department",
         key: "department",
-        width: 120,
-        render: (text: string, record: any) => {
-          return record?.detailProcessesList?.[0]?.department;
-        },
+        width: 130,
       },
       {
         title: "流转卡编号",
         dataIndex: "transferCardCode",
         key: "transferCardCode",
-        width: 240,
+        width: 260,
       },
       {
         title: "追溯条码",
@@ -236,6 +233,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "createTime",
         key: "createTime",
         width: 160,
+        render: (text) => text?.slice(0, 19),
       },
 
       {
@@ -253,12 +251,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
 
       {
         title: "序号",
-        dataIndex: "processSeq",
-        key: "processSeq",
+        dataIndex: "seq",
+        key: "seq",
         width: 60,
-        render: (text: string, record: any) => {
-          return record?.detailProcessesList?.[0]?.processSeq;
-        },
       },
       {
         title: "工艺步骤",
@@ -277,43 +272,43 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "检验员",
-        dataIndex: "verifier",
-        key: "verifier",
+        dataIndex: "verifyId",
+        key: "verifyId",
         width: 120,
         fixed: "right",
-        render: (text: string, record: any) => {
-          return record?.detailProcessesList?.[0]?.verifierInfoList?.map(
-            (item: any) => {
-              return (
-                <div>{`${item?.verifierName}-${item?.verifierBarcode}`}</div>
-              );
-            }
-          );
-        },
+        // render: (text: string, record: any) => {
+        //   return record?.detailProcessesList?.[0]?.verifierInfoList?.map(
+        //     (item: any) => {
+        //       return (
+        //         <div>{`${item?.verifyName}-${item?.verifyId}`}</div>
+        //       );
+        //     }
+        //   );
+        // },
       },
       {
         title: "操作工",
-        dataIndex: "operator",
-        key: "operator",
+        dataIndex: "operateId",
+        key: "operateId",
         width: 120,
         fixed: "right",
-        render: (text: string, record: any) => {
-          return record?.detailProcessesList?.[0]?.operationInfoList?.map(
-            (item: any) => {
-              return <div>{`${item?.operationName}-${item?.operationId}`}</div>;
-            }
-          );
-        },
+        // render: (text: string, record: any) => {
+        //   return record?.detailProcessesList?.[0]?.operationInfoList?.map(
+        //     (item: any) => {
+        //       return <div>{`${item?.operationName}-${item?.operationId}`}</div>;
+        //     }
+        //   );
+        // },
       },
       {
         title: "产量",
-        dataIndex: "operator",
-        key: "operator",
+        dataIndex: "productionNumber",
+        key: "productionNumber",
         width: 120,
         fixed: "right",
-        render: (text: string, record: any) => {
-          return record?.detailProcessesList?.[0]?.produceNumber;
-        },
+        // render: (text: string, record: any) => {
+        //   return record?.detailProcessesList?.[0]?.produceNumber;
+        // },
       },
 
       //   {

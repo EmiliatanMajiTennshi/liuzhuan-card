@@ -5,14 +5,8 @@ import {
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { Button, ConfigProvider, DatePicker, Input, Select, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
-import {
-  FINISHED_CODE,
-  SEMI_FINISHED_CODE,
-  SUCCESS_CODE,
-  kgArr,
-} from "@/constants";
+import { FINISHED_CODE, SEMI_FINISHED_CODE, SUCCESS_CODE } from "@/constants";
 import { countProductType, getHeatTreatmentFurnacePlatformsList } from "@/api";
-import { sumTransferNumberRender } from "@/utils/tableRender";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -21,16 +15,16 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       if (!options.type) {
         setOptions({ ...options, type: [{}] });
         setOptions({ ...options, type: [{}] });
-        countProductType().then((res) => {
-          //   零件类型;
-          if (res?.data?.code === SUCCESS_CODE) {
-            const typeOptions = res?.data?.data?.map((item: string) => ({
-              value: item,
-              label: item,
-            }));
-            setOptions({ ...options, type: typeOptions });
-          }
-        });
+        // countProductType().then((res) => {
+        //   //   零件类型;
+        //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+        //     const typeOptions = res?.data?.data?.map((item: string) => ({
+        //       value: item,
+        //       label: item,
+        //     }));
+        //     setOptions({ ...options, type: typeOptions });
+        //   }
+        // });
       }
       if (!options.heatTreatmentFurnacePlatforms) {
         setOptions({
@@ -40,7 +34,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 
         getHeatTreatmentFurnacePlatformsList().then((res) => {
           // 热处理炉台号
-          if (res?.data?.code === SUCCESS_CODE) {
+          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
             const platformsOptions = res?.data?.data?.map(
               (item: { id: string; name: string }) => ({
                 value: item?.name,
@@ -57,7 +51,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 
       return [
         {
-          key: "barCode",
+          key: "orderid",
           name: "生产订单条码",
           children: <Input></Input>,
           rules: [],
@@ -70,7 +64,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           rules: [],
         },
         {
-          key: "transfCardNo",
+          key: "transferCardCode",
           name: "流转卡编号",
           children: <Input></Input>,
           rules: [],
@@ -83,7 +77,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         },
 
         {
-          key: "specs",
+          key: "spec",
           name: "规格",
           children: <Input></Input>,
           rules: [],
@@ -162,7 +156,20 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         {
           key: "type",
           name: "零件类型",
-          children: <Select allowClear options={options?.type || []}></Select>,
+          children: (
+            <Select
+              allowClear
+              options={[
+                { value: "自制", label: "自制" },
+                { value: "外协", label: "外协" },
+                { value: "外购", label: "外购" },
+                { value: "五金", label: "五金" },
+                { value: "苏州采购", label: "苏州采购" },
+                { value: "补单", label: "补单" },
+                { value: "盘点零件", label: "盘点零件" },
+              ]}
+            ></Select>
+          ),
           rules: [],
         },
         {
@@ -180,7 +187,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           rules: [],
         },
         {
-          key: "heatTreatmentFurnacePlatform",
+          key: "heatTreatmentFurnacePlatforms",
           name: "热处理炉台号",
           children: (
             <Select
@@ -191,14 +198,14 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           rules: [],
         },
         {
-          key: "completionStatus",
+          key: "finishStatus",
           name: "完工状态",
           children: (
             <Select
               allowClear
               options={[
-                { value: 1, label: "完工" },
-                { value: 0, label: "未完工" },
+                { value: "完工", label: "完工" },
+                { value: "未完工", label: "未完工" },
                 // { value: 2, label: "不合格报表" },
               ]}
             ></Select>
@@ -280,14 +287,14 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setIssueModalOpen, setIssueID, setPrintModalOpen } = props;
   return {
     rowKey: "id", // 唯一标识
-    api: "queryTransferCard",
-    queryFlowCardApi: "clickTransferCard",
+    api: "queryTransferCardNew",
+    queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
     flowCardType: "flowCard",
     columns: [
       {
         title: "流转卡类型",
-        dataIndex: "transferCardType",
-        key: "transferCardType",
+        dataIndex: "category",
+        key: "category",
         width: 100,
       },
       {
@@ -299,9 +306,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
 
       {
         title: "流转卡编号",
-        dataIndex: "transfCardNo",
-        key: "transfCardNo",
-        width: 240,
+        dataIndex: "transferCardCode",
+        key: "transferCardCode",
+        width: 260,
       },
       {
         title: "追溯单号",
@@ -311,21 +318,15 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "生产订单条码",
-        dataIndex: "barCode",
-        key: "barCode",
-        width: 180,
-      },
-      {
-        title: "零件料号",
-        dataIndex: "partNumber",
-        key: "partNumber",
-        width: 130,
+        dataIndex: "orderid",
+        key: "orderid",
+        width: 160,
       },
       {
         title: "入库料号",
-        dataIndex: "storePartNumber",
-        key: "storePartNumber",
-        width: 130,
+        dataIndex: "itmid",
+        key: "itmid",
+        width: 180,
       },
       {
         title: "品名",
@@ -335,8 +336,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "规格",
-        dataIndex: "specs",
-        key: "specs",
+        dataIndex: "spec",
+        key: "spec",
         width: 100,
       },
       {
@@ -352,65 +353,63 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       //     width: 80,
       //   },
       {
-        title: "完成时间",
-        dataIndex: "finishTime",
-        key: "finishTime",
-        width: 160,
-      },
-      {
         title: "创建(流转)时间",
         dataIndex: "createTime",
         key: "createTime",
         width: 160,
+        render: (text: string) => text?.slice(0, 19),
       },
       {
+        title: "完成时间",
+        dataIndex: "ljFinDate",
+        key: "ljFinDate",
+        width: 100,
+      },
+
+      {
         title: "热处理炉台",
-        dataIndex: "heatTreatmentFurnacePlatform",
-        key: "heatTreatmentFurnacePlatform",
+        dataIndex: "heatTreatmentFurnacePlatforms",
+        key: "heatTreatmentFurnacePlatforms",
         width: 120,
       },
       {
         title: "优先顺序",
-        dataIndex: "priorityOrder",
-        key: "priorityOrder",
+        dataIndex: "priority",
+        key: "priority",
         width: 120,
       },
 
       {
         title: "生产数量总量",
-        dataIndex: "production",
-        key: "production",
+        dataIndex: "newsupcount",
+        key: "newsupcount",
         width: 110,
-        render: (text, record) => {
-          const isKg = kgArr.indexOf(record?.unit) !== -1;
-          return isKg ? record?.productionKg : record?.productionPcs;
-        },
+        // render: (text, record) => {
+        //   const isKg = kgArr.indexOf(record?.unit) !== -1;
+        //   return isKg ? record?.productionKg : record?.productionPcs;
+        // },
       },
       {
         title: "流转数量累积",
-        dataIndex: "sumTransferNumberList",
-        key: "sumTransferNumberList",
-        render: sumTransferNumberRender,
+        dataIndex: "transferNumber",
+        key: "transferNumber",
+        // render: sumTransferNumberRender,
         width: 120,
       },
       {
         title: "流转桶数",
-        dataIndex: "barrelCount",
-        key: "barrelCount",
+        dataIndex: "barrelageNumebr",
+        key: "barrelageNumebr",
         width: 120,
-        render: (barrelCount: any) => {
-          return barrelCount?.countBarrel;
-        },
+        // render: (barrelCount: any) => {
+        //   return barrelCount?.countBarrel;
+        // },
       },
       {
         title: "单桶流转数量",
-        dataIndex: "singleNumber",
-        key: "singleNumber",
+        dataIndex: "singleBarrelageNumebr",
+        key: "singleBarrelageNumebr",
         width: 110,
-        render: (text, record) => {
-          const isKg = kgArr.indexOf(record?.unit) !== -1;
-          return isKg ? record?.transferKg : record?.transferPcs;
-        },
       },
       {
         title: "当前工艺",
@@ -420,18 +419,15 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "完工状态",
-        dataIndex: "completionStatus",
-        key: "completionStatus",
-        width: 80,
+        dataIndex: "finishStatus",
+        key: "finishStatus",
+        width: 100,
         fixed: "right",
-        render: (text: number) => {
-          if (text === 0) {
-            return <Tag color="red">未完工</Tag>;
-          }
-          if (text === 1) {
+        render: (text: string) => {
+          if (text === "完工") {
             return <Tag color="green">完工</Tag>;
           }
-          return text;
+          return <Tag color="red">未完工</Tag>;
         },
       },
       {
@@ -440,7 +436,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "processList",
         render: (data: any, record: any, index: number) => {
           // 这里后面要
-          console.log(record);
 
           return (
             <>
@@ -449,7 +444,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 size="small"
                 onClick={() => {
                   setIssueModalOpen(true);
-                  setIssueID(record?.id);
+                  setIssueID({ transferCardCode: record?.transferCardCode });
                 }}
               >
                 编辑
@@ -467,9 +462,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   style={{ marginLeft: 10 }}
                   onClick={() => {
                     setPrintModalOpen(true);
-                    setIssueID(record?.id);
+                    setIssueID({ transferCardCode: record?.transferCardCode });
                   }}
-                  disabled={parseFloat(record?.printStatus) === 1}
+                  disabled={record?.printStatus !== "NO"}
                 >
                   打印流转卡
                 </Button>

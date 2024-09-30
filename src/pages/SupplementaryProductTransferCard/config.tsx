@@ -5,7 +5,7 @@ import {
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
-import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
+import { FINISHED_CODE, kgArr, SEMI_FINISHED_CODE } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
@@ -26,7 +26,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         rules: [],
       },
       {
-        key: "category",
+        key: "type",
         name: "类别",
         children: (
           <Select
@@ -118,10 +118,9 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setIssueModalOpen, setIssueID } = props;
   return {
-    api: "querySupplementaryOrder",
-    queryFlowCardApi: "querySupplementaryOrderById",
+    api: "getSupplement",
+    queryFlowCardApi: "supplementByOI",
     flowCardType: "common",
-
     columns: [
       //   {
       //     title: "零件类型",
@@ -140,13 +139,13 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "零件料号",
         dataIndex: "partNumber",
         key: "partNumber",
-        width: 150,
+        width: 120,
       },
       {
         title: "品名",
         dataIndex: "name",
         key: "name",
-        width: 100,
+        width: 120,
       },
       {
         title: "规格",
@@ -158,7 +157,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "商标",
         dataIndex: "trademark",
         key: "trademark",
-        width: 80,
+        width: 180,
       },
       {
         title: "完成时间",
@@ -177,30 +176,46 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "number",
         key: "number",
         width: 100,
+        render: (text, record) => {
+          return kgArr.indexOf(record?.unit) !== -1
+            ? record?.productionKg
+            : record?.productionPcs;
+        },
       },
       {
         title: "流转数量累积",
         dataIndex: "sumTransferNumberList",
         key: "sumTransferNumberList",
-        render: sumTransferNumberRender,
-        width: 120,
+        render: (text, record) => {
+          return kgArr.indexOf(record?.unit) !== -1
+            ? record?.transferKg
+            : record?.transferPcs;
+        },
+        width: 100,
       },
+      // {
+      //   title: "数量",
+      //   dataIndex: "number",
+      //   key: "number",
+      //   width: 100,
+      // },
+      // {
+      //   title: "流转数量累积",
+      //   dataIndex: "sumTransferNumberList",
+      //   key: "sumTransferNumberList",
+      //   render: sumTransferNumberRender,
+      //   width: 120,
+      // },
       {
         title: "第一道工艺",
-        dataIndex: "firstProcess",
-        key: "firstProcess",
-        render: (text, record) => {
-          return record?.processList?.[0]?.processName;
-        },
+        dataIndex: "process1",
+        key: "process1",
         width: 120,
       },
       {
         title: "第二道工艺",
-        dataIndex: "secondProcess",
-        key: "secondProcess",
-        render: (text, record) => {
-          return record?.processList?.[1]?.processName;
-        },
+        dataIndex: "process2",
+        key: "process2",
         width: 120,
       },
       // {
@@ -231,7 +246,10 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 size="small"
                 onClick={() => {
                   setIssueModalOpen(true);
-                  setIssueID(record?.id);
+                  setIssueID({
+                    orderid: record?.barCode,
+                    itmid: record?.parsePartNumber,
+                  });
                 }}
               >
                 下发

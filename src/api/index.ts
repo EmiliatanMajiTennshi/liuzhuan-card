@@ -62,6 +62,42 @@ import { updatePrintStatus } from "./updatePrintStatus";
 import { updateHeatTreatmentPrintStatus } from "./updateHeatTreatmentPrintStatus";
 import { queryReformInfoByItemId } from "./queryReformInfoByItemId";
 import { countUnfinishTransferToStore } from "./countUnfinishTransferToStore";
+import { getUnfinishedProducts } from "./getUnfinishedProducts";
+import { getFinishedProducts } from "./getFinishedProducts";
+import { getOutsourcingPurchasing } from "./getOutsourcingPurchasing";
+import { getSupplement } from "./getSupplement";
+import { queryTransferCardNew } from "./queryTransferCardNew";
+import { queryTransferCardToStoreNew } from "./queryTransferCardToStoreNew";
+import { queryQualityInspectionNew } from "./queryQualityInspectionNew";
+import { queryLogisticsNew } from "./queryLogisticsNew";
+import { queryReworkTransferCardNew } from "./queryReworkTransferCardNew";
+import { queryProcessUnfinishToStoreNew } from "./queryProcessUnfinishToStoreNew";
+import { queryOutSourceCheckNew } from "./queryOutSourceCheckNew";
+import { queryFurnaceChangeNew } from "./queryFurnaceChangeNew";
+import { queryProcessUnfinishNew } from "./queryProcessUnfinishNew";
+import { queryfinishedProductsByOI } from "./queryfinishedProductsByOI";
+import { queryUnfinishedProductsByOI } from "./queryUnfinishedProductsByOI";
+import { queryoutsourcingPurchasingByOI } from "./queryoutsourcingPurchasingByOI";
+import { supplementByOI } from "./supplementByOI";
+import { queryReworkTransferCardByIdNew } from "./queryReworkTransferCardByIdNew";
+import { insertUnfinishedProductsNew } from "./insertUnfinishedProductsNew";
+import { insertfinishedProductsNew } from "./insertfinishedProductsNew";
+import { insertoutsourcingPurchasingNew } from "./insertoutsourcingPurchasing";
+import { queryTransferCardInfoByCardIdNew } from "./queryTransferCardInfoByCardIdNew";
+import { insertFurnaceChange } from "./insertFurnaceChange";
+import { updateTransferCardInfoByCardId } from "./updateTransferCardInfoByCardId";
+import { updateFTransferCardInfoByCardId } from "./updateFTransferCardInfoByCardId";
+import { updateOTransferCardInfoByCardId } from "./updateOTransferCardInfoByCardId";
+import { insertDeliveryNew } from "./insertDeliveryNew";
+import { insertReworkTransferCardNew } from "./insertReworkTransferCardNew";
+import { updateReworkTransferCardById } from "./updateReworkTransferCardById";
+import { insertPrintTransferCardNew } from "./insertPrintTransferCardNew";
+import { printReworkTransferCardNew } from "./printReworkTransferCard";
+import { queryPartNumberByHalf } from "./queryPartNumberByHalf";
+import { queryStandPartNumberByHalf } from "./queryStandPartNumberByHalf";
+import { countProcessUnfinishToStore } from "./countProcessUnfinishToStoreNew";
+import { queryOrderCount } from "./queryOrderCount";
+
 export {
   countProductType,
   countOrderCompletionStatus,
@@ -128,7 +164,8 @@ export {
   updatePrintStatus,
   updateHeatTreatmentPrintStatus,
 };
-const apis = {
+
+const apisOld = {
   countProductType,
   countOrderCompletionStatus,
   countUnfinishTransferToStore,
@@ -193,6 +230,86 @@ const apis = {
   updateCheckById,
   updatePrintStatus,
   updateHeatTreatmentPrintStatus,
+};
+
+export {
+  countProcessUnfinishToStore,
+  getUnfinishedProducts,
+  getFinishedProducts,
+  getOutsourcingPurchasing,
+  getSupplement,
+  printReworkTransferCardNew,
+  queryTransferCardNew,
+  queryTransferCardToStoreNew,
+  queryQualityInspectionNew,
+  queryLogisticsNew,
+  queryReworkTransferCardNew,
+  queryProcessUnfinishToStoreNew,
+  queryOutSourceCheckNew,
+  queryFurnaceChangeNew,
+  queryProcessUnfinishNew,
+  queryfinishedProductsByOI,
+  queryUnfinishedProductsByOI,
+  queryoutsourcingPurchasingByOI,
+  queryReworkTransferCardByIdNew,
+  queryTransferCardInfoByCardIdNew,
+  queryPartNumberByHalf,
+  queryStandPartNumberByHalf,
+  queryOrderCount,
+  supplementByOI,
+  insertUnfinishedProductsNew,
+  insertfinishedProductsNew,
+  insertoutsourcingPurchasingNew,
+  insertFurnaceChange,
+  insertReworkTransferCardNew,
+  insertDeliveryNew,
+  insertPrintTransferCardNew,
+  updateTransferCardInfoByCardId,
+  updateFTransferCardInfoByCardId,
+  updateOTransferCardInfoByCardId,
+  updateReworkTransferCardById,
+};
+const apisNew = {
+  countProcessUnfinishToStore,
+  getUnfinishedProducts,
+  getFinishedProducts,
+  getOutsourcingPurchasing,
+  getSupplement,
+  printReworkTransferCardNew,
+  queryTransferCardNew,
+  queryTransferCardToStoreNew,
+  queryQualityInspectionNew,
+  queryLogisticsNew,
+  queryReworkTransferCardNew,
+  queryProcessUnfinishToStoreNew,
+  queryOutSourceCheckNew,
+  queryFurnaceChangeNew,
+  queryProcessUnfinishNew,
+  queryfinishedProductsByOI,
+  queryUnfinishedProductsByOI,
+  queryoutsourcingPurchasingByOI,
+  queryReworkTransferCardByIdNew,
+  queryTransferCardInfoByCardIdNew,
+  queryPartNumberByHalf,
+  queryStandPartNumberByHalf,
+  queryOrderCount,
+  supplementByOI,
+  insertUnfinishedProductsNew,
+  insertfinishedProductsNew,
+  insertoutsourcingPurchasingNew,
+  insertFurnaceChange,
+  insertReworkTransferCardNew,
+  insertDeliveryNew,
+  insertPrintTransferCardNew,
+  updateTransferCardInfoByCardId,
+  updateFTransferCardInfoByCardId,
+  updateOTransferCardInfoByCardId,
+  updateReworkTransferCardById,
+};
+
+const apis = {
+  ...apisOld,
+  ...apisNew,
 };
 /**
  * 用于formConfig的api

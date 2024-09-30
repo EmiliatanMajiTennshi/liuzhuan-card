@@ -39,7 +39,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       // },
 
       {
-        key: "specs",
+        key: "spec",
         name: "规格",
         children: <Input></Input>,
         rules: [],
@@ -118,7 +118,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   return {
     rowKey: "id", // 唯一标识
-    api: "queryOutsourcedPurchasedCheck",
+    api: "queryOutSourceCheckNew",
     defaultParam: { inspectionStatus: "1" },
     columns: [
       //   {
@@ -138,12 +138,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转卡编号",
         dataIndex: "transferCardCode",
         key: "transferCardCode",
-        width: 240,
+        width: 260,
       },
       {
         title: "订单号",
-        dataIndex: "barCode",
-        key: "barCode",
+        dataIndex: "orderid",
+        key: "orderid",
         width: 140,
       },
       {
@@ -154,8 +154,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "行号",
-        dataIndex: "lineNumber",
-        key: "lineNumber",
+        dataIndex: "u9LineNo",
+        key: "u9LineNo",
         width: 80,
       },
       {
@@ -174,14 +174,14 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
 
       {
         title: "规格",
-        dataIndex: "specs",
-        key: "specs",
+        dataIndex: "spec",
+        key: "spec",
         width: 100,
       },
       {
         title: "材质",
-        dataIndex: "material",
-        key: "material",
+        dataIndex: "itmtdid",
+        key: "itmtdid",
         width: 100,
       },
 
@@ -232,33 +232,21 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
 
       {
         title: "订单数量",
-        dataIndex: "production",
-        key: "production",
+        dataIndex: "newsupcount",
+        key: "newsupcount",
         width: 110,
-        render: (text, record) => {
-          const isKg = kgArr.indexOf(record?.unit) !== -1;
-          return isKg ? record?.productionKg : record?.productionPcs;
-        },
       },
       {
         title: "等级",
-        dataIndex: "level",
-        key: "level",
+        dataIndex: "inspectionLevel",
+        key: "inspectionLevel",
         width: 60,
         fixed: "right",
-        render: (text, record) => {
+        render: (text) => {
           const greenLevelArr = ["A+", "A"];
           return (
-            <Tag
-              color={
-                greenLevelArr.indexOf(
-                  record?.processList?.[0]?.inspectionLevel
-                ) !== -1
-                  ? "green"
-                  : "red"
-              }
-            >
-              {record?.processList?.[0]?.inspectionLevel}
+            <Tag color={greenLevelArr.indexOf(text) !== -1 ? "green" : "red"}>
+              {text}
             </Tag>
           );
         },
@@ -304,12 +292,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "inspectionStatus",
         width: 100,
         fixed: "right",
-        render: (text) =>
-          text === "0" ? (
-            <Tag color="red">未检</Tag>
-          ) : (
-            <Tag color="green">已检</Tag>
-          ),
+        render: (text) => (
+          <Tag color={text === "已检" ? "green" : "red"}>{text}</Tag>
+        ),
       },
 
       // {

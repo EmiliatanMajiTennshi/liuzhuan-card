@@ -2,6 +2,7 @@ import {
   queryReformInfoByItemId,
   queryReviewFormNumber,
   queryTransferCard,
+  queryTransferCardNew,
 } from "@/api";
 import { SUCCESS_CODE } from "@/constants";
 import {
@@ -21,26 +22,32 @@ interface IProps {
   form: FormInstance<any>;
   options: AnyObject;
   setOptions: React.Dispatch<React.SetStateAction<AnyObject>>;
+  data: any;
 }
-const CommonForm = (props: IProps) => {
-  const { dataString, form, options, setOptions } = props;
-  useEffect(() => {
-    form.setFieldValue("reworkTransferCardCode", dataString);
-    form.setFieldValue("productType", "老料");
-    form.setFieldValue("reworkType", "返工");
-  }, [dataString]);
+const ReworkCardForm = (props: IProps) => {
+  const { dataString, form, options, setOptions, data } = props;
+
   const [transferCardRequired, setTransferCardRequired] = useState(false);
 
   // 是否是改制 改制要多一些字段
   const [isGaizhi, setIsGaizhi] = useState(false);
+  useEffect(() => {
+    form.setFieldValue("reworkTransferCardCode", dataString);
+    form.setFieldValue("productType", data?.transferCardCode ? "新料" : "老料");
+    form.setFieldValue("reworkType", data?.reformPartNumber ? "改制" : "返工");
+    // 有流转卡号
+    setTransferCardRequired(data?.transferCardCode);
+    // 有改制料号
+    setIsGaizhi(data?.reformPartNumber);
+  }, [dataString, data]);
 
   // 防抖
   // 流转卡
   const debounceGetTransferCard = debounce(async function (e) {
     try {
       setOptions({ ...options, transferCardOptionsLoading: true });
-      const res = await queryTransferCard({ transfCardNo: e });
-      if (res?.data?.code === SUCCESS_CODE) {
+      const res = await queryTransferCardNew({ transferCardCode: e });
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
         const transferCardData = res?.data?.data || [];
         const _options = {
           ...options,
@@ -57,7 +64,7 @@ const CommonForm = (props: IProps) => {
     try {
       setOptions({ ...options, reworkNumberOptionsLoading: true });
       const res = await queryReviewFormNumber({ number: e });
-      if (res?.data?.code === SUCCESS_CODE) {
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
         const reworkNumberData = res?.data?.data || [];
         const _options = {
           ...options,
@@ -74,7 +81,7 @@ const CommonForm = (props: IProps) => {
     try {
       setOptions({ ...options, reformPartNumberOptionsLoading: true });
       const res = await queryReformInfoByItemId({ itemId: e });
-      if (res?.data?.code === SUCCESS_CODE) {
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
         const reformPartNumberData = res?.data?.data || [];
         const _options = {
           ...options,
@@ -90,10 +97,9 @@ const CommonForm = (props: IProps) => {
   const debounceGetPartNumber = debounce(async function (e) {
     try {
       setOptions({ ...options, partNumberOptionsLoading: true });
-      const res = await queryTransferCard({ partNumber: e });
-      if (res?.data?.code === SUCCESS_CODE) {
+      const res = await queryTransferCardNew({ itmid: e });
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
         const partNumberData = res?.data?.data || [];
-        console.log(partNumberData, 123);
 
         const _options = {
           ...options,
@@ -150,12 +156,12 @@ const CommonForm = (props: IProps) => {
             options={
               options?.transferCardOptions?.map((item: any) => {
                 return {
-                  value: item?.transfCardNo,
-                  label: item?.transfCardNo,
-                  partNumber: item?.partNumber,
+                  value: item?.transferCardCode,
+                  label: item?.transferCardCode,
+                  partNumber: item?.itmid,
                   traceabilityNumber: item?.traceabilityNumber,
                   name: item?.name,
-                  specs: item?.specs,
+                  specs: item?.spec,
                   materialTexture: item?.materialTexture,
                   trademark: item?.trademark,
                 };
@@ -212,15 +218,15 @@ const CommonForm = (props: IProps) => {
             placeholder="请输入料号进行搜索"
             required
             options={
-              uniqueArray(options?.partNumberOptions, "partNumber")?.map(
+              uniqueArray(options?.partNumberOptions, "itmid")?.map(
                 (item: any) => {
                   return {
-                    value: item?.partNumber,
-                    label: item?.partNumber,
+                    value: item?.itmid,
+                    label: item?.itmid,
                     traceabilityNumber: item?.traceabilityNumber,
                     name: item?.name,
-                    specs: item?.specs,
-                    materialTexture: item?.materialTexture,
+                    specs: item?.spec,
+                    materialTexture: item?.itmtdid,
                     trademark: item?.trademark,
                   };
                 }
@@ -238,7 +244,6 @@ const CommonForm = (props: IProps) => {
                 materialTexture,
                 trademark,
               } = record;
-
               form.setFieldValue("specs", specs);
               form.setFieldValue("traceabilityNumber", traceabilityNumber);
               form.setFieldValue("name", name);
@@ -446,4 +451,4 @@ const CommonForm = (props: IProps) => {
     </tbody>
   );
 };
-export default CommonForm;
+export default ReworkCardForm;

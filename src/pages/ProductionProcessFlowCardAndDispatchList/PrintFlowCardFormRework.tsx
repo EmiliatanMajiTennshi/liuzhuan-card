@@ -8,7 +8,7 @@ import { FormInstance } from "antd";
 import { IData } from "./indexType";
 
 import styles from "./index.module.scss";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { boldValue, fontSize22, normalStyle, redLabel } from "./styles";
 // import { getHeatTreatmentFurnacePlatformsList } from "@/api";
 
@@ -20,22 +20,14 @@ interface IProps {
 }
 
 const PrintFlowCardFormRework = (props: IProps) => {
-  const { data, isKg, form, reworkUnit } = props;
-  console.log(reworkUnit, 123);
-
+  const { data, reworkUnit } = props;
   //   const isFinished = data?.partNumber?.substring(0, 2) === FINISHED_CODE;
-
+  // 是否是改制 改制要多一些字段
+  const [isGaizhi, setIsGaizhi] = useState(false);
   useEffect(() => {
-    form.setFieldValue(
-      "huancount",
-      data?.newsupcount && data?.parseWeight
-        ? isKg
-          ? transFormToPcs(data?.newsupcount, data?.parseWeight)
-          : transFormToKg(data?.newsupcount, data?.parseWeight)
-        : ""
-    );
+    // 有改制料号
+    setIsGaizhi(Boolean(data?.reformPartNumber));
   }, [data]);
-
   return (
     <tbody className={styles.printForm}>
       <tr>
@@ -150,7 +142,48 @@ const PrintFlowCardFormRework = (props: IProps) => {
           addonAfter={reworkUnit}
         />
       </tr>
-
+      {isGaizhi && (
+        <tr>
+          <ReadOnlyInput
+            title="改制料号"
+            name="reformPartNumber"
+            labelColSpan={2}
+            colSpan={3}
+            titleStyle={normalStyle}
+            style={normalStyle}
+          />
+          <ReadOnlyInput
+            title="改制品名"
+            name="reformName"
+            labelColSpan={2}
+            colSpan={3}
+            titleStyle={normalStyle}
+            style={normalStyle}
+            addonAfter={reworkUnit}
+          />
+        </tr>
+      )}
+      {isGaizhi && (
+        <tr>
+          <ReadOnlyInput
+            title="改制规格"
+            name="reformSpec"
+            labelColSpan={2}
+            colSpan={3}
+            titleStyle={normalStyle}
+            style={normalStyle}
+          />
+          <ReadOnlyInput
+            title="改制材质"
+            name="reformMaterial"
+            labelColSpan={2}
+            colSpan={3}
+            titleStyle={normalStyle}
+            style={normalStyle}
+            addonAfter={reworkUnit}
+          />
+        </tr>
+      )}
       {/* <tr>
         <RenderQRCode
           title="领料二维码"

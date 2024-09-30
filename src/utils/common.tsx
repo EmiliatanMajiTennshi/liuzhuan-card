@@ -7,6 +7,7 @@ import {
 import { SUCCESS_CODE, VALIDATION_FAILED } from "@/constants";
 import { UPDATE_FAILED } from "@/constants";
 import { Modal, message } from "antd";
+import { AnyObject } from "antd/es/_util/type";
 import dayjs from "dayjs";
 import { cloneDeep, isArray, sortBy } from "lodash";
 /**
@@ -167,26 +168,26 @@ const handleValidate = async ({
 const handleSave = async ({ flowCardType, record, data, index }: any) => {
   // 没有错误
   const verifierInfoList =
-    record?.verifierBarcode?.map((item: string, index: number) => {
+    record?.verifyId?.map((item: string, index: number) => {
       return {
-        verifierBarcode: item,
-        verifierName: record?.verifierName?.[index],
+        verifyId: item,
+        verifyName: record?.verifyName?.[index],
       };
     }) || [];
   const operationInfoList =
-    record?.operatorBarcode?.map((item: string, index: number) => {
+    record?.operateId?.map((item: string, index: number) => {
       return {
         operationId: item,
-        operationName: record?.operatorName?.[index],
+        operationName: record?.operateName?.[index],
         operateDepartment: record?.operateDepartment?.[index],
       };
     }) || [];
 
   const cloneRecord = cloneDeep(record);
-  delete cloneRecord?.verifierBarcode;
-  delete cloneRecord?.verifierName;
-  delete cloneRecord?.operatorBarcode;
-  delete cloneRecord?.operatorName;
+  delete cloneRecord?.verifyId;
+  delete cloneRecord?.verifyName;
+  delete cloneRecord?.operateId;
+  delete cloneRecord?.operateName;
   delete cloneRecord?.operateDepartment;
 
   const {
@@ -214,7 +215,7 @@ const handleSave = async ({ flowCardType, record, data, index }: any) => {
         operationInfoList,
       };
       const res = await updateReworkDetailById(params);
-      if (res?.data?.code === SUCCESS_CODE) {
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
       } else {
         message.error(
           `第${parseFloat(index) + 1}道工序 ${record.processName} 保存失败(${
@@ -239,7 +240,7 @@ const handleSave = async ({ flowCardType, record, data, index }: any) => {
 
       // 流转卡零件管理
       const res = await insertSaveTransferCardDetail(params);
-      if (res?.data?.code === SUCCESS_CODE) {
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
       } else {
         const retryRes = await insertSaveTransferCardDetail(params);
         if (retryRes?.data?.code === SUCCESS_CODE) {
@@ -318,7 +319,25 @@ const uniqueArray = (arr: any[], key: string) => {
   });
   return Array.from(map.values());
 };
-
+/** 把对象里的数组转成字符串 */
+function convertArraysToString(obj: AnyObject) {
+  const newObj = { ...obj };
+  for (const key in newObj) {
+    if (Array.isArray(newObj[key])) {
+      newObj[key] = newObj[key].join(";");
+    }
+  }
+  return newObj;
+}
+/**字符串通过分号转数组 */
+function convertStringToArray(str: string) {
+  // 去掉结尾的分号（如果有）
+  if (str?.endsWith(";")) {
+    str = str.slice(0, -1);
+  }
+  // 使用分号分隔字符串并转换为数组
+  return str?.split(";");
+}
 export {
   getTrackingNumber,
   getLZCardNumber,
@@ -336,4 +355,6 @@ export {
   getErrorMessage,
   uniqueArray,
   handleValidate,
+  convertArraysToString,
+  convertStringToArray,
 };

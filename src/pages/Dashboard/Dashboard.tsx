@@ -3,66 +3,68 @@ import styles from "./index.module.scss";
 import { RenderDashboardCard } from "@/components/RenderDashboardCard";
 import {
   countOrderCompletionStatus,
+  countProcessUnfinishToStore,
   countUnfinishTransferToStore,
+  queryOrderCount,
 } from "@/api";
 import { CardView } from "@/components/CardView";
-import { DEFAULT_ORANGE, SUCCESS_CODE } from "@/constants";
+import { DEFAULT_ORANGE, ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
 import classNames from "classnames";
 import { RenderChart } from "@/components/RenderChart";
 import axios from "axios";
 import { AnyObject } from "antd/es/_util/type";
 import { cloneDeep, set } from "lodash";
-import { Skeleton } from "antd";
+import { message, Skeleton } from "antd";
 import { useRafInterval } from "ahooks";
 
 /**首页 */
 const Dashboard = () => {
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const [chartDataYear, setChartDataYear] = useState([]);
   const [chartDataYesterday, setChartDataYesterday] = useState([]);
   const [topLoading, setTopLoading] = useState(true);
   const [chartLoading, setChartLoading] = useState(true);
-  const fetchData = () =>
+  const [orderCount, setOrderCount] = useState([]);
+  const fetchData = () => {
     axios
       .all([
-        countOrderCompletionStatus({ sign: "1" }),
-        countOrderCompletionStatus({ sign: "2" }),
-        countUnfinishTransferToStore({ sign: "1" }),
-        countUnfinishTransferToStore({ sign: "2" }),
+        countProcessUnfinishToStore({ sign: "2" }),
+        countProcessUnfinishToStore({ sign: "1" }),
       ])
       .then(
-        axios.spread(
-          (
-            yearRes: any,
-            yesterdayRes: any,
-            yearUFChartRes: any,
-            yesterDayUFChartRes: any
-          ) => {
-            // 请求都成功返回后执行的逻辑
-            const yearList = yearRes?.data?.data;
-            const yesterDayList = yesterdayRes?.data?.data;
+        axios.spread((yearUFChartRes: any, yesterDayUFChartRes: any) => {
+          // 请求都成功返回后执行的逻辑
 
-            // 图表数据
-            const yearChartData = yearUFChartRes?.data?.data;
-            const yesterdayChartData = yesterDayUFChartRes?.data?.data;
-            console.log(yearList, yesterDayList, 123);
-            const result = cloneDeep(yearList);
-            result?.forEach((item: AnyObject) => {
-              yesterDayList?.forEach((subItem: AnyObject) => {
-                if (item?.department === subItem?.department) {
-                  item.yesterDayData = subItem;
-                }
-              });
-            });
-            setData(result);
-            setChartDataYear(yearChartData);
-            setChartDataYesterday(yesterdayChartData);
-            setTopLoading(false);
-            setChartLoading(false);
-          }
-        )
+          // 图表数据
+          const yearChartData = yearUFChartRes?.data?.data;
+          const yesterdayChartData = yesterDayUFChartRes?.data?.data;
+          // const result = cloneDeep(yearList);
+          // result?.forEach((item: AnyObject) => {
+          //   yesterDayList?.forEach((subItem: AnyObject) => {
+          //     if (item?.department === subItem?.department) {
+          //       item.yesterDayData = subItem;
+          //     }
+          //   });
+          // });
+          // setData(result);
+          setChartDataYear(yearChartData);
+          setChartDataYesterday(yesterdayChartData);
+        })
       )
-      .catch(() => {});
+      .catch((err) => {
+        console.log(err);
+        message.error(ERROR_MESSAGE);
+      })
+      .finally(() => {
+        setChartLoading(false);
+      });
+
+    queryOrderCount().then((res) => {
+      const _orderCount = res?.data?.data;
+      setOrderCount(_orderCount);
+      setTopLoading(false);
+    });
+  };
   // const fetchData = async () => {
   //   try {
   //     const resYear = await countOrderCompletionStatus({ sign: "1" });
@@ -86,14 +88,14 @@ const Dashboard = () => {
   return (
     <div className={styles.dashboard}>
       <div className={styles.container}>
-        {topLoading && <Skeleton active style={{ height: 304 }} />}
+        {topLoading && <Skeleton active style={{ height: 150 }} />}
         {!topLoading && (
           <div className={styles.topCards}>
-            {data?.map((item: AnyObject, index) => (
+            {orderCount?.map((item: AnyObject, index) => (
               <div className={classNames([styles.block])} key={item.department}>
                 <RenderDashboardCard>
                   <div className={classNames([styles.topCard])}>
-                    <CardView data={data?.[index]} />
+                    <CardView data={item} />
                   </div>
                 </RenderDashboardCard>
               </div>
@@ -127,7 +129,7 @@ const Dashboard = () => {
           </div>
         )}
         <div className={styles.charts}>
-          {chartLoading && <Skeleton active style={{ height: 304 }} />}
+          {chartLoading && <Skeleton active style={{ height: 500 }} />}
           {!chartLoading && (
             <>
               <div className={classNames([styles.block, styles.block6])}>
@@ -140,7 +142,7 @@ const Dashboard = () => {
                           color: DEFAULT_ORANGE,
                         }}
                       >
-                        已入库流转卡工序未完成情况统计（当年）
+                        已入库流转卡工序未完成情况统计（本月）
                       </h3>
                     }
                     xAxis={{
@@ -157,7 +159,7 @@ const Dashboard = () => {
                           focus: "series",
                         },
                         data: chartDataYear?.map(
-                          (item: any) => item?.countNumber1
+                          (item: any) => item?.countAllNumber
                         ),
                         label: {
                           show: true,
@@ -212,7 +214,7 @@ const Dashboard = () => {
                           focus: "series",
                         },
                         data: chartDataYesterday?.map(
-                          (item: any) => item?.countNumber1
+                          (item: any) => item?.countAllNumber
                         ),
                         label: {
                           show: true,

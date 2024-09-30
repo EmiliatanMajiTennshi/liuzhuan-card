@@ -15,25 +15,48 @@ import { PlusOutlined } from "@ant-design/icons";
 import logo from "@/assets/images/logo.png";
 import getApi, {
   TApi,
+  insertPrintTransferCardNew,
   insertRework,
+  insertReworkTransferCardNew,
   insertSaveTransferCard,
+  insertfinishedProductsNew,
+  insertoutsourcingPurchasingNew,
+  printReworkTransferCardNew,
   printSaveCard,
+  queryEquipmentInfo,
   queryOperationInfo,
   queryTestInfo,
+  queryfinishedProductsByOI,
+  updateFTransferCardInfoByCardId,
   updateHeatTreatmentPrintStatus,
+  updateOTransferCardInfoByCardId,
   updatePrintStatus,
+  updateReworkDetailById,
   updateReworkInfoById,
+  updateReworkTransferCardById,
+  updateTransferCardInfoByCardId,
 } from "@/api";
 import {
+  convertArraysToString,
+  convertStringToArray,
   getErrorMessage,
   handleSave,
   RenderQRCode,
   validateField,
 } from "@/utils";
-import { IData, IFormFields, IOperationItem, IVerifierItem } from "./indexType";
+import {
+  IData,
+  IEquipmentItem,
+  IFormFields,
+  IOperationItem,
+  IVerifierItem,
+} from "./indexType";
 import CommonForm from "./CommonForm";
 import OutsourcingForm from "./OutsourcingForm";
-import { ITableConfig } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import {
+  IIssueID,
+  ITableConfig,
+} from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import {
   SAVE_FAILED,
   SUCCESS_CODE,
@@ -48,12 +71,13 @@ import { useReactToPrint } from "react-to-print";
 import PrintFlowCardFormOutsourcing from "./PrintFlowCardFormOutsourcing";
 import FlowCardFormOutsourcing from "./FlowCardFormOutsourcing";
 import ReworkCardForm from "./ReworkCardForm";
-import { cloneDeep } from "lodash";
-import { insertSaveCard } from "@/api/insertSaveCard";
+import { cloneDeep, isBoolean } from "lodash";
 import PrintFlowCardFormRework from "./PrintFlowCardFormRework";
+import axios, { CancelTokenSource } from "axios";
+import { insertUnfinishedProductsNew } from "@/api/insertUnfinishedProductsNew";
 
 const ProductionProcessFlowCardAndDispatchList = (props: {
-  issueID?: number;
+  issueID?: IIssueID;
   queryFlowCardApi?: TApi;
   flowCardType: ITableConfig["flowCardType"];
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
@@ -61,6 +85,20 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   setReworkModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   setIssueModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   setPrintModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  needIssueFinished?: boolean;
+  notSelfIssue?: boolean;
+  finishedData32to31?: AnyObject;
+  setFinishedData32to31?: React.Dispatch<React.SetStateAction<AnyObject>>;
+  unfinishedData32to31?: AnyObject;
+  setUnfinishedData32to31?: React.Dispatch<React.SetStateAction<AnyObject>>;
+  tabChangeFlag?: boolean;
+  finishedIssueId?: any;
+  confirmFinished?: string;
+  tabLoading?: string;
+  setTabLoading?: React.Dispatch<React.SetStateAction<string>>;
+  setConfirmFinished?: React.Dispatch<React.SetStateAction<string>>;
+  setFinishedData?: React.Dispatch<React.SetStateAction<AnyObject>>;
+  finishedData?: AnyObject;
 }) => {
   const {
     issueID,
@@ -68,9 +106,23 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     flowCardType,
     setRefreshFlag,
     name: pageName,
-    setReworkModalOpen,
-    setIssueModalOpen,
+    // setReworkModalOpen,
+    // setIssueModalOpen,
     setPrintModalOpen,
+    needIssueFinished,
+    notSelfIssue,
+    finishedData32to31,
+    setFinishedData32to31,
+    unfinishedData32to31,
+    setUnfinishedData32to31,
+    tabChangeFlag,
+
+    confirmFinished,
+    tabLoading,
+    setTabLoading,
+    setConfirmFinished,
+    setFinishedData,
+    finishedData,
   } = props;
   // 数据
   const [data, setData] = useState<IData>({});
@@ -95,24 +147,51 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const [operatorList, setOperatorList] = useState<IOperationItem[]>([]);
   // 检验员列表
   const [verifierList, setVerifierList] = useState<IVerifierItem[]>([]);
-  console.log(props, data, 1245);
+  // 设备列表
+  const [equipmentList, setEquipmentList] = useState<IEquipmentItem[]>([]);
 
+  const cancelTokenSource = useRef<CancelTokenSource>();
+  const handleSuccess = (res: any) => {
+    if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+      message.success(res?.data?.data);
+      // 添加完刷新数据
+      fetchData();
+      setRefreshFlag((flag) => !flag);
+    } else {
+      message.error(SAVE_FAILED);
+    }
+  };
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
     onAfterPrint: () => {
-      if (pageName === "HeatTreatmentFurnaceOperationQuery") {
-        updateHeatTreatmentPrintStatus({ id: data?.id }).then((res) => {
-          setRefreshFlag((flag) => !flag);
-        });
-      } else if (isRework) {
-        updatePrintStatus({ id: data?.id }).then((res) => {
+      if (isRework) {
+        printReworkTransferCardNew({
+          transferCardCode: data?.reworkTransferCardCode,
+        }).then((res) => {
           setRefreshFlag((flag) => !flag);
         });
       } else {
-        printSaveCard({ id: data?.id }).then((res) => {
+        insertPrintTransferCardNew({
+          transferCardCode: data?.transferCardCode,
+        }).then(() => {
           setRefreshFlag((flag) => !flag);
         });
       }
+      // if (pageName === "HeatTreatmentFurnaceOperationQuery") {
+      //   insertPrintTransferCardNew({
+      //     transferCardCode: data?.transferCardCode,
+      //   }).then((res) => {
+      //     setRefreshFlag((flag) => !flag);
+      //   });
+      // } else if (isRework) {
+      //   updatePrintStatus({ id: data?.id }).then((res) => {
+      //     setRefreshFlag((flag) => !flag);
+      //   });
+      // } else {
+      //   printSaveCard({ id: data?.id }).then((res) => {
+      //     setRefreshFlag((flag) => !flag);
+      //   });
+      // }
       setPrintModalOpen?.(false);
     },
   });
@@ -129,43 +208,54 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     // 需要加工数据格式
     switch (flowCardType) {
       case "flowCard":
-        const cloneProcessesFlowCard = cloneDeep(data?.detailProcessesList);
+        const cloneProcessesFlowCard = cloneDeep(data?.processList);
         cloneProcessesFlowCard?.forEach((item) => {
-          const { operationInfoList = [], verifierInfoList = [] } = item || {};
-          item.verifierBarcode = [];
-          item.verifierName = [];
-          item.operatorName = [];
-          item.operatorBarcode = [];
-          item.operateDepartment = [];
-          operationInfoList.forEach((subItem: IOperationItem) => {
-            item.operatorName.push(subItem?.operationName);
-            item.operatorBarcode.push(subItem?.operationId);
-            item.operateDepartment.push(subItem?.operateDepartment);
-          });
-          verifierInfoList.forEach((subItem: any) => {
-            item.verifierBarcode.push(subItem?.verifierBarcode);
-            item.verifierName.push(subItem?.verifierName);
-          });
+          item.verifyId = convertStringToArray(item.verifyId);
+          item.verifyName = convertStringToArray(item.verifyName);
+          item.operateId = convertStringToArray(item.operateId);
+          item.operateName = convertStringToArray(item.operateName);
+          item.operateDepartment = convertStringToArray(item.operateDepartment);
+          // item.verifyId = convertStringToArray(item.verifyId);
+          // const { operationInfoList = [], verifierInfoList = [] } = item || {};
+          // item.verifyId = [];
+          // item.verifyName = [];
+          // item.operateName = [];
+          // item.operateId = [];
+          // item.operateDepartment = [];
+          // operationInfoList.forEach((subItem: IOperationItem) => {
+          //   item.operateName.push(subItem?.operationName);
+          //   item.operateId.push(subItem?.operationId);
+          //   item.operateDepartment.push(subItem?.operateDepartment);
+          // });
+          // verifierInfoList.forEach((subItem: any) => {
+          //   item.verifyId.push(subItem?.verifyId);
+          //   item.verifyName.push(subItem?.verifyName);
+          // });
         });
         return cloneProcessesFlowCard;
       case "rework":
         const cloneProcessesRework = cloneDeep(data?.detailProcesses);
         cloneProcessesRework?.forEach((item) => {
-          const { operationInfoList = [], verifierInfoList = [] } = item || {};
-          item.verifierBarcode = [];
-          item.verifierName = [];
-          item.operatorName = [];
-          item.operatorBarcode = [];
-          item.operateDepartment = [];
-          operationInfoList.forEach((subItem: IOperationItem) => {
-            item.operatorName.push(subItem?.operationName);
-            item.operatorBarcode.push(subItem?.operationId);
-            item.operateDepartment.push(subItem?.operateDepartment);
-          });
-          verifierInfoList.forEach((subItem: any) => {
-            item.verifierBarcode.push(subItem?.verifierBarcode);
-            item.verifierName.push(subItem?.verifierName);
-          });
+          //   const { operationInfoList = [], verifierInfoList = [] } = item || {};
+          //   item.verifyId = [];
+          //   item.verifyName = [];
+          //   item.operateName = [];
+          //   item.operateId = [];
+          //   item.operateDepartment = [];
+          //   operationInfoList.forEach((subItem: IOperationItem) => {
+          //     item.operateName.push(subItem?.operationName);
+          //     item.operateId.push(subItem?.operationId);
+          //     item.operateDepartment.push(subItem?.operateDepartment);
+          //   });
+          //   verifierInfoList.forEach((subItem: any) => {
+          //     item.verifyId.push(subItem?.verifyId);
+          //     item.verifyName.push(subItem?.verifyName);
+          //   });
+          item.verifyId = convertStringToArray(item.verifyId);
+          item.verifyName = convertStringToArray(item.verifyName);
+          item.operateId = convertStringToArray(item.operateId);
+          item.operateName = convertStringToArray(item.operateName);
+          item.operateDepartment = convertStringToArray(item.operateDepartment);
         });
 
         return cloneProcessesRework;
@@ -178,9 +268,15 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const fetchData = async () => {
     try {
       setLoading(true);
+      if (setTabLoading) {
+        setTabLoading("loading");
+      }
       if (!queryFlowCardApi) return;
-      const currentRequest = getApi(queryFlowCardApi);
-      const res: any = await currentRequest({ id: issueID });
+      cancelTokenSource.current = axios.CancelToken.source();
+      const currentRequest: any = getApi(queryFlowCardApi);
+      const res: any = await currentRequest(issueID, {
+        cancelToken: cancelTokenSource.current.token,
+      });
       if (res?.status === 200 && res?.data?.data) {
         const _data = res?.data?.data;
         //
@@ -189,20 +285,35 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         } else {
           const isArray = Array.isArray(_data);
           const formData = isArray ? _data[0] : _data;
+
           form.setFieldsValue(formData);
           setData(formData);
           setMItemId(formData?.mItemId);
           const _tableData = getProcessesList(flowCardType, formData);
+
           setTableData(_tableData || []);
+          if (notSelfIssue) {
+            if (setConfirmFinished) {
+              setConfirmFinished("confirmed");
+            }
+            if (setFinishedData) {
+              setFinishedData(formData);
+            }
+          }
         }
       } else {
         throw new Error("请求数据时发生错误");
       }
     } catch (error: any) {
-      message.error(error.message);
-      console.error("请求数据时发生错误", error);
+      if (axios.isCancel(error)) {
+        console.log("Request canceled", error.message);
+      } else {
+        message.error(error.message);
+        console.error("请求数据时发生错误", error);
+      }
     } finally {
       setLoading(false);
+      setTabLoading && setTabLoading("finish");
     }
   };
   // 请求table选项数据
@@ -210,62 +321,106 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     try {
       const res = await queryOperationInfo();
       const operationInfo = res?.data?.data;
-      if (res?.data?.code === SUCCESS_CODE && operationInfo) {
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1 && operationInfo) {
         if (Array.isArray(operationInfo)) {
           setOperatorList(operationInfo);
         }
       }
     } catch (error: any) {
       message.error(error.message);
-      console.error("请求数据时发生错误", error);
+      console.error("获取操作员列表时发生错误", error);
     }
   };
   const fetchVerifierData = async () => {
     try {
       const res = await queryTestInfo();
       const verifierInfo = res?.data?.data;
-      if (res?.data?.code === SUCCESS_CODE && verifierInfo) {
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1 && verifierInfo) {
         if (Array.isArray(verifierInfo)) {
           setVerifierList(verifierInfo);
         }
       }
     } catch (error: any) {
       message.error(error.message);
-      console.error("请求数据时发生错误", error);
+      console.error("获取检验员列表时发生错误", error);
+    }
+  };
+  const fetchEquipmentData = async () => {
+    try {
+      const res = await queryEquipmentInfo();
+      const equipmentInfo = res?.data?.data;
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1 && equipmentInfo) {
+        if (Array.isArray(equipmentInfo)) {
+          setEquipmentList(equipmentInfo);
+        }
+      }
+    } catch (error: any) {
+      message.error(error.message);
+      console.error("获取设备列表时发生错误", error);
     }
   };
   useEffect(() => {
     /**加载数据 */
-
     if (issueID || queryFlowCardApi) {
       fetchData();
     }
     if (flowCardType === "flowCard" || flowCardType === "rework") {
       fetchOperatorData();
       fetchVerifierData();
+      fetchEquipmentData();
     }
-  }, [issueID, queryFlowCardApi]);
+  }, []);
 
   useEffect(() => {
     if (flowCardType === "rework" && tableData.length === 0) {
       setTableData([...tableData, {}]);
     }
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (cancelTokenSource.current) {
+        cancelTokenSource.current.cancel(
+          "Operation canceled by the component unmount."
+        );
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (needIssueFinished && setUnfinishedData32to31) {
+      setUnfinishedData32to31(form?.getFieldsValue());
+    }
+    if (notSelfIssue && setFinishedData32to31) {
+      setFinishedData32to31(form?.getFieldsValue());
+    }
+  }, [tabChangeFlag]);
+
+  useEffect(() => {
+    if (notSelfIssue) {
+      form.setFieldsValue({
+        ...data,
+        transferKg: unfinishedData32to31?.transferKg,
+        transferPcs: unfinishedData32to31?.transferPcs,
+        trademark: unfinishedData32to31?.trademark,
+      });
+    }
+  }, [unfinishedData32to31]);
   // useEffect(() => {
   //   formFooter.setFieldValue("remark", data?.remark);
   // }, [data]);
   const isOutsourcing = useMemo(() => {
-    return data?.barCode?.startsWith("2PO") || data?.barCode?.startsWith("240");
+    return data?.orderid?.startsWith("2PO") || data?.orderid?.startsWith("240");
   }, [data]);
 
   const isRework = useMemo(() => {
     return (
       queryFlowCardApi === "queryQR" ||
-      queryFlowCardApi === "queryReworkInfoById"
+      queryFlowCardApi === "queryReworkTransferCardByIdNew"
     );
   }, []);
 
-  const isViewRework = queryFlowCardApi === "queryReworkInfoById";
+  const isViewRework = queryFlowCardApi === "queryReworkTransferCardByIdNew";
 
   /** 主要尺寸(孔径,片厚等)*/
   const mainsize: any = useMemo(() => {
@@ -275,7 +430,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     return {};
   }, [data]);
 
-  const unit = data?.uomname || "";
+  const unit = data?.unit || "";
   const isKg = kgArr.indexOf(unit) !== -1;
 
   const onFinish = async (values: IFormFields) => {
@@ -289,7 +444,10 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       dataString,
       tableData,
     });
-
+    const isSemiFinished = data?.itmid?.startsWith("32");
+    const isFinished = data?.itmid?.startsWith("31");
+    // 非自制
+    const isSelf = data?.orderid?.startsWith("2MX");
     if (flowCardType === "rework") {
       const cloneErrors = cloneDeep(errors);
       let errorFlag = false;
@@ -319,37 +477,61 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       }
       if (isViewRework) {
         // 查看页面
-        if (params?.detailProcesses) delete params?.detailProcesses;
-        params.id = data?.id;
-        params.type = data?.type;
-        updateReworkInfoById(params).then(async (res) => {
-          if (res?.data?.code === SUCCESS_CODE) {
-            message.success(res?.data?.data);
-          } else {
-            message.error(SAVE_FAILED);
-          }
-          for (const index in tableData) {
-            await handleSave({
-              flowCardType,
-              record: tableData[index],
-              data,
-              index,
-            });
-          }
-          fetchData();
-          setRefreshFlag((flag) => !flag);
+        // if (params?.detailProcesses) delete params?.detailProcesses;
+        // params.id = data?.id;
+        // params.type = data?.type;
+        const processList = tableData?.map((item) => {
+          return {
+            ...convertArraysToString(item),
+            transferCardCode: data?.reworkTransferCardCode,
+          };
         });
+
+        updateReworkTransferCardById({
+          ...params,
+          detailProcesses: processList,
+        }).then((res) => handleSuccess(res));
+        // updateReworkInfoById(params).then(async (res) => {
+        //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+        //     message.success(res?.data?.data);
+        //   } else {
+        //     message.error(SAVE_FAILED);
+        //   }
+        //   for (const index in tableData) {
+        //     await handleSave({
+        //       flowCardType,
+        //       record: tableData[index],
+        //       data,
+        //       index,
+        //     });
+        //   }
+        //   fetchData();
+        //   setRefreshFlag((flag) => !flag);
+        // });
       }
       if (!isViewRework) {
         // 添加页面
-        insertRework(params as any).then((res) => {
-          if (res?.data?.code === SUCCESS_CODE) {
-            message.success(res?.data?.data);
-            setRefreshFlag((flag) => !flag);
-          } else {
-            message.error(getErrorMessage(res, SAVE_FAILED));
-          }
+        // insertReworkTransferCardNew(params as any).then((res) => {
+        //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+        //     message.success(res?.data?.data);
+        //     setRefreshFlag((flag) => !flag);
+        //   } else {
+        //     message.error(getErrorMessage(res, SAVE_FAILED));
+        //   }
+        //   fetchData();
+        //   setRefreshFlag((flag) => !flag);
+        // });
+        const processList = tableData?.map((item) => {
+          return {
+            ...convertArraysToString(item),
+            transferCardCode: dataString,
+          };
         });
+        insertReworkTransferCardNew({
+          ...params,
+          reworkTransferCardCode: dataString,
+          detailProcesses: processList,
+        }).then((res) => handleSuccess(res));
       }
     }
 
@@ -380,54 +562,159 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         message.error(VALIDATION_FAILED);
         return;
       } else {
+        const processList = tableData?.map((item) => {
+          return {
+            ...convertArraysToString(item),
+            transferCardCode: data?.transferCardCode,
+          };
+        });
         // 页面大保存
         const finialSave = async () => {
-          insertSaveTransferCard(params).then((res) => {
-            if (res?.data?.code === SUCCESS_CODE) {
-              message.success(res?.data?.data);
-            } else {
-              message.error(res?.data?.data || SAVE_FAILED);
-            }
-          });
-          for (const index in tableData) {
-            await handleSave({
-              flowCardType,
-              record: tableData[index],
-              data,
-              index,
-            });
+          if (!isSelf) {
+            updateOTransferCardInfoByCardId({
+              ...params,
+              processList,
+            }).then((res) => handleSuccess(res));
+          } else if (isSemiFinished) {
+            updateTransferCardInfoByCardId({
+              ...params,
+              processList,
+            }).then((res) => handleSuccess(res));
+          } else if (isFinished) {
+            updateFTransferCardInfoByCardId({
+              ...params,
+              processList,
+            }).then((res) => handleSuccess(res));
+          } else {
           }
-          fetchData();
-          setRefreshFlag((flag) => !flag);
+
+          // insertSaveTransferCard(params).then((res) => {
+          //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+          //     message.success(res?.data?.data);
+          //   } else {
+          //     message.error(res?.data?.data || SAVE_FAILED);
+          //   }
+          // });
+          // for (const index in tableData) {
+          //   await handleSave({
+          //     flowCardType,
+          //     record: tableData[index],
+          //     data,
+          //     index,
+          //   });
+          // }
+          // fetchData();
+          // setRefreshFlag((flag) => !flag);
         };
         finialSave();
       }
     }
 
-    if (flowCardType === "common" || flowCardType === "outsourcing") {
-      insertSaveCard(params).then((res) => {
-        if (res?.data?.code === SUCCESS_CODE) {
-          message.success(res?.data?.data);
-          // 添加完刷新数据
-          fetchData();
-          setRefreshFlag((flag) => !flag);
-        } else {
-          message.error(SAVE_FAILED);
-        }
-      });
-    }
+    if (
+      flowCardType === "common" ||
+      flowCardType === "finished" ||
+      flowCardType === "unfinished" ||
+      flowCardType === "outsourcing"
+    ) {
+      if (needIssueFinished) {
+        const finishedParams = {
+          form,
+          data: finishedData || {},
+          values: finishedData32to31,
+          mainsize: finishedData?.mainsizeList?.[0] || {},
+          isKg: kgArr.indexOf(finishedData?.unit) !== -1,
+          flowCardType: "finished" as any,
+          dataString: "",
+          tableData: getProcessesList("finished", finishedData || {}) || [],
+        };
+        const now = new Date().getTime();
 
-    console.log("Received values of form: ", values, params, tableData);
+        const request32to31 = async () => {
+          try {
+            const [resUnfinished, resFinished] = await Promise.all([
+              insertUnfinishedProductsNew({ ...params, relation: now }),
+              insertfinishedProductsNew({
+                ...getParams(finishedParams),
+                relation: now,
+                transferKg: params?.transferKg,
+                transferPcs: params?.transferPcs,
+                trademark: params?.trademark,
+              }),
+            ]);
+            if (SUCCESS_CODE.indexOf(resUnfinished?.data?.code) !== -1) {
+              message.success("半品（32）下发成功");
+              // 添加完刷新数据
+            } else {
+              message.error("半品（32）下发失败");
+            }
+            if (SUCCESS_CODE.indexOf(resFinished?.data?.code) !== -1) {
+              message.success("半品（31）下发成功");
+              // 添加完刷新数据
+              fetchData();
+              setRefreshFlag((flag) => !flag);
+            } else {
+              message.error("半品（31）下发失败");
+            }
+          } catch {
+            message.error("下发失败");
+          }
+        };
+        request32to31();
+        return;
+      }
+      if (flowCardType === "unfinished" || isSemiFinished) {
+        insertUnfinishedProductsNew(params).then((res) => {
+          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+            message.success(res?.data?.data);
+            // 添加完刷新数据
+            fetchData();
+            setRefreshFlag((flag) => !flag);
+          } else {
+            message.error(SAVE_FAILED);
+          }
+        });
+      }
+      if (flowCardType === "finished" || !isSemiFinished) {
+        insertfinishedProductsNew(params).then((res) => {
+          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+            message.success(res?.data?.data);
+            // 添加完刷新数据
+            fetchData();
+            setRefreshFlag((flag) => !flag);
+          } else {
+            message.error(SAVE_FAILED);
+          }
+        });
+      }
+      if (flowCardType === "outsourcing") {
+        insertoutsourcingPurchasingNew(params).then((res) => {
+          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+            message.success(res?.data?.data);
+            // 添加完刷新数据
+            fetchData();
+            setRefreshFlag((flag) => !flag);
+          } else {
+            message.error(SAVE_FAILED);
+          }
+        });
+      }
+    }
   };
 
   // common 表单
   const commonFormProps = {
-    data,
+    data: notSelfIssue ? { ...data, ...finishedData32to31 } : data,
     isKg,
     form,
     mItmID,
     setMItemId,
     mainsize,
+    needIssueFinished,
+    notSelfIssue,
+    finishedData32to31,
+    setFinishedData32to31,
+    tabChangeFlag,
+    setUnfinishedData32to31,
   };
   // 外协外购
   const outsourcingFormProps = {
@@ -442,6 +729,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     isKg,
     form,
     reworkUnit: data?.reworkUnit,
+    mainsize,
   };
   // 流转卡
   const reworkCardFormProps = {
@@ -449,6 +737,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     form,
     options,
     setOptions,
+    data,
   };
 
   // 列
@@ -464,12 +753,13 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     data,
     operatorList,
     verifierList,
+    equipmentList,
   });
 
   return (
     <>
       <div className={styles["flow-card"]} ref={printRef}>
-        <Spin spinning={loading}>
+        <Spin spinning={tabLoading ? false : loading}>
           <ConfigProvider
             theme={{
               components: {
@@ -498,6 +788,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                       value={dataString || data?.reworkTransferCardCode || ""}
                       noTd={true}
                       size={96}
+                      form={form}
                     />
                   </>
                 )}
@@ -513,13 +804,16 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                       value={data?.transferCardCode || data?.transferCard || ""}
                       noTd={true}
                       size={96}
+                      form={form}
                     />
                   </>
                 )}
               </div>
               <table style={{ overflow: "hidden", tableLayout: "fixed" }}>
                 {/* 标品/非标 */}
-                {flowCardType === "common" && (
+                {(flowCardType === "common" ||
+                  flowCardType === "finished" ||
+                  flowCardType === "unfinished") && (
                   <CommonForm {...commonFormProps} />
                 )}
                 {/* 外协外购 */}
@@ -618,8 +912,23 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                     form.submit();
                   }}
                   className={styles.footerSaveBtn}
+                  disabled={
+                    notSelfIssue ||
+                    (Boolean(confirmFinished) &&
+                      confirmFinished !== "confirmed")
+                  }
                 >
                   保存
+                  {needIssueFinished &&
+                    confirmFinished === "undo" &&
+                    "（请切换到成品流转卡确认无误）"}
+                  {needIssueFinished &&
+                    confirmFinished === "loading" &&
+                    "（请等待成品流转卡加载完成）"}
+                  {needIssueFinished &&
+                    confirmFinished === "confirmed" &&
+                    "（同时保存对应成品）"}
+                  {notSelfIssue && "（请前往半品界面保存）"}
                 </Button>
               )}
             </div>

@@ -22,7 +22,6 @@ const Login = observer(() => {
 
   /**切换tab的回调 */
   const onTabChange = (key: string) => {
-    console.log(key);
     setActiveTabKey(key);
   };
   return (

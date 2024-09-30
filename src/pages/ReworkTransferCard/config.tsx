@@ -16,18 +16,24 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
     formItems: ({ options, setOptions }) => {
       if (!options.type) {
         setOptions({ ...options, type: [{}] });
-        countProductType().then((res) => {
-          //   零件类型;
-          if (res?.data?.code === SUCCESS_CODE) {
-            const typeOptions = res?.data?.data?.map((item: string) => ({
-              value: item,
-              label: item,
-            }));
-            setOptions({ ...options, type: typeOptions });
-          }
-        });
+        // countProductType().then((res) => {
+        //   //   零件类型;
+        //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+        //     const typeOptions = res?.data?.data?.map((item: string) => ({
+        //       value: item,
+        //       label: item,
+        //     }));
+        //     setOptions({ ...options, type: typeOptions });
+        //   }
+        // });
       }
       return [
+        {
+          key: "reworkTransferCardCode",
+          name: "返工卡编号",
+          children: <Input></Input>,
+          rules: [],
+        },
         {
           key: "transferCardCode",
           name: "流转卡编号",
@@ -41,12 +47,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           children: <Input></Input>,
           rules: [],
         },
-        {
-          key: "reworkTransferCardCode",
-          name: "返工卡编号",
-          children: <Input></Input>,
-          rules: [],
-        },
+
         {
           key: "traceabilityNumber",
           name: "追溯条码",
@@ -76,8 +77,30 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         },
         {
           key: "type",
-          name: "类型",
-          children: <Select allowClear options={options?.type || []}></Select>,
+          name: "物料类型",
+          children: (
+            <Select
+              allowClear
+              options={[
+                { value: "0", label: "老料" },
+                { value: "1", label: "新料" },
+              ]}
+            ></Select>
+          ),
+          rules: [],
+        },
+        {
+          key: "reformPartNumber",
+          name: "返工类型",
+          children: (
+            <Select
+              allowClear
+              options={[
+                { value: "0", label: "返工" },
+                { value: "1", label: "改制" },
+              ]}
+            ></Select>
+          ),
           rules: [],
         },
         {
@@ -164,9 +187,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setIssueModalOpen, setIssueID, setPrintModalOpen } = props;
   return {
     rowKey: "id", // 唯一标识
-    api: "queryRework",
+    api: "queryReworkTransferCardNew",
     flowCardType: "rework",
-    queryFlowCardApi: "queryReworkInfoById",
+    queryFlowCardApi: "queryReworkTransferCardByIdNew",
     columns: [
       //   {
       //     title: "流转卡类型",
@@ -258,7 +281,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 size="small"
                 onClick={() => {
                   setIssueModalOpen(true);
-                  setIssueID(record?.id);
+                  setIssueID({
+                    transferCardCode: record?.reworkTransferCardCode,
+                  });
                 }}
               >
                 查看
@@ -276,9 +301,11 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   style={{ marginLeft: "10px" }}
                   onClick={() => {
                     setPrintModalOpen(true);
-                    setIssueID(record?.id);
+                    setIssueID({
+                      transferCardCode: record?.reworkTransferCardCode,
+                    });
                   }}
-                  disabled={parseFloat(record?.printStatus) === 1}
+                  // disabled={record?.printStatus !== "NO"}
                 >
                   打印
                 </Button>
