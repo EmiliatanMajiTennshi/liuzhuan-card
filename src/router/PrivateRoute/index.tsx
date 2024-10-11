@@ -260,6 +260,18 @@ const UnfinishedIssueFinished = React.lazy(() =>
     default: res.UnfinishedIssueFinished,
   }))
 );
+/**半品同时打印成品 */
+const UnfinishedAndFinishedPrintTogether = React.lazy(() =>
+  import("@/pages/UnfinishedAndFinishedPrintTogether").then((res) => ({
+    default: res.UnfinishedAndFinishedPrintTogether,
+  }))
+);
+/**零件流转卡打印 */
+const PrintProductTransferCard = React.lazy(() =>
+  import("@/pages/PrintProductTransferCard").then((res) => ({
+    default: res.PrintProductTransferCard,
+  }))
+);
 
 /**路由 */
 const routeMap = [
@@ -401,6 +413,14 @@ const routeMap = [
   {
     path: "/unfinished_issue_finished",
     element: <UnfinishedIssueFinished />,
+  },
+  {
+    path: "/unfinished_and_finished_print_together",
+    element: <UnfinishedAndFinishedPrintTogether />,
+  },
+  {
+    path: "/print_product_transfer_card",
+    element: <PrintProductTransferCard />,
   },
 ];
 

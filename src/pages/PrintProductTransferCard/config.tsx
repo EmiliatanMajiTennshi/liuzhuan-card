@@ -10,7 +10,6 @@ import { countProductType, getHeatTreatmentFurnacePlatformsList } from "@/api";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
-    span: 4,
     formExtend: true,
     formItems: ({ options, setOptions }) => {
       if (!options.type) {
@@ -59,7 +58,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         },
 
         {
-          key: "itmid",
+          key: "partNumber",
           name: "零件料号",
           children: <Input></Input>,
           rules: [],
@@ -84,22 +83,9 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           rules: [],
         },
         {
-          key: "type",
-          name: "零件类型",
-          children: (
-            <Select
-              allowClear
-              options={[
-                { value: "自制", label: "自制" },
-                { value: "外协", label: "外协" },
-                { value: "外购", label: "外购" },
-                { value: "五金", label: "五金" },
-                { value: "苏州采购", label: "苏州采购" },
-                { value: "补单", label: "补单" },
-                { value: "盘点零件", label: "盘点零件" },
-              ]}
-            ></Select>
-          ),
+          key: "name",
+          name: "品名",
+          children: <Input></Input>,
           rules: [],
         },
         {
@@ -168,17 +154,24 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           ],
         },
         {
-          key: "heatTreatmentFurnacePlatforms",
-          name: "热处理炉台号",
+          key: "type",
+          name: "零件类型",
           children: (
             <Select
               allowClear
-              options={options?.heatTreatmentFurnacePlatforms || []}
+              options={[
+                { value: "自制", label: "自制" },
+                { value: "外协", label: "外协" },
+                { value: "外购", label: "外购" },
+                { value: "五金", label: "五金" },
+                { value: "苏州采购", label: "苏州采购" },
+                { value: "补单", label: "补单" },
+                { value: "盘点零件", label: "盘点零件" },
+              ]}
             ></Select>
           ),
           rules: [],
         },
-
         {
           key: "category",
           name: "流转卡类型",
@@ -194,12 +187,16 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           rules: [],
         },
         {
-          key: "name",
-          name: "品名",
-          children: <Input></Input>,
+          key: "heatTreatmentFurnacePlatforms",
+          name: "热处理炉台号",
+          children: (
+            <Select
+              allowClear
+              options={options?.heatTreatmentFurnacePlatforms || []}
+            ></Select>
+          ),
           rules: [],
         },
-
         {
           key: "finishStatus",
           name: "完工状态",
@@ -293,7 +290,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "queryTransferCardNew",
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
     flowCardType: "flowCard",
-    disableFirstLoading: true,
     columns: [
       {
         title: "流转卡类型",
@@ -426,13 +422,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "currentProcess",
         key: "currentProcess",
         width: 120,
-        fixed: "right",
       },
       {
         title: "完工状态",
         dataIndex: "finishStatus",
         key: "finishStatus",
-        width: 100,
+        width: 80,
         fixed: "right",
         render: (text: string) => {
           if (text === "完工") {
@@ -450,20 +445,30 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
 
           return (
             <>
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => {
-                  setIssueModalOpen(true);
-                  setIssueID({ transferCardCode: record?.transferCardCode });
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorPrimary: "#87d068",
+                  },
                 }}
               >
-                编辑
-              </Button>
+                <Button
+                  type="primary"
+                  size="small"
+                  style={{ marginLeft: 10 }}
+                  onClick={() => {
+                    setPrintModalOpen(true);
+                    setIssueID({ transferCardCode: record?.transferCardCode });
+                  }}
+                  // disabled={record?.printStatus !== "NO"}
+                >
+                  {record?.printStatus !== "NO" ? "已打印" : "打印流转卡"}
+                </Button>
+              </ConfigProvider>
             </>
           );
         },
-        width: 120,
+        width: 140,
         fixed: "right",
       },
     ],

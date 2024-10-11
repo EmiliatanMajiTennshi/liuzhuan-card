@@ -189,7 +189,7 @@ const PrintFlowCardFormRework = (props: IProps) => {
           title="领料二维码"
           name="lingliaoQRcode"
           colSpan={4}
-          size={96}
+          size={120}
           value={data.mItmID || "没有数据"}
         />
       </tr> */}

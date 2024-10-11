@@ -43,6 +43,18 @@ interface IGetModalConfigProps {
   roles: any;
   isInsert?: boolean;
 }
+const accounts = [
+  { name: "孙成龙", number: 11770 },
+  { name: "蔡新", number: 10689 },
+  { name: "范士林", number: 10015 },
+  { name: "王杰", number: 11914 },
+  { name: "徐庆", number: 14391 },
+  { name: "曹宏文", number: 12942 },
+  { name: "朱丽琴", number: 14724 },
+  { name: "卓士涛", number: 11176 },
+  { name: "王长宽", number: 13655 },
+];
+
 const validatePassword = (rule: any, value: string) => {
   if (!value) {
     return Promise.resolve();
@@ -265,10 +277,10 @@ const formConfig: IFormConfig = {
             values.role = [values.role] as unknown as string[];
             insertUser(values).then((res) => {
               if (res?.data?.code === 200) {
-                message.success(res?.data?.data || ADD_SUCCESS);
+                message.success(res?.data?.msg || ADD_SUCCESS);
                 setRefreshFlag((flag) => !flag);
               } else {
-                message.error(res?.response?.data?.msg || res?.data?.msg);
+                message.error(res?.data?.msg || res?.data?.msg);
               }
             });
           };
@@ -287,6 +299,20 @@ const formConfig: IFormConfig = {
         <PlusOutlined />
         新增
       </Button>,
+      // <Button
+      //   onClick={() => {
+      //     accounts.forEach((item) => {
+      //       insertUser({
+      //         account: item.number.toString(),
+      //         username: item.name,
+      //         password: "123456",
+      //         role: ["冲压事业部"],
+      //       });
+      //     });
+      //   }}
+      // >
+      //   批量注册
+      // </Button>,
     ];
   },
   formItems: [

@@ -91,6 +91,10 @@ export interface IData {
   productPcs?: string;
   transferNumber?: string;
   reformPartNumber?: string;
+  furnaceNo?: string;
+  associationTraceabilityNumber?: string;
+  orderCatchHalf?: string;
+  trademark?: string;
 }
 
 export interface IFormFields {

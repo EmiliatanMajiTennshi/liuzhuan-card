@@ -286,7 +286,11 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   const type = record?.type;
                   const handleRes = (res: any) => {
                     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-                      res?.data?.data && setFinishedParams(res?.data?.data);
+                      if (res?.data?.data?.[0]?.barCode) {
+                        setFinishedParams(res?.data?.data);
+                      } else {
+                        setFinishedParams([{ partNumber: "", barCode: "" }]);
+                      }
                     } else {
                       setFinishedParams([{ partNumber: "", barCode: "" }]);
                       message.error(ERROR_UNFINISHED_ISSUE_FINISHED);

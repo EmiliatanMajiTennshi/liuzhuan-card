@@ -11,6 +11,8 @@ import styles from "./index.module.scss";
 import { useEffect } from "react";
 import {
   bold24,
+  bold26,
+  bold28,
   bold32,
   boldValue,
   fontSize22,
@@ -29,8 +31,9 @@ interface IProps {
 const PrintFlowCardForm = (props: IProps) => {
   const { data, form } = props;
   const mainsizeList = data?.mainsizeList?.[0];
+  console.log(data, 12411);
 
-  const partNumber = data?.partNumber;
+  const partNumber = data?.partNumber || data?.itmid;
   // 32没有热处理炉台
   const isSemiFinished = partNumber?.startsWith("32");
 
@@ -42,14 +45,14 @@ const PrintFlowCardForm = (props: IProps) => {
           name="orderid"
           titleStyle={redLabel}
           style={fontSize22}
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
         />
         <ReadOnlyInput
           title="料号"
           name="itmid"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={fontSize22}
         />
@@ -58,16 +61,16 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title="品名"
           name="name"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={boldValue}
         />
         <ReadOnlyInput
           title="规格"
           name="spec"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={boldValue}
         />
@@ -76,16 +79,16 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title="材质"
           name="itmtdid"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={normalStyle}
         />
         <ReadOnlyInput
           title="商标"
           name="trademark"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={normalStyle}
           // options={
@@ -101,16 +104,16 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title="表面处理"
           name="itmtcid"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={normalStyle}
         />
         <ReadOnlyInput
           title="图号"
           name="itmTEID"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={normalStyle}
         />
@@ -119,16 +122,16 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title="追溯单号"
           name="traceabilityNumber"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
-          style={boldValue}
+          style={{ ...bold26, margin: "4px 0" }}
         />
         <ReadOnlyInput
           title="完成日期"
           name="ljFinDate"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={normalStyle}
         />
@@ -141,8 +144,8 @@ const PrintFlowCardForm = (props: IProps) => {
             </>
           }
           name="productKg"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={bold32}
           isNumber
@@ -150,12 +153,12 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={
             <>
-              生产数量<div>(PCS)</div>
+              流转数量<div>(公斤)</div>
             </>
           }
-          name="productPcs"
-          labelColSpan={4}
-          colSpan={7}
+          name="transferNumberKG"
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={bold32}
           isNumber
@@ -165,12 +168,12 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={
             <>
-              流转数量<div>(公斤)</div>
+              生产数量<div>(PCS)</div>
             </>
           }
-          name="transferNumberKG"
-          labelColSpan={4}
-          colSpan={7}
+          name="productPcs"
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={bold32}
           isNumber
@@ -182,8 +185,8 @@ const PrintFlowCardForm = (props: IProps) => {
             </>
           }
           name="transferNumberPCS"
-          labelColSpan={4}
-          colSpan={7}
+          labelColSpan={9}
+          colSpan={14}
           titleStyle={normalStyle}
           style={bold32}
           isNumber
@@ -198,8 +201,8 @@ const PrintFlowCardForm = (props: IProps) => {
             </>
           }
           name="furnaceNo"
-          labelColSpan={4}
-          colSpan={18}
+          labelColSpan={9}
+          colSpan={37}
           titleStyle={redLabel}
           style={bold24}
           // 要求打印出来的的供方/炉批号显示为空。
@@ -216,8 +219,8 @@ const PrintFlowCardForm = (props: IProps) => {
               </>
             }
             name="heatTreatmentFurnacePlatforms"
-            labelColSpan={4}
-            colSpan={18}
+            labelColSpan={9}
+            colSpan={37}
             style={boldValue}
             titleStyle={redLabel}
           />
@@ -225,7 +228,7 @@ const PrintFlowCardForm = (props: IProps) => {
       )}
       <tr>
         {/* <ReadOnlyInput title="行号" name="u9LineNo" colSpan={2} /> */}
-        <th colSpan={22} style={{ textAlign: "center", ...boldValue }}>
+        <th colSpan={46} style={{ textAlign: "center", ...boldValue }}>
           生产入库扫描条码
         </th>
       </tr>
@@ -233,17 +236,17 @@ const PrintFlowCardForm = (props: IProps) => {
         <RenderQRCode
           title="订单号"
           name="orderQRcode"
-          colSpan={11}
+          colSpan={23}
           value={data?.orderid || "没有数据"}
-          size={96}
+          size={120}
           form={form}
         />
 
         <RenderQRCode
           title="追溯单号"
           name="traceabilityNumberQRCode"
-          colSpan={11}
-          size={96}
+          colSpan={23}
+          size={120}
           value={data?.traceabilityNumber || "没有数据"}
           form={form}
         />
@@ -252,18 +255,19 @@ const PrintFlowCardForm = (props: IProps) => {
         <RenderQRCode
           title="入库二维码"
           name="rukuQRcode"
-          colSpan={11}
-          size={96}
+          colSpan={23}
+          size={120}
           value={`${data.parseitmid}${data.pNumber || ""}` || "没有数据"}
           form={form}
         />
         <RenderQRCode
           title="领料二维码"
           name="lingliaoQRcode"
-          colSpan={11}
-          size={96}
+          colSpan={23}
+          size={120}
           value={data?.pickingCode || data?.mItmID || "没有数据"}
           form={form}
+          footer={<span style={{ fontSize: 24 }}>{data?.spec}</span>}
         />
       </tr>
       <tr>
@@ -275,15 +279,15 @@ const PrintFlowCardForm = (props: IProps) => {
             padding: "0px 8px",
             lineHeight: "110%",
           }}
-          colSpan={2}
+          colSpan={4}
         >
           主要尺寸
         </th>
         <ReadOnlyInput
           title={mainsizeList?.project1 || ""}
           name="projectitem1"
-          labelColSpan={3}
-          colSpan={7}
+          labelColSpan={6}
+          colSpan={15}
           titleStyle={{ ...normalStyle }}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem1}
@@ -292,8 +296,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project2 || ""}
           name="projectitem2"
-          labelColSpan={3}
-          colSpan={7}
+          labelColSpan={6}
+          colSpan={15}
           titleStyle={{ ...normalStyle }}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem2}
@@ -304,8 +308,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project3 || ""}
           name="projectitem3"
-          labelColSpan={3}
-          colSpan={7}
+          labelColSpan={6}
+          colSpan={15}
           titleStyle={normalStyle}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem3}
@@ -314,8 +318,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project4 || ""}
           name="projectitem4"
-          labelColSpan={3}
-          colSpan={7}
+          labelColSpan={6}
+          colSpan={15}
           titleStyle={normalStyle}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem4}
@@ -326,8 +330,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project5 || ""}
           name="projectitem5"
-          labelColSpan={3}
-          colSpan={7}
+          labelColSpan={6}
+          colSpan={15}
           titleStyle={normalStyle}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem5}
@@ -336,8 +340,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project6 || ""}
           name="projectitem6"
-          labelColSpan={3}
-          colSpan={7}
+          labelColSpan={6}
+          colSpan={15}
           titleStyle={normalStyle}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem6}
@@ -345,17 +349,17 @@ const PrintFlowCardForm = (props: IProps) => {
         />
       </tr>
       <tr>
-        <td colSpan={22} className={styles.noPadding}>
+        <td colSpan={46} className={styles.noPadding}>
           <table>
             <thead>
               <tr>
                 <th
                   style={{ ...boldValue, padding: "5px 5px", width: "50%" }}
-                  colSpan={11}
+                  colSpan={23}
                 >
                   工序
                 </th>
-                <th style={boldValue} colSpan={11}>
+                <th style={boldValue} colSpan={23}>
                   检验员盖章
                 </th>
               </tr>
@@ -366,11 +370,11 @@ const PrintFlowCardForm = (props: IProps) => {
                   <tr>
                     <th
                       style={{ ...normalStyle, padding: "5px 5px" }}
-                      colSpan={11}
+                      colSpan={23}
                     >
                       {item.processName}
                     </th>
-                    <td colSpan={11}></td>
+                    <td colSpan={23}></td>
                   </tr>
                 );
               })}

@@ -7,6 +7,7 @@ import { MyTooltip } from "@/components/MyTooltip";
 import TextArea from "antd/es/input/TextArea";
 import ReadOnlyFormItem from "@/components/ReadOnlyFormItem/ReadOnlyFormItem";
 import { FormInstance, Rule } from "antd/es/form";
+import classNames from "classnames";
 const RequiredDot = () => {
   return <span style={{ color: "red" }}>{" *"}</span>;
 };
@@ -49,7 +50,7 @@ const RenderQRCode = ({
 
   const renderQRcode = !notInForm ? (
     <div style={{ textAlign: "center", margin: "0 5px" }} title={value}>
-      {title && <div>{title}</div>}
+      {title && <div style={{ fontSize: 16 }}>{title}</div>}
       <Form.Item name={name} style={{ marginBottom: 0 }}>
         {qrCode}
       </Form.Item>
@@ -123,7 +124,7 @@ const ReadOnlyInput = ({
           styles["input-container-locked"],
           styles["input-container"],
         ].join(" ")}
-        style={{ ...tdStyle, minWidth: 150, minHeight: 24 }}
+        style={{ ...tdStyle, minWidth: 150, minHeight: 24, fontSize: 24 }}
         colSpan={colSpan}
       >
         <Form.Item name={name}>
@@ -200,7 +201,14 @@ const EditAbleInput = ({
       <th style={titleStyle}>
         {title} {required && <RequiredDot />}
       </th>
-      <td className={styles["input-container"]} colSpan={colSpan}>
+      <td
+        className={classNames([
+          styles["input-container"],
+          { [styles["addonAfter"]]: true },
+        ])}
+        colSpan={colSpan}
+        style={{ lineHeight: 1.2 }}
+      >
         <Form.Item
           name={name}
           dependencies={dependencies}
@@ -319,6 +327,7 @@ const RenderSelect = ({
   loading,
   required,
   disabled,
+  remark,
 }: {
   title: string;
   name: string;
@@ -335,6 +344,7 @@ const RenderSelect = ({
   loading?: boolean;
   required?: boolean;
   disabled?: boolean;
+  remark?: string;
 }) => {
   return (
     <>
@@ -362,6 +372,7 @@ const RenderSelect = ({
             disabled={disabled}
           ></Select>
         </Form.Item>
+        <span style={{ color: "red" }}>{remark && <>提示：{remark}</>}</span>
       </td>
     </>
   );
@@ -372,16 +383,18 @@ const RenderDatePicker = ({
   colSpan,
   required,
   showTime,
+  titleStyle,
 }: {
   title: string;
   name: string;
   colSpan: number;
   required?: boolean;
   showTime?: boolean;
+  titleStyle?: React.CSSProperties;
 }) => {
   return (
     <>
-      <th>{title}</th>
+      <th style={titleStyle}>{title}</th>
       <td
         colSpan={colSpan}
         className={`${styles["input-container"]} ${styles["date-container"]}`}
@@ -390,7 +403,7 @@ const RenderDatePicker = ({
           name={name}
           rules={[{ required: required, message: `请输入${title}` }]}
         >
-          <DatePicker showTime={showTime}></DatePicker>
+          <DatePicker showTime={showTime} size="large"></DatePicker>
         </Form.Item>
       </td>
     </>

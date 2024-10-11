@@ -22,6 +22,11 @@
       }
     }
   }
+  :global {
+    .ant-table-cell {
+      padding: 8px 4px !important;
+    }
+  }
 }
 
 .form-title {
@@ -56,7 +61,25 @@
   .printForm {
     th,
     td {
-      padding: 0px 2px;
+      padding: 2px 2px;
+      // width: 25%; /* 设置每个单元格的宽度为表格宽度的25% */
+    }
+    // th[colspan="2"],
+    // td[colspan="2"] {
+    //   width: 25%; /* 确保带有colspan的单元格自动调整宽度 */
+    // }
+    // th[colspan="1"],
+    // td[colspan="1"] {
+    //   width: 12.5%; /* 确保带有colspan的单元格自动调整宽度 */
+    // }
+    .noPadding {
+      padding: 0;
+    }
+  }
+  .normalForm {
+    th,
+    td {
+      padding: 4px 2px;
       // width: 25%; /* 设置每个单元格的宽度为表格宽度的25% */
     }
     // th[colspan="2"],
@@ -80,6 +103,7 @@
     display: flex;
     align-items: center;
     flex: 1;
+    font-size: 18px;
     margin-right: 20px;
     .footerTextArea {
       height: 40px;

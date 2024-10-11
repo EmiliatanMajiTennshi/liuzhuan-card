@@ -16,7 +16,8 @@ import { FormInstance, Spin } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
-
+import { normalStyle, normalStyle18 } from "./styles";
+import styles from "./index.module.scss";
 interface IProps {
   dataString: string;
   form: FormInstance<any>;
@@ -113,9 +114,10 @@ const ReworkCardForm = (props: IProps) => {
     }
   }, 500);
   return (
-    <tbody>
+    <tbody className={styles.normalForm}>
       <tr>
         <RenderSelect
+          titleStyle={normalStyle}
           title="物料类型"
           name="productType"
           options={[
@@ -136,6 +138,7 @@ const ReworkCardForm = (props: IProps) => {
           }}
         ></RenderSelect>
         <RenderSelect
+          titleStyle={normalStyle}
           title="返工类型"
           name="reworkType"
           options={[
@@ -167,7 +170,7 @@ const ReworkCardForm = (props: IProps) => {
                 };
               }) || []
             }
-            titleStyle={{ color: "red" }}
+            titleStyle={{ color: "red", ...normalStyle }}
             colSpan={3}
             showSearch
             loading={options?.transferCardOptionsLoading}
@@ -194,10 +197,10 @@ const ReworkCardForm = (props: IProps) => {
           ></RenderSelect>
         ) : (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="流转卡编号"
             name="transferCardCode"
-            titleStyle={{ color: "red" }}
+            titleStyle={{ color: "red", ...normalStyle }}
             colSpan={3}
             placeholder="选择老料时无法选择流转卡编号"
           />
@@ -206,10 +209,11 @@ const ReworkCardForm = (props: IProps) => {
       <tr>
         {transferCardRequired ? (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="料号"
             name="partNumber"
             placeholder="输入流转卡编号后自动填写"
+            titleStyle={normalStyle}
           />
         ) : (
           <RenderSelect
@@ -232,7 +236,7 @@ const ReworkCardForm = (props: IProps) => {
                 }
               ) || []
             }
-            titleStyle={{ color: "red" }}
+            titleStyle={{ color: "red", ...normalStyle }}
             showSearch
             loading={options?.partNumberOptionsLoading}
             onSearch={debounceGetPartNumber}
@@ -257,14 +261,16 @@ const ReworkCardForm = (props: IProps) => {
         )}
         {transferCardRequired ? (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="追溯单号"
             name="traceabilityNumber"
             placeholder="输入流转卡编号后自动填写"
           />
         ) : (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="追溯单号"
             name="traceabilityNumber"
             placeholder="输入料号后自动填写"
@@ -286,7 +292,7 @@ const ReworkCardForm = (props: IProps) => {
             }) || []
           }
           colSpan={3}
-          titleStyle={{ color: "red" }}
+          titleStyle={{ color: "red", ...normalStyle }}
           showSearch
           loading={options?.reworkNumberOptionsLoading}
           onSearch={debounceGetReworkNumber}
@@ -302,14 +308,16 @@ const ReworkCardForm = (props: IProps) => {
       <tr>
         {transferCardRequired ? (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="品名"
             name="name"
             placeholder="输入流转卡编号后自动填写"
           />
         ) : (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="品名"
             name="name"
             placeholder="输入料号后自动填写"
@@ -317,14 +325,16 @@ const ReworkCardForm = (props: IProps) => {
         )}
         {transferCardRequired ? (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="规格"
             name="specs"
             placeholder="输入流转卡编号后自动填写"
           />
         ) : (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="规格"
             name="specs"
             placeholder="输入料号后自动填写"
@@ -332,14 +342,16 @@ const ReworkCardForm = (props: IProps) => {
         )}
         {transferCardRequired ? (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="材质"
             name="material"
             placeholder="输入流转卡编号后自动填写"
           />
         ) : (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="材质"
             name="material"
             placeholder="输入料号后自动填写"
@@ -347,14 +359,16 @@ const ReworkCardForm = (props: IProps) => {
         )}
         {transferCardRequired ? (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="商标"
             name="trademark"
             placeholder="输入流转卡编号后自动填写"
           />
         ) : (
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="商标"
             name="trademark"
             placeholder="输入料号后自动填写"
@@ -363,6 +377,8 @@ const ReworkCardForm = (props: IProps) => {
       </tr>
       <tr>
         <EditAbleTextArea
+          titleStyle={normalStyle}
+          style={normalStyle18}
           title="返工流程"
           name="reworkFlow"
           colSpan={7}
@@ -371,18 +387,21 @@ const ReworkCardForm = (props: IProps) => {
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          titleStyle={normalStyle}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="开单人"
           name="drawer"
           placeholder="输入评审单号后自动填写"
         />
         <EditAbleInput
+          titleStyle={normalStyle}
           title="返工数量"
           name="reworkQuantity"
           isNumber
           required
         />
         <RenderSelect
+          titleStyle={normalStyle}
           title="单位"
           name="reworkUnit"
           options={[
@@ -411,7 +430,7 @@ const ReworkCardForm = (props: IProps) => {
                 };
               }) || []
             }
-            titleStyle={{ color: "red" }}
+            titleStyle={{ color: "red", ...normalStyle }}
             showSearch
             loading={options?.reformPartNumberOptionsLoading}
             onSearch={debounceGetReformPartNumber}
@@ -429,19 +448,22 @@ const ReworkCardForm = (props: IProps) => {
           ></RenderSelect>
 
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="品名"
             name="reformName"
             placeholder="输入改制料号后自动填写"
           />
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="规格"
             name="reformSpec"
             placeholder="输入改制料号后自动填写"
           ></ReadOnlyInput>
           <ReadOnlyInput
-            style={{ lineHeight: "24px" }}
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="材质"
             name="reformMaterial"
             placeholder="输入改制料号后自动填写"

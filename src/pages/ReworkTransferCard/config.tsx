@@ -305,9 +305,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                       transferCardCode: record?.reworkTransferCardCode,
                     });
                   }}
-                  // disabled={record?.printStatus !== "NO"}
+                  disabled={Boolean(record?.pCardID)}
                 >
-                  打印
+                  {Boolean(record?.pCardID) ? "已打印" : "打印"}
                 </Button>
               </ConfigProvider>
             </div>

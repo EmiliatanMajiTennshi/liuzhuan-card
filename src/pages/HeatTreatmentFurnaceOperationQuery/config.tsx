@@ -441,7 +441,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   }}
                   disabled={record?.printStatus !== "NO"}
                 >
-                  打印
+                  {record?.printStatus !== "NO" ? "已打印" : "打印"}
                 </Button>
               </ConfigProvider>
             </div>

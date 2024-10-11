@@ -97,6 +97,8 @@ import { queryPartNumberByHalf } from "./queryPartNumberByHalf";
 import { queryStandPartNumberByHalf } from "./queryStandPartNumberByHalf";
 import { countProcessUnfinishToStore } from "./countProcessUnfinishToStoreNew";
 import { queryOrderCount } from "./queryOrderCount";
+import { querytransferCardRelation } from "./querytransferCardRelationNew";
+import { queryFurnaceByTraceabilityHalf } from "./queryFurnaceByTraceabilityHalfNew";
 
 export {
   countProductType,
@@ -256,6 +258,8 @@ export {
   queryPartNumberByHalf,
   queryStandPartNumberByHalf,
   queryOrderCount,
+  querytransferCardRelation,
+  queryFurnaceByTraceabilityHalf,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -293,6 +297,8 @@ const apisNew = {
   queryPartNumberByHalf,
   queryStandPartNumberByHalf,
   queryOrderCount,
+  querytransferCardRelation,
+  queryFurnaceByTraceabilityHalf,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,

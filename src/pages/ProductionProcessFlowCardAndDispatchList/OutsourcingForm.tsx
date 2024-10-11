@@ -12,6 +12,7 @@ import { IData } from "./indexType";
 import styles from "./index.module.scss";
 import { useEffect, useState } from "react";
 import { DEFAULT_RED } from "@/constants/constants";
+import { normalStyle, normalStyle18 } from "./styles";
 
 interface IProps {
   data: IData;
@@ -48,38 +49,44 @@ const OutsourcingForm = (props: IProps) => {
     }
   }, [data]);
   return (
-    <tbody>
+    <tbody className={styles.normalForm}>
       <tr>
         <EditAbleInput
           title="生产订单条码"
           name="orderid"
-          titleStyle={{ color: "red" }}
+          titleStyle={{ color: "red", ...normalStyle }}
+          style={normalStyle18}
           required
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title="料号"
           name="itmid"
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title="品名"
           name="name"
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title="规格"
           name="spec"
         />
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title="材质"
           name="itmtdid"
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title="商标"
           name="trademark"
           // options={
@@ -91,23 +98,28 @@ const OutsourcingForm = (props: IProps) => {
           // placeholder="请选择商标"
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title="追溯单号"
           name="traceabilityNumber"
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title="完成日期"
           name="ljFinDate"
         />
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={`生产数量${data?.unit ? `（${data?.unit}）` : ""}`}
           name="newsupcount"
         />
         <EditAbleInput
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={`流转数量${data?.unit ? `（${data?.unit}）` : ""}`}
           isNumber
           name="liucount"
@@ -129,15 +141,17 @@ const OutsourcingForm = (props: IProps) => {
 
             form.setFieldValue("liuhuancount", transferValue.toString());
           }}
-          rules={[{ validator: validateNotZero }]}
+          // rules={[{ validator: validateNotZero }]}
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title="行号"
           name="u9LineNo"
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title="图号"
           name="itmTEID"
         />
@@ -145,23 +159,26 @@ const OutsourcingForm = (props: IProps) => {
       <tr></tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="供方/炉批号"
           name="furnaceNum"
           colSpan={4}
-          titleStyle={{ color: "red" }}
+          defaultValue={data?.furnaceNo || mainsize?.allID || ""}
+          titleStyle={{ color: "red", ...normalStyle }}
+          form={form}
         />
 
-        <th colSpan={3} style={{ textAlign: "center" }}>
+        <th colSpan={3} style={{ textAlign: "center", ...normalStyle }}>
           生产入库扫描条码
         </th>
       </tr>
       <tr>
-        <th rowSpan={3} style={{ color: "red" }}>
+        <th rowSpan={3} style={{ color: "red", ...normalStyle }}>
           主要尺寸
         </th>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project1 || ""}
           name={mainsize?.project1 || ""}
           defaultValue={mainsize?.projectitem1 || ""}
@@ -169,7 +186,8 @@ const OutsourcingForm = (props: IProps) => {
           form={form}
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project2 || ""}
           name={mainsize?.project2 || ""}
           defaultValue={mainsize?.projectitem2 || ""}
@@ -208,7 +226,8 @@ const OutsourcingForm = (props: IProps) => {
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project3 || ""}
           name={mainsize?.project3 || ""}
           defaultValue={mainsize?.projectitem3 || ""}
@@ -216,7 +235,8 @@ const OutsourcingForm = (props: IProps) => {
           form={form}
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project4 || ""}
           name={mainsize?.project4 || ""}
           defaultValue={mainsize?.projectitem4 || ""}
@@ -226,7 +246,8 @@ const OutsourcingForm = (props: IProps) => {
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project5 || ""}
           name={mainsize?.project5 || ""}
           defaultValue={mainsize?.projectitem5 || ""}
@@ -234,7 +255,8 @@ const OutsourcingForm = (props: IProps) => {
           form={form}
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project6 || ""}
           name={mainsize?.project6 || ""}
           defaultValue={mainsize?.projectitem6 || ""}

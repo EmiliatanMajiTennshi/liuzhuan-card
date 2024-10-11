@@ -47,6 +47,7 @@ interface IRenderCustomSelectProps {
   processList?: string[];
   isAddNewCard?: boolean;
   mode?: string;
+  extendData?: AnyObject;
 }
 const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
   const {
@@ -67,6 +68,7 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
     processList,
     isAddNewCard,
     mode,
+    extendData,
   } = props;
   const {
     name,
@@ -149,7 +151,9 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
                 isArray(record?.[name]) && isMuti ? [...prevNameList, e] : [e];
 
               // 当前选择的数据
-              const currentData = dataListObjectName[e];
+              debugger;
+              const currentData =
+                dataListObjectName[e] || extendData?.dataListObjectName[e];
               console.log(currentData, 12311, dataListObjectName, e);
 
               // 先前的条码列表
@@ -216,7 +220,8 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
                   : [e];
 
               // 当前选择的数据
-              const currentData = dataListObject[e];
+              const currentData =
+                dataListObject[e] || extendData?.dataListObject[e];
 
               // 先前的姓名列表
               const prevNameList = record?.[name];

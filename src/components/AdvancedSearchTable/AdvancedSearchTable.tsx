@@ -15,7 +15,7 @@ import {
   IIssueID,
   ITableConfigProps,
 } from "./AdvancedSearchTableType";
-import getApi, { TApi } from "@/api";
+import getApi, { queryfinishedProductsByOI, TApi } from "@/api";
 import { ProductionProcessFlowCardAndDispatchList } from "@/pages/ProductionProcessFlowCardAndDispatchList";
 import {
   ERROR_MESSAGE,
@@ -82,7 +82,8 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   // // 鼠标所在行
   // const [hoveredRow, setHoveredRow] = useState(null);
   const tableRef = useRef<any>(null);
-
+  // 首次是否加载
+  const isFirstRender = useRef(true);
   /**
    * 传给config里的tableConfig
    */
@@ -112,6 +113,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     defaultParam,
     name,
     needIssueFinished,
+    disableFirstLoading,
   } = _tableConfig;
 
   // 获取当前页面table数据的请求
@@ -124,38 +126,42 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     pageSize: pageSize,
     pageNum: currentPage,
   };
-  useEffect(() => {
-    //请求数据
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setSelectedRowKeys([]);
-        const res: any = await currentRequest(params);
-        const currentData = res?.data?.data;
-        if (res?.data && currentData) {
-          setSearchedData(currentData);
-          setTotalCount(res?.data?.page?.total || currentData?.[0]?.size);
-        } else if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-          message.info({
-            content: FIND_NO_DATA,
-            style: { marginTop: "40px" },
-          });
-          setSearchedData([]);
-        } else {
-          throw new Error(`${getErrorMessage(res, ERROR_MESSAGE)}`);
-        }
-      } catch (error: any) {
-        console.error(ERROR_MESSAGE, error);
-        message.error({
-          content: error?.message,
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setSelectedRowKeys([]);
+      const res: any = await currentRequest(params);
+      const currentData = res?.data?.data;
+      if (res?.data && currentData) {
+        setSearchedData(currentData);
+        setTotalCount(res?.data?.page?.total || currentData?.[0]?.size);
+      } else if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+        message.info({
+          content: FIND_NO_DATA,
           style: { marginTop: "40px" },
         });
         setSearchedData([]);
-      } finally {
-        setLoading(false);
+      } else {
+        throw new Error(`${getErrorMessage(res, ERROR_MESSAGE)}`);
       }
-    };
+    } catch (error: any) {
+      console.error(ERROR_MESSAGE, error);
+      message.error({
+        content: error?.message,
+        style: { marginTop: "40px" },
+      });
+      setSearchedData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    if (isFirstRender.current && disableFirstLoading) {
+      isFirstRender.current = false;
+      return;
+    }
+    // 请求数据
     fetchData();
   }, [api, searchParams, currentPage, pageSize, refreshFlag]);
 
@@ -308,6 +314,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
         >
           <Spin spinning={tabLoading === "loading"}>
             <Tabs
+              size="large"
               items={[
                 {
                   label: "半品下发",
@@ -408,6 +415,16 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
             setRefreshFlag={setRefreshFlag}
             name={name}
             setPrintModalOpen={setPrintModalOpen}
+            finishedPrintProps={
+              needIssueFinished
+                ? {
+                    issueID: {
+                      ...finishedParams,
+                    } as any,
+                    queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
+                  }
+                : undefined
+            }
           />
         </Modal>
       )}

@@ -36,6 +36,8 @@ export interface ITableConfig {
   defaultParam?: { [key: string]: string };
   // 是否下发成品
   needIssueFinished?: boolean;
+  // 首次加载禁用
+  disableFirstLoading?: boolean;
 }
 
 /**

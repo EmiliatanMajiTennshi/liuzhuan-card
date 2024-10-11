@@ -267,22 +267,23 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       //   },
 
       {
-        title: "工艺步骤",
-        dataIndex: "currentProcess",
-        key: "currentProcess",
-        width: 100,
-      },
-      {
         title: "序号",
         dataIndex: "seq",
         key: "seq",
         width: 60,
       },
       {
+        title: "工艺步骤",
+        dataIndex: "currentProcess",
+        key: "currentProcess",
+        width: 100,
+        fixed: "right",
+      },
+      {
         title: "检验员",
         dataIndex: "verifyId",
         key: "verifyId",
-        width: 120,
+        width: 80,
         fixed: "right",
         // render: (text: string, record: any) => {
         //   return record?.detailProcessesList?.[0]?.verifierInfoList?.map(
@@ -298,7 +299,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "操作工",
         dataIndex: "operateId",
         key: "operateId",
-        width: 120,
+        width: 80,
         fixed: "right",
         // render: (text: string, record: any) => {
         //   return record?.detailProcessesList?.[0]?.operationInfoList?.map(
@@ -312,7 +313,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "产量",
         dataIndex: "productionNumber",
         key: "productionNumber",
-        width: 120,
+        width: 80,
         fixed: "right",
         // render: (text: string, record: any) => {
         //   return record?.detailProcessesList?.[0]?.produceNumber;

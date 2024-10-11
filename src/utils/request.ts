@@ -54,7 +54,8 @@ request.interceptors.response.use(
       error?.response?.data?.code === 401 &&
       (error?.response?.data?.msg ===
         "无权访问(Unauthorized):当前Subject是匿名Subject，请先登录(This subject is anonymous.)" ||
-        error?.response?.data?.msg?.indexOf("Token已过期") !== -1)
+        error?.response?.data?.msg?.indexOf("Token已过期") !== -1 ||
+        error?.response?.data?.msg?.indexOf("该帐号不存在") !== -1)
     ) {
       message.error(TOKEN_ERROR);
       redirectToLogin();

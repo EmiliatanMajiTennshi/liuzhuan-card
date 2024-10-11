@@ -26,6 +26,7 @@ import {
 } from "@/constants/constants";
 import { AnyObject } from "antd/es/_util/type";
 import { debounce } from "lodash";
+import { normalStyle, normalStyle18 } from "./styles";
 
 interface IProps {
   data: IData;
@@ -45,13 +46,10 @@ const CommonForm = (props: IProps) => {
     data,
     isKg,
     form,
-    mItmID,
-    setMItemId,
+
     mainsize,
     needIssueFinished,
     notSelfIssue,
-    setFinishedData32to31,
-    finishedData32to31,
   } = props;
   const itmid = data?.itmid;
   // 半成品
@@ -71,7 +69,8 @@ const CommonForm = (props: IProps) => {
     options: [],
     loading: false,
   });
-  const isFinished = data?.itmid?.substring(0, 2) === FINISHED_CODE;
+  const isFinished =
+    data?.itmid?.substring(0, 2) === FINISHED_CODE || isFinished32to31;
   useEffect(() => {
     if (isFinished && heatTreatmentFurnaces.length === 0) {
       getHeatTreatmentFurnacePlatformsList()
@@ -198,46 +197,54 @@ const CommonForm = (props: IProps) => {
     }
   }, 500);
   return (
-    <tbody>
+    <tbody className={styles.normalForm}>
       <tr>
         <EditAbleInput
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="生产订单条码"
           name="orderid"
-          titleStyle={{ color: "red" }}
+          titleStyle={{ color: "red", ...normalStyle }}
           required
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="料号"
           name="itmid"
+          titleStyle={normalStyle}
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="品名"
           name="name"
+          titleStyle={normalStyle}
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="规格"
           name="spec"
+          titleStyle={normalStyle}
         />
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="材质"
           name="itmtdid"
+          titleStyle={normalStyle}
         />
         {isFinished32to31 ? (
           <ReadOnlyInput
             title="商标"
             name="trademark"
-            style={{ lineHeight: "24px" }}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
+            titleStyle={normalStyle}
           ></ReadOnlyInput>
         ) : (
           <RenderSelect
             title="商标"
             name="trademark"
+            remark={data?.trademark}
+            titleStyle={normalStyle}
             options={[
               ...(data?.trademarkList1?.map((item) => ({
                 value: item.trademark,
@@ -262,58 +269,74 @@ const CommonForm = (props: IProps) => {
                 form.setFieldValue("pnumber", pnumber);
               }
             }}
+            showSearch
           />
         )}
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="追溯单号"
           name="traceabilityNumber"
           colSpan={isSemiFinished ? 3 : 1}
+          titleStyle={normalStyle}
         />
         {!isSemiFinished && (
-          <EditAbleInput title="追溯单号（半品）" name="orderCatchHalf" />
+          <EditAbleInput
+            title="追溯单号(半品）"
+            name="orderCatchHalf"
+            titleStyle={normalStyle}
+          />
         )}
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          titleStyle={normalStyle}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="客户订单号"
           name="ordernum"
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          titleStyle={normalStyle}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="表面处理"
           name="itmtcid"
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          titleStyle={normalStyle}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="图号"
           name="itmTEID"
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          titleStyle={normalStyle}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="完成日期"
           name="ljFinDate"
         />
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          titleStyle={normalStyle}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="生产数量（公斤）"
           name={"productKg"}
         />
         {isFinished32to31 ? (
           <ReadOnlyInput
+            titleStyle={normalStyle}
             title="流转数量（公斤）"
             isNumber
             name={"transferKg"}
-            style={{ lineHeight: "24px" }}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             addonAfter={
-              <span style={{ color: DEFAULT_RED }}>剩余：{liuMaxKg}</span>
+              <span style={{ color: DEFAULT_RED, fontSize: 14 }}>
+                剩余：{liuMaxKg}
+              </span>
             }
           />
         ) : (
           <EditAbleInput
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="流转数量（公斤）"
             isNumber
             name={"transferKg"}
@@ -336,22 +359,28 @@ const CommonForm = (props: IProps) => {
           />
         )}
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          titleStyle={normalStyle}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="生产数量（PCS）"
           name={"productPcs"}
         />
         {isFinished32to31 ? (
           <ReadOnlyInput
+            titleStyle={normalStyle}
             title="流转数量（PCS）"
-            style={{ lineHeight: "24px" }}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             isNumber
             name={"transferPcs"}
             addonAfter={
-              <span style={{ color: DEFAULT_RED }}>剩余：{liuMaxPCS}</span>
+              <span style={{ color: DEFAULT_RED, fontSize: 14 }}>
+                剩余：{liuMaxPCS}
+              </span>
             }
           />
         ) : (
           <EditAbleInput
+            titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             title="流转数量（PCS）"
             isNumber
             max={liuMaxPCS}
@@ -388,6 +417,7 @@ const CommonForm = (props: IProps) => {
       </tr>
       <tr>
         <RenderSelect
+          titleStyle={normalStyle}
           title="材料料号"
           name="mItmID"
           options={uniqueArray(partNumberOptions.options, "mcode")?.map(
@@ -433,31 +463,47 @@ const CommonForm = (props: IProps) => {
           //   });
           // }}
         />
-        <EditAbleInput title="材料品名" name="mName" />
-        <EditAbleInput title="材料规格" name="mspec" />
-        <EditAbleInput title="材料材质" name="mItmTDID" />
+        <EditAbleInput
+          titleStyle={normalStyle}
+          title="材料品名"
+          name="mName"
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+        />
+        <EditAbleInput
+          titleStyle={normalStyle}
+          title="材料规格"
+          name="mspec"
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+        />
+        <EditAbleInput
+          titleStyle={normalStyle}
+          title="材料材质"
+          name="mItmTDID"
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+        />
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="供方/炉批号"
           name="furnaceNo"
           colSpan={4}
-          titleStyle={{ color: "red" }}
-          defaultValue={mainsize?.allID || ""}
+          titleStyle={{ color: "red", ...normalStyle }}
+          defaultValue={data?.furnaceNo || mainsize?.allID || ""}
           form={form}
         />
 
-        <th colSpan={3} style={{ textAlign: "center" }}>
+        <th colSpan={3} style={{ textAlign: "center", ...normalStyle }}>
           生产入库扫描条码
         </th>
       </tr>
       <tr>
-        <th rowSpan={3} style={{ color: "red" }}>
+        <th rowSpan={3} style={{ color: "red", ...normalStyle }}>
           主要尺寸
         </th>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project1 || ""}
           name={mainsize?.project1 || ""}
           defaultValue={mainsize?.projectitem1 || ""}
@@ -465,7 +511,8 @@ const CommonForm = (props: IProps) => {
           form={form}
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project2 || ""}
           name={mainsize?.project2 || ""}
           defaultValue={mainsize?.projectitem2 || ""}
@@ -512,7 +559,8 @@ const CommonForm = (props: IProps) => {
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project3 || ""}
           name={mainsize?.project3 || ""}
           defaultValue={mainsize?.projectitem3 || ""}
@@ -520,7 +568,8 @@ const CommonForm = (props: IProps) => {
           form={form}
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project4 || ""}
           name={mainsize?.project4 || ""}
           defaultValue={mainsize?.projectitem4 || ""}
@@ -530,7 +579,8 @@ const CommonForm = (props: IProps) => {
       </tr>
       <tr>
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project5 || ""}
           name={mainsize?.project5 || ""}
           defaultValue={mainsize?.projectitem5 || ""}
@@ -538,7 +588,8 @@ const CommonForm = (props: IProps) => {
           form={form}
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px" }}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
+          titleStyle={normalStyle}
           title={mainsize?.project6 || ""}
           name={mainsize?.project6 || ""}
           defaultValue={mainsize?.projectitem6 || ""}
@@ -552,16 +603,15 @@ const CommonForm = (props: IProps) => {
             title="热处理炉台"
             name="heatTreatmentFurnace"
             options={heatTreatmentFurnaces}
-            titleStyle={{ color: "red" }}
+            titleStyle={{ color: "red", ...normalStyle }}
             colSpan={1}
             labelColSpan={2}
             placeholder="请选择炉台"
-            required
           />
           <RenderSelect
             title="优先顺序"
-            required
             name="priority"
+            titleStyle={normalStyle}
             options={Array.from({ length: 50 }, (item, index) => ({
               value: index + 1,
               label: index + 1,
@@ -572,7 +622,7 @@ const CommonForm = (props: IProps) => {
             title="流转时间"
             name="transferTime"
             colSpan={2}
-            required
+            titleStyle={normalStyle}
             showTime
           />
         </tr>

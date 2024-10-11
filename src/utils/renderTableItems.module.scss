@@ -1,7 +1,6 @@
 $color-red: #ff4d4f;
 .input-container {
   background-color: rgba(48, 79, 255, 0.11);
-
   input,
   span,
   div,
@@ -78,6 +77,10 @@ $color-red: #ff4d4f;
       box-shadow: none !important;
       padding: 0 !important;
     }
+    .ant-select-selection-item,
+    .ant-select-selection-placeholder {
+      font-size: 18px;
+    }
     .ant-form-item-control-input-content {
       height: 22px;
       & > div {
@@ -106,6 +109,9 @@ $color-red: #ff4d4f;
       border: none !important;
       box-shadow: none;
     }
+    .ant-picker-large .ant-picker-input > input {
+      font-size: 18px;
+    }
   }
 }
 
@@ -120,5 +126,11 @@ $color-red: #ff4d4f;
     .ant-form-item {
       margin-bottom: 0;
     }
+  }
+}
+
+.addonAfter {
+  input {
+    font-size: 18px !important;
   }
 }

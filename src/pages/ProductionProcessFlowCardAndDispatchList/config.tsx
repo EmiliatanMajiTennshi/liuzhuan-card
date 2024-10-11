@@ -63,7 +63,6 @@ export const useTableColumns = ({
   verifierList?: IVerifierItem[];
   equipmentList?: IEquipmentItem[];
 }) => {
-  // 检验员
   const [processList, setProcessList] = useState<string[]>([]);
   useEffect(() => {
     if (SELF_CHECK_LIST.indexOf(flowCardType || "") !== -1) {
@@ -74,6 +73,7 @@ export const useTableColumns = ({
       });
     }
   }, []);
+
   // const debounceGetEquipment = debounce(async function (e) {
   //   try {
   //     setOptions({ ...options, equipmentOptionsLoading: true });
@@ -247,7 +247,7 @@ export const useTableColumns = ({
         title: "工序",
         dataIndex: "processName",
         key: "processName",
-        width: 120,
+        width: 160,
         render: (text: string) => {
           const needSync = processList?.indexOf(text) !== -1;
           return (
@@ -264,7 +264,7 @@ export const useTableColumns = ({
         dataIndex: "inspectionLevel",
         key: "inspectionLevel",
         width: 140,
-        needValidate: true,
+        needValidate: false,
         render: (text: any, record: any, index: number) => {
           return (
             <>
@@ -275,28 +275,28 @@ export const useTableColumns = ({
                 defaultValue={text}
                 onSelect={(e) => {
                   record.inspectionLevel = e;
-                  const cloneErrors = cloneDeep(errors);
-                  if (!cloneErrors[index]) {
-                    cloneErrors[index] = {};
-                  }
+                  // const cloneErrors = cloneDeep(errors);
+                  // if (!cloneErrors[index]) {
+                  //   cloneErrors[index] = {};
+                  // }
 
-                  cloneErrors[index].inspectionLevel = validateField(
-                    "检验等级",
-                    e
-                  );
-                  setErrors(cloneErrors);
+                  // cloneErrors[index].inspectionLevel = validateField(
+                  //   "检验等级",
+                  //   e
+                  // );
+                  // setErrors(cloneErrors);
                 }}
                 onClear={() => {
                   delete record.inspectionLevel;
-                  const cloneErrors = cloneDeep(errors);
-                  if (!cloneErrors[index]) {
-                    cloneErrors[index] = {};
-                  }
-                  cloneErrors[index].inspectionLevel = validateField(
-                    "检验等级",
-                    ""
-                  );
-                  setErrors(cloneErrors);
+                  // const cloneErrors = cloneDeep(errors);
+                  // if (!cloneErrors[index]) {
+                  //   cloneErrors[index] = {};
+                  // }
+                  // cloneErrors[index].inspectionLevel = validateField(
+                  //   "检验等级",
+                  //   ""
+                  // );
+                  // setErrors(cloneErrors);
                 }}
                 options={[
                   { value: "A+", label: "A+", key: "A+" },
@@ -333,6 +333,11 @@ export const useTableColumns = ({
             dataList: verifierList,
             dataListObject: verifierListObject,
             dataListObjectName: verifierListObjectName,
+            extendData: {
+              dataList: operatorList,
+              dataListObject: operatorListObject,
+              dataListObjectName: operatorListObjectName,
+            },
             themeTitle: "检验员",
             config: {
               name: "verifyName",
@@ -362,6 +367,11 @@ export const useTableColumns = ({
             tableData,
             setTableData,
             dataList: verifierList,
+            extendData: {
+              dataList: operatorList,
+              dataListObject: operatorListObject,
+              dataListObjectName: operatorListObjectName,
+            },
             dataListObject: verifierListObject,
             dataListObjectName: verifierListObjectName,
             themeTitle: "检验员",
@@ -682,7 +692,7 @@ export const useTableColumns = ({
         title: "工序",
         dataIndex: "processName",
         key: "processName",
-        width: isAddNewCard ? 100 : 140,
+        width: isAddNewCard ? 100 : 160,
         needValidate: true,
         render: (text: string, record: any, index: number) => {
           const needSync = processList?.indexOf(text) !== -1;
@@ -726,7 +736,7 @@ export const useTableColumns = ({
         dataIndex: "inspectionLevel",
         key: "inspectionLevel",
         width: isAddNewCard ? 100 : 140,
-        needValidate: !isAddNewCard,
+        needValidate: false,
         render: (text: any, record: any, index: number) => {
           return (
             <>
@@ -738,28 +748,28 @@ export const useTableColumns = ({
                 disabled={isAddNewCard}
                 onSelect={(e) => {
                   record.inspectionLevel = e;
-                  const cloneErrors = cloneDeep(errors);
-                  if (!cloneErrors[index]) {
-                    cloneErrors[index] = {};
-                  }
+                  // const cloneErrors = cloneDeep(errors);
+                  // if (!cloneErrors[index]) {
+                  //   cloneErrors[index] = {};
+                  // }
 
-                  cloneErrors[index].inspectionLevel = validateField(
-                    "检验等级",
-                    e
-                  );
-                  setErrors(cloneErrors);
+                  // cloneErrors[index].inspectionLevel = validateField(
+                  //   "检验等级",
+                  //   e
+                  // );
+                  // setErrors(cloneErrors);
                 }}
                 onClear={() => {
                   delete record.inspectionLevel;
-                  const cloneErrors = cloneDeep(errors);
-                  if (!cloneErrors[index]) {
-                    cloneErrors[index] = {};
-                  }
-                  cloneErrors[index].inspectionLevel = validateField(
-                    "检验等级",
-                    ""
-                  );
-                  setErrors(cloneErrors);
+                  // const cloneErrors = cloneDeep(errors);
+                  // if (!cloneErrors[index]) {
+                  //   cloneErrors[index] = {};
+                  // }
+                  // cloneErrors[index].inspectionLevel = validateField(
+                  //   "检验等级",
+                  //   ""
+                  // );
+                  // setErrors(cloneErrors);
                 }}
                 options={[
                   { value: "A+", label: "A+", key: "A+" },
@@ -1101,6 +1111,7 @@ interface IGetParams {
   dataString?: string;
   tableData: any[];
 }
+
 export const getParams = ({
   form,
   data,
@@ -1122,7 +1133,7 @@ export const getParams = ({
       //零件类型
       type: data?.type,
       //生产订单条码
-      barCode: values.orderQRcode,
+      barCode: values.orderid,
       //零件料号
       partNumber: values.itmid,
       // //入库料号
@@ -1198,7 +1209,9 @@ export const getParams = ({
       //工艺
       process: data?.processList,
       // pNumber
-      pNumber: form.getFieldValue("pnumber"),
+      pNumber: (form?.getFieldValue("pnumber") as string)?.startsWith("-")
+        ? form?.getFieldValue("pnumber")?.slice(1)
+        : form?.getFieldValue("pnumber"),
       // parentID
       parentId: data?.id,
     },
@@ -1271,11 +1284,12 @@ export const getParams = ({
       parentId: data.id,
     },
     flowCard: {
+      // orderid: values?.orderid,
       // id
       // id: data.id,
       // barCode: values.barCode,
       // 炉批号
-      furnaceNo: values.furnaceNo,
+      furnaceNo: values.furnaceNo || "",
       // 供方
       supplierName: values.supplierName,
       // 追溯单号(半品)
@@ -1284,8 +1298,9 @@ export const getParams = ({
       remark: values.remark,
       // 优先顺序
       // priorityOrder: values.priorityOrderpriorityOrder,
-
       transferCardCode: data?.transferCardCode,
+      // 追溯单号（半品）
+      orderCatchHalf: values.orderCatchHalf,
     },
     print: {},
     rework: {

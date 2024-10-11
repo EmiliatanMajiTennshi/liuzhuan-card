@@ -166,10 +166,10 @@ const formConfig: IFormConfig = {
           const onFinish = (values: any) => {
             insertPermission(values).then((res) => {
               if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-                message.success(res?.data?.data || ADD_SUCCESS);
+                message.success(res?.data?.msg || ADD_SUCCESS);
                 setRefreshFlag((flag) => !flag);
               } else {
-                message.error(res?.response?.data?.msg || res?.data?.msg);
+                message.error(res?.data?.msg || res?.data?.msg);
               }
             });
           };

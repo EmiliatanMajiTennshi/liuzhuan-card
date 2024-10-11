@@ -11,7 +11,7 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
   // 查询参数
   const [searchParams, setSearchParams] = useState<object>({});
   // 页面loading
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   // 手动刷新列表
   const [refreshFlag, setRefreshFlag] = useState(false);
 
