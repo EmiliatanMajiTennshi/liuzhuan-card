@@ -1149,7 +1149,7 @@ export const getParams = ({
       //流转PCS数
       transferPcs: values.transferPcs,
       //供方/炉批号
-      furnaceNo: values.furnaceNo,
+      // furnaceNo: values.furnaceNo,
       //材料料号
       materialPartNumber: values.mItmID,
       //材料品名

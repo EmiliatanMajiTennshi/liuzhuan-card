@@ -498,10 +498,10 @@ const CommonForm = (props: IProps) => {
         <ReadOnlyInput
           style={{ lineHeight: "24px", ...normalStyle18 }}
           title="供方/炉批号"
-          name="furnaceNo"
+          name="furnaceNo_del"
           colSpan={4}
           titleStyle={{ color: "red", ...normalStyle }}
-          defaultValue={data?.furnaceNo || mainsize?.allID || ""}
+          // defaultValue={data?.furnaceNo || mainsize?.allID || ""}
           form={form}
         />
 
