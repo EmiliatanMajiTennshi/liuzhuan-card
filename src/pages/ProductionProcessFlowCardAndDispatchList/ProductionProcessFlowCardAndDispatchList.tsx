@@ -65,6 +65,7 @@ import { cloneDeep } from "lodash";
 import PrintFlowCardFormRework from "./PrintFlowCardFormRework";
 import axios, { CancelTokenSource } from "axios";
 import { insertUnfinishedProductsNew } from "@/api/insertUnfinishedProductsNew";
+import { useThrottleFn } from "ahooks";
 
 const ProductionProcessFlowCardAndDispatchList = (props: {
   issueID?: IIssueID;
@@ -153,6 +154,17 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const [printFinishedData, setPrintFinishedData] = useState<IData>({});
 
   const cancelTokenSource = useRef<CancelTokenSource>();
+
+  const { run: submit } = useThrottleFn(
+    () => {
+      console.log(1241);
+
+      form.submit();
+    },
+    {
+      wait: 5000,
+    }
+  );
   const handleSuccess = (res: any) => {
     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
       message.success(res?.data?.data);
@@ -318,13 +330,11 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         } else {
           const isArray = Array.isArray(_data);
           const formData = isArray ? _data[0] : _data;
-
           form.setFieldsValue(formData);
           setData(formData);
-          setMItemId(formData?.mItemId);
-
+          setMItemId(formData?.mItmID);
           const _tableData = getProcessesList(flowCardType, formData);
-          console.log(_tableData, 12412);
+          console.log(_tableData, 124212, formData);
           setTableData(_tableData || []);
           if (notSelfIssue) {
             if (setConfirmFinished) {
@@ -357,7 +367,16 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       const operationInfo = res?.data?.data;
       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1 && operationInfo) {
         if (Array.isArray(operationInfo)) {
-          setOperatorList(operationInfo);
+          console.log(operationInfo, 1241214);
+          setOperatorList(
+            operationInfo?.map((item) => {
+              return {
+                name: item?.operationName,
+                barcode: item?.operationId,
+                department: item?.operateDepartment,
+              };
+            })
+          );
         }
       }
     } catch (error: any) {
@@ -371,7 +390,15 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       const verifierInfo = res?.data?.data;
       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1 && verifierInfo) {
         if (Array.isArray(verifierInfo)) {
-          setVerifierList(verifierInfo);
+          console.log(verifierInfo, 124421);
+          setVerifierList(
+            verifierInfo?.map((item) => {
+              return {
+                name: item?.testName,
+                barcode: item?.testId,
+              };
+            })
+          );
         }
       }
     } catch (error: any) {
@@ -385,7 +412,16 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       const equipmentInfo = res?.data?.data;
       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1 && equipmentInfo) {
         if (Array.isArray(equipmentInfo)) {
-          setEquipmentList(equipmentInfo);
+          console.log(equipmentInfo, 12411);
+
+          setEquipmentList(
+            equipmentInfo?.map((item) => {
+              return {
+                barcode: item?.equipmentId,
+                name: item?.equipmentName,
+              };
+            })
+          );
         }
       }
     } catch (error: any) {
@@ -469,6 +505,8 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const isKg = kgArr.indexOf(unit) !== -1;
 
   const onFinish = async (values: IFormFields) => {
+    console.log(values, 1241);
+
     const params: any = getParams({
       form,
       data,
@@ -483,6 +521,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     const isFinished = data?.itmid?.startsWith("31");
     // 非自制
     const isSelf = data?.type === "自制" || data?.type === "补单";
+
     if (flowCardType === "rework") {
       const cloneErrors = cloneDeep(errors);
       let errorFlag = false;
@@ -573,6 +612,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
           reworkTransferCardCode: dataString,
           detailProcesses: processList,
         }).then((res) => handleSuccess(res));
+        console.log(values, 1241);
       }
     }
 
@@ -610,18 +650,21 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
             transferCardCode: data?.transferCardCode,
           };
         });
-        console.log(tableData);
+        console.log(tableData, data, 12414);
 
         // 页面大保存
         const finialSave = async () => {
           if (!isSelf) {
             updateOTransferCardInfoByCardId({
-              ...params,
+              ...(values?.transferNumberKG
+                ? { transferNumber: values?.transferNumberKG, ...params }
+                : params),
               processList,
             }).then((res) => handleSuccess(res));
           } else if (isSemiFinished) {
             updateTransferCardInfoByCardId({
               ...params,
+              // relation:data?.relation,
               processList,
             }).then((res) => handleSuccess(res));
           } else if (isFinished) {
@@ -650,7 +693,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
           // fetchData();
           // setRefreshFlag((flag) => !flag);
         };
-        finialSave();
+        // finialSave();
       }
     }
 
@@ -706,7 +749,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         request32to31();
         return;
       }
-      if (flowCardType === "unfinished" || isSemiFinished) {
+      if (isSelf && (flowCardType === "unfinished" || isSemiFinished)) {
         insertUnfinishedProductsNew(params).then((res) => {
           if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
             message.success(res?.data?.data);
@@ -718,7 +761,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
           }
         });
       }
-      if (flowCardType === "finished" || !isSemiFinished) {
+      if (isSelf && (flowCardType === "finished" || !isSemiFinished)) {
         insertfinishedProductsNew(params).then((res) => {
           if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
             message.success(res?.data?.data);
@@ -730,7 +773,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
           }
         });
       }
-      if (flowCardType === "outsourcing") {
+      if (!isSelf && flowCardType === "outsourcing") {
         insertoutsourcingPurchasingNew(params).then((res) => {
           if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
             message.success(res?.data?.data);
@@ -1010,7 +1053,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                   type="primary"
                   size="large"
                   onClick={() => {
-                    form.submit();
+                    submit();
                   }}
                   className={styles.footerSaveBtn}
                   disabled={

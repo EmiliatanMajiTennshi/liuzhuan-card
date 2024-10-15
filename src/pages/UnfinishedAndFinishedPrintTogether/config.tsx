@@ -252,70 +252,70 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         width: 100,
       },
 
-      {
-        title: "热处理炉台",
-        dataIndex: "heatTreatmentFurnacePlatforms",
-        key: "heatTreatmentFurnacePlatforms",
-        width: 120,
-      },
-      {
-        title: "优先顺序",
-        dataIndex: "priority",
-        key: "priority",
-        width: 120,
-      },
+      // {
+      //   title: "热处理炉台",
+      //   dataIndex: "heatTreatmentFurnacePlatforms",
+      //   key: "heatTreatmentFurnacePlatforms",
+      //   width: 120,
+      // },
+      // {
+      //   title: "优先顺序",
+      //   dataIndex: "priority",
+      //   key: "priority",
+      //   width: 120,
+      // },
 
-      {
-        title: "生产数量总量",
-        dataIndex: "newsupcount",
-        key: "newsupcount",
-        width: 110,
-        // render: (text, record) => {
-        //   const isKg = kgArr.indexOf(record?.unit) !== -1;
-        //   return isKg ? record?.productionKg : record?.productionPcs;
-        // },
-      },
-      {
-        title: "流转数量累积",
-        dataIndex: "transferNumber",
-        key: "transferNumber",
-        // render: sumTransferNumberRender,
-        width: 120,
-      },
-      {
-        title: "流转桶数",
-        dataIndex: "barrelageNumebr",
-        key: "barrelageNumebr",
-        width: 120,
-        // render: (barrelCount: any) => {
-        //   return barrelCount?.countBarrel;
-        // },
-      },
-      {
-        title: "单桶流转数量",
-        dataIndex: "singleBarrelageNumebr",
-        key: "singleBarrelageNumebr",
-        width: 110,
-      },
-      {
-        title: "当前工艺",
-        dataIndex: "currentProcess",
-        key: "currentProcess",
-        width: 120,
-      },
-      {
-        title: "完工状态",
-        dataIndex: "finishStatus",
-        key: "finishStatus",
-        width: 100,
-        fixed: "right",
-        render: (text: string) => {
-          if (text === "完工") {
-            return <Tag color="green">完工</Tag>;
-          }
-          return <Tag color="red">未完工</Tag>;
-        },
-      },
+      // {
+      //   title: "生产数量总量",
+      //   dataIndex: "newsupcount",
+      //   key: "newsupcount",
+      //   width: 110,
+      //   // render: (text, record) => {
+      //   //   const isKg = kgArr.indexOf(record?.unit) !== -1;
+      //   //   return isKg ? record?.productionKg : record?.productionPcs;
+      //   // },
+      // },
+      // {
+      //   title: "流转数量累积",
+      //   dataIndex: "transferNumber",
+      //   key: "transferNumber",
+      //   // render: sumTransferNumberRender,
+      //   width: 120,
+      // },
+      // {
+      //   title: "流转桶数",
+      //   dataIndex: "barrelageNumebr",
+      //   key: "barrelageNumebr",
+      //   width: 120,
+      //   // render: (barrelCount: any) => {
+      //   //   return barrelCount?.countBarrel;
+      //   // },
+      // },
+      // {
+      //   title: "单桶流转数量",
+      //   dataIndex: "singleBarrelageNumebr",
+      //   key: "singleBarrelageNumebr",
+      //   width: 110,
+      // },
+      // {
+      //   title: "当前工艺",
+      //   dataIndex: "currentProcess",
+      //   key: "currentProcess",
+      //   width: 120,
+      // },
+      // {
+      //   title: "完工状态",
+      //   dataIndex: "finishStatus",
+      //   key: "finishStatus",
+      //   width: 100,
+      //   fixed: "right",
+      //   render: (text: string) => {
+      //     if (text === "完工") {
+      //       return <Tag color="green">完工</Tag>;
+      //     }
+      //     return <Tag color="red">未完工</Tag>;
+      //   },
+      // },
       {
         title: "操作",
         dataIndex: "processList",
@@ -363,9 +363,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                     //     .catch((err) => message.error(ERROR_MESSAGE, err));
                     // }
                   }}
-                  disabled={record?.printStatus !== "NO"}
+                  disabled={Boolean(record?.pCardID)}
                 >
-                  {record?.printStatus !== "NO" ? "已打印" : "打印流转卡"}
+                  {Boolean(record?.pCardID) ? "已打印" : "打印流转卡"}
                 </Button>
               ) : (
                 <></>

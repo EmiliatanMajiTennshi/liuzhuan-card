@@ -328,6 +328,7 @@ const RenderSelect = ({
   required,
   disabled,
   remark,
+  form,
 }: {
   title: string;
   name: string;
@@ -345,7 +346,15 @@ const RenderSelect = ({
   required?: boolean;
   disabled?: boolean;
   remark?: string;
+  form?: any;
 }) => {
+  useEffect(() => {
+    if (form && defaultValue) {
+      console.log(123123);
+
+      form.setFieldValue(name, defaultValue);
+    }
+  }, [defaultValue]);
   return (
     <>
       <th style={titleStyle} colSpan={labelColSpan}>
@@ -363,7 +372,6 @@ const RenderSelect = ({
             placeholder={placeholder}
             options={options}
             onSelect={onSelect}
-            defaultValue={defaultValue}
             showSearch={showSearch}
             onSearch={onSearch}
             notFoundContent={notFoundContent}

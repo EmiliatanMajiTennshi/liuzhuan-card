@@ -18,7 +18,7 @@ import { RenderQRCode } from "@/utils";
 import { getHeatTreatmentFurnacePlatformsList } from "@/api";
 import { kgArr, DEFAULT_ORANGE, SUCCESS_CODE } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
-
+import dayjs from "dayjs";
 interface IGetModalConfigProps {
   barCode: string;
   transferCardCode: string;
@@ -226,7 +226,13 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     name: "HeatTreatmentFurnaceOperationQuery",
     rowKey: "id", // 唯一标识
     api: "queryTransferCardNew",
-    defaultParam: { heatTreatmentFurnacePlatformsStatus: "1" },
+    defaultParam: {
+      heatTreatmentFurnacePlatformsStatus: "1",
+
+      createTimeStart: dayjs().format("YYYY-MM-DD"),
+      createTimeEnd: dayjs().format("YYYY-MM-DD"),
+    },
+
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
     flowCardType: "flowCard",
     columns: [

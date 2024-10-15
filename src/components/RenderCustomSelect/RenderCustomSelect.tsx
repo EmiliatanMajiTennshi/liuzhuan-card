@@ -33,8 +33,6 @@ interface IRenderCustomSelectProps {
   config: {
     name: string;
     barcode: string;
-    resName: string;
-    resId: string;
     departmentName?: string;
     // 被同步的字段
     syncName?: string;
@@ -73,8 +71,7 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
   const {
     name,
     barcode,
-    resName,
-    resId,
+
     departmentName,
     syncBarcode,
     syncName,
@@ -151,7 +148,6 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
                 isArray(record?.[name]) && isMuti ? [...prevNameList, e] : [e];
 
               // 当前选择的数据
-              debugger;
               const currentData =
                 dataListObjectName[e] || extendData?.dataListObjectName[e];
               console.log(currentData, 12311, dataListObjectName, e);
@@ -160,7 +156,7 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
               const prevBarcodeList = record?.[barcode];
               // 当前选择的条码
 
-              const currentBarcode = currentData?.[resId];
+              const currentBarcode = currentData?.barcode;
               record[barcode] =
                 isArray(prevBarcodeList) && isMuti
                   ? [...prevBarcodeList, currentBarcode]
@@ -222,11 +218,12 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
               // 当前选择的数据
               const currentData =
                 dataListObject[e] || extendData?.dataListObject[e];
+              console.log(currentData, 124214);
 
               // 先前的姓名列表
               const prevNameList = record?.[name];
               // 当前选择的姓名
-              const currentName = currentData?.[resName];
+              const currentName = currentData?.name;
               record[name] =
                 isArray(prevNameList) && isMuti
                   ? [...prevNameList, currentName]
@@ -342,20 +339,20 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
             ? dataList?.map((item: any) => {
                 return (
                   <Select.Option
-                    value={item?.[resId]}
-                    key={item?.[resId] + item?.[resName]}
+                    value={item?.barcode}
+                    key={item?.barcode + item?.name}
                   >
-                    {item?.[resId]}
+                    {item?.barcode}
                   </Select.Option>
                 );
               })
             : dataList?.map((item: any) => {
                 return (
                   <Select.Option
-                    value={item?.[resName]}
-                    key={item?.[resId] + item?.[resName]}
+                    value={item?.name}
+                    key={item?.barcode + item?.name}
                   >
-                    {item?.[resName]}
+                    {item?.name}
                   </Select.Option>
                 );
               })}

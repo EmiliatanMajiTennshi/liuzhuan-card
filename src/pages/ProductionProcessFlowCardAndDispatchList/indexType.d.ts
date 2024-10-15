@@ -95,6 +95,7 @@ export interface IData {
   associationTraceabilityNumber?: string;
   orderCatchHalf?: string;
   trademark?: string;
+  materialInfos?: any;
 }
 
 export interface IFormFields {
@@ -126,19 +127,19 @@ export interface IFormFields {
   heatTreatmentFurnace: string;
   priority: string;
   transferTime: string;
+  transferNumberKG?: string | number;
 }
 
 export interface IOperationItem {
-  operationId: string;
-  operationName: string;
-  operateDepartment: string;
+  name: string;
+  barcode: string;
+  department: string;
 }
 export interface IVerifierItem {
-  testId: string;
-  testName: string;
-  testDepartment: string;
+  name: string;
+  barcode: string;
 }
 export interface IEquipmentItem {
-  equipmentId: string;
-  equipmentName: string;
+  name: string;
+  barcode: string;
 }

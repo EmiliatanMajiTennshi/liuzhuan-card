@@ -131,15 +131,14 @@ const OutsourcingForm = (props: IProps) => {
             </span>
           }
           onChange={(e: number) => {
-            const value = e;
-            const transferValue =
-              data?.parseWeight && parseFloat(data?.parseWeight || "0") && value
-                ? isKg
-                  ? transFormToPcs(value, data?.parseWeight)
-                  : transFormToKg(value, data?.parseWeight)
-                : value;
-
-            form.setFieldValue("liuhuancount", transferValue.toString());
+            // const value = e;
+            // const transferValue =
+            //   data?.parseWeight && parseFloat(data?.parseWeight || "0") && value
+            //     ? isKg
+            //       ? transFormToPcs(value, data?.parseWeight)
+            //       : transFormToKg(value, data?.parseWeight)
+            //     : value;
+            // form.setFieldValue("liuhuancount", transferValue?.toString());
           }}
           // rules={[{ validator: validateNotZero }]}
         />

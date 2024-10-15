@@ -362,3 +362,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
 };
 
 export { formConfig, tableConfig };
+function dayjs(): string {
+  throw new Error("Function not implemented.");
+}

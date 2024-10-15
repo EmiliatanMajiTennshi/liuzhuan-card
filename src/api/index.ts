@@ -1,3 +1,4 @@
+import { countProcessUnfinishToStoreMonth } from "./countProcessUnfinishToStoreMonth";
 import { updateUser } from "./updateUser";
 import { getUserList } from "./getUserList";
 import { loginRequest } from "./loginRequest";
@@ -99,6 +100,7 @@ import { countProcessUnfinishToStore } from "./countProcessUnfinishToStoreNew";
 import { queryOrderCount } from "./queryOrderCount";
 import { querytransferCardRelation } from "./querytransferCardRelationNew";
 import { queryFurnaceByTraceabilityHalf } from "./queryFurnaceByTraceabilityHalfNew";
+import { countProcessUnfinishToStoreYestereday } from "./countProcessUnfinishToStoreYestereday";
 
 export {
   countProductType,
@@ -236,6 +238,8 @@ const apisOld = {
 
 export {
   countProcessUnfinishToStore,
+  countProcessUnfinishToStoreYestereday,
+  countProcessUnfinishToStoreMonth,
   getUnfinishedProducts,
   getFinishedProducts,
   getOutsourcingPurchasing,
@@ -275,6 +279,8 @@ export {
 };
 const apisNew = {
   countProcessUnfinishToStore,
+  countProcessUnfinishToStoreYestereday,
+  countProcessUnfinishToStoreMonth,
   getUnfinishedProducts,
   getFinishedProducts,
   getOutsourcingPurchasing,

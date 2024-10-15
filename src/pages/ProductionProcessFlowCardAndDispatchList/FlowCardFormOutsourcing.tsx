@@ -9,19 +9,23 @@ import { FormInstance } from "antd";
 import { IData } from "./indexType";
 
 import styles from "./index.module.scss";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { normalStyle, normalStyle18 } from "./styles";
 // import { getHeatTreatmentFurnacePlatformsList } from "@/api";
 
 interface IProps {
   data: IData;
   form: FormInstance<any>;
+  isKg: boolean;
 }
 const FlowCardFormOutsourcing = (props: IProps) => {
-  const { data, form } = props;
+  const { data, form, isKg } = props;
+  // 最大流转数量
+  const [liuMax, setLiuMax] = useState(0);
 
-  const isKg = data?.productKg || data?.transferNumberKG;
-
+  useEffect(() => {
+    setLiuMax(parseFloat(data?.productKg || ""));
+  }, [data]);
   return (
     <tbody>
       <tr>
@@ -73,15 +77,16 @@ const FlowCardFormOutsourcing = (props: IProps) => {
         <ReadOnlyInput
           style={{ lineHeight: "24px", ...normalStyle18 }}
           title={isKg ? "生产数量(KG)" : "生产数量(PCS)"}
-          name={isKg ? "productKg" : "productPcs"}
+          name={"productKg"}
           titleStyle={normalStyle}
         />
-        <ReadOnlyInput
+        <EditAbleInput
           style={{ lineHeight: "24px", ...normalStyle18 }}
           title={isKg ? "流转数量(KG)" : "流转数量(PCS)"}
-          name={isKg ? "transferNumberKG" : "transferNumberPCS"}
+          name={"transferNumberKG"}
           titleStyle={normalStyle}
-          // max={liuMaxPCS}
+          max={liuMax}
+          isNumber
           // step={0.01}
         />
       </tr>

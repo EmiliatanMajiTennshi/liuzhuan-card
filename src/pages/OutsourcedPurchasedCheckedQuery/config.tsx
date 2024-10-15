@@ -148,8 +148,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "条码",
-        dataIndex: "partNumber",
-        key: "partNumber",
+        dataIndex: "itmid",
+        key: "itmid",
         width: 140,
       },
       {

@@ -3,7 +3,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Select, message } from "antd";
+import { Button, DatePicker, Input, Select, TimePicker, message } from "antd";
 import { RuleObject } from "antd/es/form";
 
 import {
@@ -254,13 +254,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "trademark",
         width: 150,
       },
-      {
-        title: "下发(流转)时间",
-        dataIndex: "createTime",
-        key: "createTime",
-        width: 160,
-        render: (text) => text?.slice(0, 19),
-      },
+
       {
         title: "单位",
         dataIndex: "unit",
@@ -307,9 +301,47 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               onSelect={(e) => {
                 record.furnaceChange = e;
               }}
+              allowClear
             ></Select>
           );
         },
+      },
+      {
+        title: "优先顺序",
+        key: "priorityOrder",
+        dataIndex: "priorityOrder",
+        width: 160,
+        fixed: "right",
+        render: () => (
+          <Select
+            style={{ width: "100%" }}
+            title="优先顺序"
+            options={Array.from({ length: 50 }, (item, index) => ({
+              value: index + 1,
+              label: index + 1,
+            }))}
+            placeholder="请选择优先顺序"
+            allowClear
+          />
+        ),
+      },
+      {
+        title: "流转时间",
+        dataIndex: "createTime",
+        key: "createTime",
+        width: 160,
+        fixed: "right",
+        render: (text, record) => (
+          <DatePicker
+            showTime
+            style={{ width: "100%" }}
+            placeholder="请选择流转时间"
+            onChange={(e) => {
+              record.createTime = e;
+            }}
+            allowClear
+          ></DatePicker>
+        ),
       },
 
       {
@@ -324,19 +356,22 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               type="primary"
               size="small"
               onClick={() => {
-                insertFurnaceChange({
-                  transferCardCode: record?.transferCardCode,
-                  heatTreatmentFurnacePlatform: record?.furnaceChange,
-                  // id: record?.id,
-                  // name: record?.furnaceChange,
-                }).then((res) => {
-                  if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-                    message.success(res?.data?.data || UPDATE_SUCCESS);
-                    setRefreshFlag((flag) => !flag);
-                  } else {
-                    message.error(res?.data?.data || UPDATE_FAILED);
-                  }
-                });
+                console.log(record, 12414);
+
+                // insertFurnaceChange({
+                //   transferCardCode: record?.transferCardCode,
+                //   heatTreatmentFurnacePlatform: record?.furnaceChange,
+                //   createTime: record?.createTime,
+                //   // id: record?.id,
+                //   // name: record?.furnaceChange,
+                // }).then((res) => {
+                //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                //     message.success(res?.data?.data || UPDATE_SUCCESS);
+                //     setRefreshFlag((flag) => !flag);
+                //   } else {
+                //     message.error(res?.data?.data || UPDATE_FAILED);
+                //   }
+                // });
               }}
             >
               变更

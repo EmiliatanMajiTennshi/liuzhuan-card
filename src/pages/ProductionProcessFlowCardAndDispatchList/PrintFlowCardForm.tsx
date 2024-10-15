@@ -125,7 +125,7 @@ const PrintFlowCardForm = (props: IProps) => {
           labelColSpan={9}
           colSpan={14}
           titleStyle={normalStyle}
-          style={{ ...bold26, margin: "4px 0" }}
+          style={{ ...bold24, margin: "4px 0" }}
         />
         <ReadOnlyInput
           title="完成日期"
@@ -267,7 +267,11 @@ const PrintFlowCardForm = (props: IProps) => {
           size={120}
           value={data?.pickingCode || data?.mItmID || "没有数据"}
           form={form}
-          footer={<span style={{ fontSize: 24 }}>{data?.spec}</span>}
+          footer={
+            <span style={{ fontSize: 24 }}>
+              {data?.materialInfos?.[0]?.mspec}
+            </span>
+          }
         />
       </tr>
       <tr>
@@ -286,8 +290,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project1 || ""}
           name="projectitem1"
-          labelColSpan={6}
-          colSpan={15}
+          labelColSpan={7}
+          colSpan={14}
           titleStyle={{ ...normalStyle }}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem1}
@@ -296,8 +300,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project2 || ""}
           name="projectitem2"
-          labelColSpan={6}
-          colSpan={15}
+          labelColSpan={7}
+          colSpan={14}
           titleStyle={{ ...normalStyle }}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem2}
@@ -308,8 +312,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project3 || ""}
           name="projectitem3"
-          labelColSpan={6}
-          colSpan={15}
+          labelColSpan={7}
+          colSpan={14}
           titleStyle={normalStyle}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem3}
@@ -318,8 +322,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project4 || ""}
           name="projectitem4"
-          labelColSpan={6}
-          colSpan={15}
+          labelColSpan={7}
+          colSpan={14}
           titleStyle={normalStyle}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem4}
@@ -330,8 +334,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project5 || ""}
           name="projectitem5"
-          labelColSpan={6}
-          colSpan={15}
+          labelColSpan={7}
+          colSpan={14}
           titleStyle={normalStyle}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem5}
@@ -340,8 +344,8 @@ const PrintFlowCardForm = (props: IProps) => {
         <ReadOnlyInput
           title={mainsizeList?.project6 || ""}
           name="projectitem6"
-          labelColSpan={6}
-          colSpan={15}
+          labelColSpan={7}
+          colSpan={14}
           titleStyle={normalStyle}
           style={normalStyle}
           defaultValue={mainsizeList?.projectitem6}

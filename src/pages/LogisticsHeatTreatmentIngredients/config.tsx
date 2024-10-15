@@ -413,6 +413,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         fixed: "right",
         width: 100,
         render: (text, record) => {
+          console.log(record, 12411);
+
           return (
             <Button
               disabled={record?.heatTreatmentDelivery === "1"}

@@ -10,6 +10,7 @@ import { countProductType, getHeatTreatmentFurnacePlatformsList } from "@/api";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    span: 4,
     formExtend: true,
     formItems: ({ options, setOptions }) => {
       if (!options.type) {
@@ -58,7 +59,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         },
 
         {
-          key: "partNumber",
+          key: "itmid",
           name: "零件料号",
           children: <Input></Input>,
           rules: [],
@@ -460,7 +461,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                     setPrintModalOpen(true);
                     setIssueID({ transferCardCode: record?.transferCardCode });
                   }}
-                  // disabled={record?.printStatus !== "NO"}
+                  disabled={record?.printStatus !== "NO"}
                 >
                   {record?.printStatus !== "NO" ? "已打印" : "打印流转卡"}
                 </Button>

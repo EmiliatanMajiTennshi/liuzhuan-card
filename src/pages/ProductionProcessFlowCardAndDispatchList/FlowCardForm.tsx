@@ -37,7 +37,10 @@ const FlowCardForm = (props: IProps) => {
     data?.partNumber?.substring(0, 2) === FINISHED_CODE ||
     data?.itmid?.substring(0, 2) === FINISHED_CODE;
 
-  const debounceGetFurnaceNum = debounce(async function (e) {
+  const debounceGetFurnaceNum = debounce(async function (e, flag?: boolean) {
+    if (flag && mainsize?.allID) {
+      return;
+    }
     try {
       const res = await queryFurnaceByTraceabilityHalf({
         traceabilityHalf: e?.target?.value,
@@ -48,44 +51,26 @@ const FlowCardForm = (props: IProps) => {
           form?.setFieldValue("furnaceNo", furnaceNumData?.furnaceNo);
           message.success("炉批号更新成功！");
         } else {
-          message.error("未找到对应炉批号，请重试");
+          message.error("此追溯单号未找到对应炉批号，请重试");
         }
+      } else {
+        message.error("此追溯单号未找到对应炉批号，请重试");
       }
     } catch (err) {
+      message.error("此追溯单号未找到对应炉批号，请重试");
       console.log(err);
     }
   }, 500);
   useEffect(() => {
-    // form.setFieldValue(
-    //   "huancount",
-    //   data?.newsupcount && data?.parseWeight
-    //     ? isKg
-    //       ? transFormToPcs(data?.newsupcount, data?.parseWeight)
-    //       : transFormToKg(data?.newsupcount, data?.parseWeight)
-    //     : ""
-    // );
-    // form.setFieldValue("transferCardCode", data?.transferCard);
-    // 给流转数量初始值 产量-已使用
-    // if (isKg) {
-    //   if (data?.productionKg) {
-    //     // 流转数量
-    //     const transferKg = (
-    //       parseFloat(data?.productionKg) -
-    //       parseFloat(data?.alreadySend?.alreaySendNumKG || "0")
-    //     ).toFixed(2);
-    //     form.setFieldValue("transferKg", transferKg);
-    //     setLiuMaxKg(parseFloat(transferKg));
-    //   }
-    // } else {
-    //   if (data?.productionPcs) {
-    //     const transferPcs = (
-    //       parseFloat(data?.productionPcs) -
-    //       parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
-    //     ).toFixed(2);
-    //     setLiuMaxPCS(parseFloat(transferPcs));
-    //     form.setFieldValue("transferPcs", transferPcs);
-    //   }
-    // }
+    if (isFinished && data?.associationTraceabilityNumber) {
+      debounceGetFurnaceNum(
+        {
+          target: { value: data?.associationTraceabilityNumber },
+        },
+        true
+      );
+      console.log(data, 124);
+    }
   }, [data]);
   useEffect(() => {
     // if(isKg){
@@ -226,7 +211,9 @@ const FlowCardForm = (props: IProps) => {
           colSpan={2}
           form={form}
           style={{ lineHeight: "120%", ...normalStyle18 }}
-          defaultValue={data?.furnaceNo || ""}
+          defaultValue={
+            isSemiFinished ? "" : data?.furnaceNo || mainsize?.allID || ""
+          }
         />
         <th colSpan={3} style={{ textAlign: "center", ...normalStyle }}>
           生产入库扫描条码

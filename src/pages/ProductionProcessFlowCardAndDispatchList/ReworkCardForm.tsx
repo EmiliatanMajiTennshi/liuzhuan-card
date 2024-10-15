@@ -227,7 +227,7 @@ const ReworkCardForm = (props: IProps) => {
                   return {
                     value: item?.itmid,
                     label: item?.itmid,
-                    traceabilityNumber: item?.traceabilityNumber,
+                    // traceabilityNumber: item?.traceabilityNumber,
                     name: item?.name,
                     specs: item?.spec,
                     materialTexture: item?.itmtdid,
@@ -243,13 +243,13 @@ const ReworkCardForm = (props: IProps) => {
             onSelect={(e: any, record: any) => {
               const {
                 specs,
-                traceabilityNumber,
+                // traceabilityNumber,
                 name,
                 materialTexture,
                 trademark,
               } = record;
               form.setFieldValue("specs", specs);
-              form.setFieldValue("traceabilityNumber", traceabilityNumber);
+              // form.setFieldValue("traceabilityNumber", traceabilityNumber);
               form.setFieldValue("name", name);
               form.setFieldValue("material", materialTexture);
               form.setFieldValue("trademark", trademark || "");
@@ -268,12 +268,12 @@ const ReworkCardForm = (props: IProps) => {
             placeholder="输入流转卡编号后自动填写"
           />
         ) : (
-          <ReadOnlyInput
+          <EditAbleInput
             titleStyle={normalStyle}
             style={{ lineHeight: "24px", ...normalStyle18 }}
             title="追溯单号"
             name="traceabilityNumber"
-            placeholder="输入料号后自动填写"
+            placeholder="请输入追溯单号"
           />
         )}
 

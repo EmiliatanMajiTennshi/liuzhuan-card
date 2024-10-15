@@ -17,13 +17,13 @@ import {
   Popconfirm,
   Select,
 } from "antd";
-import { TApi, queryEquipmentInfo, queryProcess } from "@/api";
-import { debounce, isEmpty } from "lodash";
+import { TApi, queryProcess } from "@/api";
+import { isEmpty } from "lodash";
 import { AnyObject } from "antd/es/_util/type";
 import { cloneDeep } from "lodash";
 import dayjs from "dayjs";
 
-import { formatTime, handleSave, validateField } from "@/utils";
+import { formatTime, validateField } from "@/utils";
 import { SELF_CHECK_LIST, SUCCESS_CODE } from "@/constants";
 import { RenderCustomSelect } from "@/components/RenderCustomSelect";
 import { useEffect, useState } from "react";
@@ -115,22 +115,23 @@ export const useTableColumns = ({
   const verifierListObjectName: { [key: string]: IVerifierItem } = {};
   const equipmentListObject: { [key: string]: IEquipmentItem } = {};
   const equipmentListObjectName: { [key: string]: IEquipmentItem } = {};
+
   if (operatorList) {
     operatorList.forEach((item) => {
-      operatorListObject[item.operationId] = item; // 假设每个item有唯一的id
-      operatorListObjectName[item.operationName] = item;
+      operatorListObject[item.barcode] = item; // 假设每个item有唯一的id
+      operatorListObjectName[item.name] = item;
     });
   }
   if (verifierList) {
     verifierList.forEach((item) => {
-      verifierListObject[item.testId] = item; // 假设每个item有唯一的id
-      verifierListObjectName[item.testName] = item;
+      verifierListObject[item.barcode] = item; // 假设每个item有唯一的id
+      verifierListObjectName[item.name] = item;
     });
   }
   if (equipmentList) {
     equipmentList.forEach((item) => {
-      equipmentListObject[item.equipmentId] = item;
-      equipmentListObjectName[item.equipmentName] = item;
+      equipmentListObject[item.barcode] = item;
+      equipmentListObjectName[item.name] = item;
     });
   }
 
@@ -342,8 +343,6 @@ export const useTableColumns = ({
             config: {
               name: "verifyName",
               barcode: "verifyId",
-              resName: "testName",
-              resId: "testId",
             },
             type: "barcode",
             processList,
@@ -357,6 +356,8 @@ export const useTableColumns = ({
         key: "verifyName",
         width: 130,
         render: (text: any, record: any, index: number) => {
+          console.log(text, record, tableData, 1241424);
+
           const props = {
             text,
             columns: columns.flowCard,
@@ -378,8 +379,6 @@ export const useTableColumns = ({
             config: {
               name: "verifyName",
               barcode: "verifyId",
-              resName: "testName",
-              resId: "testId",
             },
             type: "name",
             processList,
@@ -410,9 +409,7 @@ export const useTableColumns = ({
             config: {
               name: "operateName",
               barcode: "operateId",
-              resName: "operationName",
-              resId: "operationId",
-              departmentName: "operateDepartment",
+              departmentName: "department",
               syncName: "verifyName",
               syncBarcode: "verifyId",
             },
@@ -444,8 +441,6 @@ export const useTableColumns = ({
             config: {
               name: "operateName",
               barcode: "operateId",
-              resName: "operationName",
-              resId: "operationId",
               departmentName: "operateDepartment",
               syncName: "verifyName",
               syncBarcode: "verifyId",
@@ -513,8 +508,7 @@ export const useTableColumns = ({
             config: {
               name: "equipmentName",
               barcode: "equipmentId",
-              resName: "equipmentName",
-              resId: "equipmentId",
+
               // departmentName: "operateDepartment",
               // syncName: "verifyName",
               // syncBarcode: "verifyId",
@@ -622,8 +616,7 @@ export const useTableColumns = ({
             config: {
               name: "equipmentName",
               barcode: "equipmentId",
-              resName: "equipmentName",
-              resId: "equipmentId",
+
               // departmentName: "operateDepartment",
               // syncName: "verifyName",
               // syncBarcode: "verifyId",
@@ -812,8 +805,6 @@ export const useTableColumns = ({
             config: {
               name: "verifyName",
               barcode: "verifyId",
-              resName: "testName",
-              resId: "testId",
             },
             type: "barcode",
             required: false,
@@ -846,8 +837,6 @@ export const useTableColumns = ({
             config: {
               name: "verifyName",
               barcode: "verifyId",
-              resName: "testName",
-              resId: "testId",
             },
             type: "name",
             isAddNewCard,
@@ -878,9 +867,7 @@ export const useTableColumns = ({
             config: {
               name: "operateName",
               barcode: "operateId",
-              resName: "operationName",
-              resId: "operationId",
-              departmentName: "operateDepartment",
+              departmentName: "department",
             },
             type: "barcode",
             isAddNewCard,
@@ -911,9 +898,7 @@ export const useTableColumns = ({
             config: {
               name: "operateName",
               barcode: "operateId",
-              resName: "operationName",
-              resId: "operationId",
-              departmentName: "operateDepartment",
+              departmentName: "department",
             },
             type: "name",
             isAddNewCard,
@@ -980,8 +965,6 @@ export const useTableColumns = ({
             config: {
               name: "equipmentName",
               barcode: "equipmentId",
-              resName: "equipmentName",
-              resId: "equipmentId",
               // departmentName: "operateDepartment",
               // syncName: "verifyName",
               // syncBarcode: "verifyId",
@@ -1016,8 +999,7 @@ export const useTableColumns = ({
             config: {
               name: "equipmentName",
               barcode: "equipmentId",
-              resName: "equipmentName",
-              resId: "equipmentId",
+
               // departmentName: "operateDepartment",
               // syncName: "verifyName",
               // syncBarcode: "verifyId",
@@ -1240,20 +1222,17 @@ export const getParams = ({
       traceabilityNumber: values.traceabilityNumber,
       //图号
       drawingNumber: values.itmTEID,
-      //生产公斤数
-      productionKg: isKg ? values.newsupcount : values.huancount,
-      //流转公斤数
-      transferKg: (isKg
-        ? values.liucount
-        : form.getFieldValue("liuhuancount")
-      )?.toString(),
-      //生产PCS数
-      productionPcs: !isKg ? values.newsupcount : values.huancount,
-      //流转PCS数
-      transferPcs: (!isKg
-        ? values.liucount
-        : form.getFieldValue("liuhuancount")
-      )?.toString(),
+      //生产公斤数(实际pcs也传这个)
+      productionKg: values.newsupcount,
+      //流转公斤数(实际pcs也传这个)
+      transferKg: values.liucount,
+      // //生产PCS数
+      // productionPcs: !isKg ? values.newsupcount : values.huancount,
+      // //流转PCS数
+      // transferPcs: (!isKg
+      //   ? values.liucount
+      //   : form.getFieldValue("liuhuancount")
+      // )?.toString(),
       //主要尺寸名字1
       project1Name: mainsize.project1,
       //主要尺寸名字1内容
@@ -1301,6 +1280,7 @@ export const getParams = ({
       transferCardCode: data?.transferCardCode,
       // 追溯单号（半品）
       orderCatchHalf: values.orderCatchHalf,
+      orderid: values?.orderid,
     },
     print: {},
     rework: {
@@ -1309,7 +1289,7 @@ export const getParams = ({
       //返工类型
       reworkType: values.reworkType,
       //流转卡编号
-      transferCardCode: dataString || data?.reworkTransferCardCode,
+      transferCardCode: values.transferCardCode,
       //返工流转卡编号
       reworkTransferCardCode: dataString || data?.reworkTransferCardCode,
       // 追溯单号

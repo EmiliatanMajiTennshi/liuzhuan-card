@@ -46,7 +46,8 @@ const CommonForm = (props: IProps) => {
     data,
     isKg,
     form,
-
+    mItmID,
+    setMItemId,
     mainsize,
     needIssueFinished,
     notSelfIssue,
@@ -65,7 +66,10 @@ const CommonForm = (props: IProps) => {
   const [liuMaxPCS, setLiuMaxPCS] = useState(0);
 
   const [pNum, setPNum] = useState();
-  const [partNumberOptions, setPartNumberOPtions] = useState({
+  console.log(mItmID, 12414);
+
+  // const [materialItemId,setMItemId]
+  const [partNumberOptions, setPartNumberOPtions] = useState<AnyObject>({
     options: [],
     loading: false,
   });
@@ -184,16 +188,22 @@ const CommonForm = (props: IProps) => {
 
   const debounceGetPartNumber = debounce(async function (e) {
     try {
-      setPartNumberOPtions({ options: [], loading: true });
-      const res = await queryMaterialByItemid({ itemid: e });
+      // setPartNumberOPtions({ options: [], loading: true });
+      const res = await queryMaterialByItemid({ itemid: e?.target?.value });
 
-      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1 && res?.data?.data) {
         const partNumberData = res?.data?.data;
-
-        setPartNumberOPtions({ options: partNumberData, loading: false });
+        console.log(partNumberData, 12421);
+        form.setFieldValue("mName", partNumberData?.mName);
+        form.setFieldValue("mspec", partNumberData?.mspec);
+        form.setFieldValue("mItmTDID", partNumberData?.mItmTDID);
+        setMItemId(partNumberData?.mItmID);
+        message?.success("材料更新成功！");
+      } else {
+        message?.error("没有找到对应材料");
       }
     } catch (err) {
-      console.log(err);
+      message?.error("没有找到对应材料");
     }
   }, 500);
   return (
@@ -243,6 +253,8 @@ const CommonForm = (props: IProps) => {
           <RenderSelect
             title="商标"
             name="trademark"
+            defaultValue=""
+            form={form}
             remark={data?.trademark}
             titleStyle={normalStyle}
             options={[
@@ -281,7 +293,7 @@ const CommonForm = (props: IProps) => {
         />
         {!isSemiFinished && (
           <EditAbleInput
-            title="追溯单号(半品）"
+            title="追溯单号(半品)"
             name="orderCatchHalf"
             titleStyle={normalStyle}
           />
@@ -317,13 +329,13 @@ const CommonForm = (props: IProps) => {
         <ReadOnlyInput
           titleStyle={normalStyle}
           style={{ lineHeight: "24px", ...normalStyle18 }}
-          title="生产数量（公斤）"
+          title="生产数量(公斤)"
           name={"productKg"}
         />
         {isFinished32to31 ? (
           <ReadOnlyInput
             titleStyle={normalStyle}
-            title="流转数量（公斤）"
+            title="流转数量(公斤)"
             isNumber
             name={"transferKg"}
             style={{ lineHeight: "24px", ...normalStyle18 }}
@@ -337,7 +349,7 @@ const CommonForm = (props: IProps) => {
           <EditAbleInput
             titleStyle={normalStyle}
             style={{ lineHeight: "24px", ...normalStyle18 }}
-            title="流转数量（公斤）"
+            title="流转数量(公斤)"
             isNumber
             name={"transferKg"}
             dependencies={["transferPcs"]}
@@ -361,13 +373,13 @@ const CommonForm = (props: IProps) => {
         <ReadOnlyInput
           titleStyle={normalStyle}
           style={{ lineHeight: "24px", ...normalStyle18 }}
-          title="生产数量（PCS）"
+          title="生产数量(PCS)"
           name={"productPcs"}
         />
         {isFinished32to31 ? (
           <ReadOnlyInput
             titleStyle={normalStyle}
-            title="流转数量（PCS）"
+            title="流转数量(PCS)"
             style={{ lineHeight: "24px", ...normalStyle18 }}
             isNumber
             name={"transferPcs"}
@@ -381,7 +393,7 @@ const CommonForm = (props: IProps) => {
           <EditAbleInput
             titleStyle={normalStyle}
             style={{ lineHeight: "24px", ...normalStyle18 }}
-            title="流转数量（PCS）"
+            title="流转数量(PCS)"
             isNumber
             max={liuMaxPCS}
             name={"transferPcs"}
@@ -416,30 +428,30 @@ const CommonForm = (props: IProps) => {
         )}
       </tr>
       <tr>
-        <RenderSelect
+        <EditAbleInput
           titleStyle={normalStyle}
           title="材料料号"
           name="mItmID"
-          options={uniqueArray(partNumberOptions.options, "mcode")?.map(
-            (item: any) => {
-              return {
-                value: item?.mcode,
-                label: item?.mcode,
-                mName: item?.mName,
-                mformat: item?.mformat,
-                mtexture: item?.mtexture,
-              };
-            }
-          )}
-          loading={partNumberOptions.loading}
-          onSearch={debounceGetPartNumber}
-          onSelect={(e: string, record: any) => {
-            const { mName, mformat, mtexture } = record || {};
-            form.setFieldValue("mName", mName);
-            form.setFieldValue("mspec", mformat);
-            form.setFieldValue("mItmTDID", mtexture);
-          }}
-          showSearch={true}
+          // options={partNumberOptions.options?.map((item: any) => {
+          //   return {
+          //     value: item?.mItmID,
+          //     label: item?.mItmID,
+          //     mName: item?.mName,
+          //     mformat: item?.mspec,
+          //     mtexture: item?.mItmTDID,
+          //   };
+          // })}
+          // loading={partNumberOptions.loading}
+          onChange={debounceGetPartNumber}
+          // onSelect={(e: string, record: any) => {
+          //   const { mName, mformat, mtexture } = record || {};
+          //   form.setFieldValue("mName", mName);
+          //   form.setFieldValue("mspec", mformat);
+          //   form.setFieldValue("mItmTDID", mtexture);
+          //   setMItemId(e);
+          //   // form.setFieldValue("lingliaoQRcode", e);
+          // }}
+          // showSearch={true}
           // onBlur={(e) => {
           //   const currentId = e.target.value;
           //   if (currentId === mItmID) {
@@ -550,7 +562,7 @@ const CommonForm = (props: IProps) => {
               title="领料二维码"
               name="lingliaoQRcode"
               rowSpan={3}
-              value={data?.pickingCode || data?.mItmID || "没有数据"}
+              value={mItmID || "没有数据"}
               noTd
               form={form}
             />

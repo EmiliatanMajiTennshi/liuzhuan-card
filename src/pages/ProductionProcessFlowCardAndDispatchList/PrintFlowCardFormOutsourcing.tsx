@@ -27,8 +27,7 @@ interface IProps {
 }
 
 const PrintFlowCardFormOutsourcing = (props: IProps) => {
-  const { data, form } = props;
-  const isKg = data?.productKg;
+  const { data, form, isKg } = props;
   return (
     <tbody className={styles.printForm}>
       <tr>
@@ -151,7 +150,7 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
               </>
             )
           }
-          name={isKg ? "productKg" : "productPcs"}
+          name={"productKg"}
           labelColSpan={10}
           colSpan={16}
           titleStyle={normalStyle}
@@ -170,7 +169,7 @@ const PrintFlowCardFormOutsourcing = (props: IProps) => {
               </>
             )
           }
-          name={isKg ? "transferNumberKG" : "transferNumberPcs"}
+          name={"transferNumberKG"}
           labelColSpan={10}
           colSpan={16}
           titleStyle={normalStyle}

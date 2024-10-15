@@ -4,6 +4,8 @@ import { RenderDashboardCard } from "@/components/RenderDashboardCard";
 import {
   countOrderCompletionStatus,
   countProcessUnfinishToStore,
+  countProcessUnfinishToStoreMonth,
+  countProcessUnfinishToStoreYestereday,
   countUnfinishTransferToStore,
   queryOrderCount,
 } from "@/api";
@@ -28,8 +30,8 @@ const Dashboard = () => {
   const fetchData = () => {
     axios
       .all([
-        countProcessUnfinishToStore({ sign: "2" }),
-        countProcessUnfinishToStore({ sign: "1" }),
+        countProcessUnfinishToStoreMonth(),
+        countProcessUnfinishToStoreYestereday(),
       ])
       .then(
         axios.spread((yearUFChartRes: any, yesterDayUFChartRes: any) => {

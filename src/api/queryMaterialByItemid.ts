@@ -7,7 +7,7 @@ import { request } from "@/utils";
  */
 export const queryMaterialByItemid = async (params?: { itemid: number }) => {
   try {
-    const res = await request.get("flowCard/queryMaterialByItemid", { params });
+    const res = await request.get("flowCard/queryMaterialByItemId", { params });
     return res;
   } catch (err: any) {
     console.log(err);
