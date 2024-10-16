@@ -38,6 +38,8 @@ export interface ITableConfig {
   needIssueFinished?: boolean;
   // 首次加载禁用
   disableFirstLoading?: boolean;
+  // 不分页
+  noPaging?: boolean;
 }
 
 /**

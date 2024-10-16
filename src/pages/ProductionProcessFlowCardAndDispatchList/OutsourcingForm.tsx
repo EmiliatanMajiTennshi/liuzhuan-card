@@ -152,7 +152,7 @@ const OutsourcingForm = (props: IProps) => {
           style={{ lineHeight: "24px", ...normalStyle18 }}
           titleStyle={normalStyle}
           title="图号"
-          name="itmTEID"
+          name="goodsItmTEID"
         />
       </tr>
       <tr></tr>

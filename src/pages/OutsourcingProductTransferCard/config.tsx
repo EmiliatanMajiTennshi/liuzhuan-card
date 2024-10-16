@@ -139,12 +139,19 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "分类",
         dataIndex: "category",
         key: "category",
-        width: 100,
+        width: 80,
       },
       {
         title: "类型",
         dataIndex: "type",
         key: "type",
+        width: 80,
+      },
+
+      {
+        title: "零件类型",
+        dataIndex: "type1",
+        key: "type1",
         width: 100,
       },
 

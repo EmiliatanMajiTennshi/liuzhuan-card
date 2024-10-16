@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import { TApi } from "@/api";
 import { Rule } from "antd/es/form";
+import { AnyObject } from "antd/es/_util/type";
 
 /**
  * 表单item
@@ -49,6 +50,7 @@ export interface IFormConfig {
   /** 处理时间数据*/
   handleDate?: boolean;
   name?: string;
+  initValues?: AnyObject;
 }
 
 /**
@@ -60,4 +62,5 @@ export interface IAdvancedSearchForm {
   loading: boolean;
   selectedRowKeys: any[];
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
+  initValues?: AnyObject;
 }

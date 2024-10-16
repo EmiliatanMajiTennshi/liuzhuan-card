@@ -5,17 +5,7 @@ import {
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { Button, DatePicker, Input, message, Select, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
-
-// import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
-import { sumTransferNumberRender } from "@/utils/tableRender";
-import {
-  ERROR_MESSAGE,
-  ERROR_UNFINISHED_ISSUE_FINISHED,
-  kgArr,
-  SUCCESS_CODE,
-} from "@/constants";
-import { queryPartNumberByHalf, queryStandPartNumberByHalf } from "@/api";
-
+import dayjs from "dayjs";
 const formConfig: (form: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
@@ -159,23 +149,28 @@ const formConfig: (form: any) => IFormConfig = (form) => {
       },
     ],
     handleDate: true,
+    initValues: {
+      finishTimeStart: dayjs(),
+      finishTimeEnd: dayjs(),
+    },
   };
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const {
-    setIssueModalOpen,
-    setIssueID,
-    setFinishedParams,
-    setPrintModalOpen,
-  } = props;
+  const { setIssueID, setFinishedParams, setPrintModalOpen } = props;
   return {
     api: "querytransferCardRelation",
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
     flowCardType: "flowCard",
     // 下发成品
-    rowKey: "transferCardCode",
+    // rowKey: "transferCardCode",
     needIssueFinished: true,
+    defaultParam: {
+      printPage: "1",
+      finishTimeStart: dayjs().format("YYYY-MM-DD"),
+      finishTimeEnd: dayjs().format("YYYY-MM-DD"),
+    },
+    noPaging: true,
     columns: [
       {
         title: "流转卡类型",

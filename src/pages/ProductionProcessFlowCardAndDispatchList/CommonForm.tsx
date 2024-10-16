@@ -10,15 +10,14 @@ import {
   RenderSelect,
   transFormToKg,
   transFormToPcs,
-  uniqueArray,
   validateNotZero,
 } from "@/utils";
-import { FormInstance, message } from "antd";
+import { App, FormInstance } from "antd";
 import { IData } from "./indexType";
 import { useEffect, useState } from "react";
 import styles from "./index.module.scss";
 import { FINISHED_CODE, GET_FURNACE_ERROR } from "@/constants";
-import { GET_MATERIAL_ERROR, GET_MATERIAL_SUCCESS } from "@/constants";
+
 import {
   DEFAULT_RED,
   NO_OPTIONS_DATA,
@@ -59,6 +58,7 @@ const CommonForm = (props: IProps) => {
   const isUnfinished32to31 = needIssueFinished;
   // 32下发31 31成品
   const isFinished32to31 = notSelfIssue;
+  const { message } = App.useApp();
   // 热处理炉台
   const [heatTreatmentFurnaces, setHeatTreatmentFurnaces] = useState<any[]>([]);
   // 最大流转数量
@@ -269,12 +269,14 @@ const CommonForm = (props: IProps) => {
                 pnumber: item?.pnumber,
               })) || []),
             ]}
+            optionKey="pnumber"
             placeholder={
               !data?.trademarkList || data?.trademarkList?.length === 0
                 ? NO_OPTIONS_DATA
                 : "请选择商标"
             }
             onSelect={(e: any, record: any) => {
+              // debugger;
               const pnumber = record?.pnumber;
               if (pnumber) {
                 setPNum(pnumber);
@@ -316,7 +318,7 @@ const CommonForm = (props: IProps) => {
           titleStyle={normalStyle}
           style={{ lineHeight: "24px", ...normalStyle18 }}
           title="图号"
-          name="itmTEID"
+          name="goodsItmTEID"
         />
         <ReadOnlyInput
           titleStyle={normalStyle}

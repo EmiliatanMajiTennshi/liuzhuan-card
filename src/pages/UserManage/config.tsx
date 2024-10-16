@@ -226,7 +226,7 @@ const getModalConfig = ({
 };
 
 const formConfig: IFormConfig = {
-  span: 8,
+  span: 4,
   formTitle: "操作",
   formExtend: true,
   buttons: (props: IButtons) => {
@@ -319,6 +319,12 @@ const formConfig: IFormConfig = {
     {
       key: "account",
       name: "用户账号",
+      children: <Input></Input>,
+      rules: [],
+    },
+    {
+      key: "username",
+      name: "昵称",
       children: <Input></Input>,
       rules: [],
     },

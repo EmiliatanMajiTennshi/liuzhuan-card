@@ -1,13 +1,4 @@
-import {
-  ConfigProvider,
-  Empty,
-  Modal,
-  Spin,
-  Table,
-  Tabs,
-  Tooltip,
-  message,
-} from "antd";
+import { App, ConfigProvider, Empty, Modal, Spin, Table, Tabs } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./index.module.scss";
 import {
@@ -39,7 +30,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     refreshFlag,
     setRefreshFlag,
   } = props;
-
+  const { message } = App.useApp();
   // 查询到的数据
   const [searchedData, setSearchedData] = useState<any[]>([]);
   // 查询到的数据总数
@@ -114,6 +105,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     name,
     needIssueFinished,
     disableFirstLoading,
+    noPaging,
   } = _tableConfig;
 
   // 获取当前页面table数据的请求
@@ -123,7 +115,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     ...defaultParam,
     // 搜索参数
     ...searchParams,
-    pageSize: pageSize,
+    pageSize,
     pageNum: currentPage,
   };
   const fetchData = async () => {
@@ -157,13 +149,19 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   };
 
   useEffect(() => {
-    if (isFirstRender.current && disableFirstLoading) {
+    if (isFirstRender.current && (noPaging || disableFirstLoading)) {
       isFirstRender.current = false;
       return;
     }
     // 请求数据
     fetchData();
   }, [api, searchParams, currentPage, pageSize, refreshFlag]);
+
+  useEffect(() => {
+    if (noPaging) {
+      setPageSize(99999);
+    }
+  }, [noPaging]);
 
   useEffect(() => {
     // table 下拉数据
@@ -264,7 +262,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total) => `共${total}条数据`,
-            pageSizeOptions: [5, 10, 20, 50],
+            pageSizeOptions: [5, 10, 20, 50, 99999],
             current: currentPage,
             pageSize: pageSize,
             onChange: (page, pageSize) => {

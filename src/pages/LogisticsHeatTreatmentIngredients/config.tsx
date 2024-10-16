@@ -227,6 +227,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       ];
     },
     handleDate: true,
+    initValues: { heatTreatmentDelivery: "未完成" },
   };
 };
 
@@ -238,6 +239,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "queryLogisticsNew",
     queryFlowCardApi: "clickTransferCard",
     flowCardType: "flowCard",
+    defaultParam: { heatTreatmentDelivery: "未完成" },
     columns: [
       //   {
       //     title: "流转卡类型",

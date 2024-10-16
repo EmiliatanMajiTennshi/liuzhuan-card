@@ -1139,7 +1139,7 @@ export const getParams = ({
       //客户订单号
       customerOrderNo: values.ordernum,
       //图号
-      drawingNumber: values.itmTEID,
+      drawingNumber: values.goodsItmTEID,
       //生产公斤数
       productionKg: values.productKg,
       //流转公斤数
@@ -1221,7 +1221,7 @@ export const getParams = ({
       //追溯单号
       traceabilityNumber: values.traceabilityNumber,
       //图号
-      drawingNumber: values.itmTEID,
+      drawingNumber: values.goodsItmTEID,
       //生产公斤数(实际pcs也传这个)
       productionKg: values.newsupcount,
       //流转公斤数(实际pcs也传这个)
@@ -1315,10 +1315,10 @@ export const getParams = ({
       //商标
       trademark: values.trademark,
       //改制
-      reformMaterial: values.reformMaterial,
-      reformName: values.reformName,
-      reformPartNumber: values.reformPartNumber,
-      reformSpec: values.reformSpec,
+      reformMaterial: values.reformMaterial || "",
+      reformName: values.reformName || "",
+      reformPartNumber: values.reformPartNumber || "",
+      reformSpec: values.reformSpec || "",
       // //工序
       // detailProcesses: tableData.map((item, index) => {
       //   const {

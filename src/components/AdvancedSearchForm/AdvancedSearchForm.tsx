@@ -14,6 +14,7 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
     loading,
     selectedRowKeys,
     setRefreshFlag,
+    initValues,
   } = props;
   const [form] = Form.useForm();
 
@@ -96,7 +97,12 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
   };
   return (
     <>
-      <Form form={form} name="advanced_search" onFinish={onFinish}>
+      <Form
+        form={form}
+        name="advanced_search"
+        initialValues={initValues}
+        onFinish={onFinish}
+      >
         <Row gutter={gutter}>
           {formItems?.map((item, index) => {
             // 第几列

@@ -45,6 +45,7 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
                 setSearchParams={setSearchParams}
                 selectedRowKeys={selectedRowKeys}
                 setRefreshFlag={setRefreshFlag}
+                initValues={_formConfig?.initValues}
               ></AdvancedSearchForm>
             </div>
           )}

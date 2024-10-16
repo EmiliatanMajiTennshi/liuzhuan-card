@@ -96,6 +96,7 @@ export interface IData {
   orderCatchHalf?: string;
   trademark?: string;
   materialInfos?: any;
+  relation?: string;
 }
 
 export interface IFormFields {

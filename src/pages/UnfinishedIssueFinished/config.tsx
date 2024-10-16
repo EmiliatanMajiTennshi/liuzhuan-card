@@ -19,6 +19,7 @@ import { queryPartNumberByHalf, queryStandPartNumberByHalf } from "@/api";
 const formConfig: (form: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
+    span: 4,
     formItems: [
       {
         key: "type",
@@ -80,12 +81,7 @@ const formConfig: (form: any) => IFormConfig = (form) => {
       //   ),
       //   rules: [],
       // },
-      {
-        key: "specs",
-        name: "规格",
-        children: <Input></Input>,
-        rules: [],
-      },
+
       {
         key: "finishTimeStart",
         name: "完成时间开始",
@@ -118,6 +114,7 @@ const formConfig: (form: any) => IFormConfig = (form) => {
           },
         ],
       },
+
       {
         key: "finishTimeEnd",
         name: "完成时间结束",
@@ -150,6 +147,24 @@ const formConfig: (form: any) => IFormConfig = (form) => {
             return undefined as unknown as RuleObject;
           },
         ],
+      },
+      {
+        key: "specs",
+        name: "规格",
+        children: <Input></Input>,
+        rules: [],
+      },
+      {
+        key: "GY1",
+        name: "第一道工艺",
+        children: <Input></Input>,
+        rules: [],
+      },
+      {
+        key: "GY2",
+        name: "第二道工艺",
+        children: <Input></Input>,
+        rules: [],
       },
     ],
     handleDate: true,

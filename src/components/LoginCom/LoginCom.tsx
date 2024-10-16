@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { FormProps } from "antd";
-import { Button, Form, Input, message } from "antd";
+import { App, Button, Form, Input } from "antd";
 import { loginRequest } from "@/api";
 import { useNavigate } from "react-router-dom";
 import { FieldType, TRes } from "./LoginComType";
@@ -13,6 +13,7 @@ import { FieldType, TRes } from "./LoginComType";
  */
 const LoginCom = (props: any) => {
   // const { setActiveTabKey } = props;
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   //   const [remember, setRemember] = useState(true);

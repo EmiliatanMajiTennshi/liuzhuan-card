@@ -3,7 +3,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Select, Tag, message } from "antd";
+import { App, Button, DatePicker, Input, Select, Tag, message } from "antd";
 import { RuleObject } from "antd/es/form";
 import {
   getHeatTreatmentFurnacePlatformsList,

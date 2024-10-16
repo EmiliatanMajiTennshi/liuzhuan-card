@@ -3,10 +3,8 @@ import {
   ReadOnlyInput,
   RenderQRCode,
   RenderSelect,
-  transFormToKg,
-  transFormToPcs,
 } from "@/utils";
-import { FormInstance, message } from "antd";
+import { App, FormInstance } from "antd";
 import { IData } from "./indexType";
 
 import styles from "./index.module.scss";
@@ -25,7 +23,7 @@ interface IProps {
 }
 const FlowCardForm = (props: IProps) => {
   const { data, form, mainsize } = props;
-
+  const { message } = App.useApp();
   const isSemiFinished = data?.itmid?.startsWith("32");
   // 需要同步操作工和检验员的工艺列表
 
@@ -211,9 +209,6 @@ const FlowCardForm = (props: IProps) => {
           colSpan={2}
           form={form}
           style={{ lineHeight: "120%", ...normalStyle18 }}
-          defaultValue={
-            isSemiFinished ? "" : data?.furnaceNo || mainsize?.allID || ""
-          }
         />
         <th colSpan={3} style={{ textAlign: "center", ...normalStyle }}>
           生产入库扫描条码

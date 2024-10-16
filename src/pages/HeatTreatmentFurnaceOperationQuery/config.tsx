@@ -157,7 +157,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         },
         {
           key: "createTimeEnd",
-          name: "创建时间开始",
+          name: "创建时间结束",
           children: (
             <DatePicker
               style={{ width: "100%" }}
@@ -216,23 +216,25 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       ];
     },
     handleDate: true,
+    initValues: {
+      createTimeStart: dayjs(),
+      createTimeEnd: dayjs(),
+    },
   };
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setRefreshFlag, setIssueModalOpen, setIssueID, setPrintModalOpen } =
-    props;
+  const { setIssueModalOpen, setIssueID, setPrintModalOpen } = props;
   return {
     name: "HeatTreatmentFurnaceOperationQuery",
     rowKey: "id", // 唯一标识
     api: "queryTransferCardNew",
     defaultParam: {
       heatTreatmentFurnacePlatformsStatus: "1",
-
       createTimeStart: dayjs().format("YYYY-MM-DD"),
       createTimeEnd: dayjs().format("YYYY-MM-DD"),
     },
-
+    noPaging: true,
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
     flowCardType: "flowCard",
     columns: [

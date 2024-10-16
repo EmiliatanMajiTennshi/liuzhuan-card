@@ -329,6 +329,7 @@ const RenderSelect = ({
   disabled,
   remark,
   form,
+  optionKey,
 }: {
   title: string;
   name: string;
@@ -347,14 +348,15 @@ const RenderSelect = ({
   disabled?: boolean;
   remark?: string;
   form?: any;
+  optionKey?: string;
 }) => {
   useEffect(() => {
     if (form && defaultValue) {
-      console.log(123123);
-
       form.setFieldValue(name, defaultValue);
     }
   }, [defaultValue]);
+  console.log(options, 124124);
+
   return (
     <>
       <th style={titleStyle} colSpan={labelColSpan}>
@@ -370,7 +372,7 @@ const RenderSelect = ({
         >
           <Select
             placeholder={placeholder}
-            options={options}
+            // options={options}
             onSelect={onSelect}
             showSearch={showSearch}
             onSearch={onSearch}
@@ -378,7 +380,18 @@ const RenderSelect = ({
             loading={loading}
             allowClear
             disabled={disabled}
-          ></Select>
+          >
+            {options?.map((item) => {
+              return (
+                <Select.Option
+                  {...item}
+                  key={optionKey ? item?.[optionKey as "value"] : item.value}
+                >
+                  {item?.label}
+                </Select.Option>
+              );
+            })}
+          </Select>
         </Form.Item>
         <span style={{ color: "red" }}>{remark && <>提示：{remark}</>}</span>
       </td>

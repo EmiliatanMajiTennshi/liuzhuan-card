@@ -8,8 +8,8 @@ import {
   Skeleton,
   Spin,
   Table,
-  message,
   Input,
+  App,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import logo from "@/assets/images/logo.png";
@@ -125,6 +125,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     finishedPrintProps,
   } = props;
   // 数据
+  const { message } = App.useApp();
   const [data, setData] = useState<IData>({});
   const [dataString, setDataString] = useState<string>("");
   // loading
@@ -557,9 +558,9 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         const processList = tableData?.map((item) => {
           const formatItem = convertArraysToString(item);
           return {
+            inspectionLevel: "",
             ...formatItem,
             verifierBarcode: formatItem?.verifyId,
-
             transferCardCode: data?.reworkTransferCardCode,
           };
         });
@@ -601,6 +602,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         const processList = tableData?.map((item) => {
           const formatItem = convertArraysToString(item);
           return {
+            inspectionLevel: "",
             ...formatItem,
             verifierBarcode: formatItem?.verifyId,
 
@@ -664,7 +666,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
           } else if (isSemiFinished) {
             updateTransferCardInfoByCardId({
               ...params,
-              // relation:data?.relation,
+              relation: data?.relation,
               processList,
             }).then((res) => handleSuccess(res));
           } else if (isFinished) {
@@ -693,7 +695,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
           // fetchData();
           // setRefreshFlag((flag) => !flag);
         };
-        // finialSave();
+        finialSave();
       }
     }
 

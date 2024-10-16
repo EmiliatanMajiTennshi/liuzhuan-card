@@ -15,13 +15,13 @@ import classNames from "classnames";
 import { RenderChart } from "@/components/RenderChart";
 import axios from "axios";
 import { AnyObject } from "antd/es/_util/type";
-import { cloneDeep, set } from "lodash";
-import { message, Skeleton } from "antd";
+import { App, Skeleton } from "antd";
 import { useRafInterval } from "ahooks";
 
 /**首页 */
 const Dashboard = () => {
   // const [data, setData] = useState([]);
+  const { message } = App.useApp();
   const [chartDataYear, setChartDataYear] = useState([]);
   const [chartDataYesterday, setChartDataYesterday] = useState([]);
   const [topLoading, setTopLoading] = useState(true);

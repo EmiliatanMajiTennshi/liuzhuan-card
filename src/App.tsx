@@ -23,7 +23,6 @@ function App() {
       {/* 关闭降权操作，移除 :where() 选择器 */}
       <AppAnt>
         {/* Ant Design 提供的包裹组件，用于使得 Message、Modal、Notification 等组件的静态调用形式能获取到上下文，从而读取移除 :where() 选择器的配置  */}
-
         <Router>
           <ConfigProvider locale={locale}>
             <RootStoreProvider>
