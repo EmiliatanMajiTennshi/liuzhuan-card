@@ -4,6 +4,7 @@ import {
 } from "@/api";
 import {
   EditAbleInput,
+  getSecondDashSubstring,
   ReadOnlyInput,
   RenderDatePicker,
   RenderQRCode,
@@ -32,8 +33,6 @@ interface IProps {
   isKg: boolean;
   form: FormInstance<any>;
 
-  mItmID: string;
-  setMItemId: React.Dispatch<React.SetStateAction<string>>;
   mainsize: any;
   needIssueFinished?: boolean;
   notSelfIssue?: boolean;
@@ -45,8 +44,7 @@ const CommonForm = (props: IProps) => {
     data,
     isKg,
     form,
-    mItmID,
-    setMItemId,
+
     mainsize,
     needIssueFinished,
     notSelfIssue,
@@ -65,14 +63,11 @@ const CommonForm = (props: IProps) => {
   const [liuMaxKg, setLiuMaxKg] = useState(0);
   const [liuMaxPCS, setLiuMaxPCS] = useState(0);
 
-  const [pNum, setPNum] = useState();
-  console.log(mItmID, 12414);
+  const [pNum, setPNum] = useState<string>();
+  const [mItmID, setMItemId] = useState<string>();
 
   // const [materialItemId,setMItemId]
-  const [partNumberOptions, setPartNumberOPtions] = useState<AnyObject>({
-    options: [],
-    loading: false,
-  });
+
   const isFinished =
     data?.itmid?.substring(0, 2) === FINISHED_CODE || isFinished32to31;
   useEffect(() => {
@@ -93,38 +88,40 @@ const CommonForm = (props: IProps) => {
           console.log(err);
         });
     }
+    // 料号是否有小尾巴
+    const pCode = getSecondDashSubstring(data?.itmid || "");
+    if (pCode) {
+      const currentTrademark = data?.trademarkList?.find(
+        (item) => item?.pnumber === pCode
+      );
+      if (currentTrademark) {
+        form?.setFieldValue("trademark", currentTrademark?.trademark);
+        setPNum(pCode);
+      }
+      // console.log(CurrentTrademark, 12422214);
+    }
   }, [data]);
 
   useEffect(() => {
-    // form.setFieldValue(
-    //   "huancount",
-    //   data?.newsupcount && data?.weight
-    //     ? isKg
-    //       ? transFormToPcs(data?.newsupcount, data?.weight)
-    //       : transFormToKg(data?.newsupcount, data?.weight)
-    //     : ""
-    // );
     form.setFieldValue("transferCardCode", data.transferCardCode);
-    // form.setFieldValue("trademark", data?.pCodeList?.[0]?.pCode);
 
     // if (isKg) {
     if (data?.productKg && data?.weight) {
-      const transferKgMax = (
+      const transferKgMax =
         parseFloat(data?.productKg) -
         parseFloat(
           isKg
             ? data?.transferNumber || "0"
             : transFormToKg(data?.transferNumber || "0", data?.weight)
-        )
-      ).toFixed(2);
+        );
       const transferPcsMax = transFormToPcs(transferKgMax, data?.weight);
 
       // 推荐流转数量KG
       const transferKg =
         data?.transferNumberKG &&
-        parseFloat(data?.transferNumberKG) <= parseFloat(transferKgMax)
+        parseFloat(data?.transferNumberKG) <= transferKgMax
           ? data?.transferNumberKG
-          : transferKgMax;
+          : transferKgMax.toFixed(4);
 
       const transferNumberPCS = data?.weight
         ? transFormToPcs(data?.transferNumberKG || "0", data?.weight)
@@ -137,7 +134,7 @@ const CommonForm = (props: IProps) => {
           ? transferNumberPCS
           : transferPcsMax;
 
-      setLiuMaxKg(parseFloat(transferKgMax));
+      setLiuMaxKg(parseFloat(transferKgMax.toFixed(4)));
       setLiuMaxPCS(parseFloat(transferPcsMax));
       if (!notSelfIssue) {
         if (data?.transferNumberKG) {
@@ -148,44 +145,11 @@ const CommonForm = (props: IProps) => {
           form.setFieldValue("transferPcs", 0);
         }
       }
-      // }
-      // } else {
-      //   if (data?.newsupcount && data?.parseWeight) {
-      //     const liucountMax = (
-      //       parseFloat(data?.newsupcount) -
-      //       parseFloat(data?.alreadySend?.alreaySendNumPCS || "0")
-      //     ).toFixed(0);
-      //     const liuhuancountMax = transFormToKg(liucountMax, data?.parseWeight);
-      //     // 推荐流转数量KG
-      //     const liucountKG =
-      //       data?.transferNumberKG &&
-      //       parseFloat(data?.transferNumberKG) <= parseFloat(liuhuancountMax)
-      //         ? data?.transferNumberKG
-      //         : liuhuancountMax;
-
-      //     const transferNumberPCS = transFormToPcs(
-      //       data?.transferNumberKG || 0,
-      //       data?.parseWeight
-      //     );
-      //     const liucountPCS =
-      //       data?.transferNumberKG &&
-      //       parseFloat(transferNumberPCS) <= parseFloat(liucountMax)
-      //         ? transferNumberPCS
-      //         : liucountMax;
-
-      //     setLiuMaxKg(parseFloat(liuhuancountMax));
-      //     setLiuMaxPCS(parseFloat(liucountMax));
-      //     if (data?.transferNumberKG) {
-      //       form.setFieldValue("liucount", liucountPCS);
-      //       form.setFieldValue("liuhuancount", liucountKG);
-      //     } else {
-      //       form.setFieldValue("liucount", 0);
-      //       form.setFieldValue("liuhuancount", 0);
-      //     }
-      //   }
     }
   }, [data]);
-
+  useEffect(() => {
+    setMItemId(data?.mItmID);
+  }, [data]);
   const debounceGetPartNumber = debounce(async function (e) {
     try {
       // setPartNumberOPtions({ options: [], loading: true });
@@ -193,7 +157,6 @@ const CommonForm = (props: IProps) => {
 
       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1 && res?.data?.data) {
         const partNumberData = res?.data?.data;
-        console.log(partNumberData, 12421);
         form.setFieldValue("mName", partNumberData?.mName);
         form.setFieldValue("mspec", partNumberData?.mspec);
         form.setFieldValue("mItmTDID", partNumberData?.mItmTDID);
@@ -205,7 +168,7 @@ const CommonForm = (props: IProps) => {
     } catch (err) {
       message?.error("没有找到对应材料");
     }
-  }, 500);
+  }, 1000);
   return (
     <tbody className={styles.normalForm}>
       <tr>
@@ -253,8 +216,9 @@ const CommonForm = (props: IProps) => {
           <RenderSelect
             title="商标"
             name="trademark"
-            defaultValue=""
+            empty
             form={form}
+            data={data}
             remark={data?.trademark}
             titleStyle={normalStyle}
             options={[
@@ -621,6 +585,7 @@ const CommonForm = (props: IProps) => {
             colSpan={1}
             labelColSpan={2}
             placeholder="请选择炉台"
+            disabled={isFinished32to31}
           />
           <RenderSelect
             title="优先顺序"
@@ -631,6 +596,7 @@ const CommonForm = (props: IProps) => {
               label: index + 1,
             }))}
             placeholder="请选择优先顺序"
+            disabled={isFinished32to31}
           />
           <RenderDatePicker
             title="流转时间"
@@ -638,6 +604,7 @@ const CommonForm = (props: IProps) => {
             colSpan={2}
             titleStyle={normalStyle}
             showTime
+            disabled={isFinished32to31}
           />
         </tr>
       )}

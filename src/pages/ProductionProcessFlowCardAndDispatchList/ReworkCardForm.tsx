@@ -1,4 +1,5 @@
 import {
+  queryPartNumberInfo,
   queryReformInfoByItemId,
   queryReviewFormNumber,
   queryTransferCard,
@@ -19,28 +20,26 @@ import { useEffect, useState } from "react";
 import { normalStyle, normalStyle18 } from "./styles";
 import styles from "./index.module.scss";
 interface IProps {
-  dataString: string;
   form: FormInstance<any>;
   options: AnyObject;
   setOptions: React.Dispatch<React.SetStateAction<AnyObject>>;
   data: any;
 }
 const ReworkCardForm = (props: IProps) => {
-  const { dataString, form, options, setOptions, data } = props;
+  const { form, options, setOptions, data } = props;
 
   const [transferCardRequired, setTransferCardRequired] = useState(false);
 
   // 是否是改制 改制要多一些字段
   const [isGaizhi, setIsGaizhi] = useState(false);
   useEffect(() => {
-    form.setFieldValue("reworkTransferCardCode", dataString);
     form.setFieldValue("productType", data?.transferCardCode ? "新料" : "老料");
     form.setFieldValue("reworkType", data?.reformPartNumber ? "改制" : "返工");
     // 有流转卡号
     setTransferCardRequired(data?.transferCardCode);
     // 有改制料号
     setIsGaizhi(data?.reformPartNumber);
-  }, [dataString, data]);
+  }, [data]);
 
   // 防抖
   // 流转卡
@@ -60,7 +59,7 @@ const ReworkCardForm = (props: IProps) => {
     } catch (err) {
       console.log(err);
     }
-  }, 500);
+  }, 1000);
   const debounceGetReworkNumber = debounce(async function (e) {
     try {
       setOptions({ ...options, reworkNumberOptionsLoading: true });
@@ -77,7 +76,7 @@ const ReworkCardForm = (props: IProps) => {
     } catch (err) {
       console.log(err);
     }
-  }, 500);
+  }, 1000);
   const debounceGetReformPartNumber = debounce(async function (e) {
     try {
       setOptions({ ...options, reformPartNumberOptionsLoading: true });
@@ -94,13 +93,14 @@ const ReworkCardForm = (props: IProps) => {
     } catch (err) {
       console.log(err);
     }
-  }, 500);
+  }, 1000);
   const debounceGetPartNumber = debounce(async function (e) {
     try {
       setOptions({ ...options, partNumberOptionsLoading: true });
-      const res = await queryTransferCardNew({ itmid: e });
+      if (e === "") return;
+      const res = await queryPartNumberInfo({ partNumber: e });
       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-        const partNumberData = res?.data?.data || [];
+        const partNumberData = [res?.data?.data] || [];
 
         const _options = {
           ...options,
@@ -112,7 +112,7 @@ const ReworkCardForm = (props: IProps) => {
     } catch (err) {
       console.log(err);
     }
-  }, 500);
+  }, 1000);
   return (
     <tbody className={styles.normalForm}>
       <tr>
@@ -135,6 +135,12 @@ const ReworkCardForm = (props: IProps) => {
             form.setFieldValue("specs", undefined);
             form.setFieldValue("material", undefined);
             form.setFieldValue("trademark", undefined);
+            if (e === "老料") {
+              form.setFieldValue(
+                "traceabilityNumber",
+                data?.traceabilityNumber
+              );
+            }
           }}
         ></RenderSelect>
         <RenderSelect
@@ -164,8 +170,8 @@ const ReworkCardForm = (props: IProps) => {
                   partNumber: item?.itmid,
                   traceabilityNumber: item?.traceabilityNumber,
                   name: item?.name,
-                  specs: item?.spec,
-                  materialTexture: item?.materialTexture,
+                  spec: item?.spec,
+                  materialTexture: item?.itmtdid,
                   trademark: item?.trademark,
                 };
               }) || []
@@ -178,14 +184,14 @@ const ReworkCardForm = (props: IProps) => {
             onSelect={(e: any, record: any) => {
               const {
                 partNumber,
-                specs,
+                spec,
                 traceabilityNumber,
                 name,
                 materialTexture,
                 trademark,
               } = record;
               form.setFieldValue("partNumber", partNumber);
-              form.setFieldValue("specs", specs);
+              form.setFieldValue("spec", spec);
               form.setFieldValue("traceabilityNumber", traceabilityNumber);
               form.setFieldValue("name", name);
               form.setFieldValue("material", materialTexture);
@@ -222,19 +228,17 @@ const ReworkCardForm = (props: IProps) => {
             placeholder="请输入料号进行搜索"
             required
             options={
-              uniqueArray(options?.partNumberOptions, "itmid")?.map(
-                (item: any) => {
-                  return {
-                    value: item?.itmid,
-                    label: item?.itmid,
-                    // traceabilityNumber: item?.traceabilityNumber,
-                    name: item?.name,
-                    specs: item?.spec,
-                    materialTexture: item?.itmtdid,
-                    trademark: item?.trademark,
-                  };
-                }
-              ) || []
+              options?.partNumberOptions?.map((item: any) => {
+                return {
+                  value: item?.itmid,
+                  label: item?.itmid,
+                  // traceabilityNumber: item?.traceabilityNumber,
+                  name: item?.name,
+                  spec: item?.spec,
+                  materialTexture: item?.itmtdid,
+                  trademark: item?.trademark,
+                };
+              }) || []
             }
             titleStyle={{ color: "red", ...normalStyle }}
             showSearch
@@ -242,13 +246,13 @@ const ReworkCardForm = (props: IProps) => {
             onSearch={debounceGetPartNumber}
             onSelect={(e: any, record: any) => {
               const {
-                specs,
+                spec,
                 // traceabilityNumber,
                 name,
                 materialTexture,
                 trademark,
               } = record;
-              form.setFieldValue("specs", specs);
+              form.setFieldValue("spec", spec);
               // form.setFieldValue("traceabilityNumber", traceabilityNumber);
               form.setFieldValue("name", name);
               form.setFieldValue("material", materialTexture);
@@ -268,12 +272,11 @@ const ReworkCardForm = (props: IProps) => {
             placeholder="输入流转卡编号后自动填写"
           />
         ) : (
-          <EditAbleInput
+          <ReadOnlyInput
             titleStyle={normalStyle}
             style={{ lineHeight: "24px", ...normalStyle18 }}
             title="追溯单号"
             name="traceabilityNumber"
-            placeholder="请输入追溯单号"
           />
         )}
 
@@ -328,7 +331,7 @@ const ReworkCardForm = (props: IProps) => {
             titleStyle={normalStyle}
             style={{ lineHeight: "24px", ...normalStyle18 }}
             title="规格"
-            name="specs"
+            name="spec"
             placeholder="输入流转卡编号后自动填写"
           />
         ) : (
@@ -336,7 +339,7 @@ const ReworkCardForm = (props: IProps) => {
             titleStyle={normalStyle}
             style={{ lineHeight: "24px", ...normalStyle18 }}
             title="规格"
-            name="specs"
+            name="spec"
             placeholder="输入料号后自动填写"
           />
         )}
@@ -470,6 +473,15 @@ const ReworkCardForm = (props: IProps) => {
           ></ReadOnlyInput>
         </tr>
       )}
+      <tr>
+        <td colSpan={8}>
+          <span style={{ ...normalStyle18, color: "red", lineHeight: "40px" }}>
+            *
+            外发工艺名称：电泳、电泳涂装、交美特、零件交美特、达克罗、零件达克罗、镀镍、化学镀镍、镀硬铬、镀锌、镀铜、
+            发黑、磷化发黑、外协、热处理（外协）
+          </span>
+        </td>
+      </tr>
     </tbody>
   );
 };

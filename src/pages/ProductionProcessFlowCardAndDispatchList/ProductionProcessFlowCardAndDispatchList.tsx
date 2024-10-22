@@ -127,11 +127,9 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   // 数据
   const { message } = App.useApp();
   const [data, setData] = useState<IData>({});
-  const [dataString, setDataString] = useState<string>("");
   // loading
   const [loading, setLoading] = useState(false);
-  // 材料id
-  const [mItmID, setMItemId] = useState<string>("");
+
   // table Data
   const [tableData, setTableData] = useState<any[]>([]);
   // 选项合集
@@ -153,19 +151,11 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const [equipmentList, setEquipmentList] = useState<IEquipmentItem[]>([]);
   // 用来存放半品同时打印成品时的成品数据
   const [printFinishedData, setPrintFinishedData] = useState<IData>({});
+  // 下发 保存按钮的loading
+  const [saveLoading, setSaveLoading] = useState(false);
 
   const cancelTokenSource = useRef<CancelTokenSource>();
 
-  const { run: submit } = useThrottleFn(
-    () => {
-      console.log(1241);
-
-      form.submit();
-    },
-    {
-      wait: 5000,
-    }
-  );
   const handleSuccess = (res: any) => {
     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
       message.success(res?.data?.data);
@@ -187,12 +177,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
           setRefreshFlag((flag) => !flag);
         });
       } else {
-        console.log(
-          1231231,
-          data?.transferCardCode,
-          printFinishedData?.transferCardCode
-        );
-
         insertPrintTransferCardNew({
           transferCardCode: data?.transferCardCode,
         }).then(() => {
@@ -325,25 +309,18 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       }
       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1 && res?.data?.data) {
         const _data = res?.data?.data;
-        //
-        if (typeof _data === "string") {
-          setDataString(_data);
-        } else {
-          const isArray = Array.isArray(_data);
-          const formData = isArray ? _data[0] : _data;
-          form.setFieldsValue(formData);
-          setData(formData);
-          setMItemId(formData?.mItmID);
-          const _tableData = getProcessesList(flowCardType, formData);
-          console.log(_tableData, 124212, formData);
-          setTableData(_tableData || []);
-          if (notSelfIssue) {
-            if (setConfirmFinished) {
-              setConfirmFinished("confirmed");
-            }
-            if (setFinishedData) {
-              setFinishedData(formData);
-            }
+        const isArray = Array.isArray(_data);
+        const formData = isArray ? _data[0] : _data;
+        form.setFieldsValue(formData);
+        setData(formData);
+        const _tableData = getProcessesList(flowCardType, formData);
+        setTableData(_tableData || []);
+        if (notSelfIssue) {
+          if (setConfirmFinished) {
+            setConfirmFinished("confirmed");
+          }
+          if (setFinishedData) {
+            setFinishedData(formData);
           }
         }
       } else {
@@ -359,6 +336,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     } finally {
       setLoading(false);
       setTabLoading && setTabLoading("finish");
+      setSaveLoading(false);
     }
   };
   // 请求table选项数据
@@ -485,9 +463,11 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     return data?.orderid?.startsWith("2PO") || data?.orderid?.startsWith("240");
   }, [data]);
 
+  const isOnly32 = data?.orderid?.endsWith("BL");
+
   const isRework = useMemo(() => {
     return (
-      queryFlowCardApi === "queryQR" ||
+      queryFlowCardApi === "queryReworkBySign" ||
       queryFlowCardApi === "queryReworkTransferCardByIdNew"
     );
   }, []);
@@ -506,8 +486,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const isKg = kgArr.indexOf(unit) !== -1;
 
   const onFinish = async (values: IFormFields) => {
-    console.log(values, 1241);
-
+    setSaveLoading(true);
     const params: any = getParams({
       form,
       data,
@@ -515,13 +494,15 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       mainsize,
       isKg,
       flowCardType,
-      dataString,
       tableData,
     });
     const isSemiFinished = data?.itmid?.startsWith("32");
     const isFinished = data?.itmid?.startsWith("31");
     // 非自制
-    const isSelf = data?.type === "自制" || data?.type === "补单";
+    const isSelf =
+      data?.type?.indexOf("自制") !== -1 ||
+      data?.type?.indexOf("补单") !== -1 ||
+      data?.type?.indexOf("盘点") !== -1;
 
     if (flowCardType === "rework") {
       const cloneErrors = cloneDeep(errors);
@@ -555,8 +536,10 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         // if (params?.detailProcesses) delete params?.detailProcesses;
         // params.id = data?.id;
         // params.type = data?.type;
+
         const processList = tableData?.map((item) => {
           const formatItem = convertArraysToString(item);
+
           return {
             inspectionLevel: "",
             ...formatItem,
@@ -599,22 +582,21 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         //   fetchData();
         //   setRefreshFlag((flag) => !flag);
         // });
-        const processList = tableData?.map((item) => {
+        const processList = tableData?.map((item, index) => {
           const formatItem = convertArraysToString(item);
           return {
+            processSeq: index + 1,
             inspectionLevel: "",
             ...formatItem,
             verifierBarcode: formatItem?.verifyId,
-
-            transferCardCode: dataString,
+            transferCardCode: data?.reworkTransferCardCode,
           };
         });
         insertReworkTransferCardNew({
           ...params,
-          reworkTransferCardCode: dataString,
+          reworkTransferCardCode: data?.reworkTransferCardCode,
           detailProcesses: processList,
         }).then((res) => handleSuccess(res));
-        console.log(values, 1241);
       }
     }
 
@@ -652,15 +634,13 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
             transferCardCode: data?.transferCardCode,
           };
         });
-        console.log(tableData, data, 12414);
 
         // 页面大保存
         const finialSave = async () => {
           if (!isSelf) {
             updateOTransferCardInfoByCardId({
-              ...(values?.transferNumberKG
-                ? { transferNumber: values?.transferNumberKG, ...params }
-                : params),
+              ...{ transferNumber: values?.transferNumberKG || "", ...params },
+
               processList,
             }).then((res) => handleSuccess(res));
           } else if (isSemiFinished) {
@@ -713,7 +693,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
           mainsize: finishedData?.mainsizeList?.[0] || {},
           isKg: kgArr.indexOf(finishedData?.unit) !== -1,
           flowCardType: "finished" as any,
-          dataString: "",
           tableData: getProcessesList("finished", finishedData || {}) || [],
         };
         const now = new Date().getTime();
@@ -795,8 +774,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     data: notSelfIssue ? { ...data, ...finishedData32to31 } : data,
     isKg,
     form,
-    mItmID,
-    setMItemId,
+
     mainsize,
     needIssueFinished,
     notSelfIssue,
@@ -829,7 +807,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   };
   // 流转卡
   const reworkCardFormProps = {
-    dataString,
     form,
     options,
     setOptions,
@@ -881,7 +858,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                     <RenderQRCode
                       title="返工卡编号"
                       name="reworkTransferCardCode"
-                      value={dataString || data?.reworkTransferCardCode || ""}
+                      value={data?.reworkTransferCardCode || ""}
                       noTd={true}
                       size={120}
                       form={form}
@@ -1018,7 +995,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                 </ConfigProvider>
 
                 {flowCardType === "rework" &&
-                  queryFlowCardApi === "queryQR" && (
+                  queryFlowCardApi === "queryReworkBySign" && (
                     <Button
                       type="dashed"
                       style={{ width: "100%", marginBottom: 10 }}
@@ -1055,26 +1032,31 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                   type="primary"
                   size="large"
                   onClick={() => {
-                    submit();
+                    form.submit();
                   }}
+                  loading={saveLoading}
                   className={styles.footerSaveBtn}
                   disabled={
-                    notSelfIssue ||
-                    (Boolean(confirmFinished) &&
-                      confirmFinished !== "confirmed")
+                    !isOnly32 &&
+                    (notSelfIssue ||
+                      (Boolean(confirmFinished) &&
+                        confirmFinished !== "confirmed"))
                   }
                 >
                   保存
-                  {needIssueFinished &&
+                  {!isOnly32 &&
+                    needIssueFinished &&
                     confirmFinished === "undo" &&
                     "（请切换到成品流转卡确认无误）"}
-                  {needIssueFinished &&
+                  {!isOnly32 &&
+                    needIssueFinished &&
                     confirmFinished === "loading" &&
                     "（请等待成品流转卡加载完成）"}
-                  {needIssueFinished &&
+                  {!isOnly32 &&
+                    needIssueFinished &&
                     confirmFinished === "confirmed" &&
                     "（同时保存对应成品）"}
-                  {notSelfIssue && "（请前往半品界面保存）"}
+                  {!isOnly32 && notSelfIssue && "（请前往半品界面保存）"}
                 </Button>
               )}
             </div>

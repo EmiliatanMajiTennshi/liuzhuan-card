@@ -280,6 +280,12 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
             },
           ],
         },
+        {
+          key: "relation",
+          name: "关联号",
+          children: <Input></Input>,
+          rules: [],
+        },
       ];
     },
     handleDate: true,
@@ -320,6 +326,14 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "traceabilityNumber",
         width: 110,
       },
+
+      {
+        title: "关联号",
+        dataIndex: "relation",
+        key: "relation",
+        width: 110,
+      },
+
       {
         title: "字样",
         dataIndex: "trademark",

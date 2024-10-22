@@ -3,6 +3,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import { formatDate } from "@/utils";
 import { Button, DatePicker, Input, message, Select, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
 import dayjs from "dayjs";
@@ -25,7 +26,7 @@ const formConfig: (form: any) => IFormConfig = (form) => {
         rules: [],
       },
       {
-        key: "barCode",
+        key: "orderid",
         name: "生产订单条码",
         children: <Input></Input>,
         rules: [],
@@ -37,7 +38,7 @@ const formConfig: (form: any) => IFormConfig = (form) => {
         rules: [],
       },
       {
-        key: "partNumber",
+        key: "itmid",
         name: "零件料号",
         children: <Input></Input>,
         rules: [],
@@ -149,10 +150,10 @@ const formConfig: (form: any) => IFormConfig = (form) => {
       },
     ],
     handleDate: true,
-    initValues: {
-      finishTimeStart: dayjs(),
-      finishTimeEnd: dayjs(),
-    },
+    // initValues: {
+    //   finishTimeStart: dayjs(),
+    //   finishTimeEnd: dayjs(),
+    // },
   };
 };
 
@@ -165,12 +166,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     // 下发成品
     // rowKey: "transferCardCode",
     needIssueFinished: true,
-    defaultParam: {
-      printPage: "1",
-      finishTimeStart: dayjs().format("YYYY-MM-DD"),
-      finishTimeEnd: dayjs().format("YYYY-MM-DD"),
-    },
-    noPaging: true,
+    // defaultParam: {
+    //   // printPage: "1",
+    //   finishTimeStart: formatDate(),
+    //   finishTimeEnd: formatDate(),
+    // },
+    // noPaging: true,
     columns: [
       {
         title: "流转卡类型",

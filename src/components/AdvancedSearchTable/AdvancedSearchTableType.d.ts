@@ -40,6 +40,10 @@ export interface ITableConfig {
   disableFirstLoading?: boolean;
   // 不分页
   noPaging?: boolean;
+  // 只读
+  readonly?: boolean;
+  // 被下发的api
+  issuedFlowCardApi?: string;
 }
 
 /**
@@ -100,10 +104,13 @@ export interface ITableConfigProps {
   tableOptions: AnyObject;
   setTableOptions: React.Dispatch<React.SetStateAction<AnyObject>>;
   setFinishedParams: React.Dispatch<React.SetStateAction<AnyObject>>;
+  setMultiDetailModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface IIssueID {
   orderid?: string;
   itmid?: string;
   transferCardCode?: string;
+  U9LineNo?: string;
+  CardID?: string;
 }

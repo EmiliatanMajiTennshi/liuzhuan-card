@@ -3,23 +3,26 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Select, TimePicker, message } from "antd";
+import { Button, DatePicker, Input, message, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
 import {
-  changeFurnacePlatformById,
   getHeatTreatmentFurnacePlatformsList,
   insertFurnaceChange,
+  updateFTransferCardInfoByCardId,
 } from "@/api";
-import { kgArr } from "@/constants";
-import { sumTransferNumberRender } from "@/utils/tableRender";
 import {
-  DEFAULT_ORANGE,
+  emptyRender,
+  emptyRenderCustomPlaceHolder,
+  sumTransferNumberRender,
+} from "@/utils/tableRender";
+import {
   SUCCESS_CODE,
   UPDATE_FAILED,
   UPDATE_SUCCESS,
 } from "@/constants/constants";
-
+import dayjs from "dayjs";
+import { formatTime } from "@/utils";
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
@@ -166,7 +169,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   // 获取炉台
   const furnaceOptionsApi = "getHeatTreatmentFurnacePlatformsList";
   return {
-    rowKey: "id", // 唯一标识
+    rowKey: "transferCardCode", // 唯一标识
     api: "queryFurnaceChangeNew",
     optionList: [furnaceOptionsApi],
     columns: [
@@ -191,25 +194,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
 
       {
-        title: "工艺",
-        dataIndex: "process",
-        key: "process",
-        width: 100,
-        // render: (list: any[]) => {
-        //   return (
-        //     <span
-        //       style={{
-        //         fontWeight: "bold",
-        //         color: DEFAULT_ORANGE,
-        //         fontSize: 16,
-        //       }}
-        //     >
-        //       {list[0]?.processName}
-        //     </span>
-        //   );
-        // },
-      },
-      {
         title: "生产订单条码",
         dataIndex: "barCode",
         key: "barCode",
@@ -227,7 +211,13 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "品名",
         dataIndex: "name",
         key: "name",
-        width: 150,
+        width: 100,
+      },
+      {
+        title: "流转时间",
+        dataIndex: "transferTime",
+        key: "transferTime",
+        width: 100,
       },
       {
         title: "规格",
@@ -271,20 +261,20 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "完工数量",
         dataIndex: "finishedNumber",
         key: "finishedNumber",
-        render: sumTransferNumberRender,
+        render: (text) => emptyRenderCustomPlaceHolder(text, "0"),
         width: 120,
       },
-      {
-        title: "炉台",
-        dataIndex: "heatTreatmentFurnacePlatform",
-        key: "heatTreatmentFurnacePlatform",
-        fixed: "right",
-        width: 130,
-      },
+      // {
+      //   title: "炉台",
+      //   dataIndex: "heatTreatmentFurnacePlatform",
+      //   key: "heatTreatmentFurnacePlatform",
+      //   fixed: "right",
+      //   width: 130,
+      // },
       {
         title: "炉台-变更",
-        dataIndex: "furnaceChange",
-        key: "furnaceChange",
+        dataIndex: "heatTreatmentFurnacePlatform",
+        key: "heatTreatmentFurnacePlatform",
         fixed: "right",
         width: 180,
         render: (text, record) => {
@@ -298,8 +288,9 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   label: item?.name,
                 })
               )}
-              onSelect={(e) => {
-                record.furnaceChange = e;
+              defaultValue={text}
+              onChange={(e) => {
+                record.heatTreatmentFurnacePlatform = e;
               }}
               allowClear
             ></Select>
@@ -308,11 +299,11 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "优先顺序",
-        key: "priorityOrder",
-        dataIndex: "priorityOrder",
+        key: "priority",
+        dataIndex: "priority",
         width: 160,
         fixed: "right",
-        render: () => (
+        render: (text, record) => (
           <Select
             style={{ width: "100%" }}
             title="优先顺序"
@@ -320,6 +311,10 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               value: index + 1,
               label: index + 1,
             }))}
+            defaultValue={text}
+            onChange={(e) => {
+              record.priority = e || "";
+            }}
             placeholder="请选择优先顺序"
             allowClear
           />
@@ -327,8 +322,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
       {
         title: "流转时间",
-        dataIndex: "createTime",
-        key: "createTime",
+        dataIndex: "transferTime",
+        key: "transferTime",
         width: 160,
         fixed: "right",
         render: (text, record) => (
@@ -337,8 +332,10 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
             style={{ width: "100%" }}
             placeholder="请选择流转时间"
             onChange={(e) => {
-              record.createTime = e;
+              console.log(e, 1214);
+              record.transferTime = e ? formatTime(e) : "";
             }}
+            defaultValue={text ? dayjs(text) : undefined}
             allowClear
           ></DatePicker>
         ),
@@ -358,18 +355,39 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               onClick={() => {
                 console.log(record, 12414);
 
-                // insertFurnaceChange({
+                insertFurnaceChange({
+                  transferCardCode: record?.transferCardCode,
+                  heatTreatmentFurnacePlatform:
+                    record?.heatTreatmentFurnacePlatform,
+                  priority: record?.priority || "",
+                  transferTime: record?.transferTime || "",
+                  // createTime: record?.createTime,
+                  // id: record?.id,
+                  // name: record?.furnaceChange,
+                }).then((res) => {
+                  if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                    message.success(
+                      `炉台 ${res?.data?.data || UPDATE_SUCCESS}`
+                    );
+                    setRefreshFlag((flag) => !flag);
+                  } else {
+                    message.error(` ${res?.data?.data || UPDATE_FAILED}`);
+                  }
+                });
+                // updateFTransferCardInfoByCardId({
                 //   transferCardCode: record?.transferCardCode,
-                //   heatTreatmentFurnacePlatform: record?.furnaceChange,
-                //   createTime: record?.createTime,
-                //   // id: record?.id,
-                //   // name: record?.furnaceChange,
+                //   priority: record?.priority || "",
+                //   transferTime: record?.transferTime || "",
                 // }).then((res) => {
                 //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-                //     message.success(res?.data?.data || UPDATE_SUCCESS);
+                //     message.success(
+                //       `流转时间 ${res?.data?.data || UPDATE_SUCCESS}`
+                //     );
                 //     setRefreshFlag((flag) => !flag);
                 //   } else {
-                //     message.error(res?.data?.data || UPDATE_FAILED);
+                //     message.error(
+                //       `流转时间 ${res?.data?.data || UPDATE_FAILED}`
+                //     );
                 //   }
                 // });
               }}

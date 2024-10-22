@@ -11,12 +11,12 @@ module.exports = function (app) {
     })
   );
   app.use(
-    "/apiLz",
+    "/apiDJ",
     createProxyMiddleware({
-      target: "http://192.168.20.65:8081/api",
+      target: "http://192.168.20.222:90/lz",
       changeOrigin: true,
       pathRewrite: {
-        "/apiLz": "",
+        "/apiDJ": "",
       },
     })
   );

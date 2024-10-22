@@ -171,7 +171,7 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
         >
           <ProductionProcessFlowCardAndDispatchList
             flowCardType="rework"
-            queryFlowCardApi="queryQR"
+            queryFlowCardApi="queryReworkBySign"
             setRefreshFlag={setRefreshFlag}
             setReworkModalOpen={setReworkModalOpen}
           />

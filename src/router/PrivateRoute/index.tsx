@@ -272,6 +272,18 @@ const PrintProductTransferCard = React.lazy(() =>
     default: res.PrintProductTransferCard,
   }))
 );
+/**多工艺流转管理 */
+const MutiProcessTransfer = React.lazy(() =>
+  import("@/pages/MutiProcessTransfer").then((res) => ({
+    default: res.MutiProcessTransfer,
+  }))
+);
+/**多工艺流转查询 */
+const MutiProcessTransferQuery = React.lazy(() =>
+  import("@/pages/MultiProcessTransferQuery").then((res) => ({
+    default: res.MutiProcessTransferQuery,
+  }))
+);
 
 /**路由 */
 const routeMap = [
@@ -421,6 +433,14 @@ const routeMap = [
   {
     path: "/print_product_transfer_card",
     element: <PrintProductTransferCard />,
+  },
+  {
+    path: "/multi_process_transfer",
+    element: <MutiProcessTransfer />,
+  },
+  {
+    path: "/multi_process_transfer_query",
+    element: <MutiProcessTransferQuery />,
   },
 ];
 

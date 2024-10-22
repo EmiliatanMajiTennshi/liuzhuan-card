@@ -57,7 +57,7 @@ const getLZCardNumber = () => {
 };
 
 /** 把时间格式化成YYYY-MM-DD */
-const formatDate = (time: any) => {
+const formatDate = (time?: any) => {
   return dayjs(time).format("YYYY-MM-DD");
 };
 
@@ -70,7 +70,7 @@ const formatTime = (time: any) => {
 const transFormToKg = (number: number | string, weight: number | string) => {
   return (
     parseFloat(number.toString()) * parseFloat(weight.toString())
-  ).toFixed(2);
+  ).toFixed(4);
 };
 /**kg转psc */
 const transFormToPcs = (number: number | string, weight: number | string) => {
@@ -82,14 +82,16 @@ const transFormToPcs = (number: number | string, weight: number | string) => {
   ).toFixed(0);
 };
 /**限制小数位数 */
-const limitDecimals = (value: string | number | undefined): string => {
-  // eslint-disable-next-line no-useless-escape
-  const reg = /^(\-)*(\d+)\.(\d\d).*$/;
-
+const limitDecimals = (
+  value: string | number | undefined,
+  decimalPlaces?: number
+): string => {
+  if (!decimalPlaces || decimalPlaces < 0) return String(value);
+  const reg = new RegExp(`^(\\-)*(\\d+)\\.(\\d{0,${decimalPlaces}}).*$`);
   if (typeof value === "string") {
-    return !isNaN(Number(value)) ? value.replace(reg, "$1$2.$3") : "";
+    return !isNaN(Number(value)) ? value.replace(reg, `$1$2.$3`) : "";
   } else if (typeof value === "number") {
-    return !isNaN(value) ? String(value).replace(reg, "$1$2.$3") : "";
+    return !isNaN(value) ? String(value).replace(reg, `$1$2.$3`) : "";
   } else {
     return "";
   }
@@ -291,6 +293,14 @@ const transformDateToString = (values: any) => {
     const _tempTime = formatDate(values?.createTimeStart);
     values.createTimeStart = _tempTime;
   }
+  if (values?.time1) {
+    const _tempTime = formatDate(values?.time1);
+    values.time1 = _tempTime;
+  }
+  if (values?.time2) {
+    const _tempTime = formatDate(values?.time2);
+    values.time2 = _tempTime;
+  }
   return values;
 };
 
@@ -338,6 +348,15 @@ function convertStringToArray(str: string) {
   // 使用分号分隔字符串并转换为数组
   return str?.split(";");
 }
+
+/**用来获取有小尾巴的料号的商标 */
+function getSecondDashSubstring(value: string) {
+  const parts = value.split("-");
+  if (parts.length > 2) {
+    return "-" + parts.slice(2).join("-");
+  }
+  return false;
+}
 export {
   getTrackingNumber,
   getLZCardNumber,
@@ -357,4 +376,5 @@ export {
   handleValidate,
   convertArraysToString,
   convertStringToArray,
+  getSecondDashSubstring,
 };

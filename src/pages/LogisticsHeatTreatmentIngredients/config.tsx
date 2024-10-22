@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { RenderQRCode } from "@/utils";
+import { formatDate, RenderQRCode } from "@/utils";
 import {
   getHeatTreatmentFurnacePlatformsList,
   insertDeliveryNew,
@@ -28,6 +28,7 @@ import {
   SUCCESS_CODE,
 } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
+import dayjs from "dayjs";
 
 interface IGetModalConfigProps {
   barCode: string;
@@ -227,7 +228,12 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       ];
     },
     handleDate: true,
-    initValues: { heatTreatmentDelivery: "未完成" },
+
+    initValues: {
+      heatTreatmentDelivery: "未完成",
+      createTimeStart: dayjs(),
+      createTimeEnd: dayjs(),
+    },
   };
 };
 
@@ -239,7 +245,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "queryLogisticsNew",
     queryFlowCardApi: "clickTransferCard",
     flowCardType: "flowCard",
-    defaultParam: { heatTreatmentDelivery: "未完成" },
+    noPaging: true,
+    defaultParam: {
+      heatTreatmentDelivery: "未完成",
+      createTimeStart: formatDate(),
+      createTimeEnd: formatDate(),
+    },
     columns: [
       //   {
       //     title: "流转卡类型",

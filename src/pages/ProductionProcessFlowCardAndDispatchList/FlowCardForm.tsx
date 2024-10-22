@@ -36,9 +36,9 @@ const FlowCardForm = (props: IProps) => {
     data?.itmid?.substring(0, 2) === FINISHED_CODE;
 
   const debounceGetFurnaceNum = debounce(async function (e, flag?: boolean) {
-    if (flag && mainsize?.allID) {
-      return;
-    }
+    // if (flag && mainsize?.allID) {
+    //   return;
+    // }
     try {
       const res = await queryFurnaceByTraceabilityHalf({
         traceabilityHalf: e?.target?.value,
@@ -58,16 +58,12 @@ const FlowCardForm = (props: IProps) => {
       message.error("此追溯单号未找到对应炉批号，请重试");
       console.log(err);
     }
-  }, 500);
+  }, 1000);
   useEffect(() => {
     if (isFinished && data?.associationTraceabilityNumber) {
-      debounceGetFurnaceNum(
-        {
-          target: { value: data?.associationTraceabilityNumber },
-        },
-        true
-      );
-      console.log(data, 124);
+      debounceGetFurnaceNum({
+        target: { value: data?.associationTraceabilityNumber },
+      });
     }
   }, [data]);
   useEffect(() => {

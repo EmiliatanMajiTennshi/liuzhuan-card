@@ -1,0 +1,142 @@
+.flow-card {
+  .form {
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    label::after {
+      content: "" !important;
+    }
+    :global {
+      .ant-select-selector {
+        padding: 0;
+      }
+    }
+  }
+  :global {
+    .ant-table-cell {
+      padding: 8px 4px !important;
+    }
+  }
+}
+
+.form-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  h2 {
+    margin: 0;
+    font-size: 42px;
+  }
+  :global {
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+  }
+}
+.QRcodes {
+  display: flex;
+  justify-content: space-around;
+  padding: 0px 20px;
+}
+
+.cellForm {
+  :global {
+    .ant-form-item {
+      margin: 0;
+    }
+  }
+}
+.flow-card {
+  padding: 0 1px;
+  .printForm {
+    th,
+    td {
+      padding: 2px 2px;
+      // width: 25%; /* 设置每个单元格的宽度为表格宽度的25% */
+    }
+    // th[colspan="2"],
+    // td[colspan="2"] {
+    //   width: 25%; /* 确保带有colspan的单元格自动调整宽度 */
+    // }
+    // th[colspan="1"],
+    // td[colspan="1"] {
+    //   width: 12.5%; /* 确保带有colspan的单元格自动调整宽度 */
+    // }
+    .noPadding {
+      padding: 0;
+    }
+  }
+  .normalForm {
+    th,
+    td {
+      padding: 4px 2px;
+      // width: 25%; /* 设置每个单元格的宽度为表格宽度的25% */
+    }
+    // th[colspan="2"],
+    // td[colspan="2"] {
+    //   width: 25%; /* 确保带有colspan的单元格自动调整宽度 */
+    // }
+    // th[colspan="1"],
+    // td[colspan="1"] {
+    //   width: 12.5%; /* 确保带有colspan的单元格自动调整宽度 */
+    // }
+    .noPadding {
+      padding: 0;
+    }
+  }
+}
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  .footerTips {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    font-size: 18px;
+    margin-right: 20px;
+    .footerTextArea {
+      height: 40px;
+    }
+    h4 {
+      width: 48px;
+      margin: 0;
+    }
+  }
+  .footerSaveBtn {
+    min-width: 120px;
+  }
+  .footerForm {
+    width: 100%;
+    :global {
+      .ant-form-item {
+        margin-bottom: 0 !important;
+      }
+    }
+  }
+}
+
+.flowCardTable {
+  overflow-x: auto;
+  td {
+    padding: 16px 8px !important;
+  }
+  & > div {
+    min-width: 1450px;
+  }
+  :global {
+    .ant-input-number {
+      width: 100%;
+    }
+  }
+}

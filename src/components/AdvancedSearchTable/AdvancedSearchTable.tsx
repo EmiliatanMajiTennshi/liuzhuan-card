@@ -18,6 +18,8 @@ import {
 import { AnyObject } from "antd/es/_util/type";
 import { cloneDeep } from "lodash";
 import { getErrorMessage } from "@/utils";
+import { MultiDetail } from "@/pages/MultiDetail";
+import { UnfinishedIssueFinishedModal } from "@/pages/UnfinishedIssueFinishedModal";
 
 const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const {
@@ -43,7 +45,8 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const [issueModalOpen, setIssueModalOpen] = useState(false);
   // 打印
   const [printModalOpen, setPrintModalOpen] = useState(false);
-
+  // 多工序模态框
+  const [multiDetailModalOpen, setMultiDetailModalOpen] = useState(false);
   // 下发id
   const [issueID, setIssueID] = useState<IIssueID>({ orderid: "", itmid: "" });
   // 窗口大小 用来监听窗口变化
@@ -88,6 +91,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     tableOptions,
     setTableOptions,
     setFinishedParams,
+    setMultiDetailModalOpen,
   };
 
   const _tableConfig =
@@ -106,7 +110,10 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     needIssueFinished,
     disableFirstLoading,
     noPaging,
+    readonly,
+    issuedFlowCardApi,
   } = _tableConfig;
+  console.log(_tableConfig, 12414221, issuedFlowCardApi);
 
   // 获取当前页面table数据的请求
   const currentRequest = getApi(api);
@@ -126,7 +133,9 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
       const currentData = res?.data?.data;
       if (res?.data && currentData) {
         setSearchedData(currentData);
-        setTotalCount(res?.data?.page?.total || currentData?.[0]?.size);
+        setTotalCount(
+          res?.data?.page?.total || res?.data?.total || currentData?.[0]?.size
+        );
       } else if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
         message.info({
           content: FIND_NO_DATA,
@@ -310,6 +319,17 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           width={1600}
           className={styles.issueModal}
         >
+          {/* <UnfinishedIssueFinishedModal
+            issueID={issueID}
+            queryFlowCardApi={queryFlowCardApi}
+            flowCardType={flowCardType}
+            setRefreshFlag={setRefreshFlag}
+            issuedFlowCardApi={issuedFlowCardApi}
+            beIssuedID={{
+              orderid: finishedParams?.[0]?.barCode,
+              itmid: finishedParams?.[0]?.partNumber,
+            }}
+          /> */}
           <Spin spinning={tabLoading === "loading"}>
             <Tabs
               size="large"
@@ -424,6 +444,16 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
                 : undefined
             }
           />
+        </Modal>
+      )}
+      {multiDetailModalOpen && (
+        <Modal
+          open={multiDetailModalOpen}
+          onCancel={() => setMultiDetailModalOpen(false)}
+          footer={null}
+          width={1600}
+        >
+          <MultiDetail requestParams={issueID} readOnly={readonly} />
         </Modal>
       )}
     </div>

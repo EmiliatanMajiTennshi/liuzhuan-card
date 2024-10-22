@@ -239,6 +239,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "processList",
         key: "processList",
         render: (data: any, record: any, index: number) => {
+          console.log(record, 12412124);
+
           return (
             <>
               <Button
@@ -249,6 +251,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   setIssueID({
                     orderid: record?.barCode,
                     itmid: record?.partNumber,
+                    U9LineNo: record?.u9LineNo,
                   });
                 }}
               >

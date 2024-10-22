@@ -155,13 +155,13 @@ const formConfig: (form: any) => IFormConfig = (form) => {
         rules: [],
       },
       {
-        key: "GY1",
+        key: "process1",
         name: "第一道工艺",
         children: <Input></Input>,
         rules: [],
       },
       {
-        key: "GY2",
+        key: "process2",
         name: "第二道工艺",
         children: <Input></Input>,
         rules: [],
@@ -176,6 +176,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   return {
     api: "getUnfinishedProducts",
     queryFlowCardApi: "queryUnfinishedProductsByOI",
+    issuedFlowCardApi: "queryfinishedProductsByOI",
     flowCardType: "unfinished",
     // 下发成品
     needIssueFinished: true,

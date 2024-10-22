@@ -8,6 +8,7 @@ import TextArea from "antd/es/input/TextArea";
 import ReadOnlyFormItem from "@/components/ReadOnlyFormItem/ReadOnlyFormItem";
 import { FormInstance, Rule } from "antd/es/form";
 import classNames from "classnames";
+import { isEmpty } from "lodash";
 const RequiredDot = () => {
   return <span style={{ color: "red" }}>{" *"}</span>;
 };
@@ -228,8 +229,8 @@ const EditAbleInput = ({
               max={max}
               step={step}
               precision={precision}
-              formatter={limitDecimals}
-              parser={limitDecimals as any}
+              formatter={(value) => limitDecimals(value, precision)}
+              parser={(value) => limitDecimals(value, precision) as any}
               addonAfter={addonAfter}
               placeholder={placeholder}
             ></InputNumber>
@@ -330,6 +331,8 @@ const RenderSelect = ({
   remark,
   form,
   optionKey,
+  data,
+  empty,
 }: {
   title: string;
   name: string;
@@ -349,12 +352,14 @@ const RenderSelect = ({
   remark?: string;
   form?: any;
   optionKey?: string;
+  data?: any;
+  empty?: boolean;
 }) => {
   useEffect(() => {
-    if (form && defaultValue) {
+    if (form && (defaultValue || empty)) {
       form.setFieldValue(name, defaultValue);
     }
-  }, [defaultValue]);
+  }, [data, defaultValue]);
   console.log(options, 124124);
 
   return (
@@ -405,6 +410,7 @@ const RenderDatePicker = ({
   required,
   showTime,
   titleStyle,
+  disabled,
 }: {
   title: string;
   name: string;
@@ -412,6 +418,7 @@ const RenderDatePicker = ({
   required?: boolean;
   showTime?: boolean;
   titleStyle?: React.CSSProperties;
+  disabled?: boolean;
 }) => {
   return (
     <>
@@ -424,7 +431,11 @@ const RenderDatePicker = ({
           name={name}
           rules={[{ required: required, message: `请输入${title}` }]}
         >
-          <DatePicker showTime={showTime} size="large"></DatePicker>
+          <DatePicker
+            showTime={showTime}
+            size="large"
+            disabled={disabled}
+          ></DatePicker>
         </Form.Item>
       </td>
     </>

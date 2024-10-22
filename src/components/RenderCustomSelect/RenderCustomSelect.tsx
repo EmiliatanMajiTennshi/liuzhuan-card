@@ -106,9 +106,8 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
           mode={isMuti ? "tags" : undefined}
           onClear={() => {
             // 清空选项
-            delete record?.[barcode];
-            delete record?.[name];
-
+            record[barcode] = "";
+            record[name] = "";
             // 有些不需要部门
             if (departmentName && name === "operateName") {
               delete record?.[departmentName];
@@ -304,6 +303,7 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
               );
             }
             // 更新视图
+
             setTableData(cloneDeep(tableData));
             // 用来校验
             const cloneErrors = cloneDeep(errors);

@@ -33,7 +33,7 @@ const OutsourcingForm = (props: IProps) => {
         const transferKgMax = (
           parseFloat(data?.newsupcount) -
           parseFloat(data?.transferNumber || "0")
-        ).toFixed(2);
+        ).toFixed(4);
 
         setLiuMaxKg(parseFloat(transferKgMax));
       }
@@ -42,7 +42,7 @@ const OutsourcingForm = (props: IProps) => {
         const transferPcsMax = (
           parseFloat(data?.newsupcount) -
           parseFloat(data?.transferNumber || "0")
-        ).toFixed(2);
+        ).toFixed(4);
 
         setLiuMaxPCS(parseFloat(transferPcsMax));
       }

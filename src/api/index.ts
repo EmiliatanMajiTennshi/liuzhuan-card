@@ -101,6 +101,12 @@ import { queryOrderCount } from "./queryOrderCount";
 import { querytransferCardRelation } from "./querytransferCardRelationNew";
 import { queryFurnaceByTraceabilityHalf } from "./queryFurnaceByTraceabilityHalfNew";
 import { countProcessUnfinishToStoreYestereday } from "./countProcessUnfinishToStoreYestereday";
+import { queryPartNumberInfo } from "./queryPartNumberInfo";
+import { getMultiCardList } from "./getMultiCardList";
+import { getMultiCardDetail } from "./getMultiCardDetail";
+import { UpdateWuliu } from "./UpdateWuliu";
+import { getMultiCardgxList } from "./getMultiCardgxList";
+import { queryReworkBySign } from "./queryReworkBySign";
 
 export {
   countProductType,
@@ -244,6 +250,9 @@ export {
   getFinishedProducts,
   getOutsourcingPurchasing,
   getSupplement,
+  getMultiCardList,
+  getMultiCardDetail,
+  getMultiCardgxList,
   printReworkTransferCardNew,
   queryTransferCardNew,
   queryTransferCardToStoreNew,
@@ -264,6 +273,8 @@ export {
   queryOrderCount,
   querytransferCardRelation,
   queryFurnaceByTraceabilityHalf,
+  queryPartNumberInfo,
+  queryReworkBySign,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -276,6 +287,7 @@ export {
   updateFTransferCardInfoByCardId,
   updateOTransferCardInfoByCardId,
   updateReworkTransferCardById,
+  UpdateWuliu,
 };
 const apisNew = {
   countProcessUnfinishToStore,
@@ -285,6 +297,8 @@ const apisNew = {
   getFinishedProducts,
   getOutsourcingPurchasing,
   getSupplement,
+  getMultiCardList,
+  getMultiCardgxList,
   printReworkTransferCardNew,
   queryTransferCardNew,
   queryTransferCardToStoreNew,
@@ -305,6 +319,8 @@ const apisNew = {
   queryOrderCount,
   querytransferCardRelation,
   queryFurnaceByTraceabilityHalf,
+  queryPartNumberInfo,
+  queryReworkBySign,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -317,6 +333,7 @@ const apisNew = {
   updateFTransferCardInfoByCardId,
   updateOTransferCardInfoByCardId,
   updateReworkTransferCardById,
+  UpdateWuliu,
 };
 
 const apis = {

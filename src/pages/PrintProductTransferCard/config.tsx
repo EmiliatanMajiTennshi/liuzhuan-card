@@ -7,7 +7,8 @@ import { Button, ConfigProvider, DatePicker, Input, Select, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
 import { FINISHED_CODE, SEMI_FINISHED_CODE, SUCCESS_CODE } from "@/constants";
 import { countProductType, getHeatTreatmentFurnacePlatformsList } from "@/api";
-
+import dayjs from "dayjs";
+import { formatDate } from "@/utils";
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     span: 4,
@@ -281,6 +282,10 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       ];
     },
     handleDate: true,
+    // initValues: {
+    //   finishTimeStart: dayjs(),
+    //   finishTimeEnd: dayjs(),
+    // },
   };
 };
 
@@ -291,6 +296,11 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "queryTransferCardNew",
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
     flowCardType: "flowCard",
+    defaultParam: {
+      // printPage: "1",
+      // finishTimeStart: formatDate(),
+      // finishTimeEnd: formatDate(),
+    },
     columns: [
       {
         title: "流转卡类型",

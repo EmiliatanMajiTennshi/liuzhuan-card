@@ -27,6 +27,7 @@ import { formatTime, validateField } from "@/utils";
 import { SELF_CHECK_LIST, SUCCESS_CODE } from "@/constants";
 import { RenderCustomSelect } from "@/components/RenderCustomSelect";
 import { useEffect, useState } from "react";
+import { OnlyNumberInput } from "@/components/OnlyNumberInput";
 const getRealType = (flowCardType?: TFlowCardType) => {
   switch (flowCardType) {
     case "unfinished":
@@ -463,7 +464,7 @@ export const useTableColumns = ({
                 showTime
                 value={text ? dayjs(text) : null}
                 onChange={(e, date) => {
-                  record.finishTime = date;
+                  record.finishTime = date || "";
                   const cloneErrors = cloneDeep(errors);
                   // if (!cloneErrors[index]) {
                   //   cloneErrors[index] = {};
@@ -636,12 +637,11 @@ export const useTableColumns = ({
         render: (text: string, record: any, index: number) => {
           return (
             <>
-              <InputNumber
+              <OnlyNumberInput
                 placeholder="请输入产量"
                 value={text}
-                controls={false}
                 onChange={(e) => {
-                  record.productNumber = e;
+                  record.productNumber = e || "";
                   const cloneErrors = cloneDeep(errors);
                   // if (!cloneErrors[index]) {
                   //   cloneErrors[index] = {};
@@ -649,7 +649,7 @@ export const useTableColumns = ({
                   // cloneErrors[index].produceNumber = validateField("产量", e);
                   setErrors(cloneErrors);
                 }}
-              ></InputNumber>
+              ></OnlyNumberInput>
               {errors[index]?.productNumber && (
                 <span style={{ color: "red" }}>
                   {errors[index]?.productNumber}
@@ -689,7 +689,7 @@ export const useTableColumns = ({
         needValidate: true,
         render: (text: string, record: any, index: number) => {
           const needSync = processList?.indexOf(text) !== -1;
-          return queryFlowCardApi === "queryQR" ? (
+          return queryFlowCardApi === "queryReworkBySign" ? (
             <>
               <Input
                 style={{ width: "100%" }}
@@ -920,7 +920,8 @@ export const useTableColumns = ({
                 showTime
                 value={text ? dayjs(text) : null}
                 onChange={(e, date) => {
-                  record.finishTime = date;
+                  console.log(e, date, 1244122);
+                  record.finishTime = date || "";
                   const cloneErrors = cloneDeep(errors);
                   // if (!cloneErrors[index]) {
                   //   cloneErrors[index] = {};
@@ -1021,14 +1022,14 @@ export const useTableColumns = ({
         render: (text: string, record: any, index: number) => {
           return (
             <>
-              <InputNumber
+              <OnlyNumberInput
                 disabled={isAddNewCard}
                 placeholder="请输入产量"
                 style={{ width: "100%" }}
                 value={text}
-                controls={false}
                 onChange={(e) => {
-                  record.productNumber = e;
+                  record.productNumber = e || "";
+
                   const cloneErrors = cloneDeep(errors);
                   // if (!cloneErrors[index]) {
                   //   cloneErrors[index] = {};
@@ -1036,7 +1037,7 @@ export const useTableColumns = ({
                   // cloneErrors[index].produceNumber = validateField("产量", e);
                   setErrors(cloneErrors);
                 }}
-              ></InputNumber>
+              ></OnlyNumberInput>
               {errors[index]?.productNumber && (
                 <span style={{ color: "red" }}>
                   {errors[index]?.productNumber}
@@ -1051,7 +1052,7 @@ export const useTableColumns = ({
         dataIndex: "operate",
         key: "operate",
         width: 70,
-        hidden: queryFlowCardApi !== "queryQR",
+        hidden: queryFlowCardApi !== "queryReworkBySign",
         render: (text: string, record: any, index: number) => {
           return (
             <Popconfirm
@@ -1102,13 +1103,11 @@ export const getParams = ({
   isKg,
   flowCardType,
   remark,
-  dataString,
   tableData,
 }: IGetParams) => {
   if (!values) {
     return {};
   }
-  console.log(values, 22122);
 
   const params = {
     common: {
@@ -1291,7 +1290,7 @@ export const getParams = ({
       //流转卡编号
       transferCardCode: values.transferCardCode,
       //返工流转卡编号
-      reworkTransferCardCode: dataString || data?.reworkTransferCardCode,
+      reworkTransferCardCode: data?.reworkTransferCardCode,
       // 追溯单号
       traceabilityNumber: values.traceabilityNumber,
       //评审单号
@@ -1301,7 +1300,7 @@ export const getParams = ({
       // 品名
       name: values.name,
       //规格
-      spec: values.specs,
+      spec: values.spec,
       //返工流程
       reworkFlow: values.reworkFlow,
       //开单人

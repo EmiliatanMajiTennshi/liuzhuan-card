@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { RenderQRCode } from "@/utils";
+import { formatDate, RenderQRCode } from "@/utils";
 import { getHeatTreatmentFurnacePlatformsList } from "@/api";
 import { kgArr, DEFAULT_ORANGE, SUCCESS_CODE } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
@@ -231,8 +231,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "queryTransferCardNew",
     defaultParam: {
       heatTreatmentFurnacePlatformsStatus: "1",
-      createTimeStart: dayjs().format("YYYY-MM-DD"),
-      createTimeEnd: dayjs().format("YYYY-MM-DD"),
+      createTimeStart: formatDate(),
+      createTimeEnd: formatDate(),
     },
     noPaging: true,
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
