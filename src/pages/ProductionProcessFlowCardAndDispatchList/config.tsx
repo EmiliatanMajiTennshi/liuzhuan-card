@@ -39,8 +39,7 @@ const getRealType = (flowCardType?: TFlowCardType) => {
 };
 export const useTableColumns = ({
   flowCardType,
-  options,
-  setOptions,
+
   errors,
   setErrors,
   tableData,
@@ -52,10 +51,8 @@ export const useTableColumns = ({
   equipmentList,
 }: {
   flowCardType: ITableConfig["flowCardType"];
-  options: AnyObject;
-  setOptions: React.Dispatch<React.SetStateAction<AnyObject>>;
-  errors: any;
-  setErrors: React.Dispatch<React.SetStateAction<any>>;
+  errors?: any;
+  setErrors?: React.Dispatch<React.SetStateAction<any>>;
   tableData: any[];
   setTableData: React.Dispatch<React.SetStateAction<any[]>>;
   queryFlowCardApi?: TApi;
@@ -474,7 +471,9 @@ export const useTableColumns = ({
                   //   date as string
                   // );
 
-                  setErrors(cloneErrors);
+                  if (setErrors) {
+                    setErrors(cloneErrors);
+                  }
                 }}
               />
               {errors[index]?.finishTime && (
@@ -647,7 +646,9 @@ export const useTableColumns = ({
                   //   cloneErrors[index] = {};
                   // }
                   // cloneErrors[index].produceNumber = validateField("产量", e);
-                  setErrors(cloneErrors);
+                  if (setErrors) {
+                    setErrors(cloneErrors);
+                  }
                 }}
               ></OnlyNumberInput>
               {errors[index]?.productNumber && (
@@ -706,7 +707,9 @@ export const useTableColumns = ({
                     "工序",
                     e?.target?.value
                   );
-                  setErrors(cloneErrors);
+                  if (setErrors) {
+                    setErrors(cloneErrors);
+                  }
                 }}
               ></Input>
               {errors[index]?.processName && (
@@ -931,7 +934,9 @@ export const useTableColumns = ({
                   //   date as string
                   // );
 
-                  setErrors(cloneErrors);
+                  if (setErrors) {
+                    setErrors(cloneErrors);
+                  }
                 }}
               />
               {errors[index]?.finishTime && (
@@ -1018,8 +1023,8 @@ export const useTableColumns = ({
         dataIndex: "productNumber",
         key: "productNumber",
         width: isAddNewCard ? 100 : 140,
-
         render: (text: string, record: any, index: number) => {
+          console.log(text, 1112);
           return (
             <>
               <OnlyNumberInput
@@ -1029,13 +1034,14 @@ export const useTableColumns = ({
                 value={text}
                 onChange={(e) => {
                   record.productNumber = e || "";
-
                   const cloneErrors = cloneDeep(errors);
                   // if (!cloneErrors[index]) {
                   //   cloneErrors[index] = {};
                   // }
                   // cloneErrors[index].produceNumber = validateField("产量", e);
-                  setErrors(cloneErrors);
+                  if (setErrors) {
+                    setErrors(cloneErrors);
+                  }
                 }}
               ></OnlyNumberInput>
               {errors[index]?.productNumber && (
@@ -1065,7 +1071,9 @@ export const useTableColumns = ({
                 setTableData(cloneData);
                 const cloneErrors = cloneDeep(errors);
                 cloneErrors.splice(index, 1);
-                setErrors(cloneErrors);
+                if (setErrors) {
+                  setErrors(cloneErrors);
+                }
               }}
               onCancel={() => {}}
               okText="确认"

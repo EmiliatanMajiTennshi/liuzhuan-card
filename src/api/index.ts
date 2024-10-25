@@ -107,6 +107,8 @@ import { getMultiCardDetail } from "./getMultiCardDetail";
 import { UpdateWuliu } from "./UpdateWuliu";
 import { getMultiCardgxList } from "./getMultiCardgxList";
 import { queryReworkBySign } from "./queryReworkBySign";
+import { queryInfoByTransferCard } from "./queryInfoByTransferCard";
+import { updatePrintTransferCard } from "./updatePrintTransferCard";
 
 export {
   countProductType,
@@ -275,6 +277,7 @@ export {
   queryFurnaceByTraceabilityHalf,
   queryPartNumberInfo,
   queryReworkBySign,
+  queryInfoByTransferCard,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -288,6 +291,7 @@ export {
   updateOTransferCardInfoByCardId,
   updateReworkTransferCardById,
   UpdateWuliu,
+  updatePrintTransferCard,
 };
 const apisNew = {
   countProcessUnfinishToStore,
@@ -321,6 +325,7 @@ const apisNew = {
   queryFurnaceByTraceabilityHalf,
   queryPartNumberInfo,
   queryReworkBySign,
+  queryInfoByTransferCard,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -334,6 +339,7 @@ const apisNew = {
   updateOTransferCardInfoByCardId,
   updateReworkTransferCardById,
   UpdateWuliu,
+  updatePrintTransferCard,
 };
 
 const apis = {

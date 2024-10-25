@@ -3,10 +3,28 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, ConfigProvider, DatePicker, Input, Select, Tag } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  DatePicker,
+  Input,
+  message,
+  Popconfirm,
+  Select,
+  Tag,
+} from "antd";
 import { RuleObject } from "antd/es/form";
-import { FINISHED_CODE, SEMI_FINISHED_CODE, SUCCESS_CODE } from "@/constants";
-import { countProductType, getHeatTreatmentFurnacePlatformsList } from "@/api";
+import {
+  ERROR_MESSAGE,
+  FINISHED_CODE,
+  SEMI_FINISHED_CODE,
+  SUCCESS_CODE,
+} from "@/constants";
+import {
+  countProductType,
+  getHeatTreatmentFurnacePlatformsList,
+  updatePrintTransferCard,
+} from "@/api";
 import dayjs from "dayjs";
 import { formatDate } from "@/utils";
 const formConfig: (form?: any) => IFormConfig = (form) => {
@@ -290,7 +308,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueModalOpen, setIssueID, setPrintModalOpen } = props;
+  const { setIssueModalOpen, setIssueID, setPrintModalOpen, setRefreshFlag } =
+    props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryTransferCardNew",
@@ -463,23 +482,61 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   },
                 }}
               >
-                <Button
-                  type="primary"
-                  size="small"
-                  style={{ marginLeft: 10 }}
-                  onClick={() => {
-                    setPrintModalOpen(true);
-                    setIssueID({ transferCardCode: record?.transferCardCode });
-                  }}
-                  disabled={record?.printStatus !== "NO"}
+                <span
+                  style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  {record?.printStatus !== "NO" ? "已打印" : "打印流转卡"}
-                </Button>
+                  <Button
+                    type="primary"
+                    size="small"
+                    style={{ marginLeft: 10 }}
+                    onClick={() => {
+                      setPrintModalOpen(true);
+                      setIssueID({
+                        transferCardCode: record?.transferCardCode,
+                      });
+                    }}
+                    disabled={record?.printStatus !== "NO"}
+                  >
+                    {record?.printStatus !== "NO" ? "已打印" : "打印"}
+                  </Button>
+                  <Popconfirm
+                    title="确认恢复"
+                    description="你确定要恢复打印状态吗"
+                    onConfirm={() => {
+                      updatePrintTransferCard({
+                        transferCardCode: record?.transferCardCode,
+                      })
+                        .then((res) => {
+                          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                            message.success(res?.data?.data);
+                            setRefreshFlag((flag) => !flag);
+                          } else {
+                            message.error(res?.data?.data);
+                          }
+                        })
+                        .catch(() => {
+                          message.error(ERROR_MESSAGE);
+                        });
+                    }}
+                    onCancel={() => {}}
+                    okText="确认"
+                    cancelText="取消"
+                  >
+                    <Button
+                      type="link"
+                      size="small"
+                      style={{ marginLeft: 10 }}
+                      disabled={record?.printStatus === "NO"}
+                    >
+                      恢复
+                    </Button>
+                  </Popconfirm>
+                </span>
               </ConfigProvider>
             </>
           );
         },
-        width: 140,
+        width: 150,
         fixed: "right",
       },
     ],

@@ -1,7 +1,7 @@
 import getApi from "@/api";
 import { kgArr, SUCCESS_CODE } from "@/constants";
 import { RenderQRCode } from "@/utils";
-import { App, Form, Tabs } from "antd";
+import { App, Button, ConfigProvider, Form, Table, Tabs } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import React, { useEffect, useState } from "react";
 import logo from "@/assets/images/logo.png";
@@ -9,6 +9,10 @@ import styles from "./index.module.scss";
 import CommonForm from "../ProductionProcessFlowCardAndDispatchList/CommonForm";
 import { unit } from "@ant-design/cssinjs";
 import { Spin } from "antd/lib";
+import {
+  getParams,
+  useTableColumns,
+} from "../ProductionProcessFlowCardAndDispatchList/config";
 const UnfinishedIssueFinishedModal = (props: any) => {
   const {
     issueID,
@@ -23,6 +27,8 @@ const UnfinishedIssueFinishedModal = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [unfinishedData, setUnfinishedData] = useState<AnyObject>({});
   const [finishedData, setFinishedData] = useState<AnyObject>({});
+  const [tableDataUnfinished, setTableDataUnfinished] = useState<any[]>([]);
+  const [tableDataFinished, setTableDataFinished] = useState<any[]>([]);
   const { message } = App.useApp();
 
   const [unfinishedForm] = Form.useForm();
@@ -39,7 +45,7 @@ const UnfinishedIssueFinishedModal = (props: any) => {
         issuedRequest(beIssuedID),
       ]);
       console.log(res1, res2, 11111224, beIssuedID);
-
+      // 半品
       if (SUCCESS_CODE.indexOf(res1?.data?.code) !== -1 && res1?.data?.data) {
         const _data = res1?.data?.data;
         const isArray = Array.isArray(_data);
@@ -47,10 +53,12 @@ const UnfinishedIssueFinishedModal = (props: any) => {
         // form.setFieldsValue(formData);
         setUnfinishedData(formData);
         unfinishedForm.setFieldsValue(formData);
+        const _tableData = formData?.processList || formData?.detailProcesses;
+        setTableDataUnfinished(_tableData || []);
       } else {
         throw new Error("请求32数据时发生错误");
       }
-
+      // 成品
       if (SUCCESS_CODE.indexOf(res2?.data?.code) !== -1 && res2?.data?.data) {
         const _data = res2?.data?.data;
         const isArray = Array.isArray(_data);
@@ -58,6 +66,8 @@ const UnfinishedIssueFinishedModal = (props: any) => {
         // form.setFieldsValue(formData);
         setFinishedData(formData);
         finishedForm.setFieldsValue(formData);
+        const _tableData = formData?.processList || formData?.detailProcesses;
+        setTableDataFinished(_tableData || []);
       } else {
         throw new Error("请求31数据时发生错误");
       }
@@ -76,41 +86,125 @@ const UnfinishedIssueFinishedModal = (props: any) => {
     isKg: kgArr.indexOf(unfinishedData?.unit || "") !== -1,
     form: unfinishedForm,
     mainsize: unfinishedData?.mainsizeList?.[0] || {},
+    tableData: tableDataUnfinished,
+    setTableData: setTableDataUnfinished,
+    beIssuedForm: finishedForm,
+    beIssuedData: finishedData,
+    needIssueFinished: true,
   };
   const commonFormPropsFinished = {
     data: finishedData,
     isKg: kgArr.indexOf(finishedData?.unit || "") !== -1,
     form: finishedForm,
     mainsize: finishedData?.mainsizeList?.[0] || {},
+    tableData: tableDataFinished,
+    setTableData: setTableDataFinished,
+    notSelfIssue: true,
+  };
+  const onFinish32 = (values: any) => {
+    const value32 = values;
+    const value31 = finishedForm.getFieldsValue();
+    const params32: any = getParams({
+      form: unfinishedForm,
+      data: unfinishedData || {},
+      values: value32,
+      mainsize: unfinishedData?.mainsizeList?.[0] || {},
+      isKg: kgArr.indexOf(unfinishedData?.unit) !== -1,
+      flowCardType: "unfinished",
+      tableData: unfinishedData?.processList || unfinishedData?.detailProcesses,
+    });
+    const params31: any = getParams({
+      form: finishedForm,
+      data: finishedData || {},
+      values: value31,
+      mainsize: finishedData?.mainsizeList?.[0] || {},
+      isKg: kgArr.indexOf(finishedData?.unit) !== -1,
+      flowCardType: "finished",
+      tableData: finishedData?.processList || finishedData?.detailProcesses,
+    });
+    const now = new Date().getTime();
+    console.log(value32, value31, 12121, params32, params31);
+    fetchData();
   };
   const UnfinishedPage = (props: any) => {
     return (
       <div className={styles["flow-card"]}>
-        <Form form={props?.form} className={styles["form"]}>
-          <div className={styles["form-title"]}>
-            {/* eslint-disable-next-line jsx-a11y/alt-text */}
-            <img src={logo} width={136}></img>
-
-            <>
-              <h2 style={{ textAlign: "center" }}>生产工序流转卡暨派工单</h2>
-              <RenderQRCode
-                title="流转卡编号"
-                name="transferCardCode"
-                value={
-                  props?.data?.transferCardCode ||
-                  props?.data?.transferCard ||
-                  ""
-                }
-                noTd={true}
-                size={120}
-                form={props?.form}
-              />
-            </>
-          </div>
-          <table style={{ overflow: "hidden", tableLayout: "fixed" }}>
-            <CommonForm {...props} />
-          </table>
-        </Form>
+        <ConfigProvider
+          theme={{
+            components: {
+              Input: {
+                /* 这里是你的组件 token */
+                activeShadow: "0 0 0 0px rgba(5, 145, 255, 0.1)",
+              },
+              Table: {
+                cellFontSize: 18,
+                headerBorderRadius: 0,
+                headerBg: "#accbe9",
+                borderColor: "#000",
+              },
+            },
+          }}
+        >
+          <Form
+            form={props?.form}
+            onFinish={onFinish32}
+            className={styles["form"]}
+          >
+            <div className={styles["form-title"]}>
+              {/* eslint-disable-next-line jsx-a11y/alt-text */}
+              <img src={logo} width={136}></img>
+              <>
+                <h2 style={{ textAlign: "center" }}>生产工序流转卡暨派工单</h2>
+                <RenderQRCode
+                  title="流转卡编号"
+                  name="transferCardCode"
+                  value={
+                    props?.data?.transferCardCode ||
+                    props?.data?.transferCard ||
+                    ""
+                  }
+                  noTd={true}
+                  size={120}
+                  form={props?.form}
+                />
+              </>
+            </div>
+            <table style={{ overflow: "hidden", tableLayout: "fixed" }}>
+              <CommonForm {...props} />
+            </table>
+          </Form>
+          <>
+            <Table
+              rowKey={props?.tableData?.[0]?.id ? "id" : "hid"}
+              columns={useTableColumns({
+                flowCardType: "common",
+                tableData: props?.tableData,
+                setTableData: props?.setTableData,
+              })}
+              style={{
+                borderRight: "1px solid #000",
+                borderLeft: "1px solid #000",
+                marginBottom: 10,
+              }}
+              pagination={false}
+              dataSource={props?.tableData}
+              className={styles.flowCardTable}
+            ></Table>
+          </>
+        </ConfigProvider>
+        <div className={styles.footer}>
+          <Button
+            type="primary"
+            size="large"
+            onClick={() => {
+              props?.form?.submit();
+            }}
+            // loading={saveLoading}
+            className={styles.footerSaveBtn}
+          >
+            保存
+          </Button>
+        </div>
       </div>
     );
   };

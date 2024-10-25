@@ -1,10 +1,20 @@
+import { updatePrintTransferCard } from "@/api";
 import { IFormConfig } from "@/components/AdvancedSearchForm/AdvancedSearchFormType";
 import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
 import { formatDate } from "@/utils";
-import { Button, DatePicker, Input, message, Select, Tag } from "antd";
+import {
+  Button,
+  DatePicker,
+  Input,
+  message,
+  Popconfirm,
+  Select,
+  Tag,
+} from "antd";
 import { RuleObject } from "antd/es/form";
 import dayjs from "dayjs";
 const formConfig: (form: any) => IFormConfig = (form) => {
@@ -78,7 +88,7 @@ const formConfig: (form: any) => IFormConfig = (form) => {
       //   rules: [],
       // },
       {
-        key: "specs",
+        key: "spec",
         name: "规格",
         children: <Input></Input>,
         rules: [],
@@ -158,7 +168,8 @@ const formConfig: (form: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueID, setFinishedParams, setPrintModalOpen } = props;
+  const { setIssueID, setFinishedParams, setPrintModalOpen, setRefreshFlag } =
+    props;
   return {
     api: "querytransferCardRelation",
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
@@ -321,48 +332,75 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
           return (
             <>
               {record?.category === "半品" ? (
-                <Button
-                  type="primary"
-                  size="small"
-                  style={{ marginLeft: 10 }}
-                  onClick={() => {
-                    setPrintModalOpen(true);
-                    setIssueID({ transferCardCode: record?.transferCardCode });
-                    setFinishedParams({
-                      transferCardCode: record?.children?.[0]?.transferCardCode,
-                    });
-                    // const type = record?.type;
-                    // const handleRes = (res: any) => {
-                    //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-                    //     res?.data?.data && setFinishedParams(res?.data?.data);
-                    //   } else {
-                    //     setFinishedParams([{ partNumber: "", barCode: "" }]);
-                    //     message.error(ERROR_UNFINISHED_ISSUE_FINISHED);
-                    //   }
-                    // };
-                    // if (type === "非标零件") {
-                    //   queryPartNumberByHalf({
-                    //     barCode: record?.barCode,
-                    //     partNumber: record?.partNumber,
-                    //   })
-                    //     .then(handleRes)
-                    //     .catch((err) =>
-                    //       message.error(ERROR_UNFINISHED_ISSUE_FINISHED, err)
-                    //     );
-                    // }
-                    // if (type === "标准零件") {
-                    //   queryStandPartNumberByHalf({
-                    //     barCode: record?.barCode,
-                    //     partNumber: record?.partNumber,
-                    //   })
-                    //     .then(handleRes)
-                    //     .catch((err) => message.error(ERROR_MESSAGE, err));
-                    // }
-                  }}
-                  disabled={Boolean(record?.pCardID)}
+                <span
+                  style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  {Boolean(record?.pCardID) ? "已打印" : "打印流转卡"}
-                </Button>
+                  <Button
+                    type="primary"
+                    size="small"
+                    style={{ marginLeft: 10 }}
+                    onClick={() => {
+                      setPrintModalOpen(true);
+                      setIssueID({
+                        transferCardCode: record?.transferCardCode,
+                      });
+                      setFinishedParams({
+                        transferCardCode:
+                          record?.children?.[0]?.transferCardCode,
+                      });
+                    }}
+                    disabled={Boolean(record?.pCardID)}
+                  >
+                    {Boolean(record?.pCardID) ? "已打印" : "打印"}
+                  </Button>
+                  <Popconfirm
+                    title="确认恢复"
+                    description="你确定要恢复打印状态吗"
+                    onConfirm={() => {
+                      updatePrintTransferCard({
+                        transferCardCode: record?.transferCardCode,
+                      })
+                        .then((res) => {
+                          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                            message.success(`32:${res?.data?.data}`);
+                            setRefreshFlag((flag) => !flag);
+                          } else {
+                            message.error(res?.data?.data);
+                          }
+                        })
+                        .catch(() => {
+                          message.error(ERROR_MESSAGE);
+                        });
+                      updatePrintTransferCard({
+                        transferCardCode:
+                          record?.children?.[0]?.transferCardCode,
+                      })
+                        .then((res) => {
+                          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                            message.success(`31:${res?.data?.data}`);
+                            setRefreshFlag((flag) => !flag);
+                          } else {
+                            message.error(res?.data?.data);
+                          }
+                        })
+                        .catch(() => {
+                          message.error(ERROR_MESSAGE);
+                        });
+                    }}
+                    onCancel={() => {}}
+                    okText="确认"
+                    cancelText="取消"
+                  >
+                    <Button
+                      type="link"
+                      size="small"
+                      style={{ marginLeft: 10 }}
+                      disabled={record?.printStatus === "NO"}
+                    >
+                      恢复
+                    </Button>
+                  </Popconfirm>
+                </span>
               ) : (
                 <></>
               )}

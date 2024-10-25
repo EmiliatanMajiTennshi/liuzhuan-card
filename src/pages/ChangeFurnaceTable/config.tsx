@@ -27,27 +27,27 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
     formItems: ({ options, setOptions }) => {
-      if (!options.heatTreatmentFurnacePlatforms) {
-        setOptions({
-          ...options,
-          heatTreatmentFurnacePlatforms: [{}],
-        });
-        getHeatTreatmentFurnacePlatformsList().then((res) => {
-          // 热处理炉台号
-          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-            const platformsOptions = res?.data?.data?.map(
-              (item: { id: string; name: string }) => ({
-                value: item?.name,
-                label: item?.name,
-              })
-            );
-            setOptions({
-              ...options,
-              heatTreatmentFurnacePlatforms: platformsOptions,
-            });
-          }
-        });
-      }
+      // if (!options.heatTreatmentFurnacePlatforms) {
+      //   setOptions({
+      //     ...options,
+      //     heatTreatmentFurnacePlatforms: [{}],
+      //   });
+      //   getHeatTreatmentFurnacePlatformsList().then((res) => {
+      //     // 热处理炉台号
+      //     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+      //       const platformsOptions = res?.data?.data?.map(
+      //         (item: { id: string; name: string }) => ({
+      //           value: item?.name,
+      //           label: item?.name,
+      //         })
+      //       );
+      //       setOptions({
+      //         ...options,
+      //         heatTreatmentFurnacePlatforms: platformsOptions,
+      //       });
+      //     }
+      //   });
+      // }
       return [
         {
           key: "barCode",
@@ -81,17 +81,17 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           children: <Input></Input>,
           rules: [],
         },
-        {
-          key: "heatTreatmentFurnacePlatform",
-          name: "热处理炉台号",
-          children: (
-            <Select
-              allowClear
-              options={options?.heatTreatmentFurnacePlatforms || []}
-            ></Select>
-          ),
-          rules: [],
-        },
+        // {
+        //   key: "heatTreatmentFurnacePlatform",
+        //   name: "热处理炉台号",
+        //   children: (
+        //     <Select
+        //       allowClear
+        //       options={options?.heatTreatmentFurnacePlatforms || []}
+        //     ></Select>
+        //   ),
+        //   rules: [],
+        // },
 
         {
           key: "createTimeStart",

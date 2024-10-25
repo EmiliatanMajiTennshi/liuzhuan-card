@@ -294,13 +294,13 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 type="primary"
                 size="small"
                 onClick={() => {
-                  setIssueModalOpen(true);
-                  setIssueID({
-                    orderid: record?.barCode,
-                    itmid: record?.partNumber,
-                  });
                   const type = record?.type;
                   const handleRes = (res: any) => {
+                    setIssueModalOpen(true);
+                    setIssueID({
+                      orderid: record?.barCode,
+                      itmid: record?.partNumber,
+                    });
                     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
                       if (res?.data?.data?.[0]?.barCode) {
                         setFinishedParams(res?.data?.data);

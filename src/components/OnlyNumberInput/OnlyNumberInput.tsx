@@ -6,10 +6,11 @@ import React, { useEffect } from "react";
 const OnlyNumberInput = (props: React.ComponentProps<typeof Input>) => {
   const { disabled, placeholder, style, value: _value, onChange } = props;
   const [value, setValue] = useSafeState<ValueType>("");
+  console.log(value, 124124);
 
   useEffect(() => {
     setValue(_value || "");
-  }, []);
+  }, [_value]);
   const handleChange = (e: { target: { value: any } }) => {
     const inputValue = e.target.value;
     if (/^\d*\.?\d*$/.test(inputValue)) {

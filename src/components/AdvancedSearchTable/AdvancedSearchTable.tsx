@@ -314,6 +314,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
             setConfirmFinished("undo");
             setUnfinishedData32to31({});
             setFinishedData({});
+            setFinishedParams([{ partNumber: "", barCode: "" }]);
           }}
           footer={null}
           width={1600}

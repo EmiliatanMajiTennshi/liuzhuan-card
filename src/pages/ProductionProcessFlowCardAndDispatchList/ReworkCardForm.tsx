@@ -1,4 +1,5 @@
 import {
+  queryInfoByTransferCard,
   queryPartNumberInfo,
   queryReformInfoByItemId,
   queryReviewFormNumber,
@@ -46,7 +47,7 @@ const ReworkCardForm = (props: IProps) => {
   const debounceGetTransferCard = debounce(async function (e) {
     try {
       setOptions({ ...options, transferCardOptionsLoading: true });
-      const res = await queryTransferCardNew({ transferCardCode: e });
+      const res = await queryInfoByTransferCard({ transferCardCode: e });
       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
         const transferCardData = res?.data?.data || [];
         const _options = {
@@ -94,18 +95,37 @@ const ReworkCardForm = (props: IProps) => {
       console.log(err);
     }
   }, 1000);
-  const debounceGetPartNumber = debounce(async function (e) {
+  // const debounceGetPartNumber = debounce(async function (e) {
+  //   try {
+  //     setOptions({ ...options, partNumberOptionsLoading: true });
+  //     if (e === "") return;
+  //     const res = await queryPartNumberInfo({ partNumber: e });
+  //     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+  //       const partNumberData = [res?.data?.data] || [];
+
+  //       const _options = {
+  //         ...options,
+  //         partNumberOptions: partNumberData,
+  //         partNumberOptionsLoading: false,
+  //       };
+  //       setOptions(_options);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }, 1000);
+  const debounceGetTraceabilityNumber = debounce(async function (e) {
     try {
-      setOptions({ ...options, partNumberOptionsLoading: true });
+      setOptions({ ...options, traceabilityNumberOptionsLoading: true });
       if (e === "") return;
-      const res = await queryPartNumberInfo({ partNumber: e });
+      const res = await queryInfoByTransferCard({ traceabilityNumber: e });
       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-        const partNumberData = [res?.data?.data] || [];
+        const traceabilityNumberData = res?.data?.data || [];
 
         const _options = {
           ...options,
-          partNumberOptions: partNumberData,
-          partNumberOptionsLoading: false,
+          traceabilityNumberOptions: traceabilityNumberData,
+          traceabilityNumberOptionsLoading: false,
         };
         setOptions(_options);
       }
@@ -135,12 +155,12 @@ const ReworkCardForm = (props: IProps) => {
             form.setFieldValue("specs", undefined);
             form.setFieldValue("material", undefined);
             form.setFieldValue("trademark", undefined);
-            if (e === "老料") {
-              form.setFieldValue(
-                "traceabilityNumber",
-                data?.traceabilityNumber
-              );
-            }
+            // if (e === "老料") {
+            //   form.setFieldValue(
+            //     "traceabilityNumber",
+            //     data?.traceabilityNumber
+            //   );
+            // }
           }}
         ></RenderSelect>
         <RenderSelect
@@ -222,45 +242,46 @@ const ReworkCardForm = (props: IProps) => {
             titleStyle={normalStyle}
           />
         ) : (
-          <RenderSelect
+          <ReadOnlyInput
             title="料号"
             name="partNumber"
-            placeholder="请输入料号进行搜索"
-            required
-            options={
-              options?.partNumberOptions?.map((item: any) => {
-                return {
-                  value: item?.itmid,
-                  label: item?.itmid,
-                  // traceabilityNumber: item?.traceabilityNumber,
-                  name: item?.name,
-                  spec: item?.spec,
-                  materialTexture: item?.itmtdid,
-                  trademark: item?.trademark,
-                };
-              }) || []
-            }
-            titleStyle={{ color: "red", ...normalStyle }}
-            showSearch
-            loading={options?.partNumberOptionsLoading}
-            onSearch={debounceGetPartNumber}
-            onSelect={(e: any, record: any) => {
-              const {
-                spec,
-                // traceabilityNumber,
-                name,
-                materialTexture,
-                trademark,
-              } = record;
-              form.setFieldValue("spec", spec);
-              // form.setFieldValue("traceabilityNumber", traceabilityNumber);
-              form.setFieldValue("name", name);
-              form.setFieldValue("material", materialTexture);
-              form.setFieldValue("trademark", trademark || "");
-            }}
-            notFoundContent={
-              options?.partNumberOptionsLoading ? <Spin size="small" /> : null
-            }
+            placeholder="输入追溯单号后自动填写"
+            style={{ lineHeight: "24px", ...normalStyle18 }}
+            // required
+            // options={
+            //   options?.partNumberOptions?.map((item: any) => {
+            //     return {
+            //       value: item?.itmid,
+            //       label: item?.itmid,
+            //       // traceabilityNumber: item?.traceabilityNumber,
+            //       name: item?.name,
+            //       spec: item?.spec,
+            //       materialTexture: item?.itmtdid,
+            //       trademark: item?.trademark,
+            //     };
+            //   }) || []
+            // }
+            titleStyle={{ ...normalStyle }}
+            // showSearch
+            // loading={options?.partNumberOptionsLoading}
+            // onSearch={debounceGetPartNumber}
+            // onSelect={(e: any, record: any) => {
+            //   const {
+            //     spec,
+            //     // traceabilityNumber,
+            //     name,
+            //     materialTexture,
+            //     trademark,
+            //   } = record;
+            //   form.setFieldValue("spec", spec);
+            //   // form.setFieldValue("traceabilityNumber", traceabilityNumber);
+            //   form.setFieldValue("name", name);
+            //   form.setFieldValue("material", materialTexture);
+            //   form.setFieldValue("trademark", trademark || "");
+            // }}
+            // notFoundContent={
+            //   options?.partNumberOptionsLoading ? <Spin size="small" /> : null
+            // }
           />
         )}
         {transferCardRequired ? (
@@ -272,11 +293,54 @@ const ReworkCardForm = (props: IProps) => {
             placeholder="输入流转卡编号后自动填写"
           />
         ) : (
-          <ReadOnlyInput
-            titleStyle={normalStyle}
-            style={{ lineHeight: "24px", ...normalStyle18 }}
+          <RenderSelect
+            titleStyle={{ color: "red", ...normalStyle }}
             title="追溯单号"
             name="traceabilityNumber"
+            required
+            placeholder="请输入追溯单号进行搜索"
+            onSearch={debounceGetTraceabilityNumber}
+            loading={options?.traceabilityNumberOptionsLoading}
+            showSearch
+            options={
+              options?.traceabilityNumberOptions?.map((item: any) => {
+                console.log(
+                  item,
+                  214124124,
+                  options?.traceabilityNumberOptions
+                );
+
+                return {
+                  value: item?.traceabilityNumber,
+                  label: item?.traceabilityNumber,
+                  // traceabilityNumber: item?.traceabilityNumber,
+                  partNumber: item?.itmid,
+                  name: item?.name,
+                  spec: item?.spec,
+                  materialTexture: item?.itmtdid,
+                  trademark: item?.trademark,
+                };
+              }) || []
+            }
+            onSelect={(e: any, record: any) => {
+              const {
+                spec,
+                // traceabilityNumber,
+                partNumber,
+                name,
+                materialTexture,
+                trademark,
+              } = record;
+              form.setFieldValue("spec", spec);
+              form.setFieldValue("partNumber", partNumber);
+              // form.setFieldValue("traceabilityNumber", traceabilityNumber);
+              form.setFieldValue("name", name);
+              form.setFieldValue("material", materialTexture);
+              form.setFieldValue("trademark", trademark || "");
+            }}
+            notFoundContent={
+              options?.partNumberOptionsLoading ? <Spin size="small" /> : null
+            }
           />
         )}
 

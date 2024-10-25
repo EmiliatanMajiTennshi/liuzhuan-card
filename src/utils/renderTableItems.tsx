@@ -1,4 +1,13 @@
-import { DatePicker, Form, Input, InputNumber, Select, Spin } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Select,
+  Spin,
+} from "antd";
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode.react";
 import styles from "./renderTableItems.module.scss";
@@ -94,6 +103,8 @@ const ReadOnlyInput = ({
   addonAfter,
   isNumber,
   render,
+  empty,
+  data,
 }: {
   title: string | React.ReactNode;
   name: string;
@@ -108,12 +119,14 @@ const ReadOnlyInput = ({
   addonAfter?: string | React.ReactNode;
   isNumber?: boolean;
   render?: React.ReactNode | (() => React.ReactNode);
+  empty?: boolean;
+  data?: any;
 }) => {
   useEffect(() => {
-    if (form && defaultValue) {
+    if (form && (defaultValue || empty)) {
       form.setFieldValue(name, defaultValue);
     }
-  }, [defaultValue]);
+  }, [data, defaultValue]);
   const customRender = typeof render === "function" ? render() : render;
   return (
     <>
@@ -125,7 +138,12 @@ const ReadOnlyInput = ({
           styles["input-container-locked"],
           styles["input-container"],
         ].join(" ")}
-        style={{ ...tdStyle, minWidth: 150, minHeight: 24, fontSize: 24 }}
+        style={{
+          ...tdStyle,
+          minWidth: 150,
+          minHeight: 24,
+          fontSize: 24,
+        }}
         colSpan={colSpan}
       >
         <Form.Item name={name}>
@@ -382,22 +400,102 @@ const RenderSelect = ({
             showSearch={showSearch}
             onSearch={onSearch}
             notFoundContent={notFoundContent}
+            className={styles?.optionItem}
             loading={loading}
             allowClear
             disabled={disabled}
+            labelRender={(record) => {
+              return (
+                <span>
+                  <span>{record?.value}</span>
+                  <Button
+                    type="link"
+                    className={styles?.copyBtn}
+                    style={{ position: "absolute", right: 20, bottom: "-1px" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // navigator.clipboard
+                      //   ?.writeText(record?.value as any)
+                      //   .then(() => {
+                      //     message.success("复制成功");
+                      //   })
+                      //   .catch((err) => {
+                      //     message.error("复制失败");
+                      //   });
+                      const textArea = document.createElement("textarea");
+                      textArea.value = record?.value as any;
+                      // 使text area不在viewport，同时设置不可见
+                      document.body.appendChild(textArea);
+                      textArea.focus();
+                      textArea.select();
+                      return new Promise((res, rej) => {
+                        // 执行复制命令并移除文本框
+                        document.execCommand("copy") ? res("success") : rej();
+                        textArea.remove();
+                      })
+                        .then((res) => {
+                          message.success("复制成功");
+                        })
+                        .catch((err) => {
+                          message.error("复制失败");
+                        });
+                    }}
+                  >
+                    复制
+                  </Button>
+                </span>
+              );
+            }}
           >
             {options?.map((item) => {
               return (
                 <Select.Option
                   {...item}
                   key={optionKey ? item?.[optionKey as "value"] : item.value}
+                  className={styles?.optionItem}
                 >
                   {item?.label}
+                  <Button
+                    type="link"
+                    className={styles?.copyBtn}
+                    style={{ position: "absolute", right: 20, bottom: "-1px" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // navigator.clipboard
+                      //   ?.writeText(item?.label)
+                      //   .then(() => {
+                      //     message.success("复制成功");
+                      //   })
+                      //   .catch((err) => {
+                      //     message.error("复制失败");
+                      //   });
+                      const textArea = document.createElement("textarea");
+                      textArea.value = item?.label;
+                      // 使text area不在viewport，同时设置不可见
+                      document.body.appendChild(textArea);
+                      textArea.focus();
+                      textArea.select();
+                      return new Promise((res, rej) => {
+                        // 执行复制命令并移除文本框
+                        document.execCommand("copy") ? res("success") : rej();
+                        textArea.remove();
+                      })
+                        .then((res) => {
+                          message.success("复制成功");
+                        })
+                        .catch((err) => {
+                          message.error("复制失败");
+                        });
+                    }}
+                  >
+                    复制
+                  </Button>
                 </Select.Option>
               );
             })}
           </Select>
         </Form.Item>
+
         <span style={{ color: "red" }}>{remark && <>提示：{remark}</>}</span>
       </td>
     </>

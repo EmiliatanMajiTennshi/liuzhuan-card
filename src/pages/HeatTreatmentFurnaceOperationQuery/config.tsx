@@ -8,15 +8,25 @@ import {
   ConfigProvider,
   DatePicker,
   Input,
+  message,
   Modal,
+  Popconfirm,
   Select,
   Tag,
 } from "antd";
 import { RuleObject } from "antd/es/form";
 
 import { formatDate, RenderQRCode } from "@/utils";
-import { getHeatTreatmentFurnacePlatformsList } from "@/api";
-import { kgArr, DEFAULT_ORANGE, SUCCESS_CODE } from "@/constants";
+import {
+  getHeatTreatmentFurnacePlatformsList,
+  updatePrintTransferCard,
+} from "@/api";
+import {
+  kgArr,
+  DEFAULT_ORANGE,
+  SUCCESS_CODE,
+  ERROR_MESSAGE,
+} from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
 import dayjs from "dayjs";
 interface IGetModalConfigProps {
@@ -224,7 +234,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueModalOpen, setIssueID, setPrintModalOpen } = props;
+  const { setIssueModalOpen, setIssueID, setPrintModalOpen, setRefreshFlag } =
+    props;
   return {
     name: "HeatTreatmentFurnaceOperationQuery",
     rowKey: "id", // 唯一标识
@@ -397,61 +408,94 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "finishStatus",
         width: 80,
         fixed: "right",
-        // render: (text: string) => {
-        //   if (text === "0") {
-        //     return <Tag color="red">未完成</Tag>;
-        //   }
-        //   if (text === "1") {
-        //     return <Tag color="green">完成</Tag>;
-        //   }
-        //   return text;
-        // },
+        render: (text: string) => {
+          if (text === "未完工") {
+            return <Tag color="red">未完工</Tag>;
+          }
+          if (text === "完工") {
+            return <Tag color="green">完工</Tag>;
+          }
+          return text;
+        },
       },
       {
         title: "操作",
         dataIndex: "operate",
         key: "operate",
         fixed: "right",
-        width: 190,
+        width: 210,
         render: (text, record) => {
           return (
-            <div style={{ display: "flex" }}>
-              <Button
-                type="primary"
-                size="small"
-                style={{ marginLeft: 10 }}
-                onClick={() => {
-                  setIssueModalOpen(true);
-                  setIssueID({
-                    transferCardCode: record?.transferCardCode,
-                  });
-                }}
-              >
-                查看
-              </Button>
-
-              <ConfigProvider
-                theme={{
-                  token: {
-                    colorPrimary: "#87d068",
-                  },
-                }}
-              >
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ display: "flex" }}>
                 <Button
                   type="primary"
                   size="small"
                   style={{ marginLeft: 10 }}
                   onClick={() => {
-                    setPrintModalOpen(true);
+                    setIssueModalOpen(true);
                     setIssueID({
                       transferCardCode: record?.transferCardCode,
                     });
                   }}
-                  disabled={record?.printStatus !== "NO"}
                 >
-                  {record?.printStatus !== "NO" ? "已打印" : "打印"}
+                  查看
                 </Button>
-              </ConfigProvider>
+                <ConfigProvider
+                  theme={{
+                    token: {
+                      colorPrimary: "#87d068",
+                    },
+                  }}
+                >
+                  <Button
+                    type="primary"
+                    size="small"
+                    style={{ marginLeft: 10 }}
+                    onClick={() => {
+                      setPrintModalOpen(true);
+                      setIssueID({
+                        transferCardCode: record?.transferCardCode,
+                      });
+                    }}
+                    disabled={record?.printStatus !== "NO"}
+                  >
+                    {record?.printStatus !== "NO" ? "已打印" : "打印"}
+                  </Button>
+                </ConfigProvider>
+              </span>
+              <Popconfirm
+                title="确认恢复"
+                description="你确定要恢复打印状态吗"
+                onConfirm={() => {
+                  updatePrintTransferCard({
+                    transferCardCode: record?.transferCardCode,
+                  })
+                    .then((res) => {
+                      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                        message.success(res?.data?.data);
+                        setRefreshFlag((flag) => !flag);
+                      } else {
+                        message.error(res?.data?.data);
+                      }
+                    })
+                    .catch(() => {
+                      message.error(ERROR_MESSAGE);
+                    });
+                }}
+                onCancel={() => {}}
+                okText="确认"
+                cancelText="取消"
+              >
+                <Button
+                  type="link"
+                  size="small"
+                  style={{ marginLeft: 10 }}
+                  disabled={record?.printStatus === "NO"}
+                >
+                  恢复
+                </Button>
+              </Popconfirm>
             </div>
           );
         },

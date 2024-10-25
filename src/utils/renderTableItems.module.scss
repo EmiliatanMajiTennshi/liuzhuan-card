@@ -134,3 +134,11 @@ $color-red: #ff4d4f;
     font-size: 18px !important;
   }
 }
+.copyBtn {
+  visibility: hidden;
+}
+.optionItem:hover {
+  .copyBtn {
+    visibility: visible;
+  }
+}

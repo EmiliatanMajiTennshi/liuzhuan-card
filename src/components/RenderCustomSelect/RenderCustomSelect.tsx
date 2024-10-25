@@ -10,8 +10,8 @@ interface IRenderCustomSelectProps {
   // 第几行数据
   index: number;
   // 检验信息
-  errors: any;
-  setErrors: React.Dispatch<any>;
+  errors?: any;
+  setErrors?: React.Dispatch<any>;
   // 当前行的数据
   record: any;
   // table数据
@@ -68,20 +68,13 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
     mode,
     extendData,
   } = props;
-  const {
-    name,
-    barcode,
-
-    departmentName,
-    syncBarcode,
-    syncName,
-  } = config;
+  const { name, barcode, departmentName, syncBarcode, syncName } = config;
 
   const needSync = useMemo(
     () => processList && processList?.indexOf(record?.processName) !== -1,
     [processList, record?.processName]
   );
-
+  if (!errors || !setErrors) return <></>;
   // 转对象
   const columnsObj: { [key: string]: AnyObject } = {};
   columns?.forEach((item: { key: string }) => {

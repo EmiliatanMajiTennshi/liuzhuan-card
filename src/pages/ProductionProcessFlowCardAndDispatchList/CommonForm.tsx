@@ -38,16 +38,19 @@ interface IProps {
   notSelfIssue?: boolean;
   setFinishedData32to31?: React.Dispatch<React.SetStateAction<AnyObject>>;
   finishedData32to31?: AnyObject;
+  beIssuedForm?: FormInstance<any>;
+  beIssuedData?: IData;
 }
 const CommonForm = (props: IProps) => {
   const {
     data,
     isKg,
     form,
-
     mainsize,
     needIssueFinished,
     notSelfIssue,
+    beIssuedForm,
+    beIssuedData,
   } = props;
   const itmid = data?.itmid;
   // 半成品
@@ -67,7 +70,20 @@ const CommonForm = (props: IProps) => {
   const [mItmID, setMItemId] = useState<string>();
 
   // const [materialItemId,setMItemId]
-
+  const beIssuedTrademarkList = beIssuedForm
+    ? [
+        ...(beIssuedData?.trademarkList1?.map((item) => ({
+          value: item.trademark,
+          label: item.trademark,
+          pnumber: item?.pnumber,
+        })) || []),
+        ...(beIssuedData?.trademarkList?.map((item) => ({
+          value: item.trademark,
+          label: item.trademark,
+          pnumber: item?.pnumber,
+        })) || []),
+      ]
+    : [];
   const isFinished =
     data?.itmid?.substring(0, 2) === FINISHED_CODE || isFinished32to31;
   useEffect(() => {
@@ -149,6 +165,9 @@ const CommonForm = (props: IProps) => {
   }, [data]);
   useEffect(() => {
     setMItemId(data?.mItmID);
+    if (isUnfinished32to31) {
+      beIssuedForm?.setFieldValue("orderCatchHalf", data?.traceabilityNumber);
+    }
   }, [data]);
   const debounceGetPartNumber = debounce(async function (e) {
     try {
@@ -205,51 +224,59 @@ const CommonForm = (props: IProps) => {
           name="itmtdid"
           titleStyle={normalStyle}
         />
-        {isFinished32to31 ? (
-          <ReadOnlyInput
-            title="商标"
-            name="trademark"
-            style={{ lineHeight: "24px", ...normalStyle18 }}
-            titleStyle={normalStyle}
-          ></ReadOnlyInput>
-        ) : (
-          <RenderSelect
-            title="商标"
-            name="trademark"
-            empty
-            form={form}
-            data={data}
-            remark={data?.trademark}
-            titleStyle={normalStyle}
-            options={[
-              ...(data?.trademarkList1?.map((item) => ({
-                value: item.trademark,
-                label: item.trademark,
-                pnumber: item?.pnumber,
-              })) || []),
-              ...(data?.trademarkList?.map((item) => ({
-                value: item.trademark,
-                label: item.trademark,
-                pnumber: item?.pnumber,
-              })) || []),
-            ]}
-            optionKey="pnumber"
-            placeholder={
-              !data?.trademarkList || data?.trademarkList?.length === 0
-                ? NO_OPTIONS_DATA
-                : "请选择商标"
+
+        <RenderSelect
+          title="商标"
+          name="trademark"
+          empty
+          form={form}
+          data={data}
+          remark={data?.trademark}
+          titleStyle={normalStyle}
+          options={[
+            ...(data?.trademarkList1?.map((item) => ({
+              value: item.trademark,
+              label: item.trademark,
+              pnumber: item?.pnumber,
+            })) || []),
+            ...(data?.trademarkList?.map((item) => ({
+              value: item.trademark,
+              label: item.trademark,
+              pnumber: item?.pnumber,
+            })) || []),
+          ]}
+          optionKey="pnumber"
+          placeholder={
+            !data?.trademarkList || data?.trademarkList?.length === 0
+              ? NO_OPTIONS_DATA
+              : "请选择商标"
+          }
+          onSelect={(e: any, record: any) => {
+            // debugger;
+
+            const pnumber = record?.pnumber;
+            if (pnumber) {
+              setPNum(pnumber);
+              form.setFieldValue("pnumber", pnumber);
             }
-            onSelect={(e: any, record: any) => {
-              // debugger;
-              const pnumber = record?.pnumber;
-              if (pnumber) {
-                setPNum(pnumber);
-                form.setFieldValue("pnumber", pnumber);
+            if (beIssuedForm && beIssuedData) {
+              const beIssuedTrademark = beIssuedTrademarkList?.find(
+                (item) => item.value === e
+              );
+              if (beIssuedTrademark) {
+                beIssuedForm?.setFieldValue("trademark", e);
+                beIssuedForm?.setFieldValue(
+                  "pnumber",
+                  beIssuedTrademark?.pnumber
+                );
+              } else {
+                beIssuedForm?.setFieldValue("trademark", undefined);
               }
-            }}
-            showSearch
-          />
-        )}
+            }
+          }}
+          showSearch
+        />
+
         <ReadOnlyInput
           style={{ lineHeight: "24px", ...normalStyle18 }}
           title="追溯单号"
@@ -332,6 +359,8 @@ const CommonForm = (props: IProps) => {
 
               form.setFieldValue("transferPcs", valuePCS);
               form.validateFields(["transferPcs"]);
+              beIssuedForm?.setFieldValue("transferPcs", valuePCS);
+              beIssuedForm?.setFieldValue("transferKg", e);
             }}
             rules={[{ validator: validateNotZero }]}
           />
@@ -387,6 +416,8 @@ const CommonForm = (props: IProps) => {
               // }
               form.setFieldValue("transferKg", valueKg);
               form.validateFields(["transferKg"]);
+              beIssuedForm?.setFieldValue("transferPcs", e);
+              beIssuedForm?.setFieldValue("transferKg", valueKg);
             }}
             rules={[{ validator: validateNotZero }]}
             precision={0}
@@ -520,7 +551,11 @@ const CommonForm = (props: IProps) => {
               title="入库二维码"
               name="rukuQRcode"
               rowSpan={3}
-              value={`${data.parseitmid}${pNum || ""}` || "没有数据"}
+              value={
+                `${data.parseitmid}${
+                  pNum || form?.getFieldValue("pnumber") || ""
+                }` || "没有数据"
+              }
               noTd
               form={form}
             />

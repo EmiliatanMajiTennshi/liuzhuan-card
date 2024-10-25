@@ -163,6 +163,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       fetchData();
       setRefreshFlag((flag) => !flag);
     } else {
+      setSaveLoading(false);
       message.error(SAVE_FAILED);
     }
   };
@@ -551,7 +552,11 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         updateReworkTransferCardById({
           ...params,
           detailProcesses: processList,
-        }).then((res) => handleSuccess(res));
+        })
+          .then((res) => handleSuccess(res))
+          .catch(() => {
+            setSaveLoading(false);
+          });
         // updateReworkInfoById(params).then(async (res) => {
         //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
         //     message.success(res?.data?.data);
@@ -596,7 +601,11 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
           ...params,
           reworkTransferCardCode: data?.reworkTransferCardCode,
           detailProcesses: processList,
-        }).then((res) => handleSuccess(res));
+        })
+          .then((res) => handleSuccess(res))
+          .catch(() => {
+            setSaveLoading(false);
+          });
       }
     }
 
@@ -731,40 +740,52 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         return;
       }
       if (isSelf && (flowCardType === "unfinished" || isSemiFinished)) {
-        insertUnfinishedProductsNew(params).then((res) => {
-          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-            message.success(res?.data?.data);
-            // 添加完刷新数据
-            fetchData();
-            setRefreshFlag((flag) => !flag);
-          } else {
-            message.error(SAVE_FAILED);
-          }
-        });
+        insertUnfinishedProductsNew(params)
+          .then((res) => {
+            if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+              message.success(res?.data?.data);
+              // 添加完刷新数据
+              fetchData();
+              setRefreshFlag((flag) => !flag);
+            } else {
+              message.error(SAVE_FAILED);
+            }
+          })
+          .catch(() => {
+            setSaveLoading(false);
+          });
       }
       if (isSelf && (flowCardType === "finished" || !isSemiFinished)) {
-        insertfinishedProductsNew(params).then((res) => {
-          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-            message.success(res?.data?.data);
-            // 添加完刷新数据
-            fetchData();
-            setRefreshFlag((flag) => !flag);
-          } else {
-            message.error(SAVE_FAILED);
-          }
-        });
+        insertfinishedProductsNew(params)
+          .then((res) => {
+            if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+              message.success(res?.data?.data);
+              // 添加完刷新数据
+              fetchData();
+              setRefreshFlag((flag) => !flag);
+            } else {
+              message.error(SAVE_FAILED);
+            }
+          })
+          .catch(() => {
+            setSaveLoading(false);
+          });
       }
       if (!isSelf && flowCardType === "outsourcing") {
-        insertoutsourcingPurchasingNew(params).then((res) => {
-          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-            message.success(res?.data?.data);
-            // 添加完刷新数据
-            fetchData();
-            setRefreshFlag((flag) => !flag);
-          } else {
-            message.error(SAVE_FAILED);
-          }
-        });
+        insertoutsourcingPurchasingNew(params)
+          .then((res) => {
+            if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+              message.success(res?.data?.data);
+              // 添加完刷新数据
+              fetchData();
+              setRefreshFlag((flag) => !flag);
+            } else {
+              message.error(SAVE_FAILED);
+            }
+          })
+          .catch(() => {
+            setSaveLoading(false);
+          });
       }
     }
   };
@@ -774,7 +795,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     data: notSelfIssue ? { ...data, ...finishedData32to31 } : data,
     isKg,
     form,
-
     mainsize,
     needIssueFinished,
     notSelfIssue,
@@ -816,8 +836,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   // 列
   const columns = useTableColumns({
     flowCardType,
-    options,
-    setOptions,
     errors,
     setErrors,
     tableData,
@@ -1072,6 +1090,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
             onClick={() => {
               handlePrint();
             }}
+            loading={loading}
           >
             打印
           </Button>

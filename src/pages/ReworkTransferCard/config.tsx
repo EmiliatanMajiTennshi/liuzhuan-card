@@ -3,11 +3,25 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, ConfigProvider, DatePicker, Flex, Input, Select } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  DatePicker,
+  Flex,
+  Input,
+  message,
+  Popconfirm,
+  Select,
+} from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { countProductType } from "@/api";
-import { FINISHED_CODE, SEMI_FINISHED_CODE, SUCCESS_CODE } from "@/constants";
+import { countProductType, updatePrintTransferCard } from "@/api";
+import {
+  ERROR_MESSAGE,
+  FINISHED_CODE,
+  SEMI_FINISHED_CODE,
+  SUCCESS_CODE,
+} from "@/constants";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -184,7 +198,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueModalOpen, setIssueID, setPrintModalOpen } = props;
+  const { setIssueModalOpen, setIssueID, setPrintModalOpen, setRefreshFlag } =
+    props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryReworkTransferCardNew",
@@ -271,46 +286,80 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "操作",
         dataIndex: "operate",
         key: "operate",
-        width: 150,
+        width: 160,
         fixed: "right",
         render: (text, record) => {
           return (
-            <div>
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => {
-                  setIssueModalOpen(true);
-                  setIssueID({
-                    transferCardCode: record?.reworkTransferCardCode,
-                  });
-                }}
-              >
-                查看
-              </Button>
-              <ConfigProvider
-                theme={{
-                  token: {
-                    colorPrimary: "#87d068",
-                  },
-                }}
-              >
+            <span style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ display: "flex" }}>
                 <Button
                   type="primary"
                   size="small"
-                  style={{ marginLeft: "10px" }}
                   onClick={() => {
-                    setPrintModalOpen(true);
+                    setIssueModalOpen(true);
                     setIssueID({
                       transferCardCode: record?.reworkTransferCardCode,
                     });
                   }}
+                >
+                  查看
+                </Button>
+                <ConfigProvider
+                  theme={{
+                    token: {
+                      colorPrimary: "#87d068",
+                    },
+                  }}
+                >
+                  <Button
+                    type="primary"
+                    size="small"
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => {
+                      setPrintModalOpen(true);
+                      setIssueID({
+                        transferCardCode: record?.reworkTransferCardCode,
+                      });
+                    }}
+                    disabled={Boolean(record?.pCardID)}
+                  >
+                    {Boolean(record?.pCardID) ? "已打印" : "打印"}
+                  </Button>
+                </ConfigProvider>
+              </span>
+              <Popconfirm
+                title="确认恢复"
+                description="你确定要恢复打印状态吗"
+                onConfirm={() => {
+                  updatePrintTransferCard({
+                    transferCardCode: record?.reworkTransferCardCode,
+                  })
+                    .then((res) => {
+                      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                        message.success(res?.data?.data);
+                        setRefreshFlag((flag) => !flag);
+                      } else {
+                        message.error(res?.data?.data);
+                      }
+                    })
+                    .catch(() => {
+                      message.error(ERROR_MESSAGE);
+                    });
+                }}
+                onCancel={() => {}}
+                okText="确认"
+                cancelText="取消"
+              >
+                <Button
+                  type="link"
+                  size="small"
+                  style={{ marginLeft: 10 }}
                   disabled={Boolean(record?.pCardID)}
                 >
-                  {Boolean(record?.pCardID) ? "已打印" : "打印"}
+                  恢复
                 </Button>
-              </ConfigProvider>
-            </div>
+              </Popconfirm>
+            </span>
           );
         },
       },

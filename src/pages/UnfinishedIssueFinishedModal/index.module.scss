@@ -57,42 +57,21 @@
   }
 }
 .flow-card {
-  padding: 0 1px;
-  .printForm {
-    th,
-    td {
-      padding: 2px 2px;
-      // width: 25%; /* 设置每个单元格的宽度为表格宽度的25% */
-    }
-    // th[colspan="2"],
-    // td[colspan="2"] {
-    //   width: 25%; /* 确保带有colspan的单元格自动调整宽度 */
-    // }
-    // th[colspan="1"],
-    // td[colspan="1"] {
-    //   width: 12.5%; /* 确保带有colspan的单元格自动调整宽度 */
-    // }
-    .noPadding {
-      padding: 0;
-    }
+  th,
+  td {
+    padding: 4px 2px !important;
+    // width: 25%; /* 设置每个单元格的宽度为表格宽度的25% */
   }
-  .normalForm {
-    th,
-    td {
-      padding: 4px 2px;
-      // width: 25%; /* 设置每个单元格的宽度为表格宽度的25% */
-    }
-    // th[colspan="2"],
-    // td[colspan="2"] {
-    //   width: 25%; /* 确保带有colspan的单元格自动调整宽度 */
-    // }
-    // th[colspan="1"],
-    // td[colspan="1"] {
-    //   width: 12.5%; /* 确保带有colspan的单元格自动调整宽度 */
-    // }
-    .noPadding {
-      padding: 0;
-    }
+  // th[colspan="2"],
+  // td[colspan="2"] {
+  //   width: 25%; /* 确保带有colspan的单元格自动调整宽度 */
+  // }
+  // th[colspan="1"],
+  // td[colspan="1"] {
+  //   width: 12.5%; /* 确保带有colspan的单元格自动调整宽度 */
+  // }
+  .noPadding {
+    padding: 0;
   }
 }
 .footer {
