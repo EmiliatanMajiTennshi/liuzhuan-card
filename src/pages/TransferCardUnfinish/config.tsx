@@ -3,7 +3,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { DatePicker, Input } from "antd";
+import { DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
@@ -37,7 +37,24 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       {
         key: "department",
         name: "事业部",
-        children: <Input></Input>,
+        children: (
+          <Select
+            allowClear
+            options={[
+              { value: "品管部", label: "品管部" },
+              { value: "冲压事业部", label: "冲压事业部" },
+              { value: "零件事业部", label: "零件事业部" },
+              { value: "热处理事业部", label: "热处理事业部" },
+              { value: "扶梯链事业部", label: "扶梯链事业部" },
+              { value: "物流科", label: "物流科" },
+              { value: "机模部", label: "机模部" },
+              { value: "输送链事业部", label: "输送链事业部" },
+              { value: "轴承事业部-磨床", label: "轴承事业部-磨床" },
+              { value: "设备部", label: "设备部" },
+              { value: "品管部", label: "品管部" },
+            ]}
+          ></Select>
+        ),
         rules: [],
       },
       {

@@ -169,6 +169,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   useEffect(() => {
     if (noPaging) {
       setPageSize(99999);
+      isFirstRender.current = true;
     }
   }, [noPaging]);
 
@@ -320,7 +321,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           width={1600}
           className={styles.issueModal}
         >
-          {/* <UnfinishedIssueFinishedModal
+          <UnfinishedIssueFinishedModal
             issueID={issueID}
             queryFlowCardApi={queryFlowCardApi}
             flowCardType={flowCardType}
@@ -330,8 +331,8 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
               orderid: finishedParams?.[0]?.barCode,
               itmid: finishedParams?.[0]?.partNumber,
             }}
-          /> */}
-          <Spin spinning={tabLoading === "loading"}>
+          />
+          {/* <Spin spinning={tabLoading === "loading"}>
             <Tabs
               size="large"
               items={[
@@ -399,7 +400,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
                 }
               }}
             ></Tabs>
-          </Spin>
+          </Spin> */}
         </Modal>
       )}
       {!needIssueFinished && issueModalOpen && (

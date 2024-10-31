@@ -286,7 +286,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "操作",
         dataIndex: "operate",
         key: "operate",
-        width: 160,
+        width: 180,
         fixed: "right",
         render: (text, record) => {
           return (
@@ -354,7 +354,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   type="link"
                   size="small"
                   style={{ marginLeft: 10 }}
-                  disabled={Boolean(record?.pCardID)}
+                  disabled={!Boolean(record?.pCardID)}
                 >
                   恢复
                 </Button>

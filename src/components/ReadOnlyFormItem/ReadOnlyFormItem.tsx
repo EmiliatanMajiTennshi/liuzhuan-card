@@ -6,8 +6,9 @@ const ReadOnlyFormItem = (props: {
   placeholder?: string;
   addonAfter?: string | React.ReactNode;
   isNumber?: boolean;
+  unit?: string;
 }) => {
-  const { value, style, placeholder, addonAfter, isNumber } = props;
+  const { value, style, placeholder, addonAfter, isNumber, unit } = props;
   const breakWordArr = [" ", "-", "(", "[", "{", ";", ",", "/"];
   let breakWord = false;
   try {
@@ -31,7 +32,10 @@ const ReadOnlyFormItem = (props: {
         minHeight: "24px",
       }}
     >
-      <span> {isNumber && value ? parseFloat(value) : value}</span>
+      <span>
+        {isNumber && value ? parseFloat(value) : value}
+        {unit}
+      </span>
       <span>{addonAfter}</span>
     </span>
   ) : (
@@ -42,7 +46,7 @@ const ReadOnlyFormItem = (props: {
         justifyContent: "space-between",
       }}
     >
-      <span>{placeholder || " "}</span>
+      <span style={{ fontSize: style?.fontSize }}>{placeholder || " "}</span>
       <span>{addonAfter}</span>
     </span>
   );

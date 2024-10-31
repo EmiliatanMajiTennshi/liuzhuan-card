@@ -15,7 +15,8 @@ export type TFlowCardType =
   | "print"
   | "rework"
   | "unfinished"
-  | "finished";
+  | "finished"
+  | "rollChain";
 /**
  * tableConfig的参数
  */
@@ -113,4 +114,5 @@ export interface IIssueID {
   transferCardCode?: string;
   U9LineNo?: string;
   CardID?: string;
+  noQuery?: boolean;
 }

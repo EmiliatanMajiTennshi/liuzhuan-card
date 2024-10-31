@@ -26,6 +26,9 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
 
   // 添加返工流转卡modal
   const [reworkModalOpen, setReworkModalOpen] = useState(false);
+
+  // 添加车间卷装链条
+  const [rollChainModalOpen, setRollChainModalOpen] = useState(false);
   // 可能是函数
   const _formConfig =
     typeof formConfig === "function" ? formConfig(form) : formConfig;
@@ -157,6 +160,17 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
                   新增返工流转卡
                 </Button>
               )}
+              {name === "QueryRollChain" && (
+                <Button
+                  type="dashed"
+                  onClick={() => {
+                    setRollChainModalOpen(true);
+                  }}
+                >
+                  <PlusOutlined />
+                  新增车间卷装链条
+                </Button>
+              )}
             </Space>
           </div>
         )}
@@ -174,6 +188,21 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
             queryFlowCardApi="queryReworkBySign"
             setRefreshFlag={setRefreshFlag}
             setReworkModalOpen={setReworkModalOpen}
+          />
+        </Modal>
+      )}
+      {rollChainModalOpen && (
+        <Modal
+          open={rollChainModalOpen}
+          onCancel={() => setRollChainModalOpen(false)}
+          footer={null}
+          width={640}
+          maskClosable={false}
+        >
+          <ProductionProcessFlowCardAndDispatchList
+            flowCardType="rollChain"
+            setRefreshFlag={setRefreshFlag}
+            setRollChainModalOpen={setRollChainModalOpen}
           />
         </Modal>
       )}

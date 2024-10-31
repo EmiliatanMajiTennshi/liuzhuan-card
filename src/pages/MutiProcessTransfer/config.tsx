@@ -13,7 +13,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
     formExtend: true,
     formItems: [
       {
-        key: "CardID",
+        key: "transferCardCode",
         name: "流转卡编号",
         children: <Input></Input>,
         rules: [],
@@ -33,31 +33,35 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       // },
 
       {
-        key: "SMAKTX",
+        key: "name",
         name: "品名",
         children: <Input></Input>,
         rules: [],
       },
 
       {
-        key: "time1",
+        key: "finishTimeStart",
         name: "完成时间开始",
         children: (
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
               if (form) {
-                form.validateFields(["time2"]);
+                form.validateFields(["finishTimeEnd"]);
               }
             }}
           ></DatePicker>
         ),
         rules: [
           (form: any) => {
-            const time1 = form.getFieldValue("time1");
-            const time2 = form.getFieldValue("time2");
+            const finishTimeStart = form.getFieldValue("finishTimeStart");
+            const finishTimeEnd = form.getFieldValue("finishTimeEnd");
 
-            if (time2 && time1 && time2 < time1) {
+            if (
+              finishTimeEnd &&
+              finishTimeStart &&
+              finishTimeEnd < finishTimeStart
+            ) {
               return {
                 validator: true,
                 message: "开始日期不能晚于结束",
@@ -68,24 +72,28 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         ],
       },
       {
-        key: "time2",
+        key: "finishTimeEnd",
         name: "完成时间结束",
         children: (
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
               if (form) {
-                form.validateFields(["time1"]);
+                form.validateFields(["finishTimeStart"]);
               }
             }}
           ></DatePicker>
         ),
         rules: [
           (form: any) => {
-            const time1 = form.getFieldValue("time1");
-            const time2 = form.getFieldValue("time2");
+            const finishTimeStart = form.getFieldValue("finishTimeStart");
+            const finishTimeEnd = form.getFieldValue("finishTimeEnd");
 
-            if (time2 && time1 && time2 < time1) {
+            if (
+              finishTimeEnd &&
+              finishTimeStart &&
+              finishTimeEnd < finishTimeStart
+            ) {
               return {
                 validator: true,
                 message: "结束日期不能早于开始",
@@ -97,7 +105,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         ],
       },
       {
-        key: "Format",
+        key: "spec",
         name: "规格",
         children: <Input></Input>,
         rules: [],
@@ -111,56 +119,60 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setMultiDetailModalOpen, setIssueID } = props;
   return {
     rowKey: "id", // 唯一标识
-    api: "getMultiCardList",
+    api: "queryMultiProcess",
+    noPaging: true,
+    disableFirstLoading: true,
     columns: [
       {
         title: "流转卡编号",
-        dataIndex: "CardID",
-        key: "CardID",
+        dataIndex: "transferCardCode",
+        key: "transferCardCode",
         width: 260,
       },
       {
         title: "订单号",
-        dataIndex: "orderno",
-        key: "orderno",
+        dataIndex: "orderid",
+        key: "orderid",
+        width: 160,
       },
       {
         title: "料号",
-        dataIndex: "Matnr",
-        key: "Matnr",
+        dataIndex: "itmid",
+        key: "itmid",
       },
       {
         title: "数量",
-        dataIndex: "Num",
-        key: "Num",
+        dataIndex: "productKg",
+        key: "productKg",
       },
       {
         title: "流转数量",
-        dataIndex: "LZNum",
-        key: "LZNum",
+        dataIndex: "transferNumber",
+        key: "transferNumber",
       },
 
       {
         title: "品名",
-        dataIndex: "SMAKTX",
-        key: "SMAKTX",
+        dataIndex: "name",
+        key: "name",
       },
       {
         title: "规格",
-        dataIndex: "Format",
-        key: "Format",
+        dataIndex: "spec",
+        key: "spec",
       },
 
       {
         title: "材质",
-        dataIndex: "Texture",
-        key: "Texture",
+        dataIndex: "itmtdid",
+        key: "itmtdid",
       },
 
       {
         title: "创建时间",
-        dataIndex: "CRTM",
-        key: "CRTM",
+        dataIndex: "createTime",
+        key: "createTime",
+        width: 180,
       },
       {
         title: "完成时间",
@@ -181,7 +193,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 size="small"
                 onClick={() => {
                   setMultiDetailModalOpen(true);
-                  setIssueID({ CardID: record?.CardID });
+                  setIssueID({ transferCardCode: record?.transferCardCode });
                 }}
               >
                 编辑

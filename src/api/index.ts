@@ -109,6 +109,12 @@ import { getMultiCardgxList } from "./getMultiCardgxList";
 import { queryReworkBySign } from "./queryReworkBySign";
 import { queryInfoByTransferCard } from "./queryInfoByTransferCard";
 import { updatePrintTransferCard } from "./updatePrintTransferCard";
+import { queryMultiProcessByTransferCardCode } from "./queryMultiProcessByTransferCardCode";
+import { queryMultiProcess } from "./queryMultiProcess";
+import { updateMultiProcessByTransferCardCode } from "./updateMultiProcessByTransferCardCode";
+import { queryMultiTransfer } from "./queryMultiTransfer";
+import { queryRollChain } from "./queryRollChain";
+import { insertRollChain } from "./insertRollChain";
 
 export {
   countProductType,
@@ -198,6 +204,7 @@ const apisOld = {
   insertPermission,
   insertSaveTransferCard,
   insertSaveTransferCardDetail,
+  insertRollChain,
   loginRequest,
   logoutRequest,
   registerRequest,
@@ -278,6 +285,10 @@ export {
   queryPartNumberInfo,
   queryReworkBySign,
   queryInfoByTransferCard,
+  queryMultiProcessByTransferCardCode,
+  queryMultiProcess,
+  queryMultiTransfer,
+  queryRollChain,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -286,12 +297,14 @@ export {
   insertReworkTransferCardNew,
   insertDeliveryNew,
   insertPrintTransferCardNew,
+  insertRollChain,
   updateTransferCardInfoByCardId,
   updateFTransferCardInfoByCardId,
   updateOTransferCardInfoByCardId,
   updateReworkTransferCardById,
   UpdateWuliu,
   updatePrintTransferCard,
+  updateMultiProcessByTransferCardCode,
 };
 const apisNew = {
   countProcessUnfinishToStore,
@@ -326,6 +339,10 @@ const apisNew = {
   queryPartNumberInfo,
   queryReworkBySign,
   queryInfoByTransferCard,
+  queryMultiProcessByTransferCardCode,
+  queryMultiProcess,
+  queryMultiTransfer,
+  queryRollChain,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -340,6 +357,7 @@ const apisNew = {
   updateReworkTransferCardById,
   UpdateWuliu,
   updatePrintTransferCard,
+  updateMultiProcessByTransferCardCode,
 };
 
 const apis = {

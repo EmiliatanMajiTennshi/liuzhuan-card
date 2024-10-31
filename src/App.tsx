@@ -13,6 +13,15 @@ import RootStoreProvider from "./store";
 import "dayjs/locale/zh-cn";
 // 换成中文
 dayjs.locale("zh-cn");
+const getHtml = async () => {
+  const html = await fetch("/").then((res) => res.text()); //读取index html
+  return html;
+};
+const init = async () => {
+  const res = await getHtml();
+  console.log({ a: res }, 124214);
+};
+init();
 
 function App() {
   return (

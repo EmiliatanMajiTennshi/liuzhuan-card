@@ -1,14 +1,11 @@
 import React from "react";
-import { ContentRender } from "@/components/ContentRender";
 import { AdvancedSearchCom } from "@/components/AdvancedSearchCom";
+import { ContentRender } from "@/components/ContentRender";
 import { formConfig, tableConfig } from "./config";
 
-/**用户管理 */
-const UserManage = () => {
-  console.log(21314214);
-
+const QueryRollChain = () => {
   return (
-    <ContentRender title="用户管理">
+    <ContentRender title="生料库存查询">
       <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}
@@ -17,4 +14,4 @@ const UserManage = () => {
   );
 };
 
-export default UserManage;
+export default QueryRollChain;

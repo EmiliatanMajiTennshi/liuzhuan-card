@@ -139,7 +139,7 @@ const PrintFlowCardFormRework = (props: IProps) => {
           colSpan={3}
           titleStyle={normalStyle}
           style={normalStyle}
-          addonAfter={reworkUnit}
+          unit={reworkUnit}
         />
       </tr>
       {isGaizhi && (

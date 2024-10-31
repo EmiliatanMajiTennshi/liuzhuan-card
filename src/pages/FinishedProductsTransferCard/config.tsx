@@ -157,6 +157,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     queryFlowCardApi: "queryfinishedProductsByOI",
     flowCardType: "finished",
     rowKey: "id",
+    disableFirstLoading: true,
+    noPaging: true,
     columns: [
       {
         title: "零件类型",

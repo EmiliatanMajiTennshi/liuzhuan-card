@@ -4,7 +4,7 @@ import { ValueType } from "rc-input/lib/interface";
 import React, { useEffect } from "react";
 
 const OnlyNumberInput = (props: React.ComponentProps<typeof Input>) => {
-  const { disabled, placeholder, style, value: _value, onChange } = props;
+  const { disabled, placeholder, style, value: _value, onChange, size } = props;
   const [value, setValue] = useSafeState<ValueType>("");
   console.log(value, 124124);
 
@@ -27,6 +27,7 @@ const OnlyNumberInput = (props: React.ComponentProps<typeof Input>) => {
       placeholder={placeholder}
       style={style}
       onChange={handleChange}
+      size={size}
     />
   );
 };

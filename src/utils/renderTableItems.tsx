@@ -1,4 +1,5 @@
 import {
+  AutoComplete,
   Button,
   DatePicker,
   Form,
@@ -11,7 +12,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode.react";
 import styles from "./renderTableItems.module.scss";
-import { limitDecimals } from "./common";
+import { limitDecimals, uniqueArray } from "./common";
 import { MyTooltip } from "@/components/MyTooltip";
 import TextArea from "antd/es/input/TextArea";
 import ReadOnlyFormItem from "@/components/ReadOnlyFormItem/ReadOnlyFormItem";
@@ -105,6 +106,7 @@ const ReadOnlyInput = ({
   render,
   empty,
   data,
+  unit,
 }: {
   title: string | React.ReactNode;
   name: string;
@@ -121,6 +123,7 @@ const ReadOnlyInput = ({
   render?: React.ReactNode | (() => React.ReactNode);
   empty?: boolean;
   data?: any;
+  unit?: string;
 }) => {
   useEffect(() => {
     if (form && (defaultValue || empty)) {
@@ -163,6 +166,7 @@ const ReadOnlyInput = ({
                 placeholder={placeholder}
                 addonAfter={addonAfter}
                 isNumber={isNumber}
+                unit={unit}
               ></ReadOnlyFormItem>
             </MyTooltip>
           )}
@@ -179,6 +183,7 @@ const EditAbleInput = ({
   onBlur,
   isNumber,
   colSpan,
+  labelColSpan,
   max,
   step,
   style,
@@ -200,6 +205,7 @@ const EditAbleInput = ({
   onBlur?: (e: any) => void;
   isNumber?: boolean;
   colSpan?: number;
+  labelColSpan?: number;
   max?: number;
   precision?: number;
   step?: number;
@@ -217,7 +223,7 @@ const EditAbleInput = ({
   }, [defaultValue]);
   return (
     <>
-      <th style={titleStyle}>
+      <th style={titleStyle} colSpan={labelColSpan}>
         {title} {required && <RequiredDot />}
       </th>
       <td
@@ -351,11 +357,15 @@ const RenderSelect = ({
   optionKey,
   data,
   empty,
+  onClear,
+  autoComplete,
+  style,
 }: {
   title: string;
   name: string;
   options: { value: any; label: any }[];
   titleStyle?: React.CSSProperties;
+  style?: React.CSSProperties;
   colSpan?: number;
   labelColSpan?: number;
   placeholder?: string;
@@ -372,13 +382,14 @@ const RenderSelect = ({
   optionKey?: string;
   data?: any;
   empty?: boolean;
+  onClear?: (() => void) | undefined;
+  autoComplete?: boolean;
 }) => {
   useEffect(() => {
     if (form && (defaultValue || empty)) {
       form.setFieldValue(name, defaultValue);
     }
   }, [data, defaultValue]);
-  console.log(options, 124124);
 
   return (
     <>
@@ -393,107 +404,131 @@ const RenderSelect = ({
           name={name}
           rules={[{ required: required, message: `请输入${title}` }]}
         >
-          <Select
-            placeholder={placeholder}
-            // options={options}
-            onSelect={onSelect}
-            showSearch={showSearch}
-            onSearch={onSearch}
-            notFoundContent={notFoundContent}
-            className={styles?.optionItem}
-            loading={loading}
-            allowClear
-            disabled={disabled}
-            labelRender={(record) => {
-              return (
-                <span>
-                  <span>{record?.value}</span>
-                  <Button
-                    type="link"
-                    className={styles?.copyBtn}
-                    style={{ position: "absolute", right: 20, bottom: "-1px" }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // navigator.clipboard
-                      //   ?.writeText(record?.value as any)
-                      //   .then(() => {
-                      //     message.success("复制成功");
-                      //   })
-                      //   .catch((err) => {
-                      //     message.error("复制失败");
-                      //   });
-                      const textArea = document.createElement("textarea");
-                      textArea.value = record?.value as any;
-                      // 使text area不在viewport，同时设置不可见
-                      document.body.appendChild(textArea);
-                      textArea.focus();
-                      textArea.select();
-                      return new Promise((res, rej) => {
-                        // 执行复制命令并移除文本框
-                        document.execCommand("copy") ? res("success") : rej();
-                        textArea.remove();
-                      })
-                        .then((res) => {
-                          message.success("复制成功");
+          {!autoComplete ? (
+            <Select
+              placeholder={placeholder}
+              // options={options}
+              onSelect={onSelect}
+              showSearch={showSearch}
+              onSearch={onSearch}
+              onClear={onClear}
+              notFoundContent={notFoundContent}
+              className={styles?.optionItem}
+              loading={loading}
+              allowClear
+              disabled={disabled}
+              labelRender={(record) => {
+                return (
+                  <span>
+                    <span>{record?.value}</span>
+                    <Button
+                      type="link"
+                      className={styles?.copyBtn}
+                      style={{
+                        position: "absolute",
+                        right: 20,
+                        bottom: "-1px",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // navigator.clipboard
+                        //   ?.writeText(record?.value as any)
+                        //   .then(() => {
+                        //     message.success("复制成功");
+                        //   })
+                        //   .catch((err) => {
+                        //     message.error("复制失败");
+                        //   });
+                        const textArea = document.createElement("textarea");
+                        textArea.value = record?.value as any;
+                        // 使text area不在viewport，同时设置不可见
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        return new Promise((res, rej) => {
+                          // 执行复制命令并移除文本框
+                          document.execCommand("copy") ? res("success") : rej();
+                          textArea.remove();
                         })
-                        .catch((err) => {
-                          message.error("复制失败");
-                        });
-                    }}
+                          .then((res) => {
+                            message.success("复制成功");
+                          })
+                          .catch((err) => {
+                            message.error("复制失败");
+                          });
+                      }}
+                    >
+                      复制
+                    </Button>
+                  </span>
+                );
+              }}
+            >
+              {options?.map((item) => {
+                return (
+                  <Select.Option
+                    {...item}
+                    key={optionKey ? item?.[optionKey as "value"] : item.value}
+                    className={styles?.optionItem}
                   >
-                    复制
-                  </Button>
-                </span>
-              );
-            }}
-          >
-            {options?.map((item) => {
-              return (
-                <Select.Option
-                  {...item}
-                  key={optionKey ? item?.[optionKey as "value"] : item.value}
-                  className={styles?.optionItem}
-                >
-                  {item?.label}
-                  <Button
-                    type="link"
-                    className={styles?.copyBtn}
-                    style={{ position: "absolute", right: 20, bottom: "-1px" }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // navigator.clipboard
-                      //   ?.writeText(item?.label)
-                      //   .then(() => {
-                      //     message.success("复制成功");
-                      //   })
-                      //   .catch((err) => {
-                      //     message.error("复制失败");
-                      //   });
-                      const textArea = document.createElement("textarea");
-                      textArea.value = item?.label;
-                      // 使text area不在viewport，同时设置不可见
-                      document.body.appendChild(textArea);
-                      textArea.focus();
-                      textArea.select();
-                      return new Promise((res, rej) => {
-                        // 执行复制命令并移除文本框
-                        document.execCommand("copy") ? res("success") : rej();
-                        textArea.remove();
-                      })
-                        .then((res) => {
-                          message.success("复制成功");
+                    {item?.label}
+                    <Button
+                      type="link"
+                      className={styles?.copyBtn}
+                      style={{
+                        position: "absolute",
+                        right: 0,
+                        bottom: "-1px",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // navigator.clipboard
+                        //   ?.writeText(item?.label)
+                        //   .then(() => {
+                        //     message.success("复制成功");
+                        //   })
+                        //   .catch((err) => {
+                        //     message.error("复制失败");
+                        //   });
+                        const textArea = document.createElement("textarea");
+                        textArea.value = item?.label;
+                        // 使text area不在viewport，同时设置不可见
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        return new Promise((res, rej) => {
+                          // 执行复制命令并移除文本框
+                          document.execCommand("copy") ? res("success") : rej();
+                          textArea.remove();
                         })
-                        .catch((err) => {
-                          message.error("复制失败");
-                        });
-                    }}
-                  >
-                    复制
-                  </Button>
-                </Select.Option>
-              );
-            })}
-          </Select>
+                          .then((res) => {
+                            message.success("复制成功");
+                          })
+                          .catch((err) => {
+                            message.error("复制失败");
+                          });
+                      }}
+                    >
+                      复制
+                    </Button>
+                  </Select.Option>
+                );
+              })}
+            </Select>
+          ) : (
+            <AutoComplete
+              popupClassName="certain-category-search-dropdown"
+              options={uniqueArray(options, "value")}
+              size="large"
+              onSelect={onSelect}
+              showSearch={showSearch}
+              onSearch={onSearch}
+              onClear={onClear}
+              allowClear
+            >
+              <Input size="large" placeholder={placeholder} style={style} />
+            </AutoComplete>
+          )}
         </Form.Item>
 
         <span style={{ color: "red" }}>{remark && <>提示：{remark}</>}</span>
@@ -505,6 +540,7 @@ const RenderDatePicker = ({
   title,
   name,
   colSpan,
+  labelColSpan,
   required,
   showTime,
   titleStyle,
@@ -512,7 +548,8 @@ const RenderDatePicker = ({
 }: {
   title: string;
   name: string;
-  colSpan: number;
+  colSpan?: number;
+  labelColSpan?: number;
   required?: boolean;
   showTime?: boolean;
   titleStyle?: React.CSSProperties;
@@ -520,7 +557,10 @@ const RenderDatePicker = ({
 }) => {
   return (
     <>
-      <th style={titleStyle}>{title}</th>
+      <th style={titleStyle} colSpan={labelColSpan}>
+        {title}
+        {required && " *"}
+      </th>
       <td
         colSpan={colSpan}
         className={`${styles["input-container"]} ${styles["date-container"]}`}

@@ -11,6 +11,9 @@ $color-red: #ff4d4f;
   :global {
     .ant-form-item {
       margin-bottom: 0;
+      .ant-select-clear {
+        top: 30%;
+      }
     }
     .ant-form-item-control-input {
       min-height: auto !important;
@@ -76,6 +79,9 @@ $color-red: #ff4d4f;
       outline: none;
       box-shadow: none !important;
       padding: 0 !important;
+      input {
+        border-style: none !important;
+      }
     }
     .ant-select-selection-item,
     .ant-select-selection-placeholder {

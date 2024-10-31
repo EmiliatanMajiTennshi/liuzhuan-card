@@ -175,7 +175,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
     flowCardType: "flowCard",
     // 下发成品
-    // rowKey: "transferCardCode",
+    rowKey: "transferCardCode",
     needIssueFinished: true,
     // defaultParam: {
     //   // printPage: "1",
@@ -395,7 +395,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                       type="link"
                       size="small"
                       style={{ marginLeft: 10 }}
-                      disabled={record?.printStatus === "NO"}
+                      disabled={!Boolean(record?.pCardID)}
                     >
                       恢复
                     </Button>

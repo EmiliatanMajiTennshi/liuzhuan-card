@@ -23,7 +23,7 @@ import { AnyObject } from "antd/es/_util/type";
 import { cloneDeep } from "lodash";
 import dayjs from "dayjs";
 
-import { formatTime, validateField } from "@/utils";
+import { formatDate, formatTime, validateField } from "@/utils";
 import { SELF_CHECK_LIST, SUCCESS_CODE } from "@/constants";
 import { RenderCustomSelect } from "@/components/RenderCustomSelect";
 import { useEffect, useState } from "react";
@@ -272,6 +272,7 @@ export const useTableColumns = ({
                 allowClear
                 style={{ width: "100%" }}
                 defaultValue={text}
+                size="large"
                 onSelect={(e) => {
                   record.inspectionLevel = e;
                   // const cloneErrors = cloneDeep(errors);
@@ -458,6 +459,7 @@ export const useTableColumns = ({
           return (
             <>
               <DatePicker
+                size="large"
                 showTime
                 value={text ? dayjs(text) : null}
                 onChange={(e, date) => {
@@ -638,6 +640,7 @@ export const useTableColumns = ({
             <>
               <OnlyNumberInput
                 placeholder="请输入产量"
+                size="large"
                 value={text}
                 onChange={(e) => {
                   record.productNumber = e || "";
@@ -693,6 +696,7 @@ export const useTableColumns = ({
           return queryFlowCardApi === "queryReworkBySign" ? (
             <>
               <Input
+                size="large"
                 style={{ width: "100%" }}
                 value={text}
                 placeholder="请输入工序"
@@ -742,6 +746,7 @@ export const useTableColumns = ({
                 style={{ width: "100%" }}
                 value={text}
                 disabled={isAddNewCard}
+                size="large"
                 onSelect={(e) => {
                   record.inspectionLevel = e;
                   // const cloneErrors = cloneDeep(errors);
@@ -919,6 +924,7 @@ export const useTableColumns = ({
           return (
             <>
               <DatePicker
+                size="large"
                 disabled={isAddNewCard}
                 showTime
                 value={text ? dayjs(text) : null}
@@ -1028,6 +1034,7 @@ export const useTableColumns = ({
           return (
             <>
               <OnlyNumberInput
+                size="large"
                 disabled={isAddNewCard}
                 placeholder="请输入产量"
                 style={{ width: "100%" }}
@@ -1083,6 +1090,126 @@ export const useTableColumns = ({
                 移除
               </Button>
             </Popconfirm>
+          );
+        },
+      },
+    ],
+    rollChain: [
+      {
+        title: "序号",
+        dataIndex: "seq",
+        key: "seq",
+        width: 120,
+        render: (text: string, record: any, index: number) => (
+          <span style={{ paddingLeft: 20 }}>{index + 1}</span>
+        ),
+      },
+      {
+        title: "品名",
+        dataIndex: "name",
+        key: "name",
+        needValidate: true,
+        width: "30%",
+        render: (text: string, record: any, index: number) => {
+          return (
+            <>
+              <Input
+                size="large"
+                placeholder="请输入品名"
+                style={{ width: "100%" }}
+                value={text}
+                onChange={(e) => {
+                  record.name = e?.target?.value || "";
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].name = validateField(
+                    "品名",
+                    e?.target?.value
+                  );
+                  if (setErrors) {
+                    setErrors(cloneErrors);
+                  }
+                }}
+              ></Input>
+              {errors[index]?.name && (
+                <span style={{ color: "red" }}>{errors[index]?.name}</span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "规格",
+        dataIndex: "spec",
+        key: "spec",
+        needValidate: true,
+        width: "30%",
+        render: (text: string, record: any, index: number) => {
+          console.log(text, 1112);
+          return (
+            <>
+              <Input
+                size="large"
+                placeholder="请输入规格"
+                style={{ width: "100%" }}
+                value={text}
+                onChange={(e) => {
+                  record.spec = e?.target?.value || "";
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  cloneErrors[index].spec = validateField(
+                    "规格",
+                    e?.target?.value
+                  );
+                  if (setErrors) {
+                    setErrors(cloneErrors);
+                  }
+                }}
+              ></Input>
+              {errors[index]?.spec && (
+                <span style={{ color: "red" }}>{errors[index]?.spec}</span>
+              )}
+            </>
+          );
+        },
+      },
+      {
+        title: "商标",
+        dataIndex: "trademark",
+        key: "trademark",
+        width: "30%",
+        render: (text: string, record: any, index: number) => {
+          console.log(text, 1112);
+          return (
+            <>
+              <Input
+                size="large"
+                placeholder="请输入商标"
+                style={{ width: "100%" }}
+                value={text}
+                onChange={(e) => {
+                  record.trademark = e?.target?.value || "";
+                  const cloneErrors = cloneDeep(errors);
+                  if (!cloneErrors[index]) {
+                    cloneErrors[index] = {};
+                  }
+                  // cloneErrors[index].trademark = validateField(
+                  //   "商标",
+                  //   e?.target?.value
+                  // );
+                  if (setErrors) {
+                    setErrors(cloneErrors);
+                  }
+                }}
+              ></Input>
+              {errors[index]?.trademark && (
+                <span style={{ color: "red" }}>{errors[index]?.trademark}</span>
+              )}
+            </>
           );
         },
       },
@@ -1194,7 +1321,9 @@ export const getParams = ({
       //优先顺序
       priorityOrder: values.priority,
       //零件流转时间
-      tranferTime: formatTime(values.transferTime),
+      tranferTime: values.transferTime
+        ? formatTime(values.transferTime)
+        : undefined,
       //工艺
       process: data?.processList,
       // pNumber
@@ -1371,6 +1500,11 @@ export const getParams = ({
       //     processSeq: index + 1,
       //   };
       // }),
+    },
+    rollChain: {
+      drawer: values?.drawer,
+      drawerId: values?.drawerId,
+      rollTime: formatDate(values?.rollTime),
     },
   };
 

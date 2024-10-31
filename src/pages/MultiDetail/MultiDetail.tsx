@@ -1,4 +1,9 @@
-import { getMultiCardDetail, UpdateWuliu } from "@/api";
+import {
+  getMultiCardDetail,
+  queryMultiProcessByTransferCardCode,
+  updateMultiProcessByTransferCardCode,
+  UpdateWuliu,
+} from "@/api";
 import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
 import { App, Button, ConfigProvider, Form, Input, Spin, Table } from "antd";
 import { AnyObject } from "antd/es/_util/type";
@@ -9,9 +14,10 @@ import {
   normalStyle,
   normalStyle18,
 } from "../ProductionProcessFlowCardAndDispatchList/styles";
+import { IIssueID } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 
 const MultiDetail = (props: {
-  requestParams: AnyObject;
+  requestParams: IIssueID;
   readOnly?: boolean;
 }) => {
   const { requestParams, readOnly } = props;
@@ -22,14 +28,12 @@ const MultiDetail = (props: {
   const { message } = App.useApp();
   const [form] = Form.useForm();
   const fetchData = () =>
-    getMultiCardDetail(requestParams)
+    queryMultiProcessByTransferCardCode(requestParams)
       .then((res) => {
         if (SUCCESS_CODE.indexOf(res?.status) !== -1) {
-          console.log(res.list, 12412411, res);
-
-          setFormData(res?.data?.detail);
-          setTableData(res?.data?.list);
-          form.setFieldsValue(res?.data?.detail);
+          setFormData(res?.data?.data);
+          setTableData(res?.data?.data?.processList);
+          form.setFieldsValue(res?.data?.data);
         } else {
           message.error(ERROR_MESSAGE);
         }
@@ -47,44 +51,44 @@ const MultiDetail = (props: {
   const columns = [
     {
       title: "序号",
-      dataIndex: "Xuhao",
-      key: "Xuhao",
+      dataIndex: "seq",
+      key: "seq",
       width: 40,
     },
     {
       title: "工艺",
-      dataIndex: "Gongyi",
-      key: "Gongyi",
+      dataIndex: "processName",
+      key: "processName",
       width: 80,
     },
     {
       title: "部门",
-      dataIndex: "dept",
-      key: "dept",
+      dataIndex: "department",
+      key: "department",
       width: 60,
     },
     {
       title: "操作工",
-      dataIndex: "CaozuoName",
-      key: "CaozuoName",
+      dataIndex: "operateName",
+      key: "operateName",
       width: 60,
     },
     {
       title: "流转卡编号",
-      dataIndex: "CardID",
-      key: "CardID",
+      dataIndex: "transferCardCode",
+      key: "transferCardCode",
       width: 100,
     },
     {
       title: "产量",
-      dataIndex: "Chanliang",
-      key: "Chanliang",
+      dataIndex: "productNumber",
+      key: "productNumber",
       width: 60,
     },
     {
       title: "物流数量",
-      dataIndex: "WuliuNum",
-      key: "WuliuNum",
+      dataIndex: "logisticsQuantity",
+      key: "logisticsQuantity",
       width: 60,
       render: (text: number | string, record?: any) => {
         return readOnly ? (
@@ -95,7 +99,7 @@ const MultiDetail = (props: {
             style={{ width: "100%" }}
             defaultValue={text}
             onChange={(e) => {
-              record.WuliuNum = e?.target?.value;
+              record.logisticsQuantity = e?.target?.value;
             }}
           ></Input>
         );
@@ -116,17 +120,16 @@ const MultiDetail = (props: {
                   disabled={record?.type === "1"}
                   type="primary"
                   onClick={() => {
-                    console.log(record?.WuliuNum, 12414122);
-                    UpdateWuliu({
-                      CardID: record?.CardID,
-                      uid: record?.uid,
-                      WuliuNum: record?.WuliuNum,
+                    console.log(record?.logisticsQuantity, 12414122);
+                    updateMultiProcessByTransferCardCode({
+                      id: record?.id,
+                      logisticsQuantity: record?.logisticsQuantity,
                     })
                       .then((res) => {
-                        if (res?.data?.state === "1") {
-                          message.success(res?.data?.Msg);
+                        if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                          message.success(res?.data?.data);
                         } else {
-                          message.error(res?.data?.Msg);
+                          message.error(res?.data?.data);
                         }
                         setLoading(true);
                         fetchData();
@@ -176,7 +179,7 @@ const MultiDetail = (props: {
                 <tr>
                   <ReadOnlyInput
                     title="流转卡号"
-                    name="CardID"
+                    name="transferCardCode"
                     titleStyle={normalStyle}
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     colSpan={2}
@@ -185,13 +188,13 @@ const MultiDetail = (props: {
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
                     title="品名"
-                    name="SMAKTX"
+                    name="name"
                   />
                   <ReadOnlyInput
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
                     title="材质"
-                    name="Texture"
+                    name="itmtdid"
                   />
                 </tr>
                 <tr>
@@ -199,20 +202,20 @@ const MultiDetail = (props: {
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
                     title="订单号"
-                    name="OrderNo"
+                    name="orderid"
                     colSpan={2}
                   />
                   <ReadOnlyInput
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
                     title="规格"
-                    name="Format"
+                    name="spec"
                   />
                   <ReadOnlyInput
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
                     title="商标"
-                    name="Shangbiao"
+                    name="trademark"
                   />
                 </tr>
                 <tr>
@@ -220,7 +223,7 @@ const MultiDetail = (props: {
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
                     title="客户订单号"
-                    name="KHOrder"
+                    name="ordernum"
                     colSpan={2}
                   />
 
@@ -228,13 +231,13 @@ const MultiDetail = (props: {
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
                     title="表面处理"
-                    name="Surface"
+                    name="surfaceTreatment"
                   />
                   <ReadOnlyInput
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
                     title="图号"
-                    name="TuNo"
+                    name="itmTEID"
                   />
                 </tr>
                 <tr>
@@ -243,19 +246,19 @@ const MultiDetail = (props: {
                     titleStyle={normalStyle}
                     title="料号"
                     colSpan={2}
-                    name="Matnr"
+                    name="itmid"
                   />
                   <ReadOnlyInput
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
-                    title="数量（KG）"
-                    name="Num"
+                    title="生产数量（KG）"
+                    name="productKg"
                   />
                   <ReadOnlyInput
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
-                    title="数量（PCS）"
-                    name="Numpcs"
+                    title="生产数量（PCS）"
+                    name="productPcs"
                   />
                 </tr>
                 <tr>
@@ -270,13 +273,13 @@ const MultiDetail = (props: {
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
                     title="流转数量（KG）"
-                    name="LZNum"
+                    name="transferNumberKG"
                   />
                   <ReadOnlyInput
                     style={{ lineHeight: "24px", ...normalStyle18 }}
                     titleStyle={normalStyle}
                     title="流转数量（PCS）"
-                    name="LZNumpcs"
+                    name="transferNumberPCS"
                   />
                 </tr>
               </tbody>

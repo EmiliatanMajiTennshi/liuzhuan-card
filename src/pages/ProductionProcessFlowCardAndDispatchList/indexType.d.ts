@@ -97,6 +97,7 @@ export interface IData {
   trademark?: string;
   materialInfos?: any;
   relation?: string;
+  rollChainTraceabilityNumber?: string;
 }
 
 export interface IFormFields {

@@ -17,6 +17,7 @@ import getApi, {
   TApi,
   insertPrintTransferCardNew,
   insertReworkTransferCardNew,
+  insertRollChain,
   insertfinishedProductsNew,
   insertoutsourcingPurchasingNew,
   printReworkTransferCardNew,
@@ -48,6 +49,7 @@ import {
   ITableConfig,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import {
+  ERROR_MESSAGE,
   SAVE_FAILED,
   SUCCESS_CODE,
   VALIDATION_FAILED,
@@ -66,6 +68,9 @@ import PrintFlowCardFormRework from "./PrintFlowCardFormRework";
 import axios, { CancelTokenSource } from "axios";
 import { insertUnfinishedProductsNew } from "@/api/insertUnfinishedProductsNew";
 import { useThrottleFn } from "ahooks";
+import PrintFlowCardFormRollChain from "./PrintFlowCardFormRollChain";
+import FlowCardFormRollChain from "./FlowCardFormRollChain";
+import classNames from "classnames";
 
 const ProductionProcessFlowCardAndDispatchList = (props: {
   issueID?: IIssueID;
@@ -76,6 +81,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   setReworkModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   setIssueModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   setPrintModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setRollChainModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   needIssueFinished?: boolean;
   notSelfIssue?: boolean;
   finishedData32to31?: AnyObject;
@@ -115,7 +121,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     unfinishedData32to31,
     setUnfinishedData32to31,
     tabChangeFlag,
-
     confirmFinished,
     tabLoading,
     setTabLoading,
@@ -175,6 +180,12 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         printReworkTransferCardNew({
           transferCardCode: data?.reworkTransferCardCode,
         }).then((res) => {
+          setRefreshFlag((flag) => !flag);
+        });
+      } else if (isRollChian) {
+        insertPrintTransferCardNew({
+          transferCardCode: data?.rollChainTraceabilityNumber,
+        }).then(() => {
           setRefreshFlag((flag) => !flag);
         });
       } else {
@@ -414,6 +425,10 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     if (issueID || queryFlowCardApi) {
       fetchData();
     }
+    if (issueID?.noQuery) {
+      form.setFieldsValue(issueID);
+      setData(issueID);
+    }
     if (flowCardType === "flowCard" || flowCardType === "rework") {
       fetchOperatorData();
       fetchVerifierData();
@@ -485,6 +500,12 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
 
   const unit = data?.unit || "";
   const isKg = kgArr.indexOf(unit) !== -1;
+
+  // 卷装链
+  const isRollChian =
+    Boolean(data?.rollChainTraceabilityNumber) || flowCardType === "rollChain";
+
+  console.log(data, 1211);
 
   const onFinish = async (values: IFormFields) => {
     setSaveLoading(true);
@@ -687,6 +708,55 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         finialSave();
       }
     }
+    if (flowCardType === "rollChain") {
+      const cloneErrors = cloneDeep(errors);
+      let errorFlag = false;
+      // 对table进行校验
+      tableData.forEach((item, index: number) => {
+        if (!cloneErrors[index]) {
+          cloneErrors[index] = {};
+        }
+        columns.forEach((subItem: any) => {
+          if (subItem.needValidate) {
+            const error = validateField(subItem.title, item[subItem.key]);
+            if (!error) {
+              delete cloneErrors[index][subItem.key];
+            } else {
+              cloneErrors[index][subItem.key] = error;
+              if (errorFlag === false) {
+                errorFlag = true;
+              }
+            }
+          }
+        });
+      });
+      setErrors(cloneErrors);
+      if (errorFlag) {
+        message.error(VALIDATION_FAILED);
+        setSaveLoading(false);
+        return;
+      } else {
+        console.log(params, tableData, 12313, values);
+        const insertRollChainFn = async () => {
+          try {
+            const res = await insertRollChain({
+              ...params,
+              rollChainViews: tableData,
+            });
+            if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+              message.success(res?.data?.data);
+            } else {
+              message.error(res?.data?.data);
+            }
+          } catch {
+            message.error(ERROR_MESSAGE);
+          } finally {
+            setSaveLoading(false);
+          }
+        };
+        insertRollChainFn();
+      }
+    }
 
     if (
       flowCardType === "common" ||
@@ -849,7 +919,11 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
 
   return (
     <>
-      <div className={styles["flow-card"]} ref={printRef}>
+      <div
+        className={styles["flow-card"]}
+        ref={printRef}
+        style={flowCardType === "print" ? { marginRight: 2 } : {}}
+      >
         <Spin spinning={tabLoading ? false : loading}>
           <ConfigProvider
             theme={{
@@ -884,7 +958,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                   </>
                 )}
 
-                {flowCardType !== "rework" && !isRework && (
+                {flowCardType !== "rework" && !isRework && !isRollChian && (
                   <>
                     <h2 style={{ textAlign: "center" }}>
                       生产工序流转卡暨派工单
@@ -897,6 +971,25 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                       size={120}
                       form={form}
                     />
+                  </>
+                )}
+                {flowCardType === "print" && isRollChian && (
+                  <>
+                    <h2 style={{ textAlign: "center" }}>车间卷装链条</h2>
+                    <RenderQRCode
+                      title="追溯号"
+                      name="rollChainTraceabilityNumber"
+                      value={data?.rollChainTraceabilityNumber || ""}
+                      noTd={true}
+                      size={120}
+                      form={form}
+                    />
+                  </>
+                )}
+                {flowCardType === "rollChain" && (
+                  <>
+                    <h2 style={{ textAlign: "center" }}>车间卷装链条添加</h2>
+                    <span style={{ width: 20 }}></span>
                   </>
                 )}
               </div>
@@ -931,9 +1024,9 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                     <Skeleton active style={{ height: 500 }} />
                   )}
                 {/* 打印 自制*/}
-                {flowCardType === "print" && isOutsourcing === false && (
-                  <PrintFlowCardForm {...flowCardFormProps} />
-                )}
+                {flowCardType === "print" &&
+                  isOutsourcing === false &&
+                  !isRollChian && <PrintFlowCardForm {...flowCardFormProps} />}
                 {/* 打印 外协外购/苏州/五金*/}
                 {flowCardType === "print" && isOutsourcing && (
                   <PrintFlowCardFormOutsourcing {...flowCardFormProps} />
@@ -942,9 +1035,16 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                 {flowCardType === "print" && isRework && (
                   <PrintFlowCardFormRework {...flowCardFormProps} />
                 )}
+                {/* 打印 卷装链*/}
+                {flowCardType === "print" && isRollChian && (
+                  <PrintFlowCardFormRollChain {...flowCardFormProps} />
+                )}
                 {/** 添加返工流转卡 */}
                 {flowCardType === "rework" && (
                   <ReworkCardForm {...reworkCardFormProps} />
+                )}
+                {flowCardType === "rollChain" && (
+                  <FlowCardFormRollChain {...reworkCardFormProps} />
                 )}
               </table>
             </Form>
@@ -1008,23 +1108,62 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                     }}
                     pagination={false}
                     dataSource={tableData}
-                    className={styles.flowCardTable}
+                    className={classNames([
+                      styles.flowCardTable,
+                      { [styles["flowCardTableRollChain"]]: true },
+                    ])}
                   ></Table>
+                  {flowCardType === "flowCard" && data?.materialInfos && (
+                    <Table
+                      // rowKey={tableData?.[0]?.id ? "id" : "hid"}
+                      columns={[
+                        { key: "mItmID", dataIndex: "mItmID", title: "料号" },
+                        { key: "mName", dataIndex: "mName", title: "品名" },
+                        { key: "mspec", dataIndex: "mspec", title: "规格" },
+                        {
+                          key: "mItmTDID",
+                          dataIndex: "mItmTDID",
+                          title: "材质",
+                        },
+                        {
+                          key: "storeNumber",
+                          dataIndex: "storeNumber",
+                          title: "库存数量",
+                        },
+                        {
+                          key: "storeName",
+                          dataIndex: "storeName",
+                          title: "仓库 - 库位",
+                        },
+                        // { key: "munit", dataIndex: "munit", title: "规格" },
+                      ]}
+                      style={{
+                        borderRight: "1px solid #000",
+                        borderLeft: "1px solid #000",
+                        borderTop: "1px solid #000",
+                        marginBottom: 10,
+                      }}
+                      pagination={false}
+                      dataSource={data?.materialInfos}
+                      className={styles.flowCardTable}
+                    ></Table>
+                  )}
                 </ConfigProvider>
 
-                {flowCardType === "rework" &&
-                  queryFlowCardApi === "queryReworkBySign" && (
-                    <Button
-                      type="dashed"
-                      style={{ width: "100%", marginBottom: 10 }}
-                      onClick={() => {
-                        setTableData([...tableData, {}]);
-                      }}
-                    >
-                      <PlusOutlined />
-                      添加一行数据
-                    </Button>
-                  )}
+                {((flowCardType === "rework" &&
+                  queryFlowCardApi === "queryReworkBySign") ||
+                  flowCardType === "rollChain") && (
+                  <Button
+                    type="dashed"
+                    style={{ width: "100%", marginBottom: 10 }}
+                    onClick={() => {
+                      setTableData([...tableData, {}]);
+                    }}
+                  >
+                    <PlusOutlined />
+                    添加一行数据
+                  </Button>
+                )}
               </>
             )}
 

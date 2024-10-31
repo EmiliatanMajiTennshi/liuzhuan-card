@@ -20,6 +20,7 @@ import {
   convertArraysToString,
   convertStringToArray,
   getSecondDashSubstring,
+  getTime,
 } from "./common";
 import { setToken, getToken, removeToken } from "./token";
 import {
@@ -66,4 +67,5 @@ export {
   emptyRenderCustomPlaceHolder,
   emptyRender,
   getSecondDashSubstring,
+  getTime,
 };

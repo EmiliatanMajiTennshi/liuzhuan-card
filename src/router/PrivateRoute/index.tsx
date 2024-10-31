@@ -284,6 +284,12 @@ const MutiProcessTransferQuery = React.lazy(() =>
     default: res.MutiProcessTransferQuery,
   }))
 );
+/**车间卷装链条 */
+const QueryRollChain = React.lazy(() =>
+  import("@/pages/QueryRollChain").then((res) => ({
+    default: res.QueryRollChain,
+  }))
+);
 
 /**路由 */
 const routeMap = [
@@ -441,6 +447,10 @@ const routeMap = [
   {
     path: "/multi_process_transfer_query",
     element: <MutiProcessTransferQuery />,
+  },
+  {
+    path: "/query_roll_chain",
+    element: <QueryRollChain />,
   },
 ];
 

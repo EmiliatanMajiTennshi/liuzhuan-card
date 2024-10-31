@@ -56,9 +56,13 @@ const getLZCardNumber = () => {
   return lzCardNumber;
 };
 
+/** 获取时间 */
+const getTime = (time?: any) => {
+  return dayjs(time);
+};
 /** 把时间格式化成YYYY-MM-DD */
-const formatDate = (time?: any) => {
-  return dayjs(time).format("YYYY-MM-DD");
+const formatDate = (time?: any, format?: string) => {
+  return dayjs(time).format(format || "YYYY-MM-DD");
 };
 
 /** 把时间格式化成YYYY-MM-DD HH:mm:ss*/
@@ -67,10 +71,14 @@ const formatTime = (time: any) => {
 };
 
 /**psc转kg */
-const transFormToKg = (number: number | string, weight: number | string) => {
+const transFormToKg = (
+  number: number | string,
+  weight: number | string,
+  precision?: number
+) => {
   return (
     parseFloat(number.toString()) * parseFloat(weight.toString())
-  ).toFixed(4);
+  ).toFixed(precision || 4);
 };
 /**kg转psc */
 const transFormToPcs = (number: number | string, weight: number | string) => {
@@ -301,6 +309,10 @@ const transformDateToString = (values: any) => {
     const _tempTime = formatDate(values?.time2);
     values.time2 = _tempTime;
   }
+  if (values?.rollTime) {
+    const _tempTime = formatDate(values?.rollTime);
+    values.rollTime = _tempTime;
+  }
   return values;
 };
 
@@ -377,4 +389,5 @@ export {
   convertArraysToString,
   convertStringToArray,
   getSecondDashSubstring,
+  getTime,
 };

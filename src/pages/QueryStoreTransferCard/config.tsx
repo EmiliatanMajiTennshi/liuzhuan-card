@@ -222,22 +222,28 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       //   },
 
       {
-        title: "订单数量",
-        dataIndex: "orderNumber",
-        key: "orderNumber",
+        title: "订单数量kg",
+        dataIndex: "productionKg",
+        key: "productionKg",
         width: 100,
       },
       {
-        title: "流转数量累积",
-        dataIndex: "sumTransfer",
-        key: "sumTransfer",
+        title: "订单数量pcs",
+        dataIndex: "productionPcs",
+        key: "productionPcs",
         width: 120,
       },
       {
-        title: "单桶数量",
-        dataIndex: "produceNumber",
-        key: "produceNumber",
+        title: "流转数量kg",
+        dataIndex: "transferKg",
+        key: "transferKg",
         width: 100,
+      },
+      {
+        title: "流转数量pcs",
+        dataIndex: "transferPcs",
+        key: "transferPcs",
+        width: 120,
       },
       {
         title: "入库数量",

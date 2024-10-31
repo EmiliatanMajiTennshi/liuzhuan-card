@@ -32,7 +32,6 @@ interface IProps {
   data: IData;
   isKg: boolean;
   form: FormInstance<any>;
-
   mainsize: any;
   needIssueFinished?: boolean;
   notSelfIssue?: boolean;
@@ -40,6 +39,10 @@ interface IProps {
   finishedData32to31?: AnyObject;
   beIssuedForm?: FormInstance<any>;
   beIssuedData?: IData;
+  beIssuedPCode?: string;
+  setBeIssuedPCode?: React.Dispatch<React.SetStateAction<string | undefined>>;
+
+  uncoverData?: AnyObject;
 }
 const CommonForm = (props: IProps) => {
   const {
@@ -51,7 +54,13 @@ const CommonForm = (props: IProps) => {
     notSelfIssue,
     beIssuedForm,
     beIssuedData,
+    beIssuedPCode,
+    setBeIssuedPCode,
+
+    uncoverData,
   } = props;
+  console.log("asdddd", notSelfIssue);
+
   const itmid = data?.itmid;
   // 半成品
   const isSemiFinished = itmid?.startsWith("32");
@@ -69,6 +78,8 @@ const CommonForm = (props: IProps) => {
   const [pNum, setPNum] = useState<string>();
   const [mItmID, setMItemId] = useState<string>();
 
+  // 料号是否有小尾巴
+  const pCode = getSecondDashSubstring(data?.itmid || "");
   // const [materialItemId,setMItemId]
   const beIssuedTrademarkList = beIssuedForm
     ? [
@@ -104,8 +115,7 @@ const CommonForm = (props: IProps) => {
           console.log(err);
         });
     }
-    // 料号是否有小尾巴
-    const pCode = getSecondDashSubstring(data?.itmid || "");
+
     if (pCode) {
       const currentTrademark = data?.trademarkList?.find(
         (item) => item?.pnumber === pCode
@@ -113,14 +123,17 @@ const CommonForm = (props: IProps) => {
       if (currentTrademark) {
         form?.setFieldValue("trademark", currentTrademark?.trademark);
         setPNum(pCode);
+        form?.setFieldValue("pnumber", pCode);
       }
       // console.log(CurrentTrademark, 12422214);
     }
   }, [data]);
-
+  useEffect(() => {
+    setPNum(form?.getFieldValue("pnumber"));
+  }, [form?.getFieldValue("pnumber")]);
   useEffect(() => {
     form.setFieldValue("transferCardCode", data.transferCardCode);
-
+    console.log(1231232, data);
     // if (isKg) {
     if (data?.productKg && data?.weight) {
       const transferKgMax =
@@ -149,7 +162,8 @@ const CommonForm = (props: IProps) => {
         parseFloat(transferNumberPCS) <= parseFloat(transferPcsMax)
           ? transferNumberPCS
           : transferPcsMax;
-
+      beIssuedForm?.setFieldValue("transferPcs", transferPcs);
+      beIssuedForm?.setFieldValue("transferKg", transferKg);
       setLiuMaxKg(parseFloat(transferKgMax.toFixed(4)));
       setLiuMaxPCS(parseFloat(transferPcsMax));
       if (!notSelfIssue) {
@@ -162,6 +176,12 @@ const CommonForm = (props: IProps) => {
         }
       }
     }
+    if (!data.transferNumber) {
+      setLiuMaxKg(0);
+      setLiuMaxPCS(0);
+      form.setFieldValue("transferKg", 0);
+      form.setFieldValue("transferPcs", 0);
+    }
   }, [data]);
   useEffect(() => {
     setMItemId(data?.mItmID);
@@ -169,6 +189,12 @@ const CommonForm = (props: IProps) => {
       beIssuedForm?.setFieldValue("orderCatchHalf", data?.traceabilityNumber);
     }
   }, [data]);
+
+  useEffect(() => {
+    console.log(uncoverData, 11111333);
+
+    form.setFieldsValue(uncoverData);
+  }, [uncoverData, data]);
   const debounceGetPartNumber = debounce(async function (e) {
     try {
       // setPartNumberOPtions({ options: [], loading: true });
@@ -224,58 +250,89 @@ const CommonForm = (props: IProps) => {
           name="itmtdid"
           titleStyle={normalStyle}
         />
-
-        <RenderSelect
-          title="商标"
-          name="trademark"
-          empty
-          form={form}
-          data={data}
-          remark={data?.trademark}
-          titleStyle={normalStyle}
-          options={[
-            ...(data?.trademarkList1?.map((item) => ({
-              value: item.trademark,
-              label: item.trademark,
-              pnumber: item?.pnumber,
-            })) || []),
-            ...(data?.trademarkList?.map((item) => ({
-              value: item.trademark,
-              label: item.trademark,
-              pnumber: item?.pnumber,
-            })) || []),
-          ]}
-          optionKey="pnumber"
-          placeholder={
-            !data?.trademarkList || data?.trademarkList?.length === 0
-              ? NO_OPTIONS_DATA
-              : "请选择商标"
-          }
-          onSelect={(e: any, record: any) => {
-            // debugger;
-
-            const pnumber = record?.pnumber;
-            if (pnumber) {
-              setPNum(pnumber);
-              form.setFieldValue("pnumber", pnumber);
+        {!pCode ? (
+          <RenderSelect
+            title="商标"
+            name="trademark"
+            empty
+            form={form}
+            data={data}
+            remark={data?.trademark}
+            titleStyle={normalStyle}
+            options={[
+              ...(data?.trademarkList1?.map((item) => ({
+                value: item.trademark,
+                label: item.trademark,
+                pnumber: item?.pnumber,
+              })) || []),
+              ...(data?.trademarkList?.map((item) => ({
+                value: item.trademark,
+                label: item.trademark,
+                pnumber: item?.pnumber,
+              })) || []),
+            ]}
+            optionKey="pnumber"
+            placeholder={
+              !data?.trademarkList || data?.trademarkList?.length === 0
+                ? NO_OPTIONS_DATA
+                : "请选择商标"
             }
-            if (beIssuedForm && beIssuedData) {
-              const beIssuedTrademark = beIssuedTrademarkList?.find(
-                (item) => item.value === e
-              );
-              if (beIssuedTrademark) {
-                beIssuedForm?.setFieldValue("trademark", e);
-                beIssuedForm?.setFieldValue(
-                  "pnumber",
-                  beIssuedTrademark?.pnumber
-                );
-              } else {
-                beIssuedForm?.setFieldValue("trademark", undefined);
+            onSelect={(e: any, record: any) => {
+              // debugger;
+              const pnumber = record?.pnumber;
+              if (pnumber) {
+                setPNum(pnumber);
+                form.setFieldValue("pnumber", pnumber);
+                if (notSelfIssue && setBeIssuedPCode) {
+                  setBeIssuedPCode(pnumber);
+                }
               }
-            }
-          }}
-          showSearch
-        />
+
+              if (beIssuedForm && beIssuedData) {
+                const beIssuedFormTrademark =
+                  beIssuedForm.getFieldValue("trademark");
+
+                if (beIssuedFormTrademark) {
+                  // 原本就有商标的不要同步
+                  return;
+                }
+                const beIssuedTrademark = beIssuedTrademarkList?.find(
+                  (item) => item.value === e
+                );
+                if (beIssuedTrademark) {
+                  beIssuedForm?.setFieldValue("trademark", e);
+                  beIssuedForm?.setFieldValue(
+                    "pnumber",
+                    beIssuedTrademark?.pnumber
+                  );
+                  if (setBeIssuedPCode && needIssueFinished) {
+                    setBeIssuedPCode(beIssuedTrademark?.pnumber as string);
+                  }
+                } else {
+                  beIssuedForm?.setFieldValue("trademark", undefined);
+                }
+              }
+            }}
+            onClear={() => {
+              setPNum(undefined);
+              if (setBeIssuedPCode) {
+                setBeIssuedPCode(undefined);
+              }
+              form?.setFieldValue("trademark", undefined);
+              form?.setFieldValue("pnumber", undefined);
+              beIssuedForm?.setFieldValue("trademark", undefined);
+              beIssuedForm?.setFieldValue("pnumber", undefined);
+            }}
+            showSearch
+          />
+        ) : (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px", ...normalStyle18 }}
+            title="商标"
+            name="trademark"
+            titleStyle={normalStyle}
+          />
+        )}
 
         <ReadOnlyInput
           style={{ lineHeight: "24px", ...normalStyle18 }}
@@ -400,7 +457,7 @@ const CommonForm = (props: IProps) => {
               const valuePCS = e;
               const valueKg =
                 data?.weight && valuePCS
-                  ? transFormToKg(valuePCS, data?.weight)
+                  ? transFormToKg(valuePCS, data?.weight, 2)
                   : "";
               // if (
               //   isUnfinished32to31 &&
@@ -553,7 +610,7 @@ const CommonForm = (props: IProps) => {
               rowSpan={3}
               value={
                 `${data.parseitmid}${
-                  pNum || form?.getFieldValue("pnumber") || ""
+                  beIssuedPCode || pNum || form?.getFieldValue("pnumber") || ""
                 }` || "没有数据"
               }
               noTd

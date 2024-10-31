@@ -5,10 +5,11 @@ import { request } from "@/utils";
 
  * @returns
  */
-export const countProcessUnfinishToStoreMonth = async () => {
+export const countProcessUnfinishToStoreMonth = async (params?: any) => {
   try {
     const res = await request.get(
-      "processUnfinish/countProcessUnfinishToStoreMonth"
+      "processUnfinish/countProcessUnfinishToStoreMonth",
+      { params }
     );
     return res;
   } catch (err: any) {

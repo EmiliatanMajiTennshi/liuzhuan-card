@@ -15,32 +15,37 @@ import classNames from "classnames";
 import { RenderChart } from "@/components/RenderChart";
 import axios from "axios";
 import { AnyObject } from "antd/es/_util/type";
-import { App, Skeleton } from "antd";
+import { App, DatePicker, Skeleton } from "antd";
 import { useRafInterval } from "ahooks";
+import { formatDate, getTime } from "@/utils";
 
 /**首页 */
 const Dashboard = () => {
   // const [data, setData] = useState([]);
   const { message } = App.useApp();
-  const [chartDataYear, setChartDataYear] = useState([]);
+  const [chartDataMonth, setChartDataMonth] = useState([]);
   const [chartDataYesterday, setChartDataYesterday] = useState([]);
   const [topLoading, setTopLoading] = useState(true);
   const [chartLoading, setChartLoading] = useState(true);
+  const [monthLoading, setMonthLoading] = useState(true);
   const [orderCount, setOrderCount] = useState([]);
+  const [selectedData, setSelectData] = useState(
+    formatDate(getTime(), "YYYYMM")
+  );
   const fetchData = () => {
     axios
       .all([
-        countProcessUnfinishToStoreMonth(),
+        countProcessUnfinishToStoreMonth({ month: selectedData }),
         countProcessUnfinishToStoreYestereday(),
       ])
       .then(
-        axios.spread((yearUFChartRes: any, yesterDayUFChartRes: any) => {
+        axios.spread((monthUFChartRes: any, yesterDayUFChartRes: any) => {
           // 请求都成功返回后执行的逻辑
 
           // 图表数据
-          const yearChartData = yearUFChartRes?.data?.data;
+          const monthChartData = monthUFChartRes?.data?.data;
           const yesterdayChartData = yesterDayUFChartRes?.data?.data;
-          // const result = cloneDeep(yearList);
+          // const result = cloneDeep(monthList);
           // result?.forEach((item: AnyObject) => {
           //   yesterDayList?.forEach((subItem: AnyObject) => {
           //     if (item?.department === subItem?.department) {
@@ -49,7 +54,7 @@ const Dashboard = () => {
           //   });
           // });
           // setData(result);
-          setChartDataYear(yearChartData);
+          setChartDataMonth(monthChartData);
           setChartDataYesterday(yesterdayChartData);
         })
       )
@@ -59,6 +64,7 @@ const Dashboard = () => {
       })
       .finally(() => {
         setChartLoading(false);
+        setMonthLoading(false);
       });
 
     queryOrderCount().then((res) => {
@@ -69,11 +75,11 @@ const Dashboard = () => {
   };
   // const fetchData = async () => {
   //   try {
-  //     const resYear = await countOrderCompletionStatus({ sign: "1" });
+  //     const resMonth = await countOrderCompletionStatus({ sign: "1" });
   //     const resYesterday = await countOrderCompletionStatus({ sign: "2" });
-  //     console.log(resYear, resYesterday);
-  //     if (resYear?.data?.code === SUCCESS_CODE) {
-  //       setData(resYear?.data?.data);
+  //     console.log(resMonth, resYesterday);
+  //     if (resMonth?.data?.code === SUCCESS_CODE) {
+  //       setData(resMonth?.data?.data);
   //     }
   //   } catch (err) {
   //     console.log(err);
@@ -82,7 +88,7 @@ const Dashboard = () => {
   useEffect(() => {
     // fetchData();
     fetchData();
-  }, []);
+  }, [selectedData]);
   // 更新数据
   useRafInterval(() => {
     fetchData();
@@ -136,55 +142,69 @@ const Dashboard = () => {
             <>
               <div className={classNames([styles.block, styles.block6])}>
                 <RenderDashboardCard>
-                  <RenderChart
-                    title={
-                      <h3
-                        style={{
-                          margin: "0px 0px 10px",
-                          color: DEFAULT_ORANGE,
-                        }}
-                      >
-                        已入库流转卡工序未完成情况统计（本月）
-                      </h3>
-                    }
-                    xAxis={{
-                      data: chartDataYear?.map((item: any) => item?.department),
-                    }}
-                    legend={{
-                      data: ["统计张数"],
-                    }}
-                    series={[
-                      {
-                        name: "统计张数",
-                        type: "bar",
-                        emphasis: {
-                          focus: "series",
-                        },
-                        data: chartDataYear?.map(
-                          (item: any) => item?.countAllNumber
+                  {monthLoading && <Skeleton active style={{ height: 500 }} />}
+                  {!monthLoading && (
+                    <RenderChart
+                      title={
+                        <h3
+                          style={{
+                            margin: "0px 0px 10px",
+                            color: DEFAULT_ORANGE,
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          已入库流转卡工序未完成情况统计（月）
+                          <DatePicker.MonthPicker
+                            value={getTime(selectedData)}
+                            onChange={(e) => {
+                              setMonthLoading(true);
+                              setSelectData(formatDate(e, "YYYYMM"));
+                            }}
+                          ></DatePicker.MonthPicker>
+                        </h3>
+                      }
+                      xAxis={{
+                        data: chartDataMonth?.map(
+                          (item: any) => item?.department
                         ),
-                        label: {
-                          show: true,
-                          position: "insideBottom",
-                          width: 14,
-                          overflow: "break",
-                          distance: 5,
-                          verticalAlign: "bottom",
-                          formatter: "{name|{b} } {value|{c}}",
-                          rich: {
-                            name: { fontSize: 14 },
-                            value: {
-                              fontSize: 24,
-                              color: DEFAULT_ORANGE,
-                            },
+                      }}
+                      legend={{
+                        data: ["统计张数"],
+                      }}
+                      series={[
+                        {
+                          name: "统计张数",
+                          type: "bar",
+                          emphasis: {
+                            focus: "series",
                           },
-                          // formatter: function (data: any) {
-                          //   return data.name;
-                          // },
+                          data: chartDataMonth?.map(
+                            (item: any) => item?.countAllNumber
+                          ),
+                          label: {
+                            show: true,
+                            position: "insideBottom",
+                            width: 14,
+                            overflow: "break",
+                            distance: 5,
+                            verticalAlign: "bottom",
+                            formatter: "{name|{b} } {value|{c}}",
+                            rich: {
+                              name: { fontSize: 14 },
+                              value: {
+                                fontSize: 24,
+                                color: DEFAULT_ORANGE,
+                              },
+                            },
+                            // formatter: function (data: any) {
+                            //   return data.name;
+                            // },
+                          },
                         },
-                      },
-                    ]}
-                  />
+                      ]}
+                    />
+                  )}
                 </RenderDashboardCard>
               </div>
               <div className={classNames([styles.block, styles.block7])}>

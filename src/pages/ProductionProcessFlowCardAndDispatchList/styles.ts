@@ -66,6 +66,7 @@ export {
   boldWeight,
   fontSize22,
   fontSize24,
+  fontSize28,
   fontColorRed,
   normalStyle,
   normalStyle18,

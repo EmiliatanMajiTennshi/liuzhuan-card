@@ -12,6 +12,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     span: 4,
     formExtend: true,
+
     formItems: ({ options, setOptions }) => {
       if (!options.type) {
         setOptions({ ...options, type: [{}] });
@@ -305,70 +306,70 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转卡类型",
         dataIndex: "category",
         key: "category",
-        width: 100,
+        width: 60,
       },
       {
         title: "零件类型",
         dataIndex: "type",
         key: "type",
-        width: 100,
+        width: 60,
       },
 
       {
         title: "流转卡编号",
         dataIndex: "transferCardCode",
         key: "transferCardCode",
-        width: 260,
+        width: 100,
       },
       {
         title: "追溯单号",
         dataIndex: "traceabilityNumber",
         key: "traceabilityNumber",
-        width: 110,
+        width: 80,
       },
 
       {
         title: "关联号",
         dataIndex: "relation",
         key: "relation",
-        width: 110,
+        width: 80,
       },
 
       {
         title: "字样",
         dataIndex: "trademark",
         key: "trademark",
-        width: 150,
+        width: 60,
       },
       {
         title: "生产订单条码",
         dataIndex: "orderid",
         key: "orderid",
-        width: 160,
+        width: 100,
       },
       {
         title: "入库料号",
         dataIndex: "itmid",
         key: "itmid",
-        width: 180,
+        width: 100,
       },
       {
         title: "品名",
         dataIndex: "name",
         key: "name",
-        width: 150,
+        width: 80,
       },
       {
         title: "规格",
         dataIndex: "spec",
         key: "spec",
-        width: 100,
+        width: 80,
       },
       {
         title: "单位",
         dataIndex: "unit",
         key: "unit",
-        width: 100,
+        width: 60,
       },
       //   {
       //     title: "商标",
@@ -380,7 +381,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "创建(流转)时间",
         dataIndex: "createTime",
         key: "createTime",
-        width: 160,
+        width: 100,
         render: (text: string) => text?.slice(0, 19),
       },
       {
@@ -394,20 +395,20 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "热处理炉台",
         dataIndex: "heatTreatmentFurnacePlatforms",
         key: "heatTreatmentFurnacePlatforms",
-        width: 120,
+        width: 60,
       },
       {
         title: "优先顺序",
         dataIndex: "priority",
         key: "priority",
-        width: 120,
+        width: 60,
       },
 
       {
         title: "生产数量总量",
         dataIndex: "newsupcount",
         key: "newsupcount",
-        width: 110,
+        width: 80,
         // render: (text, record) => {
         //   const isKg = kgArr.indexOf(record?.unit) !== -1;
         //   return isKg ? record?.productionKg : record?.productionPcs;
@@ -418,13 +419,13 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "transferNumber",
         key: "transferNumber",
         // render: sumTransferNumberRender,
-        width: 120,
+        width: 80,
       },
       {
         title: "流转桶数",
         dataIndex: "barrelageNumebr",
         key: "barrelageNumebr",
-        width: 120,
+        width: 60,
         // render: (barrelCount: any) => {
         //   return barrelCount?.countBarrel;
         // },
@@ -433,20 +434,20 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "单桶流转数量",
         dataIndex: "singleBarrelageNumebr",
         key: "singleBarrelageNumebr",
-        width: 110,
+        width: 60,
       },
       {
         title: "当前工艺",
         dataIndex: "currentProcess",
         key: "currentProcess",
-        width: 120,
+        width: 60,
         fixed: "right",
       },
       {
         title: "完工状态",
         dataIndex: "finishStatus",
         key: "finishStatus",
-        width: 100,
+        width: 80,
         fixed: "right",
         render: (text: string) => {
           if (text === "完工") {
@@ -477,7 +478,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
             </>
           );
         },
-        width: 120,
+        width: 80,
         fixed: "right",
       },
     ],

@@ -89,6 +89,7 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
           placeholder={type === "barcode" ? "查询条码" : "查询名称"}
           disabled
           style={{ width: "100%" }}
+          size="large"
         ></Select>
       ) : (
         <Select
@@ -97,6 +98,7 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
           style={{ width: "100%" }}
           value={text}
           mode={isMuti ? "tags" : undefined}
+          size="large"
           onClear={() => {
             // 清空选项
             record[barcode] = "";

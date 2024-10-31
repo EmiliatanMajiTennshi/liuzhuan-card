@@ -49,13 +49,13 @@ const FlowCardForm = (props: IProps) => {
           form?.setFieldValue("furnaceNo", furnaceNumData?.furnaceNo);
           message.success("炉批号更新成功！");
         } else {
-          message.error("此追溯单号未找到对应炉批号，请重试");
+          message.info("此追溯单号未找到对应炉批号");
         }
       } else {
-        message.error("此追溯单号未找到对应炉批号，请重试");
+        message.info("此追溯单号未找到对应炉批号");
       }
     } catch (err) {
-      message.error("此追溯单号未找到对应炉批号，请重试");
+      message.info("此追溯单号未找到对应炉批号");
       console.log(err);
     }
   }, 1000);
@@ -315,7 +315,7 @@ const FlowCardForm = (props: IProps) => {
           <ReadOnlyInput
             style={{ lineHeight: "24px", ...normalStyle18 }}
             title="热处理炉台"
-            name="heatTreatmentFurnacePlatform"
+            name="heatTreatmentFurnacePlatforms"
             titleStyle={{ color: "red", ...normalStyle }}
             colSpan={1}
             labelColSpan={2}
