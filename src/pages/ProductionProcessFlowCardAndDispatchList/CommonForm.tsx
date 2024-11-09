@@ -9,7 +9,7 @@ import {
   RenderDatePicker,
   RenderQRCode,
   RenderSelect,
-  transFormToKg,
+  transformToKg,
   transFormToPcs,
   validateNotZero,
 } from "@/utils";
@@ -141,7 +141,7 @@ const CommonForm = (props: IProps) => {
         parseFloat(
           isKg
             ? data?.transferNumber || "0"
-            : transFormToKg(data?.transferNumber || "0", data?.weight)
+            : transformToKg(data?.transferNumber || "0", data?.weight)
         );
       const transferPcsMax = transFormToPcs(transferKgMax, data?.weight);
 
@@ -150,7 +150,7 @@ const CommonForm = (props: IProps) => {
         data?.transferNumberKG &&
         parseFloat(data?.transferNumberKG) <= transferKgMax
           ? data?.transferNumberKG
-          : transferKgMax.toFixed(4);
+          : transferKgMax;
 
       const transferNumberPCS = data?.weight
         ? transFormToPcs(data?.transferNumberKG || "0", data?.weight)
@@ -164,7 +164,7 @@ const CommonForm = (props: IProps) => {
           : transferPcsMax;
       beIssuedForm?.setFieldValue("transferPcs", transferPcs);
       beIssuedForm?.setFieldValue("transferKg", transferKg);
-      setLiuMaxKg(parseFloat(transferKgMax.toFixed(4)));
+      setLiuMaxKg(transferKgMax);
       setLiuMaxPCS(parseFloat(transferPcsMax));
       if (!notSelfIssue) {
         if (data?.transferNumberKG) {
@@ -346,6 +346,7 @@ const CommonForm = (props: IProps) => {
             title="追溯单号(半品)"
             name="orderCatchHalf"
             titleStyle={normalStyle}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
           />
         )}
       </tr>
@@ -457,7 +458,7 @@ const CommonForm = (props: IProps) => {
               const valuePCS = e;
               const valueKg =
                 data?.weight && valuePCS
-                  ? transFormToKg(valuePCS, data?.weight, 2)
+                  ? transformToKg(valuePCS, data?.weight)
                   : "";
               // if (
               //   isUnfinished32to31 &&
@@ -486,6 +487,7 @@ const CommonForm = (props: IProps) => {
           titleStyle={normalStyle}
           title="材料料号"
           name="mItmID"
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           // options={partNumberOptions.options?.map((item: any) => {
           //   return {
           //     value: item?.mItmID,
@@ -677,7 +679,6 @@ const CommonForm = (props: IProps) => {
             colSpan={1}
             labelColSpan={2}
             placeholder="请选择炉台"
-            disabled={isFinished32to31}
           />
           <RenderSelect
             title="优先顺序"
@@ -688,7 +689,6 @@ const CommonForm = (props: IProps) => {
               label: index + 1,
             }))}
             placeholder="请选择优先顺序"
-            disabled={isFinished32to31}
           />
           <RenderDatePicker
             title="流转时间"
@@ -696,7 +696,6 @@ const CommonForm = (props: IProps) => {
             colSpan={2}
             titleStyle={normalStyle}
             showTime
-            disabled={isFinished32to31}
           />
         </tr>
       )}

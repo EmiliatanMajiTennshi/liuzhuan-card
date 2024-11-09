@@ -195,24 +195,29 @@ const UnfinishedIssueFinishedModal = (props: any) => {
       if (params31?.trademark && !params32?.trademark && !isFuti) {
         // 半品有商标，成品没有无法下发
         message?.error("成品（31）零件没有选择商标，请选择商标后再保存");
+        setSaveLoading(false);
         return;
       }
       if (requiredTrademark && !params31?.trademark && !isFuti) {
         // 零件品名包含 “外链板” 必须选择商标
         message?.error("该零件成品（31）必须选择商标！");
+        setSaveLoading(false);
         return;
       }
       if (requiredTrademark && !params32?.trademark && !isFuti) {
         // 零件品名包含 “外链板” 必须选择商标
         message?.error("该零件必须选择商标！");
+        setSaveLoading(false);
         return;
       }
       if (!params32?.process || params32?.process?.length === 0) {
         message?.error("半品（32）没有工序，无法下发！");
+        setSaveLoading(false);
         return;
       }
       if (!params31?.process || params31?.process?.length === 0) {
         message?.error("成品（31）没有工序，无法下发！");
+        setSaveLoading(false);
         return;
       }
 

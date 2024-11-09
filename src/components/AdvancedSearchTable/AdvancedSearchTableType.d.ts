@@ -1,7 +1,9 @@
+import { message } from "antd";
 import { TApi } from "@/api";
 import { AnyObject } from "antd/es/_util/type";
 import { ColumnsType } from "antd/es/table";
-
+import { MessageInstance } from "antd/es/message/interface";
+import { HookAPI } from "antd/es/modal/useModal";
 export interface ITableItem {
   title: string;
   dataIndex: string;
@@ -106,6 +108,8 @@ export interface ITableConfigProps {
   setTableOptions: React.Dispatch<React.SetStateAction<AnyObject>>;
   setFinishedParams: React.Dispatch<React.SetStateAction<AnyObject>>;
   setMultiDetailModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  message: MessageInstance;
+  modal: HookAPI;
 }
 
 export interface IIssueID {

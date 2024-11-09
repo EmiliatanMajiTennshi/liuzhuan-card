@@ -47,6 +47,7 @@ const FlowCardFormRollChain = (props: IProps) => {
           showSearch
           onSelect={(e: string, record: any) => {
             form.setFieldValue("drawerId", record?.operationId);
+            form.validateFields(["drawerId"]);
           }}
         />
       </tr>
@@ -69,6 +70,7 @@ const FlowCardFormRollChain = (props: IProps) => {
           })}
           onSelect={(e: string, record: any) => {
             form.setFieldValue("drawer", record?.operationName);
+            form.validateFields(["drawer"]);
           }}
         />
       </tr>

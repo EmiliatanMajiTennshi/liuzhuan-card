@@ -1,7 +1,7 @@
 import {
   EditAbleTextArea,
   ReadOnlyInput,
-  transFormToKg,
+  transformToKg,
   transFormToPcs,
 } from "@/utils";
 import { FormInstance } from "antd";
@@ -159,7 +159,6 @@ const PrintFlowCardFormRework = (props: IProps) => {
             colSpan={3}
             titleStyle={normalStyle}
             style={normalStyle}
-            addonAfter={reworkUnit}
           />
         </tr>
       )}
@@ -180,7 +179,6 @@ const PrintFlowCardFormRework = (props: IProps) => {
             colSpan={3}
             titleStyle={normalStyle}
             style={normalStyle}
-            addonAfter={reworkUnit}
           />
         </tr>
       )}

@@ -3,31 +3,12 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import {
-  Button,
-  ConfigProvider,
-  DatePicker,
-  Input,
-  Modal,
-  Select,
-  Tag,
-  message,
-} from "antd";
+import { Button, DatePicker, Input, Modal, Select, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
 
 import { formatDate, RenderQRCode } from "@/utils";
-import {
-  getHeatTreatmentFurnacePlatformsList,
-  insertDeliveryNew,
-  updateHeatTreatmentStatus,
-} from "@/api";
-import {
-  ERROR_MESSAGE,
-  kgArr,
-  DEFAULT_ORANGE,
-  SUCCESS_CODE,
-} from "@/constants";
-import { sumTransferNumberRender } from "@/utils/tableRender";
+import { getHeatTreatmentFurnacePlatformsList, insertDeliveryNew } from "@/api";
+import { ERROR_MESSAGE, DEFAULT_ORANGE, SUCCESS_CODE } from "@/constants";
 import dayjs from "dayjs";
 
 interface IGetModalConfigProps {
@@ -238,8 +219,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setRefreshFlag, setIssueModalOpen, setIssueID, setPrintModalOpen } =
-    props;
+  const { setRefreshFlag, message } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryLogisticsNew",

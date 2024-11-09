@@ -101,11 +101,10 @@ const ReworkCardForm = (props: IProps) => {
       if (e === "") return;
       const res = await queryPartNumberInfo({ partNumber: e });
       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-        const partNumberData = [res?.data?.data] || [];
-
+        const partNumberData = res?.data?.data;
         const _options = {
           ...options,
-          partNumberOptions: partNumberData,
+          partNumberOptions: [partNumberData],
           partNumberOptionsLoading: false,
         };
         setOptions(_options);
@@ -114,25 +113,25 @@ const ReworkCardForm = (props: IProps) => {
       console.log(err);
     }
   }, 1000);
-  const debounceGetTraceabilityNumber = debounce(async function (e) {
-    try {
-      setOptions({ ...options, traceabilityNumberOptionsLoading: true });
-      if (e === "") return;
-      const res = await queryInfoByTransferCard({ traceabilityNumber: e });
-      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-        const traceabilityNumberData = res?.data?.data || [];
+  // const debounceGetTraceabilityNumber = debounce(async function (e) {
+  //   try {
+  //     setOptions({ ...options, traceabilityNumberOptionsLoading: true });
+  //     if (e === "") return;
+  //     const res = await queryInfoByTransferCard({ traceabilityNumber: e });
+  //     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+  //       const traceabilityNumberData = res?.data?.data || [];
 
-        const _options = {
-          ...options,
-          traceabilityNumberOptions: traceabilityNumberData,
-          traceabilityNumberOptionsLoading: false,
-        };
-        setOptions(_options);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }, 1000);
+  //       const _options = {
+  //         ...options,
+  //         traceabilityNumberOptions: traceabilityNumberData,
+  //         traceabilityNumberOptionsLoading: false,
+  //       };
+  //       setOptions(_options);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }, 1000);
   return (
     <tbody className={styles.normalForm}>
       <tr>
@@ -466,6 +465,7 @@ const ReworkCardForm = (props: IProps) => {
         />
         <EditAbleInput
           titleStyle={normalStyle}
+          style={{ lineHeight: "24px", ...normalStyle18 }}
           title="返工数量"
           name="reworkQuantity"
           isNumber

@@ -20,6 +20,7 @@ import {
   DEFAULT_ORANGE,
   SELF_CHECK_LIST,
   ERROR_UNFINISHED_ISSUE_FINISHED,
+  EXTEND_TITLE_ARR,
 } from "./constants";
 import { menuList, getFlatMenuList } from "./menuList";
 export {
@@ -46,4 +47,5 @@ export {
   DEFAULT_ORANGE,
   SELF_CHECK_LIST,
   ERROR_UNFINISHED_ISSUE_FINISHED,
+  EXTEND_TITLE_ARR,
 };

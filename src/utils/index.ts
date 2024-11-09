@@ -4,12 +4,11 @@ import {
   getTrackingNumber,
   getLZCardNumber,
   formatDate,
-  transFormToKg,
+  transformToKg,
   transFormToPcs,
   limitDecimals,
   checkProcess,
   validateField,
-  handleSave,
   validateNotZero,
   transformDateToString,
   formatTime,
@@ -21,6 +20,7 @@ import {
   convertStringToArray,
   getSecondDashSubstring,
   getTime,
+  padArray,
 } from "./common";
 import { setToken, getToken, removeToken } from "./token";
 import {
@@ -49,12 +49,11 @@ export {
   RenderDatePicker,
   RenderQRCode,
   RenderSelect,
-  transFormToKg,
+  transformToKg,
   transFormToPcs,
   limitDecimals,
   checkProcess,
   validateField,
-  handleSave,
   validateNotZero,
   transformDateToString,
   formatTime,
@@ -68,4 +67,5 @@ export {
   emptyRender,
   getSecondDashSubstring,
   getTime,
+  padArray,
 };

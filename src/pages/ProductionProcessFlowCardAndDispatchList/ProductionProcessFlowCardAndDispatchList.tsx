@@ -78,24 +78,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   flowCardType: ITableConfig["flowCardType"];
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
   name?: string;
-  setReworkModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  setIssueModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   setPrintModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  setRollChainModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  needIssueFinished?: boolean;
-  notSelfIssue?: boolean;
-  finishedData32to31?: AnyObject;
-  setFinishedData32to31?: React.Dispatch<React.SetStateAction<AnyObject>>;
-  unfinishedData32to31?: AnyObject;
-  setUnfinishedData32to31?: React.Dispatch<React.SetStateAction<AnyObject>>;
-  tabChangeFlag?: boolean;
-  finishedIssueId?: any;
-  confirmFinished?: string;
-  tabLoading?: string;
-  setTabLoading?: React.Dispatch<React.SetStateAction<string>>;
-  setConfirmFinished?: React.Dispatch<React.SetStateAction<string>>;
-  setFinishedData?: React.Dispatch<React.SetStateAction<AnyObject>>;
-  finishedData?: AnyObject;
   finishedPrintProps?: {
     issueID: {
       orderid?: string;
@@ -112,21 +95,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     setRefreshFlag,
     name: pageName,
     // setReworkModalOpen,
-    // setIssueModalOpen,
     setPrintModalOpen,
-    needIssueFinished,
-    notSelfIssue,
-    finishedData32to31,
-    setFinishedData32to31,
-    unfinishedData32to31,
-    setUnfinishedData32to31,
-    tabChangeFlag,
-    confirmFinished,
-    tabLoading,
-    setTabLoading,
-    setConfirmFinished,
-    setFinishedData,
-    finishedData,
     finishedPrintProps,
   } = props;
   // 数据
@@ -291,9 +260,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const fetchData = async () => {
     try {
       setLoading(true);
-      if (setTabLoading) {
-        setTabLoading("loading");
-      }
+
       if (!queryFlowCardApi) return;
       cancelTokenSource.current = axios.CancelToken.source();
       const currentRequest: any = getApi(queryFlowCardApi);
@@ -327,14 +294,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         setData(formData);
         const _tableData = getProcessesList(flowCardType, formData);
         setTableData(_tableData || []);
-        if (notSelfIssue) {
-          if (setConfirmFinished) {
-            setConfirmFinished("confirmed");
-          }
-          if (setFinishedData) {
-            setFinishedData(formData);
-          }
-        }
       } else {
         throw new Error("请求数据时发生错误");
       }
@@ -347,7 +306,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       }
     } finally {
       setLoading(false);
-      setTabLoading && setTabLoading("finish");
+
       setSaveLoading(false);
     }
   };
@@ -452,26 +411,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     };
   }, []);
 
-  useEffect(() => {
-    if (needIssueFinished && setUnfinishedData32to31) {
-      setUnfinishedData32to31(form?.getFieldsValue());
-    }
-    if (notSelfIssue && setFinishedData32to31) {
-      setFinishedData32to31(form?.getFieldsValue());
-    }
-  }, [tabChangeFlag]);
-
-  useEffect(() => {
-    if (notSelfIssue) {
-      form.setFieldsValue({
-        ...data,
-        transferKg: unfinishedData32to31?.transferKg,
-        transferPcs: unfinishedData32to31?.transferPcs,
-        trademark: unfinishedData32to31?.trademark,
-        orderCatchHalf: unfinishedData32to31?.traceabilityNumber,
-      });
-    }
-  }, [unfinishedData32to31]);
   // useEffect(() => {
   //   formFooter.setFieldValue("remark", data?.remark);
   // }, [data]);
@@ -505,6 +444,8 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   const isRollChian =
     Boolean(data?.rollChainTraceabilityNumber) || flowCardType === "rollChain";
 
+  const is2MO = data?.orderid?.startsWith("2MO");
+  console.log(is2MO, 1241411);
   console.log(data, 1211);
 
   const onFinish = async (values: IFormFields) => {
@@ -520,6 +461,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     });
     const isSemiFinished = data?.itmid?.startsWith("32");
     const isFinished = data?.itmid?.startsWith("31");
+
     // 非自制
     const isSelf =
       data?.type?.indexOf("自制") !== -1 ||
@@ -764,51 +706,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       flowCardType === "unfinished" ||
       flowCardType === "outsourcing"
     ) {
-      if (needIssueFinished) {
-        const finishedParams = {
-          form,
-          data: finishedData || {},
-          values: finishedData32to31,
-          mainsize: finishedData?.mainsizeList?.[0] || {},
-          isKg: kgArr.indexOf(finishedData?.unit) !== -1,
-          flowCardType: "finished" as any,
-          tableData: getProcessesList("finished", finishedData || {}) || [],
-        };
-        const now = new Date().getTime();
-
-        const request32to31 = async () => {
-          try {
-            const [resUnfinished, resFinished] = await Promise.all([
-              insertUnfinishedProductsNew({ ...params, relation: now }),
-              insertfinishedProductsNew({
-                ...getParams(finishedParams),
-                relation: now,
-                transferKg: params?.transferKg,
-                transferPcs: params?.transferPcs,
-                trademark: params?.trademark,
-              }),
-            ]);
-            if (SUCCESS_CODE.indexOf(resUnfinished?.data?.code) !== -1) {
-              message.success("半品（32）下发成功");
-              // 添加完刷新数据
-            } else {
-              message.error("半品（32）下发失败");
-            }
-            if (SUCCESS_CODE.indexOf(resFinished?.data?.code) !== -1) {
-              message.success("成品（31）下发成功");
-              // 添加完刷新数据
-              fetchData();
-              setRefreshFlag((flag) => !flag);
-            } else {
-              message.error("成品（31）下发失败");
-            }
-          } catch {
-            message.error("下发失败");
-          }
-        };
-        request32to31();
-        return;
-      }
       if (isSelf && (flowCardType === "unfinished" || isSemiFinished)) {
         insertUnfinishedProductsNew(params)
           .then((res) => {
@@ -862,16 +759,10 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
 
   // common 表单
   const commonFormProps = {
-    data: notSelfIssue ? { ...data, ...finishedData32to31 } : data,
+    data,
     isKg,
     form,
     mainsize,
-    needIssueFinished,
-    notSelfIssue,
-    finishedData32to31,
-    setFinishedData32to31,
-    tabChangeFlag,
-    setUnfinishedData32to31,
   };
   // 外协外购
   const outsourcingFormProps = {
@@ -924,7 +815,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
         ref={printRef}
         style={flowCardType === "print" ? { marginRight: 2 } : {}}
       >
-        <Spin spinning={tabLoading ? false : loading}>
+        <Spin spinning={loading}>
           <ConfigProvider
             theme={{
               components: {
@@ -1193,27 +1084,8 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                   }}
                   loading={saveLoading}
                   className={styles.footerSaveBtn}
-                  disabled={
-                    !isOnly32 &&
-                    (notSelfIssue ||
-                      (Boolean(confirmFinished) &&
-                        confirmFinished !== "confirmed"))
-                  }
                 >
                   保存
-                  {!isOnly32 &&
-                    needIssueFinished &&
-                    confirmFinished === "undo" &&
-                    "（请切换到成品流转卡确认无误）"}
-                  {!isOnly32 &&
-                    needIssueFinished &&
-                    confirmFinished === "loading" &&
-                    "（请等待成品流转卡加载完成）"}
-                  {!isOnly32 &&
-                    needIssueFinished &&
-                    confirmFinished === "confirmed" &&
-                    "（同时保存对应成品）"}
-                  {!isOnly32 && notSelfIssue && "（请前往半品界面保存）"}
                 </Button>
               )}
             </div>

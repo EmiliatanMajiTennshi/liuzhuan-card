@@ -30,6 +30,7 @@ $color-red: #ff4d4f;
     border: none;
     outline: none;
     width: 100%;
+
     :global {
       .ant-input-number-input {
         padding: 0;
@@ -42,6 +43,20 @@ $color-red: #ff4d4f;
       }
       .ant-input-number-outlined {
         border: none !important;
+      }
+    }
+  }
+  .hasAddonAfter {
+    input {
+      font-size: 18px !important;
+    }
+    :global {
+      .ant-input-number-wrapper {
+        display: flex;
+        flex-direction: column;
+      }
+      .ant-input-number-group-addon {
+        padding: 0;
       }
     }
   }
@@ -135,11 +150,6 @@ $color-red: #ff4d4f;
   }
 }
 
-.addonAfter {
-  input {
-    font-size: 18px !important;
-  }
-}
 .copyBtn {
   visibility: hidden;
 }

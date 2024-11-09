@@ -9,6 +9,7 @@ import { RuleObject } from "antd/es/form";
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
+    name: "TransferCardUnfinishToStore",
     formItems: [
       {
         key: "barCode",

@@ -1,9 +1,16 @@
-import { Button, Col, Form, Modal, Row, Space } from "antd";
+import { App, Button, Col, Form, Modal, Row, Space } from "antd";
 import { IAdvancedSearchForm, IButtons } from "./AdvancedSearchFormType";
 import { useState } from "react";
-import { SearchOutlined, PlusOutlined, RedoOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  PlusOutlined,
+  RedoOutlined,
+  ExceptionOutlined,
+} from "@ant-design/icons";
 import { ProductionProcessFlowCardAndDispatchList } from "@/pages/ProductionProcessFlowCardAndDispatchList";
 import { transformDateToString } from "@/utils";
+import { AppealPage } from "@/pages/AppealPage";
+import { useNavigate } from "react-router-dom";
 const gutter = 24;
 const span = 6;
 
@@ -17,7 +24,7 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
     initValues,
   } = props;
   const [form] = Form.useForm();
-
+  const { message } = App.useApp();
   // 控制按钮是否加载
   const [buttonLoading, setButtonLoading] = useState({ insertButton: false });
 
@@ -29,6 +36,15 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
 
   // 添加车间卷装链条
   const [rollChainModalOpen, setRollChainModalOpen] = useState(false);
+
+  // 申诉
+  const [appealModalOpen, setAppealModalOpen] = useState(false);
+
+  // 跳转
+  const navigate = useNavigate();
+
+  const [modal, contextHolder] = Modal.useModal();
+
   // 可能是函数
   const _formConfig =
     typeof formConfig === "function" ? formConfig(form) : formConfig;
@@ -92,6 +108,9 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
     buttonLoading,
     setButtonLoading,
     loading,
+    message,
+    setAppealModalOpen,
+    modal,
   };
 
   const handleReset = () => {
@@ -139,39 +158,49 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
           )}
         </Row>
         {!buttons && (
-          <div style={{ textAlign: "right" }}>
-            <Space size="small">
-              <Button type="primary" htmlType="submit" loading={loading}>
-                <SearchOutlined />
-                查询
+          <div style={{ display: "flex", justifyContent: "right", gap: 8 }}>
+            {name === "TransferCardUnfinishToStore" && (
+              <Button
+                type="dashed"
+                danger
+                onClick={() => {
+                  navigate("/appeal_info_page");
+                }}
+              >
+                <ExceptionOutlined />
+                申诉
               </Button>
-              <Button onClick={handleReset} disabled={loading}>
-                <RedoOutlined />
-                重置
+            )}
+            <Button type="primary" htmlType="submit" loading={loading}>
+              <SearchOutlined />
+              查询
+            </Button>
+            <Button onClick={handleReset} disabled={loading}>
+              <RedoOutlined />
+              重置
+            </Button>
+            {name === "ReworkTransferCard" && (
+              <Button
+                type="dashed"
+                onClick={() => {
+                  setReworkModalOpen(true);
+                }}
+              >
+                <PlusOutlined />
+                新增返工流转卡
               </Button>
-              {name === "ReworkTransferCard" && (
-                <Button
-                  type="dashed"
-                  onClick={() => {
-                    setReworkModalOpen(true);
-                  }}
-                >
-                  <PlusOutlined />
-                  新增返工流转卡
-                </Button>
-              )}
-              {name === "QueryRollChain" && (
-                <Button
-                  type="dashed"
-                  onClick={() => {
-                    setRollChainModalOpen(true);
-                  }}
-                >
-                  <PlusOutlined />
-                  新增车间卷装链条
-                </Button>
-              )}
-            </Space>
+            )}
+            {name === "QueryRollChain" && (
+              <Button
+                type="dashed"
+                onClick={() => {
+                  setRollChainModalOpen(true);
+                }}
+              >
+                <PlusOutlined />
+                新增车间卷装链条
+              </Button>
+            )}
           </div>
         )}
       </Form>
@@ -187,7 +216,6 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
             flowCardType="rework"
             queryFlowCardApi="queryReworkBySign"
             setRefreshFlag={setRefreshFlag}
-            setReworkModalOpen={setReworkModalOpen}
           />
         </Modal>
       )}
@@ -202,10 +230,22 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
           <ProductionProcessFlowCardAndDispatchList
             flowCardType="rollChain"
             setRefreshFlag={setRefreshFlag}
-            setRollChainModalOpen={setRollChainModalOpen}
           />
         </Modal>
       )}
+      {/* {appealModalOpen && (
+        <Modal
+          open={appealModalOpen}
+          onCancel={() => setAppealModalOpen(false)}
+          footer={null}
+          width={400}
+          maskClosable={false}
+          title="申诉"
+        >
+          <AppealPage />
+        </Modal>
+      )} */}
+      {contextHolder}
     </>
   );
 };

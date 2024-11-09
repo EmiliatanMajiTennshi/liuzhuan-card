@@ -227,10 +227,7 @@ const EditAbleInput = ({
         {title} {required && <RequiredDot />}
       </th>
       <td
-        className={classNames([
-          styles["input-container"],
-          { [styles["addonAfter"]]: true },
-        ])}
+        className={classNames([styles["input-container"]])}
         colSpan={colSpan}
         style={{ lineHeight: 1.2 }}
       >
@@ -244,7 +241,10 @@ const EditAbleInput = ({
         >
           {isNumber ? (
             <InputNumber
-              className={styles.input}
+              className={classNames([
+                styles.input,
+                { [styles.hasAddonAfter]: addonAfter },
+              ])}
               style={{ ...style, border: "none" }}
               autoComplete="off"
               onChange={onChange}

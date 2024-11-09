@@ -69,3 +69,12 @@ export const SUCCESS_CODE = [20000, 200, 601, 604];
 
 /**需要自检的页面 */
 export const SELF_CHECK_LIST = ["flowCard"];
+
+/**额外标题 */
+export const EXTEND_TITLE_ARR = [
+  {
+    key: "/appeal_info_page",
+    parent: "链条流转卡",
+    label: "申诉管理",
+  },
+];

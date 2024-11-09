@@ -5,6 +5,7 @@ export interface IRole {
 export interface ITableConfigProps {
   setSearchedData: React.Dispatch<React.SetStateAction<any[]>>;
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
+  message?: MessageInstance;
 }
 
 export interface IInsertUser {

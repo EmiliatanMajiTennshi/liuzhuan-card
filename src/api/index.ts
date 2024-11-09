@@ -115,6 +115,9 @@ import { updateMultiProcessByTransferCardCode } from "./updateMultiProcessByTran
 import { queryMultiTransfer } from "./queryMultiTransfer";
 import { queryRollChain } from "./queryRollChain";
 import { insertRollChain } from "./insertRollChain";
+import { updateDelmkByTransferCardCode } from "./updateDelmkByTransferCardCode";
+import { insertAppealInfo } from "./insertAppealInfo";
+import { queryAppealInfo } from "./queryAppealInfo";
 
 export {
   countProductType,
@@ -289,6 +292,7 @@ export {
   queryMultiProcess,
   queryMultiTransfer,
   queryRollChain,
+  queryAppealInfo,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -298,6 +302,7 @@ export {
   insertDeliveryNew,
   insertPrintTransferCardNew,
   insertRollChain,
+  insertAppealInfo,
   updateTransferCardInfoByCardId,
   updateFTransferCardInfoByCardId,
   updateOTransferCardInfoByCardId,
@@ -305,6 +310,7 @@ export {
   UpdateWuliu,
   updatePrintTransferCard,
   updateMultiProcessByTransferCardCode,
+  updateDelmkByTransferCardCode,
 };
 const apisNew = {
   countProcessUnfinishToStore,
@@ -343,6 +349,7 @@ const apisNew = {
   queryMultiProcess,
   queryMultiTransfer,
   queryRollChain,
+  queryAppealInfo,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -351,6 +358,7 @@ const apisNew = {
   insertReworkTransferCardNew,
   insertDeliveryNew,
   insertPrintTransferCardNew,
+  insertAppealInfo,
   updateTransferCardInfoByCardId,
   updateFTransferCardInfoByCardId,
   updateOTransferCardInfoByCardId,
@@ -358,6 +366,7 @@ const apisNew = {
   UpdateWuliu,
   updatePrintTransferCard,
   updateMultiProcessByTransferCardCode,
+  updateDelmkByTransferCardCode,
 };
 
 const apis = {

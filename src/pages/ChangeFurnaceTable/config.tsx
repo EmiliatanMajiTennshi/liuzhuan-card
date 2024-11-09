@@ -3,19 +3,11 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, message, Select } from "antd";
+import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import {
-  getHeatTreatmentFurnacePlatformsList,
-  insertFurnaceChange,
-  updateFTransferCardInfoByCardId,
-} from "@/api";
-import {
-  emptyRender,
-  emptyRenderCustomPlaceHolder,
-  sumTransferNumberRender,
-} from "@/utils/tableRender";
+import { insertFurnaceChange } from "@/api";
+import { emptyRenderCustomPlaceHolder } from "@/utils/tableRender";
 import {
   SUCCESS_CODE,
   UPDATE_FAILED,
@@ -165,7 +157,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setRefreshFlag, tableOptions } = props;
+  const { setRefreshFlag, tableOptions, message } = props;
   // 获取炉台
   const furnaceOptionsApi = "getHeatTreatmentFurnacePlatformsList";
   return {

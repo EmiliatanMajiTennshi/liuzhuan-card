@@ -5,18 +5,9 @@ import {
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
-import { formatDate } from "@/utils";
-import {
-  Button,
-  DatePicker,
-  Input,
-  message,
-  Popconfirm,
-  Select,
-  Tag,
-} from "antd";
+import { allowRecoverPrintState } from "@/constants/config";
+import { Button, DatePicker, Input, Popconfirm, Select } from "antd";
 import { RuleObject } from "antd/es/form";
-import dayjs from "dayjs";
 const formConfig: (form: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
@@ -168,8 +159,13 @@ const formConfig: (form: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueID, setFinishedParams, setPrintModalOpen, setRefreshFlag } =
-    props;
+  const {
+    setIssueID,
+    setFinishedParams,
+    setPrintModalOpen,
+    setRefreshFlag,
+    message,
+  } = props;
   return {
     api: "querytransferCardRelation",
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
@@ -353,53 +349,55 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   >
                     {Boolean(record?.pCardID) ? "已打印" : "打印"}
                   </Button>
-                  <Popconfirm
-                    title="确认恢复"
-                    description="你确定要恢复打印状态吗"
-                    onConfirm={() => {
-                      updatePrintTransferCard({
-                        transferCardCode: record?.transferCardCode,
-                      })
-                        .then((res) => {
-                          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-                            message.success(`32:${res?.data?.data}`);
-                            setRefreshFlag((flag) => !flag);
-                          } else {
-                            message.error(res?.data?.data);
-                          }
+                  {allowRecoverPrintState && (
+                    <Popconfirm
+                      title="确认恢复"
+                      description="你确定要恢复打印状态吗"
+                      onConfirm={() => {
+                        updatePrintTransferCard({
+                          transferCardCode: record?.transferCardCode,
                         })
-                        .catch(() => {
-                          message.error(ERROR_MESSAGE);
-                        });
-                      updatePrintTransferCard({
-                        transferCardCode:
-                          record?.children?.[0]?.transferCardCode,
-                      })
-                        .then((res) => {
-                          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-                            message.success(`31:${res?.data?.data}`);
-                            setRefreshFlag((flag) => !flag);
-                          } else {
-                            message.error(res?.data?.data);
-                          }
+                          .then((res) => {
+                            if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                              message.success(`32:${res?.data?.data}`);
+                              setRefreshFlag((flag) => !flag);
+                            } else {
+                              message.error(res?.data?.data);
+                            }
+                          })
+                          .catch(() => {
+                            message.error(ERROR_MESSAGE);
+                          });
+                        updatePrintTransferCard({
+                          transferCardCode:
+                            record?.children?.[0]?.transferCardCode,
                         })
-                        .catch(() => {
-                          message.error(ERROR_MESSAGE);
-                        });
-                    }}
-                    onCancel={() => {}}
-                    okText="确认"
-                    cancelText="取消"
-                  >
-                    <Button
-                      type="link"
-                      size="small"
-                      style={{ marginLeft: 10 }}
-                      disabled={!Boolean(record?.pCardID)}
+                          .then((res) => {
+                            if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                              message.success(`31:${res?.data?.data}`);
+                              setRefreshFlag((flag) => !flag);
+                            } else {
+                              message.error(res?.data?.data);
+                            }
+                          })
+                          .catch(() => {
+                            message.error(ERROR_MESSAGE);
+                          });
+                      }}
+                      onCancel={() => {}}
+                      okText="确认"
+                      cancelText="取消"
                     >
-                      恢复
-                    </Button>
-                  </Popconfirm>
+                      <Button
+                        type="link"
+                        size="small"
+                        style={{ marginLeft: 10 }}
+                        disabled={!Boolean(record?.pCardID)}
+                      >
+                        恢复
+                      </Button>
+                    </Popconfirm>
+                  )}
                 </span>
               ) : (
                 <></>
@@ -407,7 +405,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
             </>
           );
         },
-        width: 140,
+        width: allowRecoverPrintState ? 140 : 100,
         fixed: "right",
       },
     ],

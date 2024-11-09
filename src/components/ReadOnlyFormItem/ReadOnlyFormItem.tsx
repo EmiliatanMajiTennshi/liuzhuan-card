@@ -28,7 +28,7 @@ const ReadOnlyFormItem = (props: {
         lineHeight: style?.lineHeight || "110%",
         wordBreak: breakWord ? "break-word" : "break-all",
         display: "flex",
-        justifyContent: "space-between",
+        flexDirection: "column",
         minHeight: "24px",
       }}
     >
@@ -43,7 +43,7 @@ const ReadOnlyFormItem = (props: {
       style={{
         color: "#ddd",
         display: "flex",
-        justifyContent: "space-between",
+        flexDirection: "column",
       }}
     >
       <span style={{ fontSize: style?.fontSize }}>{placeholder || " "}</span>

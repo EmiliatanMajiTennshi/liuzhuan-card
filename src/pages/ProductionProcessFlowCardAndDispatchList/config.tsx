@@ -23,7 +23,7 @@ import { AnyObject } from "antd/es/_util/type";
 import { cloneDeep } from "lodash";
 import dayjs from "dayjs";
 
-import { formatDate, formatTime, validateField } from "@/utils";
+import { formatDate, formatTime, padArray, validateField } from "@/utils";
 import { SELF_CHECK_LIST, SUCCESS_CODE } from "@/constants";
 import { RenderCustomSelect } from "@/components/RenderCustomSelect";
 import { useEffect, useState } from "react";
@@ -1178,7 +1178,7 @@ export const useTableColumns = ({
         },
       },
       {
-        title: "商标",
+        title: "字样",
         dataIndex: "trademark",
         key: "trademark",
         width: "30%",
@@ -1188,7 +1188,7 @@ export const useTableColumns = ({
             <>
               <Input
                 size="large"
-                placeholder="请输入商标"
+                placeholder="请输入字样"
                 style={{ width: "100%" }}
                 value={text}
                 onChange={(e) => {
@@ -1198,7 +1198,7 @@ export const useTableColumns = ({
                     cloneErrors[index] = {};
                   }
                   // cloneErrors[index].trademark = validateField(
-                  //   "商标",
+                  //   "字样",
                   //   e?.target?.value
                   // );
                   if (setErrors) {
@@ -1325,7 +1325,11 @@ export const getParams = ({
         ? formatTime(values.transferTime)
         : undefined,
       //工艺
-      process: data?.processList,
+      process:
+        (data?.processList || [])?.length >= 5
+          ? data?.processList
+          : padArray(data?.processList || [], 5),
+
       // pNumber
       pNumber: (form?.getFieldValue("pnumber") as string)?.startsWith("-")
         ? form?.getFieldValue("pnumber")?.slice(1)

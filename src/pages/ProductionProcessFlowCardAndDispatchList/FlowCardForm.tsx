@@ -132,6 +132,7 @@ const FlowCardForm = (props: IProps) => {
             name="orderCatchHalf"
             titleStyle={normalStyle}
             onChange={debounceGetFurnaceNum}
+            style={{ lineHeight: "24px", ...normalStyle18 }}
             form={form}
             defaultValue={
               data?.associationTraceabilityNumber || data?.orderCatchHalf || ""

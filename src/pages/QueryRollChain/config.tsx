@@ -5,6 +5,7 @@ import {
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
+import { allowRecoverPrintState } from "@/constants/config";
 import {
   Button,
   ConfigProvider,
@@ -159,7 +160,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "预览打印",
         dataIndex: "count",
         key: "count",
-        width: 150,
+        width: allowRecoverPrintState ? 150 : 100,
         render: (data: any, record: any, index: number) => {
           // 这里后面要
 
@@ -192,38 +193,40 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                   >
                     {record?.printStatus !== 0 ? "已打印" : "打印"}
                   </Button>
-                  <Popconfirm
-                    title="确认恢复"
-                    description="你确定要恢复打印状态吗"
-                    onConfirm={() => {
-                      updatePrintTransferCard({
-                        transferCardCode: record?.rollChainTraceabilityNumber,
-                      })
-                        .then((res) => {
-                          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-                            message.success(res?.data?.data);
-                            setRefreshFlag((flag) => !flag);
-                          } else {
-                            message.error(res?.data?.data);
-                          }
+                  {allowRecoverPrintState && (
+                    <Popconfirm
+                      title="确认恢复"
+                      description="你确定要恢复打印状态吗"
+                      onConfirm={() => {
+                        updatePrintTransferCard({
+                          transferCardCode: record?.rollChainTraceabilityNumber,
                         })
-                        .catch(() => {
-                          message.error(ERROR_MESSAGE);
-                        });
-                    }}
-                    onCancel={() => {}}
-                    okText="确认"
-                    cancelText="取消"
-                  >
-                    <Button
-                      type="link"
-                      size="small"
-                      style={{ marginLeft: 10 }}
-                      disabled={record?.printStatus === 0}
+                          .then((res) => {
+                            if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                              message.success(res?.data?.data);
+                              setRefreshFlag((flag) => !flag);
+                            } else {
+                              message.error(res?.data?.data);
+                            }
+                          })
+                          .catch(() => {
+                            message.error(ERROR_MESSAGE);
+                          });
+                      }}
+                      onCancel={() => {}}
+                      okText="确认"
+                      cancelText="取消"
                     >
-                      恢复
-                    </Button>
-                  </Popconfirm>
+                      <Button
+                        type="link"
+                        size="small"
+                        style={{ marginLeft: 10 }}
+                        disabled={record?.printStatus === 0}
+                      >
+                        恢复
+                      </Button>
+                    </Popconfirm>
+                  )}
                 </span>
               </ConfigProvider>
             </>

@@ -2,7 +2,8 @@ import { Button } from "antd";
 import { TApi } from "@/api";
 import { Rule } from "antd/es/form";
 import { AnyObject } from "antd/es/_util/type";
-
+import { MessageInstance } from "antd/es/message/interface";
+import { HookAPI } from "antd/es/modal/useModal";
 /**
  * 表单item
  */
@@ -27,6 +28,9 @@ export interface IButtons {
     React.SetStateAction<IButtonLoadingChildren>
   >;
   loading?: boolean;
+  message: MessageInstance;
+  setAppealModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  modal: HookAPI;
 }
 
 interface IOptions {

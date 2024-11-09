@@ -32,6 +32,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     refreshFlag,
     setRefreshFlag,
   } = props;
+
   const { message } = App.useApp();
   // 查询到的数据
   const [searchedData, setSearchedData] = useState<any[]>([]);
@@ -58,26 +59,13 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   // 如果需要半品下发成品的搜索成品的参数
   const [finishedParams, setFinishedParams] = useState<AnyObject>({});
 
-  // 32下发31时 成品存的数据
-  const [finishedData32to31, setFinishedData32to31] = useState<AnyObject>({});
-  // 32下发31时 半品存的数据
-  const [unfinishedData32to31, setUnfinishedData32to31] = useState<AnyObject>(
-    {}
-  );
-  // 31请求的数据
-  const [finishedData, setFinishedData] = useState<AnyObject>({});
-
-  // 确认成品=
-  const [confirmFinished, setConfirmFinished] = useState("undo");
-  // tab切换
-  const [tabChangeFlag, setTabChangeFlag] = useState(false);
-  // tab loading
-  const [tabLoading, setTabLoading] = useState("finish");
   // // 鼠标所在行
   // const [hoveredRow, setHoveredRow] = useState(null);
   const tableRef = useRef<any>(null);
   // 首次是否加载
   const isFirstRender = useRef(true);
+  const [modal, contextHolder] = Modal.useModal();
+
   /**
    * 传给config里的tableConfig
    */
@@ -92,6 +80,8 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     setTableOptions,
     setFinishedParams,
     setMultiDetailModalOpen,
+    message,
+    modal,
   };
 
   const _tableConfig =
@@ -311,10 +301,6 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           open={issueModalOpen}
           onCancel={() => {
             setIssueModalOpen(false);
-            setFinishedData32to31({});
-            setConfirmFinished("undo");
-            setUnfinishedData32to31({});
-            setFinishedData({});
             setFinishedParams([{ partNumber: "", barCode: "" }]);
           }}
           footer={null}
@@ -417,7 +403,6 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
             flowCardType={flowCardType}
             setRefreshFlag={setRefreshFlag}
             name={name}
-            setIssueModalOpen={setIssueModalOpen}
           />
         </Modal>
       )}
@@ -458,6 +443,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           <MultiDetail requestParams={issueID} readOnly={readonly} />
         </Modal>
       )}
+      <div className={styles.modalContent}> {contextHolder}</div>
     </div>
   );
 };

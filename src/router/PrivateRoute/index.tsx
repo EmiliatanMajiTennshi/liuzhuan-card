@@ -290,6 +290,12 @@ const QueryRollChain = React.lazy(() =>
     default: res.QueryRollChain,
   }))
 );
+/**申诉 */
+const AppealInfoPage = React.lazy(() =>
+  import("@/pages/AppealInfoPage").then((res) => ({
+    default: res.AppealInfoPage,
+  }))
+);
 
 /**路由 */
 const routeMap = [
@@ -504,6 +510,10 @@ const PrivateRoute = () => {
         {
           path: "/404",
           element: "404 Not Found",
+        },
+        {
+          path: "appeal_info_page",
+          element: <AppealInfoPage />,
         },
       ],
     },

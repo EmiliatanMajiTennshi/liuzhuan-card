@@ -2,7 +2,7 @@ import {
   EditAbleInput,
   ReadOnlyInput,
   RenderQRCode,
-  transFormToKg,
+  transformToKg,
   transFormToPcs,
   validateNotZero,
 } from "@/utils";
@@ -136,7 +136,7 @@ const OutsourcingForm = (props: IProps) => {
             //   data?.parseWeight && parseFloat(data?.parseWeight || "0") && value
             //     ? isKg
             //       ? transFormToPcs(value, data?.parseWeight)
-            //       : transFormToKg(value, data?.parseWeight)
+            //       : transformToKg(value, data?.parseWeight)
             //     : value;
             // form.setFieldValue("liuhuancount", transferValue?.toString());
           }}

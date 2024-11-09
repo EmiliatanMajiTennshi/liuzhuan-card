@@ -1,7 +1,7 @@
 import {
   ReadOnlyInput,
   RenderQRCode,
-  transFormToKg,
+  transformToKg,
   transFormToPcs,
 } from "@/utils";
 import { FormInstance } from "antd";
@@ -31,12 +31,13 @@ interface IProps {
 const PrintFlowCardForm = (props: IProps) => {
   const { data, form } = props;
   const mainsizeList = data?.mainsizeList?.[0];
-  console.log(data, 12411);
+  console.log(data, 124211);
 
   const partNumber = data?.partNumber || data?.itmid;
   // 32没有热处理炉台
   const isSemiFinished = partNumber?.startsWith("32");
 
+  const is2MO = data?.orderid?.startsWith("2MO");
   return (
     <tbody className={styles.printForm}>
       <tr>
@@ -353,38 +354,40 @@ const PrintFlowCardForm = (props: IProps) => {
         />
       </tr>
       <tr>
-        <td colSpan={46} className={styles.noPadding}>
-          <table>
-            <thead>
-              <tr>
-                <th
-                  style={{ ...boldValue, padding: "5px 5px", width: "50%" }}
-                  colSpan={23}
-                >
-                  工序
-                </th>
-                <th style={boldValue} colSpan={23}>
-                  检验员盖章
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data?.processList?.map((item) => {
-                return (
-                  <tr>
-                    <th
-                      style={{ ...normalStyle, padding: "5px 5px" }}
-                      colSpan={23}
-                    >
-                      {item.processName}
-                    </th>
-                    <td colSpan={23}></td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </td>
+        {!is2MO && (
+          <td colSpan={46} className={styles.noPadding}>
+            <table>
+              <thead>
+                <tr>
+                  <th
+                    style={{ ...boldValue, padding: "5px 5px", width: "50%" }}
+                    colSpan={23}
+                  >
+                    工序
+                  </th>
+                  <th style={boldValue} colSpan={23}>
+                    检验员盖章
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {data?.processList?.map((item) => {
+                  return (
+                    <tr>
+                      <th
+                        style={{ ...normalStyle, padding: "5px 5px" }}
+                        colSpan={23}
+                      >
+                        {item.processName}
+                      </th>
+                      <td colSpan={23}></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </td>
+        )}
       </tr>
     </tbody>
   );

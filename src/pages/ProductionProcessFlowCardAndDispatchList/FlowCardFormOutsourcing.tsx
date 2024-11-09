@@ -2,7 +2,7 @@ import {
   EditAbleInput,
   ReadOnlyInput,
   RenderQRCode,
-  transFormToKg,
+  transformToKg,
   transFormToPcs,
 } from "@/utils";
 import { FormInstance } from "antd";

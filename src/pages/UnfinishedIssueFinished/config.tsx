@@ -3,15 +3,13 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, message, Select } from "antd";
+import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
 // import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
-import { sumTransferNumberRender } from "@/utils/tableRender";
 import {
   ERROR_MESSAGE,
   ERROR_UNFINISHED_ISSUE_FINISHED,
-  kgArr,
   SUCCESS_CODE,
 } from "@/constants";
 import { queryPartNumberByHalf, queryStandPartNumberByHalf } from "@/api";
@@ -172,7 +170,7 @@ const formConfig: (form: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueModalOpen, setIssueID, setFinishedParams } = props;
+  const { setIssueModalOpen, setIssueID, setFinishedParams, message } = props;
   return {
     api: "getUnfinishedProducts",
     queryFlowCardApi: "queryUnfinishedProductsByOI",

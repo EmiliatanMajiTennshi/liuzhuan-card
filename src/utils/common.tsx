@@ -1,12 +1,5 @@
-import {
-  insertSaveTransferCard,
-  insertSaveTransferCardDetail,
-  queryProcessByItemId,
-  updateReworkDetailById,
-} from "@/api";
-import { SUCCESS_CODE, VALIDATION_FAILED } from "@/constants";
-import { UPDATE_FAILED } from "@/constants";
-import { Modal, message } from "antd";
+import { queryProcessByItemId } from "@/api";
+import { Modal } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import dayjs from "dayjs";
 import { cloneDeep, isArray, sortBy } from "lodash";
@@ -71,14 +64,18 @@ const formatTime = (time: any) => {
 };
 
 /**psc转kg */
-const transFormToKg = (
+const transformToKg = (
   number: number | string,
   weight: number | string,
   precision?: number
 ) => {
-  return (
-    parseFloat(number.toString()) * parseFloat(weight.toString())
-  ).toFixed(precision || 4);
+  return precision
+    ? (parseFloat(number.toString()) * parseFloat(weight.toString())).toFixed(
+        precision
+      )
+    : (
+        parseFloat(number.toString()) * parseFloat(weight.toString())
+      ).toString();
 };
 /**kg转psc */
 const transFormToPcs = (number: number | string, weight: number | string) => {
@@ -175,98 +172,98 @@ const handleValidate = async ({
 };
 
 // 保存
-const handleSave = async ({ flowCardType, record, data, index }: any) => {
-  // 没有错误
-  const verifierInfoList =
-    record?.verifyId?.map((item: string, index: number) => {
-      return {
-        verifyId: item,
-        verifyName: record?.verifyName?.[index],
-      };
-    }) || [];
-  const operationInfoList =
-    record?.operateId?.map((item: string, index: number) => {
-      return {
-        operationId: item,
-        operationName: record?.operateName?.[index],
-        operateDepartment: record?.operateDepartment?.[index],
-      };
-    }) || [];
+// const handleSave = async ({ flowCardType, record, data, index }: any) => {
+//   // 没有错误
+//   const verifierInfoList =
+//     record?.verifyId?.map((item: string, index: number) => {
+//       return {
+//         verifyId: item,
+//         verifyName: record?.verifyName?.[index],
+//       };
+//     }) || [];
+//   const operationInfoList =
+//     record?.operateId?.map((item: string, index: number) => {
+//       return {
+//         operationId: item,
+//         operationName: record?.operateName?.[index],
+//         operateDepartment: record?.operateDepartment?.[index],
+//       };
+//     }) || [];
 
-  const cloneRecord = cloneDeep(record);
-  delete cloneRecord?.verifyId;
-  delete cloneRecord?.verifyName;
-  delete cloneRecord?.operateId;
-  delete cloneRecord?.operateName;
-  delete cloneRecord?.operateDepartment;
+//   const cloneRecord = cloneDeep(record);
+//   delete cloneRecord?.verifyId;
+//   delete cloneRecord?.verifyName;
+//   delete cloneRecord?.operateId;
+//   delete cloneRecord?.operateName;
+//   delete cloneRecord?.operateDepartment;
 
-  const {
-    processName = "",
-    inspectionLevel = "",
-    hid = "",
-    finishTime = "",
-    equipmentBarcode = "",
-    equipmentName = "",
-    produceNumber = "",
-  } = cloneRecord;
+//   const {
+//     processName = "",
+//     inspectionLevel = "",
+//     hid = "",
+//     finishTime = "",
+//     equipmentBarcode = "",
+//     equipmentName = "",
+//     produceNumber = "",
+//   } = cloneRecord;
 
-  try {
-    // 返工
-    if (flowCardType === "rework") {
-      const params = {
-        processName,
-        inspectionLevel,
-        hid,
-        finishTime,
-        equipmentBarcode,
-        equipmentName,
-        produceNumber,
-        verifierInfoList,
-        operationInfoList,
-      };
-      const res = await updateReworkDetailById(params);
-      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-      } else {
-        message.error(
-          `第${parseFloat(index) + 1}道工序 ${record.processName} 保存失败(${
-            res?.data?.data || UPDATE_FAILED
-          })`
-        );
-      }
-    } else {
-      const params = {
-        processName,
-        inspectionLevel,
-        hid,
-        finishTime,
-        equipmentBarcode,
-        equipmentName,
-        produceNumber,
-        verifierInfoList,
-        operationInfoList,
-        hunit: "公斤",
-        id: data?.id,
-      };
+//   try {
+//     // 返工
+//     if (flowCardType === "rework") {
+//       const params = {
+//         processName,
+//         inspectionLevel,
+//         hid,
+//         finishTime,
+//         equipmentBarcode,
+//         equipmentName,
+//         produceNumber,
+//         verifierInfoList,
+//         operationInfoList,
+//       };
+//       const res = await updateReworkDetailById(params);
+//       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+//       } else {
+//         message.error(
+//           `第${parseFloat(index) + 1}道工序 ${record.processName} 保存失败(${
+//             res?.data?.data || UPDATE_FAILED
+//           })`
+//         );
+//       }
+//     } else {
+//       const params = {
+//         processName,
+//         inspectionLevel,
+//         hid,
+//         finishTime,
+//         equipmentBarcode,
+//         equipmentName,
+//         produceNumber,
+//         verifierInfoList,
+//         operationInfoList,
+//         hunit: "公斤",
+//         id: data?.id,
+//       };
 
-      // 流转卡零件管理
-      const res = await insertSaveTransferCardDetail(params);
-      if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-      } else {
-        const retryRes = await insertSaveTransferCardDetail(params);
-        if (retryRes?.data?.code === SUCCESS_CODE) {
-        } else {
-          message.error(
-            `第${parseFloat(index) + 1}道工序 ${record.processName} 保存失败(${
-              retryRes?.data?.data || UPDATE_FAILED
-            })`
-          );
-        }
-      }
-    }
-  } catch (err: any) {
-    message.error(`Error: ${err.message}`);
-  }
-};
+//       // 流转卡零件管理
+//       const res = await insertSaveTransferCardDetail(params);
+//       if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+//       } else {
+//         const retryRes = await insertSaveTransferCardDetail(params);
+//         if (retryRes?.data?.code === SUCCESS_CODE) {
+//         } else {
+//           message.error(
+//             `第${parseFloat(index) + 1}道工序 ${record.processName} 保存失败(${
+//               retryRes?.data?.data || UPDATE_FAILED
+//             })`
+//           );
+//         }
+//       }
+//     }
+//   } catch (err: any) {
+//     message.error(`Error: ${err.message}`);
+//   }
+// };
 
 /**非0必输校验 */
 const validateNotZero = (_: any, value: string | number) => {
@@ -351,6 +348,7 @@ function convertArraysToString(obj: AnyObject) {
   }
   return newObj;
 }
+
 /**字符串通过分号转数组 */
 function convertStringToArray(str: string) {
   // 去掉结尾的分号（如果有）
@@ -369,17 +367,29 @@ function getSecondDashSubstring(value: string) {
   }
   return false;
 }
+/**数组填充数据 */
+function padArray(arr: any[], targetLength: number) {
+  let maxSeq = arr.reduce((max, item) => {
+    return item.seq > max ? item.seq : max;
+  }, -Infinity);
+
+  while (arr.length < targetLength) {
+    arr.push({ seq: maxSeq + 1 });
+    maxSeq++;
+  }
+  return arr;
+}
 export {
   getTrackingNumber,
   getLZCardNumber,
   formatDate,
   formatTime,
-  transFormToKg,
+  transformToKg,
   transFormToPcs,
   limitDecimals,
   checkProcess,
   validateField,
-  handleSave,
+  // handleSave,
   validateNotZero,
   transformDateToString,
   percentage,
@@ -390,4 +400,5 @@ export {
   convertStringToArray,
   getSecondDashSubstring,
   getTime,
+  padArray,
 };

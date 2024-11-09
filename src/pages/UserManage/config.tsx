@@ -1,14 +1,5 @@
 import { emptyRender } from "@/utils/tableRender";
-import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  Popconfirm,
-  Select,
-  Tag,
-  message,
-} from "antd";
+import { Button, Form, Input, Modal, Popconfirm, Select, Tag } from "antd";
 import {
   PlusOutlined,
   SearchOutlined,
@@ -19,8 +10,11 @@ import {
   IFormConfig,
 } from "@/components/AdvancedSearchForm/AdvancedSearchFormType";
 
-import { IInsertUser, IRole, ITableConfigProps } from "./UserManageType";
-import { ITableConfig } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import { IInsertUser, IRole } from "./UserManageType";
+import {
+  ITableConfig,
+  ITableConfigProps,
+} from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { deleteUsers, insertUser, queryRole, updateUser } from "@/api";
 import { RuleObject } from "antd/es/form";
 import { ADD_SUCCESS, ERROR_MESSAGE } from "@/constants";
@@ -230,7 +224,7 @@ const formConfig: IFormConfig = {
   formTitle: "操作",
   formExtend: true,
   buttons: (props: IButtons) => {
-    const { selectedRowKeys, setRefreshFlag, loading } = props;
+    const { selectedRowKeys, setRefreshFlag, loading, message } = props;
 
     return [
       <Button
@@ -332,7 +326,7 @@ const formConfig: IFormConfig = {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setSearchedData, setRefreshFlag } = props;
+  const { setSearchedData, setRefreshFlag, message } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "getUserList",

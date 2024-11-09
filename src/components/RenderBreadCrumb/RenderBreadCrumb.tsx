@@ -1,4 +1,4 @@
-import { getFlatMenuList } from "@/constants";
+import { EXTEND_TITLE_ARR, getFlatMenuList } from "@/constants";
 import { IMenuItem } from "@/constants/constantsType";
 import { useRootStore } from "@/store";
 import { Breadcrumb } from "antd";
@@ -25,15 +25,17 @@ const RenderBreadCrumb = () => {
 
   useEffect(() => {
     // 获取页面标题
-    const flatMenuList = getFlatMenuList(menu);
+    const flatMenuList = [...getFlatMenuList(menu), ...EXTEND_TITLE_ARR];
 
     const _pageTitle = flatMenuList.find((item) => {
       return item.key === location.pathname;
     });
+
     if (_pageTitle) {
       // 使用 runInAction 包裹状态修改
 
       setPageTitle(_pageTitle);
+    } else {
     }
   }, [location.pathname, menu]);
 

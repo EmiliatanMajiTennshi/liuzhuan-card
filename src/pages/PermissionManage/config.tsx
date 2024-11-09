@@ -1,5 +1,5 @@
 import { emptyRender } from "@/utils/tableRender";
-import { Button, Form, Input, Modal, Popconfirm, Select, message } from "antd";
+import { Button, Form, Input, Modal, Popconfirm, Select } from "antd";
 import {
   PlusOutlined,
   SearchOutlined,
@@ -10,8 +10,10 @@ import {
   IFormConfig,
 } from "@/components/AdvancedSearchForm/AdvancedSearchFormType";
 
-import { ITableConfigProps } from "./PermissionType";
-import { ITableConfig } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import {
+  ITableConfig,
+  ITableConfigProps,
+} from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import {
   deletePermissionById,
   insertPermission,
@@ -121,7 +123,7 @@ const formConfig: IFormConfig = {
   formTitle: "操作",
   formExtend: true,
   buttons: (props: IButtons) => {
-    const { selectedRowKeys, setRefreshFlag, loading } = props;
+    const { selectedRowKeys, setRefreshFlag, loading, message } = props;
 
     return [
       <Button
@@ -194,7 +196,7 @@ const formConfig: IFormConfig = {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setSearchedData, setRefreshFlag } = props;
+  const { setSearchedData, setRefreshFlag, message } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryPermission",

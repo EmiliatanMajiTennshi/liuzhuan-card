@@ -3,7 +3,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { App, Button, DatePicker, Input, Select, Tag, message } from "antd";
+import { App, Button, DatePicker, Input, Select, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
 import {
   getHeatTreatmentFurnacePlatformsList,
@@ -168,7 +168,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setRefreshFlag } = props;
+  const { setRefreshFlag, message } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryHeatTreatment",

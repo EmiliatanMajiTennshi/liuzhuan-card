@@ -1,15 +1,13 @@
 import {
-  getMultiCardDetail,
   queryMultiProcessByTransferCardCode,
   updateMultiProcessByTransferCardCode,
-  UpdateWuliu,
 } from "@/api";
 import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
 import { App, Button, ConfigProvider, Form, Input, Spin, Table } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.scss";
-import { EditAbleInput, ReadOnlyInput } from "@/utils";
+import { ReadOnlyInput } from "@/utils";
 import {
   normalStyle,
   normalStyle18,
@@ -22,7 +20,6 @@ const MultiDetail = (props: {
 }) => {
   const { requestParams, readOnly } = props;
   console.log(requestParams, readOnly, 124124);
-  const [formData, setFormData] = useState<AnyObject>({});
   const [tableData, setTableData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const { message } = App.useApp();
@@ -31,7 +28,6 @@ const MultiDetail = (props: {
     queryMultiProcessByTransferCardCode(requestParams)
       .then((res) => {
         if (SUCCESS_CODE.indexOf(res?.status) !== -1) {
-          setFormData(res?.data?.data);
           setTableData(res?.data?.data?.processList);
           form.setFieldsValue(res?.data?.data);
         } else {

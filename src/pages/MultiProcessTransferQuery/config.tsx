@@ -110,6 +110,12 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         children: <Input></Input>,
         rules: [],
       },
+      {
+        key: "traceabilityNumber",
+        name: "追溯单号",
+        children: <Input></Input>,
+        rules: [],
+      },
     ],
     handleDate: true,
   };
@@ -139,6 +145,11 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "料号",
         dataIndex: "itmid",
         key: "itmid",
+      },
+      {
+        title: "追溯单号",
+        dataIndex: "traceabilityNumber",
+        key: "traceabilityNumber",
       },
       {
         title: "数量",

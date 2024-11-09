@@ -3,10 +3,13 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, ConfigProvider, DatePicker, Input, Select, Tag } from "antd";
+import { Button, DatePicker, Input, Popover, Select, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
-import { FINISHED_CODE, SEMI_FINISHED_CODE, SUCCESS_CODE } from "@/constants";
-import { countProductType, getHeatTreatmentFurnacePlatformsList } from "@/api";
+import { SUCCESS_CODE } from "@/constants";
+import {
+  getHeatTreatmentFurnacePlatformsList,
+  updateDelmkByTransferCardCode,
+} from "@/api";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -294,7 +297,13 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueModalOpen, setIssueID, setPrintModalOpen } = props;
+  const {
+    setIssueModalOpen,
+    setIssueID,
+
+    message,
+    setRefreshFlag,
+  } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryTransferCardNew",
@@ -306,7 +315,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转卡类型",
         dataIndex: "category",
         key: "category",
-        width: 60,
+        width: 70,
       },
       {
         title: "零件类型",
@@ -395,7 +404,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "热处理炉台",
         dataIndex: "heatTreatmentFurnacePlatforms",
         key: "heatTreatmentFurnacePlatforms",
-        width: 60,
+        width: 70,
       },
       {
         title: "优先顺序",
@@ -408,7 +417,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "生产数量总量",
         dataIndex: "newsupcount",
         key: "newsupcount",
-        width: 80,
+        width: 100,
         // render: (text, record) => {
         //   const isKg = kgArr.indexOf(record?.unit) !== -1;
         //   return isKg ? record?.productionKg : record?.productionPcs;
@@ -419,7 +428,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "transferNumber",
         key: "transferNumber",
         // render: sumTransferNumberRender,
-        width: 80,
+        width: 100,
       },
       {
         title: "流转桶数",
@@ -434,13 +443,21 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "单桶流转数量",
         dataIndex: "singleBarrelageNumebr",
         key: "singleBarrelageNumebr",
-        width: 60,
+        width: 70,
+      },
+
+      {
+        title: "下发人",
+        dataIndex: "issuedName",
+        key: "issuedName",
+        width: 80,
+        fixed: "right",
       },
       {
         title: "当前工艺",
         dataIndex: "currentProcess",
         key: "currentProcess",
-        width: 60,
+        width: 80,
         fixed: "right",
       },
       {
@@ -456,13 +473,91 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
           return <Tag color="red">未完工</Tag>;
         },
       },
+
       {
         title: "操作",
         dataIndex: "processList",
         key: "processList",
         render: (data: any, record: any, index: number) => {
-          // 这里后面要
+          const relation = record?.relation;
 
+          const content = (
+            <div>
+              <span style={{ fontSize: 18 }}>
+                {relation ? (
+                  <>
+                    该流转卡
+                    <span style={{ color: "red", fontSize: 24 }}>同时绑定</span>
+                    了
+                    {record?.category === "半品" ? "成品（31）" : "半品（32）"}
+                    流转卡,是否一并作废？
+                  </>
+                ) : (
+                  <>是否作废该流转卡？</>
+                )}
+              </span>
+              <div
+                style={{
+                  marginTop: 20,
+                  display: "flex",
+                  justifyContent: "right",
+                }}
+              >
+                <Button
+                  danger
+                  type="primary"
+                  onClick={() => {
+                    updateDelmkByTransferCardCode({
+                      transferCardCode: record?.transferCardCode,
+                      relation,
+                    })
+                      .then((res) => {
+                        if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                          message.success(res?.data?.data);
+                          setRefreshFlag((flag) => !flag);
+                        } else {
+                          message.error(res?.data?.data || "作废失败！");
+                        }
+                      })
+                      .catch((err) => {
+                        message.error("作废失败！");
+                      });
+                  }}
+                >
+                  {relation && "同时"}作废
+                </Button>
+                <Button type="primary" style={{ marginLeft: 10 }}>
+                  取消
+                </Button>
+                {relation && (
+                  <Button
+                    type="link"
+                    danger
+                    style={{ marginLeft: 0 }}
+                    onClick={() => {
+                      updateDelmkByTransferCardCode({
+                        transferCardCode: record?.transferCardCode,
+                      })
+                        .then((res) => {
+                          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+                            message.success(res?.data?.data);
+                            setRefreshFlag((flag) => !flag);
+                          } else {
+                            message.error(res?.data?.data || "作废失败！");
+                          }
+                        })
+                        .catch((err) => {
+                          message.error("作废失败！");
+                        });
+                    }}
+                  >
+                    单独作废
+                  </Button>
+                )}
+              </div>
+            </div>
+          );
+          // 这里后面要
           return (
             <>
               <Button
@@ -475,10 +570,18 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               >
                 编辑
               </Button>
+              <Popover
+                title={<span style={{ fontSize: 18 }}>确认作废</span>}
+                content={content}
+              >
+                <Button danger size="small" style={{ marginLeft: 10 }}>
+                  作废
+                </Button>
+              </Popover>
             </>
           );
         },
-        width: 80,
+        width: 140,
         fixed: "right",
       },
     ],
