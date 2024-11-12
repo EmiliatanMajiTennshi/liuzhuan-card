@@ -280,6 +280,15 @@ const validateNotZero = (_: any, value: string | number) => {
   return Promise.resolve();
 };
 
+/**最大值校验 */
+const validateMax = (value: string | number, max: number | string) => {
+  if (parseFloat(value as string) > parseFloat(max as string)) {
+    return Promise.reject(new Error("流转数量超过最大限制"));
+  }
+
+  return Promise.resolve();
+};
+
 /** 日期格式转换 */
 const transformDateToString = (values: any) => {
   if (values?.finishTimeEnd) {
@@ -309,6 +318,10 @@ const transformDateToString = (values: any) => {
   if (values?.rollTime) {
     const _tempTime = formatDate(values?.rollTime);
     values.rollTime = _tempTime;
+  }
+  if (values.finishTime) {
+    const _tempTime = formatDate(values?.finishTime);
+    values.finishTime = _tempTime;
   }
   return values;
 };
@@ -391,6 +404,7 @@ export {
   validateField,
   // handleSave,
   validateNotZero,
+  validateMax,
   transformDateToString,
   percentage,
   getErrorMessage,

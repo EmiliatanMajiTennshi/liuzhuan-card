@@ -8,7 +8,7 @@ import {
   Upload,
   UploadProps,
 } from "antd";
-import { DeleteOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import styles from "./index.module.scss";
 import { AnyObject } from "antd/es/_util/type";
@@ -104,7 +104,6 @@ const AppealPage = (props: {
         form={form}
         onFinish={(values) => {
           const formData = new FormData();
-
           formData.append(
             "reasonView",
             new Blob(
@@ -128,7 +127,7 @@ const AppealPage = (props: {
                 message.success(res?.data?.data);
                 setRefreshFlag((flag) => !flag);
               } else {
-                message.error(res?.data?.data);
+                message.error(res?.data?.data || res?.response?.data?.msg);
               }
             })
             .catch((err) => {
@@ -174,8 +173,9 @@ const AppealPage = (props: {
             style={{ width: 350, maxWidth: 350, marginBottom: 12 }}
             {...draggerProps}
             className={styles.uploadImg}
+            listType="picture-card"
           >
-            <Button icon={<UploadOutlined />}>选择图片</Button>
+            <PlusOutlined style={{ fontSize: 24 }} />
           </Upload>
         </Form.Item>
         <Form.Item>

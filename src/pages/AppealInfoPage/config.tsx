@@ -6,16 +6,18 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, Input, Table } from "antd";
+import { Button, DatePicker, Input, message, Table } from "antd";
 import { EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
 import { AppealPage } from "../AppealPage";
+import { queryAppealInfoById } from "@/api/queryAppealInfoById";
+import { SUCCESS_CODE } from "@/constants";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
     buttons: (props: IButtons) => {
-      const { loading, modal, setRefreshFlag } = props;
+      const { loading } = props;
 
       return [
         <Button
@@ -48,28 +50,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         // </Button>,
       ];
     },
-    formItems: ({ options, setOptions }) => {
-      // if (!options.heatTreatmentFurnacePlatforms) {
-      //   setOptions({
-      //     ...options,
-      //     heatTreatmentFurnacePlatforms: [{}],
-      //   });
-      //   getHeatTreatmentFurnacePlatformsList().then((res) => {
-      //     // 热处理炉台号
-      //     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-      //       const platformsOptions = res?.data?.data?.map(
-      //         (item: { id: string; name: string }) => ({
-      //           value: item?.name,
-      //           label: item?.name,
-      //         })
-      //       );
-      //       setOptions({
-      //         ...options,
-      //         heatTreatmentFurnacePlatforms: platformsOptions,
-      //       });
-      //     }
-      //   });
-      // }
+    formItems: () => {
       return [
         {
           key: "department",
@@ -78,11 +59,12 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           rules: [],
         },
         {
-          key: "id",
-          name: "id",
-          children: <Input></Input>,
+          key: "finishTime",
+          name: "交期",
+          children: <DatePicker style={{ width: "100%" }}></DatePicker>,
           rules: [],
         },
+
         // {
         //   key: "heatTreatmentFurnacePlatform",
         //   name: "热处理炉台号",
@@ -162,12 +144,12 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         // },
       ];
     },
-    // handleDate: true,
+    handleDate: true,
   };
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { modal, setRefreshFlag } = props;
+  const { modal, setRefreshFlag, message } = props;
   // 获取炉台
   return {
     rowKey: "transferCardCode", // 唯一标识
@@ -197,9 +179,14 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "department",
       },
       {
-        title: "数量",
+        title: "统计数量",
         dataIndex: "countAllNumber",
         key: "countAllNumber",
+      },
+      {
+        title: "申诉数量",
+        dataIndex: "complainNumber",
+        key: "complainNumber",
       },
       {
         title: "创建时间",
@@ -215,101 +202,122 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "申诉单",
         dataIndex: "reasonViewList",
         key: "reasonViewList",
+        width: 250,
+        fixed: "right",
         render: (list?: any[], record?: any) => {
           return (
             <span className={styles.operateButtons}>
-              {list ? (
+              {record?.actualNumber ? (
                 <Button
-                  onClick={() => {
-                    modal.info({
-                      title: "申诉单",
-                      width: 1000,
-                      className: styles.appealInfoModal,
-                      content: (
-                        <Table
-                          columns={[
-                            {
-                              title: "id",
-                              dataIndex: "parentId",
-                              key: "parentId",
-                              width: "10%",
-                            },
-                            {
-                              title: "申诉原因",
-                              dataIndex: "reason",
-                              key: "reason",
-                              width: "30%",
-                            },
-                            {
-                              title: "数量",
-                              dataIndex: "number",
-                              key: "number",
-                              width: "10%",
-                            },
-                            {
-                              title: "图片",
-                              dataIndex: "imgViews",
-                              key: "imgViews",
-                              width: "50%",
-                              render: (imgArr?: any[]) => {
-                                return (
-                                  <div className={styles.imgList}>
-                                    {imgArr?.map((item) => (
-                                      // <img src={item?.imgPath} alt="" />
-                                      <div
-                                        style={{
-                                          backgroundImage: `url(${item?.imgPath})`,
-                                        }}
-                                        className={styles.imgItem}
-                                      >
-                                        <div className={styles.imgButtons}>
-                                          <Button
-                                            icon={
-                                              <EyeOutlined
-                                                style={{ fontSize: 36 }}
-                                              />
-                                            }
-                                            type="link"
-                                            onClick={() => {
-                                              modal.info({
-                                                title: "预览",
-                                                width: 1200,
-                                                content: (
-                                                  <div
-                                                    style={{
-                                                      display: "flex",
-                                                      alignItems: "center",
-                                                      justifyContent: "center",
-                                                      minHeight: 400,
-                                                    }}
-                                                  >
-                                                    <img
-                                                      src={item?.imgPath}
-                                                      alt=""
-                                                      style={{
-                                                        maxWidth: "100%",
-                                                      }}
-                                                    ></img>
-                                                  </div>
-                                                ),
-                                              });
-                                            }}
-                                          ></Button>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                );
+                  onClick={async () => {
+                    try {
+                      const res = await queryAppealInfoById({
+                        id: record.id,
+                      });
+                      if (SUCCESS_CODE.indexOf(res?.data?.code) === -1) {
+                        message.error("获取申诉单失败");
+                        return;
+                      }
+                      const detail = res?.data?.data;
+                      modal.info({
+                        title: "申诉单",
+                        width: 1000,
+                        className: styles.appealInfoModal,
+                        content: (
+                          <Table
+                            columns={[
+                              {
+                                title: "id",
+                                dataIndex: "rid",
+                                key: "rid",
+                                width: "10%",
                               },
-                            },
-                          ]}
-                          dataSource={list}
-                        ></Table>
-                      ),
-                    });
+                              {
+                                title: "申诉原因",
+                                dataIndex: "reason",
+                                key: "reason",
+                                width: "30%",
+                              },
+                              {
+                                title: "数量",
+                                dataIndex: "number",
+                                key: "number",
+                                width: "10%",
+                              },
+                              {
+                                title: "申诉人",
+                                dataIndex: "createUser",
+                                key: "createUser",
+                                width: "10%",
+                              },
+                              {
+                                title: "图片",
+                                dataIndex: "imgViews",
+                                key: "imgViews",
+                                width: "40%",
+                                render: (imgArr?: any[]) => {
+                                  return (
+                                    <div className={styles.imgList}>
+                                      {imgArr?.map((item) => (
+                                        // <img src={item?.imgPath} alt="" />
+                                        <div
+                                          style={{
+                                            backgroundImage: `url(${item?.imgPath})`,
+                                          }}
+                                          className={styles.imgItem}
+                                        >
+                                          <div className={styles.imgButtons}>
+                                            <Button
+                                              icon={
+                                                <EyeOutlined
+                                                  style={{ fontSize: 36 }}
+                                                />
+                                              }
+                                              type="link"
+                                              onClick={() => {
+                                                modal.info({
+                                                  title: "预览",
+                                                  width: 1200,
+                                                  content: (
+                                                    <div
+                                                      style={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent:
+                                                          "center",
+                                                        minHeight: 400,
+                                                      }}
+                                                    >
+                                                      <img
+                                                        src={item?.imgPath}
+                                                        alt=""
+                                                        style={{
+                                                          maxWidth: "100%",
+                                                        }}
+                                                      ></img>
+                                                    </div>
+                                                  ),
+                                                });
+                                              }}
+                                            ></Button>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  );
+                                },
+                              },
+                            ]}
+                            dataSource={detail}
+                          ></Table>
+                        ),
+                      });
+                    } catch {
+                      message.error("获取申诉单失败");
+                    }
                   }}
                 >
-                  查看{list?.length}个申诉单
+                  查看{record?.actualNumber}个申诉单
                 </Button>
               ) : (
                 <Button disabled>暂无申诉单</Button>

@@ -21,6 +21,7 @@ import {
   getSecondDashSubstring,
   getTime,
   padArray,
+  validateMax,
 } from "./common";
 import { setToken, getToken, removeToken } from "./token";
 import {
@@ -55,6 +56,7 @@ export {
   checkProcess,
   validateField,
   validateNotZero,
+  validateMax,
   transformDateToString,
   formatTime,
   percentage,

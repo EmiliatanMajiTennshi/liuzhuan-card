@@ -109,6 +109,8 @@ const UnfinishedIssueFinishedModal = (props: any) => {
   // 流转数量
   const [transferNum32, setTransferNum32] = useState<number>();
   const [transferNum31, setTransferNum31] = useState<number>();
+  // 成品最大流转数量
+  const [maxTNumFinishedKg, setMaxTNumFinishedKg] = useState<number>();
 
   const fetchData = async () => {
     setLoading(true);
@@ -220,6 +222,13 @@ const UnfinishedIssueFinishedModal = (props: any) => {
         setSaveLoading(false);
         return;
       }
+      console.log(params31, finishedData, 12314);
+      console.log(maxTNumFinishedKg, 123);
+      if ((maxTNumFinishedKg || 0) < params31.transferKg) {
+        message?.error("成品（31）剩余数量小于流转数量，无法下发！");
+        setSaveLoading(false);
+        return;
+      }
 
       try {
         const [resUnfinished, resFinished] = await Promise.all([
@@ -301,6 +310,7 @@ const UnfinishedIssueFinishedModal = (props: any) => {
     setBeIssuedPCode,
     transferNum: transferNum31,
     uncoverData: uncoverData31,
+    setMaxTNumFinishedKg,
   };
   return (
     <div>

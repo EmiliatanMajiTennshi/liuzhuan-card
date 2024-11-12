@@ -244,6 +244,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "partNumber",
         width: 130,
       },
+      {
+        title: "返工订单号",
+        dataIndex: "fGOrderNo",
+        key: "fGOrderNo",
+        width: 130,
+      },
 
       {
         title: "品名",

@@ -10,6 +10,7 @@ import {
   getHeatTreatmentFurnacePlatformsList,
   updateDelmkByTransferCardCode,
 } from "@/api";
+import { allowDeleteTransferCard } from "@/constants/config";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -18,7 +19,6 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 
     formItems: ({ options, setOptions }) => {
       if (!options.type) {
-        setOptions({ ...options, type: [{}] });
         setOptions({ ...options, type: [{}] });
         // countProductType().then((res) => {
         //   //   零件类型;
@@ -481,7 +481,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         render: (data: any, record: any, index: number) => {
           const relation = record?.relation;
 
-          const content = (
+          const content = allowDeleteTransferCard ? (
             <div>
               <span style={{ fontSize: 18 }}>
                 {relation ? (
@@ -556,6 +556,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                 )}
               </div>
             </div>
+          ) : (
+            <></>
           );
           // 这里后面要
           return (
@@ -570,18 +572,20 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               >
                 编辑
               </Button>
-              <Popover
-                title={<span style={{ fontSize: 18 }}>确认作废</span>}
-                content={content}
-              >
-                <Button danger size="small" style={{ marginLeft: 10 }}>
-                  作废
-                </Button>
-              </Popover>
+              {allowDeleteTransferCard && (
+                <Popover
+                  title={<span style={{ fontSize: 18 }}>确认作废</span>}
+                  content={content}
+                >
+                  <Button danger size="small" style={{ marginLeft: 10 }}>
+                    作废
+                  </Button>
+                </Popover>
+              )}
             </>
           );
         },
-        width: 140,
+        width: allowDeleteTransferCard ? 140 : 90,
         fixed: "right",
       },
     ],

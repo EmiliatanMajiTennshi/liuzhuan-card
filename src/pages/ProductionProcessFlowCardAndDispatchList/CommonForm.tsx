@@ -11,6 +11,7 @@ import {
   RenderSelect,
   transformToKg,
   transFormToPcs,
+  validateMax,
   validateNotZero,
 } from "@/utils";
 import { App, FormInstance } from "antd";
@@ -41,7 +42,7 @@ interface IProps {
   beIssuedData?: IData;
   beIssuedPCode?: string;
   setBeIssuedPCode?: React.Dispatch<React.SetStateAction<string | undefined>>;
-
+  setMaxTNumFinishedKg?: React.Dispatch<React.SetStateAction<number>>;
   uncoverData?: AnyObject;
 }
 const CommonForm = (props: IProps) => {
@@ -56,10 +57,9 @@ const CommonForm = (props: IProps) => {
     beIssuedData,
     beIssuedPCode,
     setBeIssuedPCode,
-
+    setMaxTNumFinishedKg,
     uncoverData,
   } = props;
-  console.log("asdddd", notSelfIssue);
 
   const itmid = data?.itmid;
   // 半成品
@@ -133,7 +133,6 @@ const CommonForm = (props: IProps) => {
   }, [form?.getFieldValue("pnumber")]);
   useEffect(() => {
     form.setFieldValue("transferCardCode", data.transferCardCode);
-    console.log(1231232, data);
     // if (isKg) {
     if (data?.productKg && data?.weight) {
       const transferKgMax =
@@ -165,6 +164,11 @@ const CommonForm = (props: IProps) => {
       beIssuedForm?.setFieldValue("transferPcs", transferPcs);
       beIssuedForm?.setFieldValue("transferKg", transferKg);
       setLiuMaxKg(transferKgMax);
+
+      if (notSelfIssue && setMaxTNumFinishedKg) {
+        // 32下发31 校验流转数量
+        setMaxTNumFinishedKg(transferKgMax);
+      }
       setLiuMaxPCS(parseFloat(transferPcsMax));
       if (!notSelfIssue) {
         if (data?.transferNumberKG) {
@@ -420,7 +424,13 @@ const CommonForm = (props: IProps) => {
               beIssuedForm?.setFieldValue("transferPcs", valuePCS);
               beIssuedForm?.setFieldValue("transferKg", e);
             }}
-            rules={[{ validator: validateNotZero }]}
+            rules={[
+              { validator: validateNotZero },
+              {
+                validator: (_: any, value: string | number) =>
+                  validateMax(value, liuMaxKg),
+              },
+            ]}
           />
         )}
         <ReadOnlyInput
@@ -477,7 +487,13 @@ const CommonForm = (props: IProps) => {
               beIssuedForm?.setFieldValue("transferPcs", e);
               beIssuedForm?.setFieldValue("transferKg", valueKg);
             }}
-            rules={[{ validator: validateNotZero }]}
+            rules={[
+              { validator: validateNotZero },
+              {
+                validator: (_: any, value: string | number) =>
+                  validateMax(value, liuMaxPCS),
+              },
+            ]}
             precision={0}
           />
         )}
