@@ -11,6 +11,7 @@ import {
   updateDelmkByTransferCardCode,
 } from "@/api";
 import { allowDeleteTransferCard } from "@/constants/config";
+import { message } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -301,7 +302,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     setIssueModalOpen,
     setIssueID,
 
-    message,
     setRefreshFlag,
   } = props;
   return {

@@ -3,7 +3,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Select } from "antd";
+import { Button, DatePicker, Input, message, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
 // import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
@@ -170,7 +170,7 @@ const formConfig: (form: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueModalOpen, setIssueID, setFinishedParams, message } = props;
+  const { setIssueModalOpen, setIssueID, setFinishedParams } = props;
   return {
     api: "getUnfinishedProducts",
     queryFlowCardApi: "queryUnfinishedProductsByOI",

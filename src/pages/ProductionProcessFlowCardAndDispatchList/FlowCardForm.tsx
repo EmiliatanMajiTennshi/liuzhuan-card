@@ -1,5 +1,6 @@
 import {
   EditAbleInput,
+  message,
   ReadOnlyInput,
   RenderQRCode,
   RenderSelect,
@@ -23,7 +24,6 @@ interface IProps {
 }
 const FlowCardForm = (props: IProps) => {
   const { data, form, mainsize } = props;
-  const { message } = App.useApp();
   const isSemiFinished = data?.itmid?.startsWith("32");
   // 需要同步操作工和检验员的工艺列表
 

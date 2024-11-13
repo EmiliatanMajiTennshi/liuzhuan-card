@@ -11,17 +11,19 @@ import locale from "antd/locale/zh_CN";
 import dayjs from "dayjs";
 import RootStoreProvider from "./store";
 import "dayjs/locale/zh-cn";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // 换成中文
 dayjs.locale("zh-cn");
-const getHtml = async () => {
-  const html = await fetch("/").then((res) => res.text()); //读取index html
-  return html;
-};
-const init = async () => {
-  const res = await getHtml();
-  console.log({ a: res }, 124214);
-};
-init();
+// const getHtml = async () => {
+//   const html = await fetch("/").then((res) => res.text()); //读取index html
+//   return html;
+// };
+// const init = async () => {
+//   const res = await getHtml();
+//   console.log({ a: res }, 124214);
+// };
+// init();
 
 function App() {
   return (
@@ -40,6 +42,7 @@ function App() {
           </ConfigProvider>
         </Router>
       </AppAnt>
+      <ToastContainer position="top-center" autoClose={2000} />
     </StyleProvider>
   );
 }

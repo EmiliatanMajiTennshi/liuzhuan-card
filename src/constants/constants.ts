@@ -37,7 +37,7 @@ export const ADD_SUCCESS = "添加成功";
 /** 更新成功 */
 export const UPDATE_SUCCESS = "更新成功";
 
-/** 更新成功 */
+/** 更新失败 */
 export const UPDATE_FAILED = "更新失败";
 
 /** 没有找到符合条件的数据 */

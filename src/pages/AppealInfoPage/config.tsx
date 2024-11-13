@@ -6,12 +6,13 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, message, Table } from "antd";
+import { Button, DatePicker, Input, Table } from "antd";
 import { EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
 import { AppealPage } from "../AppealPage";
 import { queryAppealInfoById } from "@/api/queryAppealInfoById";
 import { SUCCESS_CODE } from "@/constants";
+import { message } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -149,7 +150,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { modal, setRefreshFlag, message } = props;
+  const { modal, setRefreshFlag } = props;
   // 获取炉台
   return {
     rowKey: "transferCardCode", // 唯一标识

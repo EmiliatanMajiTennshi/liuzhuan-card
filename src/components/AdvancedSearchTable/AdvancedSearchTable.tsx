@@ -1,4 +1,4 @@
-import { App, ConfigProvider, Empty, Modal, Spin, Table, Tabs } from "antd";
+import { ConfigProvider, Modal, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./index.module.scss";
 import {
@@ -17,7 +17,7 @@ import {
 
 import { AnyObject } from "antd/es/_util/type";
 import { cloneDeep } from "lodash";
-import { getErrorMessage } from "@/utils";
+import { getErrorMessage, message } from "@/utils";
 import { MultiDetail } from "@/pages/MultiDetail";
 import { UnfinishedIssueFinishedModal } from "@/pages/UnfinishedIssueFinishedModal";
 
@@ -33,7 +33,6 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     setRefreshFlag,
   } = props;
 
-  const { message } = App.useApp();
   // 查询到的数据
   const [searchedData, setSearchedData] = useState<any[]>([]);
   // 查询到的数据总数
@@ -80,7 +79,6 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     setTableOptions,
     setFinishedParams,
     setMultiDetailModalOpen,
-    message,
     modal,
   };
 
@@ -127,20 +125,14 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           res?.data?.page?.total || res?.data?.total || currentData?.[0]?.size
         );
       } else if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-        message.info({
-          content: FIND_NO_DATA,
-          style: { marginTop: "40px" },
-        });
+        message.info(FIND_NO_DATA, { style: { marginTop: "40px" } });
         setSearchedData([]);
       } else {
         throw new Error(`${getErrorMessage(res, ERROR_MESSAGE)}`);
       }
     } catch (error: any) {
       console.error(ERROR_MESSAGE, error);
-      message.error({
-        content: error?.message,
-        style: { marginTop: "40px" },
-      });
+      message.error(error?.message, { style: { marginTop: "40px" } });
       setSearchedData([]);
     } finally {
       setLoading(false);

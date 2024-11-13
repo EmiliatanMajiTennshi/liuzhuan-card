@@ -32,6 +32,7 @@ import getApi, {
 import {
   convertArraysToString,
   convertStringToArray,
+  message,
   RenderQRCode,
   validateField,
 } from "@/utils";
@@ -99,7 +100,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     finishedPrintProps,
   } = props;
   // 数据
-  const { message } = App.useApp();
   const [data, setData] = useState<IData>({});
   // loading
   const [loading, setLoading] = useState(false);

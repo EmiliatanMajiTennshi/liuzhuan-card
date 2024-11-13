@@ -5,6 +5,7 @@ import {
 import {
   EditAbleInput,
   getSecondDashSubstring,
+  message,
   ReadOnlyInput,
   RenderDatePicker,
   RenderQRCode,
@@ -68,7 +69,6 @@ const CommonForm = (props: IProps) => {
   const isUnfinished32to31 = needIssueFinished;
   // 32下发31 31成品
   const isFinished32to31 = notSelfIssue;
-  const { message } = App.useApp();
   // 热处理炉台
   const [heatTreatmentFurnaces, setHeatTreatmentFurnaces] = useState<any[]>([]);
   // 最大流转数量

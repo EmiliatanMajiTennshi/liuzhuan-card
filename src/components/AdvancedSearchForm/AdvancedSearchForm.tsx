@@ -9,8 +9,8 @@ import {
 } from "@ant-design/icons";
 import { ProductionProcessFlowCardAndDispatchList } from "@/pages/ProductionProcessFlowCardAndDispatchList";
 import { transformDateToString } from "@/utils";
-import { AppealPage } from "@/pages/AppealPage";
 import { useNavigate } from "react-router-dom";
+import styles from "./index.module.scss";
 const gutter = 24;
 const span = 6;
 
@@ -24,7 +24,6 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
     initValues,
   } = props;
   const [form] = Form.useForm();
-  const { message } = App.useApp();
   // 控制按钮是否加载
   const [buttonLoading, setButtonLoading] = useState({ insertButton: false });
 
@@ -36,9 +35,6 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
 
   // 添加车间卷装链条
   const [rollChainModalOpen, setRollChainModalOpen] = useState(false);
-
-  // 申诉
-  const [appealModalOpen, setAppealModalOpen] = useState(false);
 
   // 跳转
   const navigate = useNavigate();
@@ -108,8 +104,6 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
     buttonLoading,
     setButtonLoading,
     loading,
-    message,
-    setAppealModalOpen,
     modal,
   };
 
@@ -158,7 +152,7 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
           )}
         </Row>
         {!buttons && (
-          <div style={{ display: "flex", justifyContent: "right", gap: 8 }}>
+          <div className={styles.formButtons}>
             {name === "TransferCardUnfinishToStore" && (
               <Button
                 type="dashed"
@@ -233,18 +227,7 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
           />
         </Modal>
       )}
-      {/* {appealModalOpen && (
-        <Modal
-          open={appealModalOpen}
-          onCancel={() => setAppealModalOpen(false)}
-          footer={null}
-          width={400}
-          maskClosable={false}
-          title="申诉"
-        >
-          <AppealPage />
-        </Modal>
-      )} */}
+
       {contextHolder}
     </>
   );

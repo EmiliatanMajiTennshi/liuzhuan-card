@@ -14,7 +14,7 @@ import {
   UPDATE_SUCCESS,
 } from "@/constants/constants";
 import dayjs from "dayjs";
-import { formatTime } from "@/utils";
+import { formatTime, message } from "@/utils";
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
@@ -157,7 +157,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setRefreshFlag, tableOptions, message } = props;
+  const { setRefreshFlag, tableOptions } = props;
   // 获取炉台
   const furnaceOptionsApi = "getHeatTreatmentFurnacePlatformsList";
   return {

@@ -108,7 +108,6 @@ export interface ITableConfigProps {
   setTableOptions: React.Dispatch<React.SetStateAction<AnyObject>>;
   setFinishedParams: React.Dispatch<React.SetStateAction<AnyObject>>;
   setMultiDetailModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  message: MessageInstance;
   modal: HookAPI;
 }
 

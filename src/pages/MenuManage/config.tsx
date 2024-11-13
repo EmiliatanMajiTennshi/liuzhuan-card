@@ -16,6 +16,7 @@ import { deleteMenuById, updateMenuById } from "@/api";
 import { IInsertMenu, insertMenu } from "@/api/insertMenu";
 import React, { ReactNode } from "react";
 import { ERROR_MESSAGE } from "@/constants";
+import { message } from "@/utils";
 
 type FieldType = {
   icon: string;
@@ -149,7 +150,7 @@ const formConfig: IFormConfig = {
   formTitle: "操作",
   formExtend: true,
   buttons: (props: IButtons) => {
-    const { selectedRowKeys, setRefreshFlag, loading, message } = props;
+    const { selectedRowKeys, setRefreshFlag, loading } = props;
 
     return [
       <Button

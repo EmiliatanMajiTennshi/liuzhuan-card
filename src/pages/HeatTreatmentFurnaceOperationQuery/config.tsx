@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { formatDate, RenderQRCode } from "@/utils";
+import { formatDate, message, RenderQRCode } from "@/utils";
 import {
   getHeatTreatmentFurnacePlatformsList,
   updatePrintTransferCard,
@@ -227,13 +227,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const {
-    setIssueModalOpen,
-    setIssueID,
-    setPrintModalOpen,
-    setRefreshFlag,
-    message,
-  } = props;
+  const { setIssueModalOpen, setIssueID, setPrintModalOpen, setRefreshFlag } =
+    props;
   return {
     name: "HeatTreatmentFurnaceOperationQuery",
     rowKey: "id", // 唯一标识

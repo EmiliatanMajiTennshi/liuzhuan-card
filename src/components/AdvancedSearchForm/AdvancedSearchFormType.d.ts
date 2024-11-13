@@ -28,8 +28,6 @@ export interface IButtons {
     React.SetStateAction<IButtonLoadingChildren>
   >;
   loading?: boolean;
-  message: MessageInstance;
-  setAppealModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   modal: HookAPI;
 }
 

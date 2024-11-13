@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import type { FormProps } from "antd";
-import { App, Button, Form, Input } from "antd";
+import { App, Button, Form, Input, notification } from "antd";
 import { loginRequest } from "@/api";
 import { useNavigate } from "react-router-dom";
 import { FieldType, TRes } from "./LoginComType";
+import { message } from "@/utils";
 // import styles from "./index.module.scss";
 
 /**
@@ -13,7 +14,6 @@ import { FieldType, TRes } from "./LoginComType";
  */
 const LoginCom = (props: any) => {
   // const { setActiveTabKey } = props;
-  const { message } = App.useApp();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   //   const [remember, setRemember] = useState(true);
@@ -27,13 +27,9 @@ const LoginCom = (props: any) => {
    * @param _message  提示信息
    */
   const successMessage = (_message: string) => {
-    message.success({
-      content: _message,
+    message.success(_message, {
       className: "custom-class",
-      duration: 2,
-      style: {
-        marginTop: "20vh",
-      },
+      delay: 2,
     });
   };
 
@@ -42,15 +38,10 @@ const LoginCom = (props: any) => {
    * @param _message  提示信息
    */
   const errorMessage = (_message: string) => {
-    message.error({
-      content: _message,
+    message.error(_message, {
       className: "custom-class",
-      duration: 2,
-      style: {
-        marginTop: "20vh",
-        position: "relative",
-        transform: "translateX(-25%)",
-      },
+      delay: 2,
+      position: "top-left",
     });
   };
 
@@ -74,8 +65,6 @@ const LoginCom = (props: any) => {
       successMessage("登录成功");
       navigate("/");
     } else {
-      console.log(res, 123);
-
       errorMessage(res?.msg || `登录失败${res?.statusText}`);
     }
   };

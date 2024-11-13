@@ -8,7 +8,6 @@ import {
   Select,
   Tag,
   TreeSelect,
-  message,
 } from "antd";
 import {
   PlusOutlined,
@@ -48,6 +47,7 @@ import {
   GET_MENU_OR_PERMISSION_FAILED,
 } from "@/constants";
 import { UPDATE_SUCCESS } from "@/constants/constants";
+import { message } from "@/utils";
 
 const validateSpace = (rule: any, value: string) => {
   if (!value) {

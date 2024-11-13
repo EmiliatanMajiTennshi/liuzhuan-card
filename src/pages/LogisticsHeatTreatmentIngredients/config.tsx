@@ -6,7 +6,7 @@ import {
 import { Button, DatePicker, Input, Modal, Select, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { formatDate, RenderQRCode } from "@/utils";
+import { formatDate, message, RenderQRCode } from "@/utils";
 import { getHeatTreatmentFurnacePlatformsList, insertDeliveryNew } from "@/api";
 import { ERROR_MESSAGE, DEFAULT_ORANGE, SUCCESS_CODE } from "@/constants";
 import dayjs from "dayjs";
@@ -219,7 +219,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setRefreshFlag, message } = props;
+  const { setRefreshFlag } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryLogisticsNew",

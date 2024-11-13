@@ -25,7 +25,7 @@ import {
   updatePrintTransferCard,
 } from "@/api";
 import dayjs from "dayjs";
-import { formatDate } from "@/utils";
+import { formatDate, message } from "@/utils";
 import { allowRecoverPrintState } from "@/constants/config";
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -308,7 +308,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setIssueID, setPrintModalOpen, setRefreshFlag, message } = props;
+  const { setIssueID, setPrintModalOpen, setRefreshFlag } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryTransferCardNew",

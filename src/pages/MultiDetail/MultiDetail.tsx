@@ -4,10 +4,9 @@ import {
 } from "@/api";
 import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
 import { App, Button, ConfigProvider, Form, Input, Spin, Table } from "antd";
-import { AnyObject } from "antd/es/_util/type";
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.scss";
-import { ReadOnlyInput } from "@/utils";
+import { message, ReadOnlyInput } from "@/utils";
 import {
   normalStyle,
   normalStyle18,
@@ -22,7 +21,6 @@ const MultiDetail = (props: {
   console.log(requestParams, readOnly, 124124);
   const [tableData, setTableData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const { message } = App.useApp();
   const [form] = Form.useForm();
   const fetchData = () =>
     queryMultiProcessByTransferCardCode(requestParams)

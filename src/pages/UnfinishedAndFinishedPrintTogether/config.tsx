@@ -6,7 +6,7 @@ import {
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
 import { allowRecoverPrintState } from "@/constants/config";
-import { Button, DatePicker, Input, Popconfirm, Select } from "antd";
+import { Button, DatePicker, Input, message, Popconfirm, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 const formConfig: (form: any) => IFormConfig = (form) => {
   return {
@@ -159,13 +159,8 @@ const formConfig: (form: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const {
-    setIssueID,
-    setFinishedParams,
-    setPrintModalOpen,
-    setRefreshFlag,
-    message,
-  } = props;
+  const { setIssueID, setFinishedParams, setPrintModalOpen, setRefreshFlag } =
+    props;
   return {
     api: "querytransferCardRelation",
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",

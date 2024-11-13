@@ -18,6 +18,7 @@ import {
 import { deleteUsers, insertUser, queryRole, updateUser } from "@/api";
 import { RuleObject } from "antd/es/form";
 import { ADD_SUCCESS, ERROR_MESSAGE } from "@/constants";
+import { message } from "@/utils";
 
 type FieldType = {
   username: string;
@@ -224,7 +225,7 @@ const formConfig: IFormConfig = {
   formTitle: "操作",
   formExtend: true,
   buttons: (props: IButtons) => {
-    const { selectedRowKeys, setRefreshFlag, loading, message } = props;
+    const { selectedRowKeys, setRefreshFlag, loading } = props;
 
     return [
       <Button
@@ -326,7 +327,7 @@ const formConfig: IFormConfig = {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setSearchedData, setRefreshFlag, message } = props;
+  const { setSearchedData, setRefreshFlag } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "getUserList",

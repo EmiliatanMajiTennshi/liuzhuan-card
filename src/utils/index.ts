@@ -34,6 +34,7 @@ import {
 } from "./renderTableItems";
 import { emptyRender, emptyRenderCustomPlaceHolder } from "./tableRender";
 import requestDJ from "./requestDJ";
+import { message } from "./message";
 export {
   request,
   requestLz,
@@ -70,4 +71,5 @@ export {
   getSecondDashSubstring,
   getTime,
   padArray,
+  message,
 };

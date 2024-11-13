@@ -2,27 +2,23 @@ import React, { useEffect, useState } from "react";
 import styles from "./index.module.scss";
 import { RenderDashboardCard } from "@/components/RenderDashboardCard";
 import {
-  countOrderCompletionStatus,
-  countProcessUnfinishToStore,
   countProcessUnfinishToStoreMonth,
   countProcessUnfinishToStoreYestereday,
-  countUnfinishTransferToStore,
   queryOrderCount,
 } from "@/api";
 import { CardView } from "@/components/CardView";
-import { DEFAULT_ORANGE, ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
+import { DEFAULT_ORANGE, ERROR_MESSAGE } from "@/constants";
 import classNames from "classnames";
 import { RenderChart } from "@/components/RenderChart";
 import axios from "axios";
 import { AnyObject } from "antd/es/_util/type";
 import { App, DatePicker, Skeleton } from "antd";
 import { useRafInterval } from "ahooks";
-import { formatDate, getTime } from "@/utils";
+import { formatDate, getTime, message } from "@/utils";
 
 /**首页 */
 const Dashboard = () => {
   // const [data, setData] = useState([]);
-  const { message } = App.useApp();
   const [chartDataMonth, setChartDataMonth] = useState([]);
   const [chartDataYesterday, setChartDataYesterday] = useState([]);
   const [topLoading, setTopLoading] = useState(true);

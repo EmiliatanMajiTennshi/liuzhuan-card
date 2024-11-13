@@ -1,9 +1,9 @@
 import axios from "axios";
 import { getToken } from "./token";
-import { message } from "antd";
 import { TOKEN_ERROR } from "@/constants";
 import { debounce } from "lodash";
 import { startTransition } from "react";
+import { message } from "./message";
 
 const redirectToLogin = debounce(function () {
   startTransition(() => {

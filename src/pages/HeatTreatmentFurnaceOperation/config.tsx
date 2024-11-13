@@ -11,6 +11,7 @@ import {
 } from "@/api";
 import { ERROR_MESSAGE, SUCCESS_CODE, kgArr } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
+import { message } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -168,7 +169,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setRefreshFlag, message } = props;
+  const { setRefreshFlag } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryHeatTreatment",

@@ -9,7 +9,6 @@ import {
   DatePicker,
   Flex,
   Input,
-  message,
   Popconfirm,
   Select,
 } from "antd";
@@ -23,6 +22,7 @@ import {
   SUCCESS_CODE,
 } from "@/constants";
 import { allowRecoverPrintState } from "@/constants/config";
+import { message } from "@/utils";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {

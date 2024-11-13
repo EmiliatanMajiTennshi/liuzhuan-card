@@ -21,6 +21,7 @@ import {
 } from "@/api";
 
 import { ADD_SUCCESS, ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
+import { message } from "@/utils";
 
 type FieldType = {
   name: string;
@@ -123,7 +124,7 @@ const formConfig: IFormConfig = {
   formTitle: "操作",
   formExtend: true,
   buttons: (props: IButtons) => {
-    const { selectedRowKeys, setRefreshFlag, loading, message } = props;
+    const { selectedRowKeys, setRefreshFlag, loading } = props;
 
     return [
       <Button
@@ -196,7 +197,7 @@ const formConfig: IFormConfig = {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setSearchedData, setRefreshFlag, message } = props;
+  const { setSearchedData, setRefreshFlag } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryPermission",

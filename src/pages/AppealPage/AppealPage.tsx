@@ -14,6 +14,7 @@ import styles from "./index.module.scss";
 import { AnyObject } from "antd/es/_util/type";
 import { insertAppealInfo } from "@/api";
 import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
+import { message } from "@/utils";
 
 const AppealPage = (props: {
   id?: number;
@@ -27,7 +28,6 @@ const AppealPage = (props: {
   const [imgList, setImgList] = useState<AnyObject>({});
   const [previewImg, setPreviewImg] = useState("");
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
-  const { message } = App.useApp();
   const [form] = Form.useForm();
   const getBase64 = (file: Blob): Promise<string> =>
     new Promise((resolve, reject) => {

@@ -3,7 +3,7 @@ import getApi, {
   insertUnfinishedProductsNew,
 } from "@/api";
 import { kgArr, SUCCESS_CODE } from "@/constants";
-import { RenderQRCode } from "@/utils";
+import { message, RenderQRCode } from "@/utils";
 import { App, Button, ConfigProvider, Form, Table, Tabs } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import React, { useEffect, useState } from "react";
@@ -100,7 +100,6 @@ const UnfinishedIssueFinishedModal = (props: any) => {
   const [activeKey, setActiveKey] = useState("1");
   // 保存按钮的loading
   const [saveLoading, setSaveLoading] = useState(false);
-  const { message } = App.useApp();
   const [unfinishedForm] = Form.useForm();
   const [finishedForm] = Form.useForm();
   // 数据重新请求后不需要更新的数据
@@ -188,7 +187,10 @@ const UnfinishedIssueFinishedModal = (props: any) => {
     });
 
     const now = new Date().getTime();
-    const requiredTrademark = params31?.name?.indexOf("外链板") !== -1;
+    const requiredTrademark31 =
+      params31?.name && params31?.name?.indexOf("外链板") !== -1;
+    const requiredTrademark32 =
+      params32?.name && params32?.name?.indexOf("外链板") !== -1;
     // 扶梯链不需要商标
     const isFuti =
       unfinishedData?.department === "扶梯链" ||
@@ -200,13 +202,13 @@ const UnfinishedIssueFinishedModal = (props: any) => {
         setSaveLoading(false);
         return;
       }
-      if (requiredTrademark && !params31?.trademark && !isFuti) {
+      if (requiredTrademark31 && !params31?.trademark && !isFuti) {
         // 零件品名包含 “外链板” 必须选择商标
         message?.error("该零件成品（31）必须选择商标！");
         setSaveLoading(false);
         return;
       }
-      if (requiredTrademark && !params32?.trademark && !isFuti) {
+      if (requiredTrademark32 && !params32?.trademark && !isFuti) {
         // 零件品名包含 “外链板” 必须选择商标
         message?.error("该零件必须选择商标！");
         setSaveLoading(false);
@@ -222,8 +224,7 @@ const UnfinishedIssueFinishedModal = (props: any) => {
         setSaveLoading(false);
         return;
       }
-      console.log(params31, finishedData, 12314);
-      console.log(maxTNumFinishedKg, 123);
+
       if ((maxTNumFinishedKg || 0) < params31.transferKg) {
         message?.error("成品（31）剩余数量小于流转数量，无法下发！");
         setSaveLoading(false);
