@@ -1,11 +1,4 @@
-import {
-  EditAbleInput,
-  ReadOnlyInput,
-  RenderQRCode,
-  transformToKg,
-  transFormToPcs,
-  validateNotZero,
-} from "@/utils";
+import { EditAbleInput, ReadOnlyInput, RenderQRCode } from "@/utils";
 import { FormInstance } from "antd";
 import { IData } from "./indexType";
 
@@ -114,13 +107,13 @@ const OutsourcingForm = (props: IProps) => {
         <ReadOnlyInput
           style={{ lineHeight: "24px", ...normalStyle18 }}
           titleStyle={normalStyle}
-          title={`生产数量${data?.unit ? `（${data?.unit}）` : ""}`}
+          title={`生产数量${data?.unit ? `(${data?.unit})` : ""}`}
           name="newsupcount"
         />
         <EditAbleInput
           style={{ lineHeight: "24px", ...normalStyle18 }}
           titleStyle={normalStyle}
-          title={`流转数量${data?.unit ? `（${data?.unit}）` : ""}`}
+          title={`流转数量${data?.unit ? `(${data?.unit})` : ""}`}
           isNumber
           name="liucount"
           precision={isKg ? 2 : 0}

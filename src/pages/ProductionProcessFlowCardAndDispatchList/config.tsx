@@ -1396,7 +1396,10 @@ export const getParams = ({
       //商标
       trademark: values.trademark,
       //工艺
-      process: data.processList,
+      process: data?.processList?.map((item, index) => ({
+        ...item,
+        seq: index + 1,
+      })),
       //行号
       lineNumber: values.u9LineNo,
       // parentID

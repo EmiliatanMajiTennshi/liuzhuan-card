@@ -1,6 +1,7 @@
 import getApi, {
   insertfinishedProductsNew,
   insertUnfinishedProductsNew,
+  updateDelmkByTransferCardCode,
 } from "@/api";
 import { kgArr, SUCCESS_CODE } from "@/constants";
 import { message, RenderQRCode } from "@/utils";
@@ -230,6 +231,11 @@ const UnfinishedIssueFinishedModal = (props: any) => {
         setSaveLoading(false);
         return;
       }
+      if (!params31?.transferCardCode) {
+        message?.error("成品（31）没有库存或未找到，无法下发");
+        setSaveLoading(false);
+        return;
+      }
 
       try {
         const [resUnfinished, resFinished] = await Promise.all([
@@ -239,8 +245,10 @@ const UnfinishedIssueFinishedModal = (props: any) => {
             relation: now,
           }),
         ]);
+        let successMessage = "";
+        let errorMessage = "";
         if (SUCCESS_CODE.indexOf(resUnfinished?.data?.code) !== -1) {
-          message.success("半品（32）下发成功");
+          successMessage += "半品（32）下发成功。";
           setUncoverData32({
             transferKg: params32?.transferKg,
             transferPcs: params32?.transferPcs,
@@ -253,10 +261,10 @@ const UnfinishedIssueFinishedModal = (props: any) => {
           });
           // 添加完刷新数据
         } else {
-          message.error("半品（32）下发失败");
+          errorMessage += "半品（32）下发失败。";
         }
         if (SUCCESS_CODE.indexOf(resFinished?.data?.code) !== -1) {
-          message.success("成品（31）下发成功");
+          successMessage += "成品（31）下发成功。";
           setUncoverData31({
             transferKg: params31?.transferKg,
             transferPcs: params31?.transferPcs,
@@ -271,7 +279,29 @@ const UnfinishedIssueFinishedModal = (props: any) => {
           // 添加完刷新数据
           fetchData();
         } else {
-          message.error("成品（31）下发失败");
+          errorMessage += "成品（31）下发失败。";
+        }
+        if (errorMessage) {
+          message.error(errorMessage.trim());
+          message.error("本次下发已作废，请重新下发");
+          // 如果有一个失败，取消下发
+          await updateDelmkByTransferCardCode({
+            transferCardCode: params32?.transferCardCode,
+            now,
+          })
+            .then((res) => {
+              if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+              } else {
+                message.error("作废失败！请联系管理员");
+              }
+            })
+            .catch((err) => {
+              message.error("作废失败！请联系管理员");
+            });
+        } else {
+          if (successMessage) {
+            message.success(successMessage.trim());
+          }
         }
       } catch {
         message.error("下发失败");

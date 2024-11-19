@@ -1001,12 +1001,13 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                     dataSource={tableData}
                     className={classNames([
                       styles.flowCardTable,
-                      { [styles["flowCardTableRollChain"]]: true },
+                      { [styles["flowCardTableRollChain"]]: isRollChian },
                     ])}
                   ></Table>
                   {flowCardType === "flowCard" && data?.materialInfos && (
                     <Table
                       // rowKey={tableData?.[0]?.id ? "id" : "hid"}
+
                       columns={[
                         { key: "mItmID", dataIndex: "mItmID", title: "料号" },
                         { key: "mName", dataIndex: "mName", title: "品名" },
@@ -1036,7 +1037,10 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                       }}
                       pagination={false}
                       dataSource={data?.materialInfos}
-                      className={styles.flowCardTable}
+                      className={classNames([
+                        styles.flowCardTable,
+                        { [styles["flowCardTableRollChain"]]: true },
+                      ])}
                     ></Table>
                   )}
                 </ConfigProvider>

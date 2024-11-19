@@ -293,10 +293,12 @@ const CommonForm = (props: IProps) => {
               }
 
               if (beIssuedForm && beIssuedData) {
-                const beIssuedFormTrademark =
-                  beIssuedForm.getFieldValue("trademark");
+                console.log(beIssuedData, 12422);
+                const beIssuedPCode = getSecondDashSubstring(
+                  beIssuedData?.itmid || ""
+                );
 
-                if (beIssuedFormTrademark) {
+                if (beIssuedPCode) {
                   // 原本就有商标的不要同步
                   return;
                 }
