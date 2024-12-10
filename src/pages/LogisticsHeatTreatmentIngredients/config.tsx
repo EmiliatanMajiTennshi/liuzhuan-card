@@ -10,6 +10,8 @@ import { formatDate, message, RenderQRCode } from "@/utils";
 import { getHeatTreatmentFurnacePlatformsList, insertDeliveryNew } from "@/api";
 import { ERROR_MESSAGE, DEFAULT_ORANGE, SUCCESS_CODE } from "@/constants";
 import dayjs from "dayjs";
+import { SelectHeatTreatmentFurnacePlatform } from "@/components/SelectHeatTreatmentFurnacePlatform";
+import { CustomInput } from "@/components/CustomInput";
 
 interface IGetModalConfigProps {
   barCode: string;
@@ -60,70 +62,44 @@ const getModalConfig = ({
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
-    formItems: ({ options, setOptions }) => {
-      if (!options.heatTreatmentFurnacePlatforms) {
-        setOptions({
-          ...options,
-          heatTreatmentFurnacePlatforms: [{}],
-        });
-        getHeatTreatmentFurnacePlatformsList().then((res) => {
-          // 热处理炉台号
-          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-            const platformsOptions = res?.data?.data?.map(
-              (item: { id: string; name: string }) => ({
-                value: item?.name,
-                label: item?.name,
-              })
-            );
-            setOptions({
-              ...options,
-              heatTreatmentFurnacePlatforms: platformsOptions,
-            });
-          }
-        });
-      }
+    formItems: () => {
       return [
         {
           key: "barCode",
           name: "生产订单条码",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
         {
           key: "partNumber",
           name: "料号",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
 
         {
           key: "specs",
           name: "规格",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
           key: "transferCardCode",
           name: "流转卡编号",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
 
         {
           key: "name",
           name: "品名",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
           key: "heatTreatmentFurnacePlatform",
           name: "热处理炉台号",
-          children: (
-            <Select
-              allowClear
-              options={options?.heatTreatmentFurnacePlatforms || []}
-            ></Select>
-          ),
+          children: <SelectHeatTreatmentFurnacePlatform />,
           rules: [],
         },
 

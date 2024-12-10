@@ -4,6 +4,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import { CustomInput } from "@/components/CustomInput";
 import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
 import { allowRecoverPrintState } from "@/constants/config";
 import {
@@ -24,20 +25,20 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       {
         key: "rollChainTraceabilityNumber",
         name: "追溯号",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
         key: "name",
         name: "品名",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
 
       {
         key: "spec",
         name: "规格",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {

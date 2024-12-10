@@ -12,80 +12,47 @@ import {
 } from "@/api";
 import { allowDeleteTransferCard } from "@/constants/config";
 import { message } from "@/utils";
+import { SelectHeatTreatmentFurnacePlatform } from "@/components/SelectHeatTreatmentFurnacePlatform";
+import { CustomInput } from "@/components/CustomInput";
+import dayjs from "dayjs";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     span: 4,
     formExtend: true,
 
-    formItems: ({ options, setOptions }) => {
-      if (!options.type) {
-        setOptions({ ...options, type: [{}] });
-        // countProductType().then((res) => {
-        //   //   零件类型;
-        //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-        //     const typeOptions = res?.data?.data?.map((item: string) => ({
-        //       value: item,
-        //       label: item,
-        //     }));
-        //     setOptions({ ...options, type: typeOptions });
-        //   }
-        // });
-      }
-      if (!options.heatTreatmentFurnacePlatforms) {
-        setOptions({
-          ...options,
-          heatTreatmentFurnacePlatforms: [{}],
-        });
-
-        getHeatTreatmentFurnacePlatformsList().then((res) => {
-          // 热处理炉台号
-          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-            const platformsOptions = res?.data?.data?.map(
-              (item: { id: string; name: string }) => ({
-                value: item?.name,
-                label: item?.name,
-              })
-            );
-            setOptions({
-              ...options,
-              heatTreatmentFurnacePlatforms: platformsOptions,
-            });
-          }
-        });
-      }
-
+    formItems: () => {
       return [
         {
           key: "orderid",
           name: "生产订单条码",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
 
         {
           key: "itmid",
           name: "零件料号",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
           key: "transferCardCode",
           name: "流转卡编号",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
         {
           key: "traceabilityNumber",
           name: "追溯条码",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
 
         {
           key: "spec",
           name: "规格",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
@@ -175,12 +142,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         {
           key: "heatTreatmentFurnacePlatforms",
           name: "热处理炉台号",
-          children: (
-            <Select
-              allowClear
-              options={options?.heatTreatmentFurnacePlatforms || []}
-            ></Select>
-          ),
+          children: <SelectHeatTreatmentFurnacePlatform />,
           rules: [],
         },
 
@@ -201,7 +163,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         {
           key: "name",
           name: "品名",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
 
@@ -288,28 +250,41 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         {
           key: "relation",
           name: "关联号",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
+          rules: [],
+        },
+        {
+          key: "trademark",
+          name: "字样",
+          children: <CustomInput></CustomInput>,
+          rules: [],
+        },
+        {
+          key: "currentProcess",
+          name: "工艺",
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
       ];
     },
     handleDate: true,
+    initValues: {
+      // createTimeStart: dayjs(),
+      // createTimeEnd: dayjs(),
+    },
   };
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const {
-    setIssueModalOpen,
-    setIssueID,
-
-    setRefreshFlag,
-  } = props;
+  const { setIssueModalOpen, setIssueID, setRefreshFlag } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryTransferCardNew",
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
     flowCardType: "flowCard",
     disableFirstLoading: true,
+    hideCountView: true,
+    noPaging: true,
     columns: [
       {
         title: "流转卡类型",

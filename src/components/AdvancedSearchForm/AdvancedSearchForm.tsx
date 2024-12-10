@@ -6,13 +6,14 @@ import {
   PlusOutlined,
   RedoOutlined,
   ExceptionOutlined,
+  BarChartOutlined,
 } from "@ant-design/icons";
 import { ProductionProcessFlowCardAndDispatchList } from "@/pages/ProductionProcessFlowCardAndDispatchList";
 import { transformDateToString } from "@/utils";
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
-const gutter = 24;
-const span = 6;
+import QRCodeScanner from "../QRCodeScanner/QRCodeScanner";
+const defaultSpan = 6;
 
 const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
   const {
@@ -52,8 +53,11 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
     name,
   } = _formConfig;
 
+  const span = _span || defaultSpan;
+
   // 列数
-  const colNumber = gutter / (_span || span);
+  const colNumber = 24 / span;
+
   // 控制每一列宽度相同
   let labelWidths: number[] = [];
   let requiredArr: number[] | undefined[] = [];
@@ -119,7 +123,7 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
         initialValues={initValues}
         onFinish={onFinish}
       >
-        <Row gutter={gutter}>
+        <Row gutter={8}>
           {formItems?.map((item, index) => {
             // 第几列
             const columnNum = index % colNumber;
@@ -144,26 +148,39 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
               </Col>
             );
           })}
-          {buttons && typeof buttons !== "function" && (
-            <Form.Item>{buttons}</Form.Item>
-          )}
-          {buttons && typeof buttons === "function" && (
-            <Form.Item>{buttons(buttonsProps)}</Form.Item>
-          )}
+          <div className={styles.customBtns}>
+            {buttons && typeof buttons !== "function" && (
+              <Form.Item>{buttons}</Form.Item>
+            )}
+            {buttons && typeof buttons === "function" && (
+              <Form.Item>{buttons(buttonsProps)}</Form.Item>
+            )}
+          </div>
         </Row>
         {!buttons && (
           <div className={styles.formButtons}>
             {name === "TransferCardUnfinishToStore" && (
-              <Button
-                type="dashed"
-                danger
-                onClick={() => {
-                  navigate("/appeal_info_page");
-                }}
-              >
-                <ExceptionOutlined />
-                申诉
-              </Button>
+              <>
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    navigate("/statistical_details");
+                  }}
+                >
+                  <BarChartOutlined />
+                  统计明细
+                </Button>
+                <Button
+                  type="dashed"
+                  danger
+                  onClick={() => {
+                    navigate("/appeal_info_page");
+                  }}
+                >
+                  <ExceptionOutlined />
+                  申诉
+                </Button>
+              </>
             )}
             <Button type="primary" htmlType="submit" loading={loading}>
               <SearchOutlined />

@@ -3,18 +3,10 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import {
-  Button,
-  ConfigProvider,
-  DatePicker,
-  Flex,
-  Input,
-  Popconfirm,
-  Select,
-} from "antd";
+import { Button, ConfigProvider, DatePicker, Popconfirm, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
-import { countProductType, updatePrintTransferCard } from "@/api";
+import { updatePrintTransferCard } from "@/api";
 import {
   ERROR_MESSAGE,
   FINISHED_CODE,
@@ -23,57 +15,46 @@ import {
 } from "@/constants";
 import { allowRecoverPrintState } from "@/constants/config";
 import { message } from "@/utils";
+import { CustomInput } from "@/components/CustomInput";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    span: 4,
     name: "ReworkTransferCard",
     formExtend: true,
-    formItems: ({ options, setOptions }) => {
-      if (!options.type) {
-        setOptions({ ...options, type: [{}] });
-        // countProductType().then((res) => {
-        //   //   零件类型;
-        //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-        //     const typeOptions = res?.data?.data?.map((item: string) => ({
-        //       value: item,
-        //       label: item,
-        //     }));
-        //     setOptions({ ...options, type: typeOptions });
-        //   }
-        // });
-      }
+    formItems: () => {
       return [
         {
           key: "reworkTransferCardCode",
           name: "返工卡编号",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
           key: "transferCardCode",
           name: "流转卡编号",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
 
         {
           key: "partNumber",
           name: "料号",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
 
         {
           key: "traceabilityNumber",
           name: "追溯条码",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
 
         {
           key: "spec",
           name: "规格",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
@@ -192,6 +173,20 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
             },
           ],
         },
+        {
+          key: "printStatus",
+          name: "打印状态",
+          children: (
+            <Select
+              allowClear
+              options={[
+                { value: "PR", label: "已打印" },
+                { value: "NO", label: "未打印" },
+              ]}
+            ></Select>
+          ),
+          rules: [],
+        },
       ];
     },
     handleDate: true,
@@ -206,6 +201,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "queryReworkTransferCardNew",
     flowCardType: "rework",
     queryFlowCardApi: "queryReworkTransferCardByIdNew",
+    defaultPageSize: 50,
     columns: [
       //   {
       //     title: "流转卡类型",

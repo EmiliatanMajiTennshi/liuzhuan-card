@@ -7,6 +7,7 @@ import { Button, DatePicker, Input, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
 
 import { kgArr } from "@/constants";
+import { CustomInput } from "@/components/CustomInput";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -15,27 +16,27 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       {
         key: "transferCardCode",
         name: "流转卡编号",
-        children: <Input></Input>,
+        children: <CustomInput allowScanner></CustomInput>,
         rules: [],
       },
       // {
       //   key: "barCode",
       //   name: "订单号",
-      //   children: <Input></Input>,
+      //   children: <CustomInput></CustomInput>,
       //   rules: [],
       // },
 
       // {
       //   key: "partNumber",
       //   name: "零件料号",
-      //   children: <Input></Input>,
+      //   children: <CustomInput></CustomInput>,
       //   rules: [],
       // },
 
       {
         key: "name",
         name: "品名",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
 
@@ -107,13 +108,13 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       {
         key: "spec",
         name: "规格",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
         key: "traceabilityNumber",
         name: "追溯单号",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
     ],

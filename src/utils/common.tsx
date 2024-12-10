@@ -1,6 +1,7 @@
 import { queryProcessByItemId } from "@/api";
 import { Modal } from "antd";
 import { AnyObject } from "antd/es/_util/type";
+import BigNumber from "bignumber.js";
 import dayjs from "dayjs";
 import { cloneDeep, isArray, sortBy } from "lodash";
 /**
@@ -69,21 +70,27 @@ const transformToKg = (
   weight: number | string,
   precision?: number
 ) => {
-  return precision
-    ? (parseFloat(number.toString()) * parseFloat(weight.toString())).toFixed(
-        precision
-      )
-    : (
-        parseFloat(number.toString()) * parseFloat(weight.toString())
-      ).toString();
+  // 保留小数
+  const resultWithPrecision = mul(
+    parseFloat(number.toString()),
+    parseFloat(weight.toString())
+  ).toFixed(precision);
+  // 不保留小数
+  const resultWithoutPrecision = mul(
+    parseFloat(number.toString()),
+    parseFloat(weight.toString())
+  ).toString();
+  const result = precision ? resultWithPrecision : resultWithoutPrecision;
+  return result;
 };
 /**kg转psc */
 const transFormToPcs = (number: number | string, weight: number | string) => {
   if (parseFloat(weight.toString()) === 0) {
     return "没有单重，无法计算";
   }
-  return (
-    parseFloat(number.toString()) / parseFloat(weight.toString())
+  return div(
+    parseFloat(number.toString()),
+    parseFloat(weight.toString())
   ).toFixed(0);
 };
 /**限制小数位数 */
@@ -392,6 +399,32 @@ function padArray(arr: any[], targetLength: number) {
   }
   return arr;
 }
+/**sleep */
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**加 */
+const plus = (a: BigNumber.Value, b: BigNumber.Value) => {
+  const newPlus = new BigNumber(a);
+  return newPlus.plus(b).toNumber();
+};
+
+/**减 */
+const minus = (a: BigNumber.Value, b: BigNumber.Value) => {
+  const newMinus = new BigNumber(a);
+  return newMinus.minus(b).toNumber();
+};
+
+/**乘 */
+function mul(a: BigNumber.Value, b: BigNumber.Value) {
+  const newTimes = new BigNumber(a);
+  return newTimes.times(b).toNumber();
+}
+
+/**除 */
+const div = (a: BigNumber.Value, b: BigNumber.Value) => {
+  const newDiv = new BigNumber(a);
+  return newDiv.div(b).toNumber();
+};
 export {
   getTrackingNumber,
   getLZCardNumber,
@@ -415,4 +448,9 @@ export {
   getSecondDashSubstring,
   getTime,
   padArray,
+  sleep,
+  plus,
+  minus,
+  mul,
+  div,
 };

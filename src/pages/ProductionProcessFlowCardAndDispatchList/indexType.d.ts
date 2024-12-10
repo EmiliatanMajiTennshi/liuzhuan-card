@@ -76,7 +76,6 @@ export interface IData {
   barCode?: string;
   transferCard?: string;
   materialPartNumber?: string;
-  id?: number;
   remark?: string;
   transferNumberKG?: string;
   transferNumberPCS?: string;
@@ -98,6 +97,7 @@ export interface IData {
   materialInfos?: any;
   relation?: string;
   rollChainTraceabilityNumber?: string;
+  id?: string | number;
 }
 
 export interface IFormFields {

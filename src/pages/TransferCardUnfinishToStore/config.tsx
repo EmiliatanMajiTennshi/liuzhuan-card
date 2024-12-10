@@ -3,6 +3,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import { CustomInput } from "@/components/CustomInput";
 import { DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
@@ -14,25 +15,25 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       {
         key: "barCode",
         name: "生产订单条码",
-        children: <Input></Input>,
+        children: <CustomInput allowScanner></CustomInput>,
         rules: [],
       },
       {
         key: "partNumber",
         name: "料号",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
         key: "transferCard",
         name: "流转卡编号",
-        children: <Input></Input>,
+        children: <CustomInput allowScanner></CustomInput>,
         rules: [],
       },
       {
         key: "specs",
         name: "规格",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
@@ -61,7 +62,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       {
         key: "traceabilityNumber",
         name: "追溯条码",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {

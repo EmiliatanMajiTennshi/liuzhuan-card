@@ -3,6 +3,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import { CustomInput } from "@/components/CustomInput";
 import { Input } from "antd";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
@@ -12,20 +13,20 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       {
         key: "partNumber",
         name: "零件料号",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
         key: "name",
         name: "品名",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
 
       {
         key: "specs",
         name: "规格",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
     ],

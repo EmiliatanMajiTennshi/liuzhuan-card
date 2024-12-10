@@ -47,6 +47,10 @@ export interface ITableConfig {
   readonly?: boolean;
   // 被下发的api
   issuedFlowCardApi?: string;
+  // 默认页面大小
+  defaultPageSize?: number;
+  // 不显示总数量
+  hideCountView?: boolean;
 }
 
 /**
@@ -118,4 +122,5 @@ export interface IIssueID {
   U9LineNo?: string;
   CardID?: string;
   noQuery?: boolean;
+  id?: string;
 }

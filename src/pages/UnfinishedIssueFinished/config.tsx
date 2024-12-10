@@ -13,6 +13,7 @@ import {
   SUCCESS_CODE,
 } from "@/constants";
 import { queryPartNumberByHalf, queryStandPartNumberByHalf } from "@/api";
+import { CustomInput } from "@/components/CustomInput";
 
 const formConfig: (form: any) => IFormConfig = (form) => {
   return {
@@ -36,19 +37,19 @@ const formConfig: (form: any) => IFormConfig = (form) => {
       {
         key: "barCode",
         name: "生产订单条码",
-        children: <Input></Input>,
+        children: <CustomInput allowScanner></CustomInput>,
         rules: [],
       },
       {
         key: "partNumber",
         name: "零件料号",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
-        key: "name",
+        key: "name2",
         name: "品名",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       // {
@@ -149,19 +150,19 @@ const formConfig: (form: any) => IFormConfig = (form) => {
       {
         key: "specs",
         name: "规格",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
         key: "process1",
         name: "第一道工艺",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
         key: "process2",
         name: "第二道工艺",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
     ],

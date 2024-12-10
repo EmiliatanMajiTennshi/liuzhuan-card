@@ -1,4 +1,4 @@
-import { ConfigProvider, Modal, Table } from "antd";
+import { Button, ConfigProvider, Modal, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./index.module.scss";
 import {
@@ -20,6 +20,7 @@ import { cloneDeep } from "lodash";
 import { getErrorMessage, message } from "@/utils";
 import { MultiDetail } from "@/pages/MultiDetail";
 import { UnfinishedIssueFinishedModal } from "@/pages/UnfinishedIssueFinishedModal";
+import { OutsourcingIssueTogetherModal } from "@/pages/OutsourcingIssueTogetherModal";
 
 const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const {
@@ -51,13 +52,12 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const [issueID, setIssueID] = useState<IIssueID>({ orderid: "", itmid: "" });
   // 窗口大小 用来监听窗口变化
   // const [screenW, setScreenW] = useState(0);
-
   // table里的各种下拉选项
   const [tableOptions, setTableOptions] = useState<AnyObject>({});
-
   // 如果需要半品下发成品的搜索成品的参数
   const [finishedParams, setFinishedParams] = useState<AnyObject>({});
-
+  // 数量信息
+  const [weightViews, setWeightViews] = useState<AnyObject>([]);
   // // 鼠标所在行
   // const [hoveredRow, setHoveredRow] = useState(null);
   const tableRef = useRef<any>(null);
@@ -100,8 +100,9 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     noPaging,
     readonly,
     issuedFlowCardApi,
+    defaultPageSize,
+    hideCountView,
   } = _tableConfig;
-  console.log(_tableConfig, 12414221, issuedFlowCardApi);
 
   // 获取当前页面table数据的请求
   const currentRequest = getApi(api);
@@ -119,11 +120,13 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
       setSelectedRowKeys([]);
       const res: any = await currentRequest(params);
       const currentData = res?.data?.data;
+
       if (res?.data && currentData) {
         setSearchedData(currentData);
         setTotalCount(
           res?.data?.page?.total || res?.data?.total || currentData?.[0]?.size
         );
+        setWeightViews(res?.data?.weightViews);
       } else if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
         message.info(FIND_NO_DATA, { style: { marginTop: "40px" } });
         setSearchedData([]);
@@ -140,7 +143,11 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   };
 
   useEffect(() => {
-    if (isFirstRender.current && (noPaging || disableFirstLoading)) {
+    // 防止初次加载
+    if (
+      isFirstRender.current &&
+      (noPaging || disableFirstLoading || defaultPageSize)
+    ) {
       isFirstRender.current = false;
       return;
     }
@@ -154,6 +161,12 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
       isFirstRender.current = true;
     }
   }, [noPaging]);
+  useEffect(() => {
+    if (defaultPageSize) {
+      setPageSize(defaultPageSize);
+      // isFirstRender.current = true;
+    }
+  }, [defaultPageSize]);
 
   useEffect(() => {
     // table 下拉数据
@@ -226,6 +239,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     onChange: onSelectChange,
     columnWidth: 80,
   };
+  console.log(_tableConfig, 11232);
 
   return (
     <div style={{ height: "100%" }}>
@@ -264,7 +278,6 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
             className: styles.pagination,
           }}
           loading={loading}
-
           // components={{
           //   body: {
           //     cell: (props: any) => {
@@ -287,6 +300,24 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           //   },
           // }}
         />
+        {!hideCountView && weightViews && weightViews?.length !== 0 && (
+          <span
+            style={{
+              position: "absolute",
+              top: 118,
+              fontSize: 24,
+              marginLeft: 20,
+              right: 40,
+            }}
+          >
+            总流转数量
+            {weightViews?.map((item: any) => (
+              <span style={{ marginLeft: 20 }}>
+                {(item?.kg || item?.pcs) + item?.unit}
+              </span>
+            ))}
+          </span>
+        )}
       </ConfigProvider>
       {needIssueFinished && issueModalOpen && (
         <Modal
@@ -299,86 +330,32 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           width={1600}
           className={styles.issueModal}
         >
-          <UnfinishedIssueFinishedModal
-            issueID={issueID}
-            queryFlowCardApi={queryFlowCardApi}
-            flowCardType={flowCardType}
-            setRefreshFlag={setRefreshFlag}
-            issuedFlowCardApi={issuedFlowCardApi}
-            beIssuedID={{
-              orderid: finishedParams?.[0]?.barCode,
-              itmid: finishedParams?.[0]?.partNumber,
-            }}
-          />
-          {/* <Spin spinning={tabLoading === "loading"}>
-            <Tabs
-              size="large"
-              items={[
-                {
-                  label: "半品下发",
-                  key: "1",
-                  children: (
-                    <ProductionProcessFlowCardAndDispatchList
-                      issueID={issueID}
-                      queryFlowCardApi={queryFlowCardApi}
-                      flowCardType={flowCardType}
-                      setRefreshFlag={setRefreshFlag}
-                      name={name}
-                      setIssueModalOpen={setIssueModalOpen}
-                      // 同时下发成品
-                      needIssueFinished={true}
-                      finishedData32to31={finishedData32to31}
-                      setFinishedData32to31={setFinishedData32to31}
-                      unfinishedData32to31={unfinishedData32to31}
-                      setUnfinishedData32to31={setUnfinishedData32to31}
-                      tabChangeFlag={tabChangeFlag}
-                      confirmFinished={confirmFinished}
-                      tabLoading={tabLoading}
-                      setTabLoading={setTabLoading}
-                      finishedData={finishedData}
-                    />
-                  ),
-                },
-                {
-                  label: "成品下发",
-                  key: "2",
-                  children: finishedParams?.[0]?.barCode ? (
-                    <ProductionProcessFlowCardAndDispatchList
-                      issueID={{
-                        orderid: finishedParams?.[0]?.barCode,
-                        itmid: finishedParams?.[0]?.partNumber,
-                      }}
-                      queryFlowCardApi={"queryfinishedProductsByOI"}
-                      flowCardType={"finished"}
-                      setRefreshFlag={setRefreshFlag}
-                      name={name}
-                      setIssueModalOpen={setIssueModalOpen}
-                      // 被半品下发
-                      notSelfIssue={true}
-                      finishedData32to31={finishedData32to31}
-                      setFinishedData32to31={setFinishedData32to31}
-                      unfinishedData32to31={unfinishedData32to31}
-                      setUnfinishedData32to31={setUnfinishedData32to31}
-                      tabChangeFlag={tabChangeFlag}
-                      confirmFinished={confirmFinished}
-                      setConfirmFinished={setConfirmFinished}
-                      tabLoading={tabLoading}
-                      setTabLoading={setTabLoading}
-                      setFinishedData={setFinishedData}
-                    />
-                  ) : (
-                    <Empty children="没有找到对应成品流转卡"></Empty>
-                  ),
-                },
-              ]}
-              onChange={(e) => {
-                setTabChangeFlag((flag) => !flag);
-                if (!confirmFinished) {
-                  setConfirmFinished("loading");
-                }
+          {flowCardType === "unfinished" && (
+            <UnfinishedIssueFinishedModal
+              issueID={issueID}
+              queryFlowCardApi={queryFlowCardApi}
+              flowCardType={flowCardType}
+              setRefreshFlag={setRefreshFlag}
+              issuedFlowCardApi={issuedFlowCardApi}
+              beIssuedID={{
+                orderid: finishedParams?.[0]?.barCode,
+                itmid: finishedParams?.[0]?.partNumber,
               }}
-            ></Tabs>
-          </Spin> */}
+            />
+          )}
+          {flowCardType === "outsourcing" && (
+            <OutsourcingIssueTogetherModal
+              issueID={issueID}
+              queryFlowCardApi={queryFlowCardApi}
+              flowCardType={flowCardType}
+              setRefreshFlag={setRefreshFlag}
+              issuedFlowCardApi={issuedFlowCardApi}
+              beIssuedID={{
+                orderid: finishedParams?.[0]?.barCode,
+                itmid: finishedParams?.[0]?.partNumber,
+              }}
+            />
+          )}
         </Modal>
       )}
       {!needIssueFinished && issueModalOpen && (

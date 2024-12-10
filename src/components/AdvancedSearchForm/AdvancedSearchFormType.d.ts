@@ -19,6 +19,7 @@ export interface IFormItem {
  */
 interface IButtonLoadingChildren {
   insertButton: boolean;
+  insertMenuButton?: boolean;
 }
 export interface IButtons {
   selectedRowKeys: any[];
@@ -45,6 +46,7 @@ export interface IFormItemProps {
  */
 export interface IFormConfig {
   span?: number;
+  gutter?: number;
   formItems: IFormItem[] | ((props: IFormItemProps) => IFormItem[]);
   formTitle?: string;
   buttons?: Button[] | ((props: IButtons) => Button[]);

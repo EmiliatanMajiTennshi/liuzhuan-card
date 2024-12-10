@@ -1,4 +1,5 @@
 import { IFormConfig } from "@/components/AdvancedSearchForm/AdvancedSearchFormType";
+import { CustomInput } from "@/components/CustomInput";
 import { DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
@@ -8,37 +9,37 @@ const formConfig: IFormConfig = {
     {
       key: "orderid",
       name: "生产订单条码",
-      children: <Input></Input>,
+      children: <CustomInput allowScanner></CustomInput>,
       rules: [],
     },
     {
       key: "itmid",
       name: "料号",
-      children: <Input></Input>,
+      children: <CustomInput></CustomInput>,
       rules: [],
     },
     {
       key: "flowCardNumber",
       name: "流转卡编号",
-      children: <Input></Input>,
+      children: <CustomInput allowScanner></CustomInput>,
       rules: [],
     },
     {
       key: "tracingCode",
       name: "追溯条码",
-      children: <Input></Input>,
+      children: <CustomInput></CustomInput>,
       rules: [],
     },
     {
       key: "format",
       name: "规格",
-      children: <Input></Input>,
+      children: <CustomInput></CustomInput>,
       rules: [],
     },
     {
       key: "goodsname",
       name: "品名",
-      children: <Input></Input>,
+      children: <CustomInput></CustomInput>,
       rules: [],
     },
     {

@@ -10,6 +10,7 @@ const initUser = {
   regTime: "",
   sex: null,
   username: "",
+  roleName: "",
 };
 /**
  * user的store

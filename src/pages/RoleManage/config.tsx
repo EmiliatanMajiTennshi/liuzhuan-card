@@ -48,7 +48,8 @@ import {
 } from "@/constants";
 import { UPDATE_SUCCESS } from "@/constants/constants";
 import { message } from "@/utils";
-
+import styles from "./index.module.scss";
+import { CustomInput } from "@/components/CustomInput";
 const validateSpace = (rule: any, value: string) => {
   if (!value) {
     return Promise.resolve();
@@ -59,7 +60,20 @@ const validateSpace = (rule: any, value: string) => {
 
   return Promise.resolve();
 };
-
+/**
+ * 把后端传来的menu改成符合TreeSelect选择器的格式
+ * @param menu
+ * @returns
+ */
+const handleMenu = (menu: IMenuItem[]): IProcessedMenuItem[] => {
+  return menu?.map((item: IMenuItem) => {
+    return {
+      value: item.label,
+      title: item.label,
+      children: handleMenu(item?.children || []),
+    };
+  });
+};
 /**
  * 获取modal配置
  * @param param0
@@ -73,20 +87,6 @@ const getModalConfig = ({
   allMenu,
   isInsert,
 }: IGetModalConfigProps) => {
-  /**
-   * 把后端传来的menu改成符合TreeSelect选择器的格式
-   * @param menu
-   * @returns
-   */
-  const handleMenu = (menu: IMenuItem[]): IProcessedMenuItem[] => {
-    return menu?.map((item: IMenuItem) => {
-      return {
-        value: item.label,
-        title: item.label,
-        children: handleMenu(item?.children || []),
-      };
-    });
-  };
   const handledMenu = handleMenu(allMenu);
 
   /**
@@ -211,6 +211,7 @@ const formConfig: IFormConfig = {
       buttonLoading,
       setButtonLoading,
       loading,
+      modal,
     } = props;
 
     return [
@@ -310,13 +311,154 @@ const formConfig: IFormConfig = {
         <PlusOutlined />
         新增
       </Button>,
+      <Button
+        style={{ marginRight: 5 }}
+        type="link"
+        key="add_menu"
+        loading={buttonLoading.insertMenuButton}
+        onClick={async () => {
+          setButtonLoading((prevData: IButtonLoadingChildren) => {
+            const _temp = JSON.parse(JSON.stringify(prevData));
+            _temp.insertMenuButton = true;
+            return _temp;
+          });
+          const [res1, res2] = await Promise.all([queryAllMenu(), queryRole()]);
+          const menuData = res1?.data?.data;
+          const roleData = res2?.data?.data;
+          modal.info({
+            title: "批量添加菜单",
+            className: styles.insertModal,
+            footer: null,
+            closable: true,
+            width: 400,
+            onCancel: () => {
+              setButtonLoading((prevData: IButtonLoadingChildren) => {
+                const _temp = JSON.parse(JSON.stringify(prevData));
+                _temp.insertMenuButton = false;
+                return _temp;
+              });
+            },
+            content: (
+              <Form
+                name="basic"
+                layout="vertical"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                style={{ maxWidth: 400 }}
+                initialValues={{
+                  roles: roleData?.map((item: any) => item.id),
+                }}
+                onFinish={(values) => {
+                  console.log(res1, res2, 1124);
+                  values?.roles?.forEach((item: any) => {
+                    const _temp = roleData?.find((_item: any) => {
+                      return item === _item.id;
+                    });
+                    if (_temp) {
+                      const handledMenu = _temp?.menu?.map(
+                        (item: IMenuItem) => item.label
+                      );
+                      const handledPermission =
+                        _temp?.permissionDto?.map((item: any) => item.name) ||
+                        [];
+                      if (handledMenu.indexOf(values.menu) === -1) {
+                        updateRoleInfoPermission({
+                          name: _temp.name,
+                          menus: [...handledMenu, values.menu],
+                          id: _temp?.id,
+                          permission: handledPermission || [],
+                        }).then(() => {
+                          message.success(`${_temp.name + UPDATE_SUCCESS}`);
+                        });
+                      }
+                    }
+                  });
+                  console.log(values, 123);
+                }}
+              >
+                <Form.Item<FieldType>
+                  label="角色名称"
+                  name="roles"
+                  style={{ marginBottom: 10 }}
+                  rules={[{ required: true, message: "请选择角色" }]}
+                >
+                  <Select
+                    mode="multiple"
+                    style={{ width: 350 }}
+                    options={
+                      roleData?.map((item: any) => {
+                        return {
+                          value: item.id,
+                          label: item.name,
+                        };
+                      }) || []
+                    }
+                    tagRender={({ label, onClose }) => {
+                      return (
+                        <Tag
+                          color="blue"
+                          closable={true}
+                          onClose={onClose}
+                          style={{ marginBottom: 3, marginTop: 3 }}
+                        >
+                          {label}
+                        </Tag>
+                      );
+                    }}
+                  ></Select>
+                </Form.Item>
+
+                <Form.Item<FieldType>
+                  label="菜单"
+                  name="menu"
+                  style={{ marginBottom: 10 }}
+                  rules={[{ required: true, message: "请选择菜单" }]}
+                >
+                  <TreeSelect
+                    treeDefaultExpandAll
+                    treeData={handleMenu(menuData || [])}
+                    style={{ width: 350 }}
+                    tagRender={({ label, onClose }) => {
+                      return (
+                        <Tag
+                          color="green"
+                          closable={true}
+                          onClose={onClose}
+                          style={{ marginBottom: 3, marginTop: 3 }}
+                        >
+                          {label}
+                        </Tag>
+                      );
+                    }}
+                  ></TreeSelect>
+                </Form.Item>
+                <Form.Item
+                  wrapperCol={{ span: 16 }}
+                  style={{ marginBottom: 0 }}
+                >
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ width: 350, marginTop: 10 }}
+                  >
+                    保存
+                  </Button>
+                </Form.Item>
+              </Form>
+            ),
+          });
+        }}
+      >
+        <PlusOutlined />
+        批量添加菜单
+      </Button>,
     ];
   },
   formItems: [
     {
       key: "name",
       name: "角色名称",
-      children: <Input></Input>,
+      children: <CustomInput></CustomInput>,
       rules: [],
     },
   ],

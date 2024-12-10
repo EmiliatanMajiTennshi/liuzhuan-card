@@ -1,4 +1,4 @@
-import { EditAbleInput, ReadOnlyInput, RenderQRCode } from "@/utils";
+import { EditAbleInput, minus, ReadOnlyInput, RenderQRCode } from "@/utils";
 import { FormInstance } from "antd";
 import { IData } from "./indexType";
 
@@ -23,8 +23,8 @@ const OutsourcingForm = (props: IProps) => {
     // 给流转数量初始值 产量-已使用
     if (isKg) {
       if (data?.newsupcount) {
-        const transferKgMax = (
-          parseFloat(data?.newsupcount) -
+        const transferKgMax = minus(
+          parseFloat(data?.newsupcount),
           parseFloat(data?.transferNumber || "0")
         ).toFixed(4);
 
@@ -32,8 +32,8 @@ const OutsourcingForm = (props: IProps) => {
       }
     } else {
       if (data?.newsupcount) {
-        const transferPcsMax = (
-          parseFloat(data?.newsupcount) -
+        const transferPcsMax = minus(
+          parseFloat(data?.newsupcount),
           parseFloat(data?.transferNumber || "0")
         ).toFixed(4);
 

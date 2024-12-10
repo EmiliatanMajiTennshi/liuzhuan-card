@@ -3,6 +3,7 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import { CustomInput } from "@/components/CustomInput";
 import { Button, DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
@@ -43,19 +44,19 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       {
         key: "barCode",
         name: "生产订单条码",
-        children: <Input></Input>,
+        children: <CustomInput allowScanner></CustomInput>,
         rules: [],
       },
       {
         key: "partNumber",
         name: "零件料号",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
         key: "specs",
         name: "规格",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
@@ -252,6 +253,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
                     orderid: record?.barCode,
                     itmid: record?.partNumber,
                     U9LineNo: record?.u9LineNo,
+                    id: record?.id,
                   });
                 }}
               >

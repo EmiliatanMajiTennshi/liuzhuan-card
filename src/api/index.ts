@@ -118,6 +118,8 @@ import { insertRollChain } from "./insertRollChain";
 import { updateDelmkByTransferCardCode } from "./updateDelmkByTransferCardCode";
 import { insertAppealInfo } from "./insertAppealInfo";
 import { queryAppealInfo } from "./queryAppealInfo";
+import { queryStoreList } from "./queryStroeList";
+import { queryPartNumberByU9Code } from "./queryPartNumberByU9Code";
 
 export {
   countProductType,
@@ -293,6 +295,8 @@ export {
   queryMultiTransfer,
   queryRollChain,
   queryAppealInfo,
+  queryStoreList,
+  queryPartNumberByU9Code,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -350,6 +354,8 @@ const apisNew = {
   queryMultiTransfer,
   queryRollChain,
   queryAppealInfo,
+  queryStoreList,
+  queryPartNumberByU9Code,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,

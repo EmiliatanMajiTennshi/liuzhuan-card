@@ -14,7 +14,6 @@ const AuthRoute = ({ dashboardFlag, children }: IAuthRoute) => {
   const setUserInfo = userStore.setUserInfo;
 
   const navigate = useNavigate();
-  console.log(window.location.hash, 142);
 
   if (
     dashboardFlag &&
@@ -27,6 +26,8 @@ const AuthRoute = ({ dashboardFlag, children }: IAuthRoute) => {
     getUserInfo()
       .then((res: IRes) => {
         if (res?.data?.data) {
+          console.log(res, 1123);
+
           setUserInfo(res?.data?.data);
           setAllowLogin(true);
         } else {

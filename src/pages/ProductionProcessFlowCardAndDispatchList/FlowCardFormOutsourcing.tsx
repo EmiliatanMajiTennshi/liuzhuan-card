@@ -22,6 +22,9 @@ const FlowCardFormOutsourcing = (props: IProps) => {
   const { data, form, isKg } = props;
   // 最大流转数量
   const [liuMax, setLiuMax] = useState(0);
+  const type = data?.type;
+  // 是否是苏州采购
+  const isSuZhou = type === "苏州采购";
 
   useEffect(() => {
     setLiuMax(parseFloat(data?.productKg || ""));
@@ -104,12 +107,23 @@ const FlowCardFormOutsourcing = (props: IProps) => {
           name="itmTEID"
           titleStyle={normalStyle}
         />
-        <ReadOnlyInput
-          style={{ lineHeight: "24px", ...normalStyle18 }}
-          title="追溯单号"
-          name="traceabilityNumber"
-          titleStyle={normalStyle}
-        />
+        {isSuZhou && (
+          <EditAbleInput
+            style={{ lineHeight: "24px", ...normalStyle18 }}
+            title="追溯单号"
+            name="traceabilityNumber"
+            titleStyle={normalStyle}
+          />
+        )}
+        {!isSuZhou && (
+          <ReadOnlyInput
+            style={{ lineHeight: "24px", ...normalStyle18 }}
+            title="追溯单号"
+            name="traceabilityNumber"
+            titleStyle={normalStyle}
+          />
+        )}
+
         <ReadOnlyInput
           style={{ lineHeight: "24px", ...normalStyle18 }}
           title="完成日期"

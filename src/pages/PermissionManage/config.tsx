@@ -22,6 +22,7 @@ import {
 
 import { ADD_SUCCESS, ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
 import { message } from "@/utils";
+import { CustomInput } from "@/components/CustomInput";
 
 type FieldType = {
   name: string;
@@ -190,7 +191,7 @@ const formConfig: IFormConfig = {
     {
       key: "name",
       name: "权限名",
-      children: <Input></Input>,
+      children: <CustomInput></CustomInput>,
       rules: [],
     },
   ],

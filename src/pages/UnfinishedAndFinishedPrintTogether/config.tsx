@@ -4,12 +4,14 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
+import { CustomInput } from "@/components/CustomInput";
 import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
 import { allowRecoverPrintState } from "@/constants/config";
 import { Button, DatePicker, Input, message, Popconfirm, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 const formConfig: (form: any) => IFormConfig = (form) => {
   return {
+    span: 4,
     formExtend: true,
     formItems: [
       {
@@ -29,25 +31,25 @@ const formConfig: (form: any) => IFormConfig = (form) => {
       {
         key: "orderid",
         name: "生产订单条码",
-        children: <Input></Input>,
+        children: <CustomInput allowScanner></CustomInput>,
         rules: [],
       },
       {
         key: "transferCardCode",
         name: "流转卡编号",
-        children: <Input></Input>,
+        children: <CustomInput allowScanner></CustomInput>,
         rules: [],
       },
       {
         key: "itmid",
         name: "零件料号",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
-        key: "name",
+        key: "name2",
         name: "品名",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       // {
@@ -81,7 +83,7 @@ const formConfig: (form: any) => IFormConfig = (form) => {
       {
         key: "spec",
         name: "规格",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
@@ -149,12 +151,27 @@ const formConfig: (form: any) => IFormConfig = (form) => {
           },
         ],
       },
+      {
+        key: "printStatus",
+        name: "打印状态",
+        children: (
+          <Select
+            allowClear
+            options={[
+              { value: "PR", label: "已打印" },
+              { value: "NO", label: "未打印" },
+            ]}
+          ></Select>
+        ),
+        rules: [],
+      },
     ],
     handleDate: true,
-    // initValues: {
-    //   finishTimeStart: dayjs(),
-    //   finishTimeEnd: dayjs(),
-    // },
+    initValues: {
+      // finishTimeStart: dayjs(),
+      // finishTimeEnd: dayjs(),
+      printStatus: "NO",
+    },
   };
 };
 
@@ -168,12 +185,14 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     // 下发成品
     rowKey: "transferCardCode",
     needIssueFinished: true,
-    // defaultParam: {
-    //   // printPage: "1",
-    //   finishTimeStart: formatDate(),
-    //   finishTimeEnd: formatDate(),
-    // },
+    defaultParam: {
+      // printPage: "1",
+      // finishTimeStart: formatDate(),
+      // finishTimeEnd: formatDate(),
+      printStatus: "NO",
+    },
     // noPaging: true,
+    defaultPageSize: 50,
     columns: [
       {
         title: "流转卡类型",

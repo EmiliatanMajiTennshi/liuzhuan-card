@@ -268,7 +268,6 @@ export const useTableColumns = ({
           return (
             <>
               <Select
-                placeholder="选择等级"
                 allowClear
                 style={{ width: "100%" }}
                 defaultValue={text}
@@ -460,6 +459,7 @@ export const useTableColumns = ({
             <>
               <DatePicker
                 size="large"
+                placeholder={""}
                 showTime
                 value={text ? dayjs(text) : null}
                 onChange={(e, date) => {
@@ -639,7 +639,6 @@ export const useTableColumns = ({
           return (
             <>
               <OnlyNumberInput
-                placeholder="请输入产量"
                 size="large"
                 value={text}
                 onChange={(e) => {
@@ -741,7 +740,6 @@ export const useTableColumns = ({
           return (
             <>
               <Select
-                placeholder="选择等级"
                 allowClear
                 style={{ width: "100%" }}
                 value={text}
@@ -926,6 +924,7 @@ export const useTableColumns = ({
               <DatePicker
                 size="large"
                 disabled={isAddNewCard}
+                placeholder={""}
                 showTime
                 value={text ? dayjs(text) : null}
                 onChange={(e, date) => {
@@ -1036,7 +1035,6 @@ export const useTableColumns = ({
               <OnlyNumberInput
                 size="large"
                 disabled={isAddNewCard}
-                placeholder="请输入产量"
                 style={{ width: "100%" }}
                 value={text}
                 onChange={(e) => {
@@ -1281,7 +1279,7 @@ export const getParams = ({
       //生产PCS数
       productionPcs: values.productPcs,
       //流转PCS数
-      transferPcs: values.transferPcs,
+      transferPcs: Math.floor(values?.transferPcs || 0),
       //供方/炉批号
       // furnaceNo: values.furnaceNo,
       //材料料号
@@ -1423,6 +1421,8 @@ export const getParams = ({
       transferCardCode: data?.transferCardCode,
       // 追溯单号（半品）
       orderCatchHalf: values.orderCatchHalf,
+      // 追溯单号
+      traceabilityNumber: values.traceabilityNumber,
       orderid: values?.orderid,
     },
     print: {},

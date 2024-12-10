@@ -296,6 +296,24 @@ const AppealInfoPage = React.lazy(() =>
     default: res.AppealInfoPage,
   }))
 );
+/**跳转事业部看板 */
+const GoToDepartmentDashboard = React.lazy(() =>
+  import("@/pages/GoToDepartmentDashboard").then((res) => ({
+    default: res.GoToDepartmentDashboard,
+  }))
+);
+/**统计明细 */
+const StatisticalDetails = React.lazy(() =>
+  import("@/pages/StatisticalDetails").then((res) => ({
+    default: res.StatisticalDetails,
+  }))
+);
+/**外协外购同时下发 */
+const OutsourcingIssueTogether = React.lazy(() =>
+  import("@/pages/OutsourcingIssueTogether").then((res) => ({
+    default: res.OutsourcingIssueTogether,
+  }))
+);
 
 /**路由 */
 const routeMap = [
@@ -458,6 +476,18 @@ const routeMap = [
     path: "/query_roll_chain",
     element: <QueryRollChain />,
   },
+  {
+    path: "/department_dashboard",
+    element: <GoToDepartmentDashboard />,
+  },
+  {
+    path: "/statistical_details",
+    element: <StatisticalDetails />,
+  },
+  {
+    path: "/outsourcing_issue_together",
+    element: <OutsourcingIssueTogether />,
+  },
 ];
 
 // 转成对象
@@ -514,6 +544,10 @@ const PrivateRoute = () => {
         {
           path: "appeal_info_page",
           element: <AppealInfoPage />,
+        },
+        {
+          path: "statistical_details",
+          element: <StatisticalDetails />,
         },
       ],
     },

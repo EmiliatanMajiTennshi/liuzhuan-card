@@ -4,7 +4,7 @@ import React from "react";
 import { formConfig, tableConfig } from "./config";
 
 /**
- * 半品下发成品
+ * 半品下发成品 同时下发
  * @returns
  */
 const UnfinishedIssueFinished = () => {

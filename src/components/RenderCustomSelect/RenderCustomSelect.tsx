@@ -86,14 +86,14 @@ const RenderCustomSelect = (props: IRenderCustomSelectProps) => {
     <>
       {isAddNewCard ? (
         <Select
-          placeholder={type === "barcode" ? "查询条码" : "查询名称"}
+          // placeholder={type === "barcode" ? "查询条码" : "查询名称"}
           disabled
           style={{ width: "100%" }}
           size="large"
         ></Select>
       ) : (
         <Select
-          placeholder={type === "barcode" ? "查询条码" : "查询名称"}
+          // placeholder={type === "barcode" ? "查询条码" : "查询名称"}
           allowClear
           style={{ width: "100%" }}
           value={text}

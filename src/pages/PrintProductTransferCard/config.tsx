@@ -13,99 +13,55 @@ import {
   Tag,
 } from "antd";
 import { RuleObject } from "antd/es/form";
-import {
-  ERROR_MESSAGE,
-  FINISHED_CODE,
-  SEMI_FINISHED_CODE,
-  SUCCESS_CODE,
-} from "@/constants";
-import {
-  countProductType,
-  getHeatTreatmentFurnacePlatformsList,
-  updatePrintTransferCard,
-} from "@/api";
-import dayjs from "dayjs";
-import { formatDate, message } from "@/utils";
+import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
+import { updatePrintTransferCard } from "@/api";
+import { message } from "@/utils";
 import { allowRecoverPrintState } from "@/constants/config";
+import { SelectHeatTreatmentFurnacePlatform } from "@/components/SelectHeatTreatmentFurnacePlatform";
+import { CustomInput } from "@/components/CustomInput";
+import dayjs from "dayjs";
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     span: 4,
     formExtend: true,
-    formItems: ({ options, setOptions }) => {
-      if (!options.type) {
-        setOptions({ ...options, type: [{}] });
-        setOptions({ ...options, type: [{}] });
-        // countProductType().then((res) => {
-        //   //   零件类型;
-        //   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-        //     const typeOptions = res?.data?.data?.map((item: string) => ({
-        //       value: item,
-        //       label: item,
-        //     }));
-        //     setOptions({ ...options, type: typeOptions });
-        //   }
-        // });
-      }
-      if (!options.heatTreatmentFurnacePlatforms) {
-        setOptions({
-          ...options,
-          heatTreatmentFurnacePlatforms: [{}],
-        });
-
-        getHeatTreatmentFurnacePlatformsList().then((res) => {
-          // 热处理炉台号
-          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-            const platformsOptions = res?.data?.data?.map(
-              (item: { id: string; name: string }) => ({
-                value: item?.name,
-                label: item?.name,
-              })
-            );
-            setOptions({
-              ...options,
-              heatTreatmentFurnacePlatforms: platformsOptions,
-            });
-          }
-        });
-      }
-
+    formItems: () => {
       return [
         {
           key: "orderid",
           name: "生产订单条码",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
 
         {
           key: "itmid",
           name: "零件料号",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
           key: "transferCardCode",
           name: "流转卡编号",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
         {
           key: "traceabilityNumber",
           name: "追溯条码",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
 
         {
           key: "spec",
           name: "规格",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
           key: "name",
           name: "品名",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
@@ -209,12 +165,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         {
           key: "heatTreatmentFurnacePlatforms",
           name: "热处理炉台号",
-          children: (
-            <Select
-              allowClear
-              options={options?.heatTreatmentFurnacePlatforms || []}
-            ></Select>
-          ),
+          children: <SelectHeatTreatmentFurnacePlatform />,
           rules: [],
         },
         {
@@ -297,13 +248,27 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
             },
           ],
         },
+        {
+          key: "printStatus",
+          name: "打印状态",
+          children: (
+            <Select
+              allowClear
+              options={[
+                { value: "PR", label: "已打印" },
+                { value: "NO", label: "未打印" },
+              ]}
+            ></Select>
+          ),
+          rules: [],
+        },
       ];
     },
     handleDate: true,
-    // initValues: {
-    //   finishTimeStart: dayjs(),
-    //   finishTimeEnd: dayjs(),
-    // },
+    initValues: {
+      createTimeStart: dayjs(),
+      createTimeEnd: dayjs(),
+    },
   };
 };
 
@@ -314,11 +279,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "queryTransferCardNew",
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
     flowCardType: "flowCard",
-    defaultParam: {
-      // printPage: "1",
-      // finishTimeStart: formatDate(),
-      // finishTimeEnd: formatDate(),
-    },
+    disableFirstLoading: true,
     columns: [
       {
         title: "流转卡类型",

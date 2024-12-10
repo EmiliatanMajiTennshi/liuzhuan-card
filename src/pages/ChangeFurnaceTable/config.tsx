@@ -15,76 +15,53 @@ import {
 } from "@/constants/constants";
 import dayjs from "dayjs";
 import { formatTime, message } from "@/utils";
+import { SelectHeatTreatmentFurnacePlatform } from "@/components/SelectHeatTreatmentFurnacePlatform";
+import { CustomInput } from "@/components/CustomInput";
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
+    span: 4,
     formExtend: true,
-    formItems: ({ options, setOptions }) => {
-      // if (!options.heatTreatmentFurnacePlatforms) {
-      //   setOptions({
-      //     ...options,
-      //     heatTreatmentFurnacePlatforms: [{}],
-      //   });
-      //   getHeatTreatmentFurnacePlatformsList().then((res) => {
-      //     // 热处理炉台号
-      //     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-      //       const platformsOptions = res?.data?.data?.map(
-      //         (item: { id: string; name: string }) => ({
-      //           value: item?.name,
-      //           label: item?.name,
-      //         })
-      //       );
-      //       setOptions({
-      //         ...options,
-      //         heatTreatmentFurnacePlatforms: platformsOptions,
-      //       });
-      //     }
-      //   });
-      // }
+    formItems: () => {
       return [
         {
           key: "barCode",
           name: "生产订单条码",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
         {
           key: "partNumber",
           name: "料号",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
 
         {
           key: "specs",
           name: "规格",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
           key: "transferCardCode",
           name: "流转卡编号",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
 
         {
           key: "name",
           name: "品名",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
-        // {
-        //   key: "heatTreatmentFurnacePlatform",
-        //   name: "热处理炉台号",
-        //   children: (
-        //     <Select
-        //       allowClear
-        //       options={options?.heatTreatmentFurnacePlatforms || []}
-        //     ></Select>
-        //   ),
-        //   rules: [],
-        // },
 
+        {
+          key: "heatTreatmentFurnacePlatform",
+          name: "炉台",
+          children: <SelectHeatTreatmentFurnacePlatform />,
+          rules: [],
+        },
         {
           key: "createTimeStart",
           name: "下发时间开始",
@@ -150,6 +127,71 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
             },
           ],
         },
+        {
+          key: "finishTimeStart",
+          name: "交期开始",
+          children: (
+            <DatePicker
+              style={{ width: "100%" }}
+              onChange={() => {
+                if (form) {
+                  form.validateFields(["finishTimeEnd"]);
+                }
+              }}
+            ></DatePicker>
+          ),
+          rules: [
+            (form: any) => {
+              const finishTimeStart = form.getFieldValue("finishTimeStart");
+              const finishTimeEnd = form.getFieldValue("finishTimeEnd");
+
+              if (
+                finishTimeEnd &&
+                finishTimeStart &&
+                finishTimeEnd < finishTimeStart
+              ) {
+                return {
+                  validator: true,
+                  message: "开始日期不能晚于结束",
+                } as unknown as RuleObject;
+              }
+              return undefined as unknown as RuleObject;
+            },
+          ],
+        },
+        {
+          key: "finishTimeEnd",
+          name: "交期结束",
+          children: (
+            <DatePicker
+              style={{ width: "100%" }}
+              onChange={() => {
+                if (form) {
+                  form.validateFields(["finishTimeStart"]);
+                }
+              }}
+            ></DatePicker>
+          ),
+          rules: [
+            (form: any) => {
+              const finishTimeStart = form.getFieldValue("finishTimeStart");
+              const finishTimeEnd = form.getFieldValue("finishTimeEnd");
+
+              if (
+                finishTimeEnd &&
+                finishTimeStart &&
+                finishTimeEnd < finishTimeStart
+              ) {
+                return {
+                  validator: true,
+                  message: "结束日期不能早于开始",
+                } as unknown as RuleObject;
+              }
+
+              return undefined as unknown as RuleObject;
+            },
+          ],
+        },
       ];
     },
     handleDate: true,
@@ -182,28 +224,28 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转卡编号",
         dataIndex: "transferCardCode",
         key: "transferCardCode",
-        width: 260,
+        width: 160,
       },
 
       {
         title: "生产订单条码",
         dataIndex: "barCode",
         key: "barCode",
-        width: 180,
+        width: 120,
       },
 
       {
         title: "料号",
         dataIndex: "partNumber",
         key: "partNumber",
-        width: 130,
+        width: 90,
       },
 
       {
         title: "品名",
         dataIndex: "name",
         key: "name",
-        width: 100,
+        width: 80,
       },
       {
         title: "流转时间",
@@ -215,26 +257,26 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "规格",
         dataIndex: "specs",
         key: "specs",
-        width: 100,
+        width: 80,
       },
       {
         title: "材质",
         dataIndex: "material",
         key: "material",
-        width: 100,
+        width: 90,
       },
       {
         title: "表面处理",
         dataIndex: "surfaceTreatment",
         key: "surfaceTreatment",
-        width: 100,
+        width: 80,
       },
 
       {
         title: "字样",
         dataIndex: "trademark",
         key: "trademark",
-        width: 150,
+        width: 100,
       },
 
       {
@@ -247,14 +289,33 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "派工数量",
         dataIndex: "dispatchWorkNumber",
         key: "dispatchWorkNumber",
-        width: 110,
+        width: 80,
       },
+
       {
         title: "完工数量",
         dataIndex: "finishedNumber",
         key: "finishedNumber",
         render: (text) => emptyRenderCustomPlaceHolder(text, "0"),
-        width: 120,
+        width: 80,
+      },
+      {
+        title: "生料料号",
+        dataIndex: "halfItmid",
+        key: "halfItmid",
+        width: 90,
+      },
+      {
+        title: "生料数量",
+        dataIndex: "kcnum",
+        key: "kcnum",
+        width: 80,
+      },
+      {
+        title: "生料单位",
+        dataIndex: "kcunit",
+        key: "kcunit",
+        width: 80,
       },
       // {
       //   title: "炉台",
@@ -282,7 +343,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               )}
               defaultValue={text}
               onChange={(e) => {
-                record.heatTreatmentFurnacePlatform = e;
+                record.heatTreatmentFurnacePlatform = e || "";
               }}
               allowClear
             ></Select>
@@ -293,7 +354,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "优先顺序",
         key: "priority",
         dataIndex: "priority",
-        width: 160,
+        width: 100,
         fixed: "right",
         render: (text, record) => (
           <Select

@@ -6,13 +6,14 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Table } from "antd";
+import { Button, DatePicker, Table } from "antd";
 import { EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
 import { AppealPage } from "../AppealPage";
 import { queryAppealInfoById } from "@/api/queryAppealInfoById";
 import { SUCCESS_CODE } from "@/constants";
 import { message } from "@/utils";
+import { CustomInput } from "@/components/CustomInput";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -56,7 +57,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         {
           key: "department",
           name: "部门",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {

@@ -8,6 +8,7 @@ import { RuleObject } from "antd/es/form";
 
 import { FINISHED_CODE, SEMI_FINISHED_CODE } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
+import { CustomInput } from "@/components/CustomInput";
 
 const formConfig: (form: any) => IFormConfig = (form) => {
   return {
@@ -29,19 +30,19 @@ const formConfig: (form: any) => IFormConfig = (form) => {
       {
         key: "barCode",
         name: "生产订单条码",
-        children: <Input></Input>,
+        children: <CustomInput allowScanner></CustomInput>,
         rules: [],
       },
       {
         key: "partNumber",
         name: "零件料号",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
         key: "name",
         name: "品名",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {
@@ -75,7 +76,7 @@ const formConfig: (form: any) => IFormConfig = (form) => {
       {
         key: "specs",
         name: "规格",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
       {

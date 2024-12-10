@@ -19,6 +19,7 @@ import { deleteUsers, insertUser, queryRole, updateUser } from "@/api";
 import { RuleObject } from "antd/es/form";
 import { ADD_SUCCESS, ERROR_MESSAGE } from "@/constants";
 import { message } from "@/utils";
+import { CustomInput } from "@/components/CustomInput";
 
 type FieldType = {
   username: string;
@@ -314,13 +315,13 @@ const formConfig: IFormConfig = {
     {
       key: "account",
       name: "用户账号",
-      children: <Input></Input>,
+      children: <CustomInput></CustomInput>,
       rules: [],
     },
     {
       key: "username",
       name: "昵称",
-      children: <Input></Input>,
+      children: <CustomInput></CustomInput>,
       rules: [],
     },
   ],

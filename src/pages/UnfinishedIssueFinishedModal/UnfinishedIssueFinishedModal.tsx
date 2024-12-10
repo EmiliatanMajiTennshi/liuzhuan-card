@@ -4,7 +4,7 @@ import getApi, {
   updateDelmkByTransferCardCode,
 } from "@/api";
 import { kgArr, SUCCESS_CODE } from "@/constants";
-import { message, RenderQRCode } from "@/utils";
+import { message, RenderQRCode, sleep } from "@/utils";
 import { App, Button, ConfigProvider, Form, Table, Tabs } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import React, { useEffect, useState } from "react";
@@ -120,9 +120,11 @@ const UnfinishedIssueFinishedModal = (props: any) => {
       const issuedRequest: any = getApi(issuedFlowCardApi);
       const [res1, res2] = await Promise.all([
         currentRequest(issueID),
-        issuedRequest(beIssuedID),
+        (async () => {
+          await sleep(300); // 延迟 1 秒
+          return issuedRequest(beIssuedID);
+        })(),
       ]);
-      console.log(res1, res2, 11111224, beIssuedID);
       // 半品
       if (SUCCESS_CODE.indexOf(res1?.data?.code) !== -1 && res1?.data?.data) {
         const _data = res1?.data?.data;
@@ -240,10 +242,13 @@ const UnfinishedIssueFinishedModal = (props: any) => {
       try {
         const [resUnfinished, resFinished] = await Promise.all([
           insertUnfinishedProductsNew({ ...params32, relation: now }),
-          insertfinishedProductsNew({
-            ...params31,
-            relation: now,
-          }),
+          (async () => {
+            await sleep(300); // 延迟 1 秒
+            return insertfinishedProductsNew({
+              ...params31,
+              relation: now,
+            });
+          })(),
         ]);
         let successMessage = "";
         let errorMessage = "";
@@ -283,21 +288,21 @@ const UnfinishedIssueFinishedModal = (props: any) => {
         }
         if (errorMessage) {
           message.error(errorMessage.trim());
-          message.error("本次下发已作废，请重新下发");
-          // 如果有一个失败，取消下发
-          await updateDelmkByTransferCardCode({
-            transferCardCode: params32?.transferCardCode,
-            now,
-          })
-            .then((res) => {
-              if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-              } else {
-                message.error("作废失败！请联系管理员");
-              }
-            })
-            .catch((err) => {
-              message.error("作废失败！请联系管理员");
-            });
+          // message.error("本次下发已作废，请重新下发");
+          // // 如果有一个失败，取消下发
+          // await updateDelmkByTransferCardCode({
+          //   transferCardCode: params32?.transferCardCode,
+          //   now,
+          // })
+          //   .then((res) => {
+          //     if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
+          //     } else {
+          //       message.error("作废失败！请联系管理员");
+          //     }
+          //   })
+          //   .catch((err) => {
+          //     message.error("作废失败！请联系管理员");
+          //   });
         } else {
           if (successMessage) {
             message.success(successMessage.trim());

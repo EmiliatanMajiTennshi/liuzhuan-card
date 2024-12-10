@@ -22,6 +22,11 @@ import {
   getTime,
   padArray,
   validateMax,
+  sleep,
+  plus,
+  minus,
+  mul,
+  div,
 } from "./common";
 import { setToken, getToken, removeToken } from "./token";
 import {
@@ -72,4 +77,9 @@ export {
   getTime,
   padArray,
   message,
+  sleep,
+  plus,
+  minus,
+  mul,
+  div,
 };

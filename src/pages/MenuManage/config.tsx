@@ -17,6 +17,7 @@ import { IInsertMenu, insertMenu } from "@/api/insertMenu";
 import React, { ReactNode } from "react";
 import { ERROR_MESSAGE } from "@/constants";
 import { message } from "@/utils";
+import { CustomInput } from "@/components/CustomInput";
 
 type FieldType = {
   icon: string;
@@ -216,7 +217,7 @@ const formConfig: IFormConfig = {
     {
       key: "search",
       name: "名称",
-      children: <Input></Input>,
+      children: <CustomInput></CustomInput>,
       rules: [],
     },
   ],

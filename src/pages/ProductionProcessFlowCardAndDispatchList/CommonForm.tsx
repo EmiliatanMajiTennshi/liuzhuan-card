@@ -6,6 +6,7 @@ import {
   EditAbleInput,
   getSecondDashSubstring,
   message,
+  minus,
   ReadOnlyInput,
   RenderDatePicker,
   RenderQRCode,
@@ -135,13 +136,13 @@ const CommonForm = (props: IProps) => {
     form.setFieldValue("transferCardCode", data.transferCardCode);
     // if (isKg) {
     if (data?.productKg && data?.weight) {
-      const transferKgMax =
-        parseFloat(data?.productKg) -
-        parseFloat(
-          isKg
-            ? data?.transferNumber || "0"
-            : transformToKg(data?.transferNumber || "0", data?.weight)
-        );
+      const transferNumberKg = isKg
+        ? data?.transferNumber || "0"
+        : transformToKg(data?.transferNumber || "0", data?.weight);
+      const transferKgMax = minus(
+        parseFloat(data?.productKg),
+        parseFloat(transferNumberKg)
+      );
       const transferPcsMax = transFormToPcs(transferKgMax, data?.weight);
 
       // 推荐流转数量KG

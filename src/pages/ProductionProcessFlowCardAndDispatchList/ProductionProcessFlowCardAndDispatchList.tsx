@@ -135,7 +135,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       message.success(res?.data?.data);
       // 添加完刷新数据
       fetchData();
-      setRefreshFlag((flag) => !flag);
+      // setRefreshFlag((flag) => !flag);
     } else {
       setSaveLoading(false);
       message.error(SAVE_FAILED);
@@ -415,7 +415,11 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   //   formFooter.setFieldValue("remark", data?.remark);
   // }, [data]);
   const isOutsourcing = useMemo(() => {
-    return data?.orderid?.startsWith("2PO") || data?.orderid?.startsWith("240");
+    return (
+      data?.orderid?.startsWith("2PO") ||
+      data?.orderid?.startsWith("240") ||
+      data?.type === "苏州采购"
+    );
   }, [data]);
 
   const isOnly32 = data?.orderid?.endsWith("BL");
@@ -609,10 +613,12 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
 
         // 页面大保存
         const finialSave = async () => {
+          // 非自制
+          console.log(params, 11231);
+
           if (!isSelf) {
             updateOTransferCardInfoByCardId({
               ...{ transferNumber: values?.transferNumberKG || "", ...params },
-
               processList,
             }).then((res) => handleSuccess(res));
           } else if (isSemiFinished) {

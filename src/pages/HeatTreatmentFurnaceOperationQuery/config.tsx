@@ -22,6 +22,7 @@ import {
 import { DEFAULT_ORANGE, SUCCESS_CODE, ERROR_MESSAGE } from "@/constants";
 import dayjs from "dayjs";
 import { allowRecoverPrintState } from "@/constants/config";
+import { SelectHeatTreatmentFurnacePlatform } from "@/components/SelectHeatTreatmentFurnacePlatform";
 interface IGetModalConfigProps {
   barCode: string;
   transferCardCode: string;
@@ -70,59 +71,38 @@ const getModalConfig = ({
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
-    formItems: ({ options, setOptions }) => {
-      if (!options.heatTreatmentFurnacePlatforms) {
-        setOptions({
-          ...options,
-          heatTreatmentFurnacePlatforms: [{}],
-        });
-        getHeatTreatmentFurnacePlatformsList().then((res) => {
-          // 热处理炉台号
-          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-            const platformsOptions = res?.data?.data?.map(
-              (item: { id: string; name: string }) => ({
-                value: item?.name,
-                label: item?.name,
-              })
-            );
-            setOptions({
-              ...options,
-              heatTreatmentFurnacePlatforms: platformsOptions,
-            });
-          }
-        });
-      }
+    formItems: () => {
       return [
         // {
         //   key: "barCode",
         //   name: "生产订单条码",
-        //   children: <Input></Input>,
+        //   children: <CustomInput></CustomInput>,
         //   rules: [],
         // },
         // {
         //   key: "partNumber",
         //   name: "料号",
-        //   children: <Input></Input>,
+        //   children: <CustomInput></CustomInput>,
         //   rules: [],
         // },
 
         // {
         //   key: "specs",
         //   name: "规格",
-        //   children: <Input></Input>,
+        //   children: <CustomInput></CustomInput>,
         //   rules: [],
         // },
         // {
         //   key: "transferCardCode",
         //   name: "流转卡编号",
-        //   children: <Input></Input>,
+        //   children: <CustomInput></CustomInput>,
         //   rules: [],
         // },
 
         // {
         //   key: "name",
         //   name: "品名",
-        //   children: <Input></Input>,
+        //   children: <CustomInput></CustomInput>,
         //   rules: [],
         // },
 
@@ -194,12 +174,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         {
           key: "heatTreatmentFurnacePlatforms",
           name: "热处理炉台号",
-          children: (
-            <Select
-              allowClear
-              options={options?.heatTreatmentFurnacePlatforms || []}
-            ></Select>
-          ),
+          children: <SelectHeatTreatmentFurnacePlatform />,
           rules: [],
         },
         {
@@ -222,6 +197,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
     initValues: {
       createTimeStart: dayjs(),
       createTimeEnd: dayjs(),
+      finishStatus: "未完工",
     },
   };
 };
@@ -237,6 +213,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       heatTreatmentFurnacePlatformsStatus: "1",
       createTimeStart: formatDate(),
       createTimeEnd: formatDate(),
+      finishStatus: "未完工",
     },
     noPaging: true,
     queryFlowCardApi: "queryTransferCardInfoByCardIdNew",
@@ -259,7 +236,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "热处理炉台",
         dataIndex: "heatTreatmentFurnacePlatforms",
         key: "heatTreatmentFurnacePlatforms",
-        width: 150,
+        width: 100,
         render: (text) => {
           return (
             <span
@@ -278,7 +255,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转卡编号",
         dataIndex: "transferCardCode",
         key: "transferCardCode",
-        width: 260,
+        width: 160,
       },
       {
         title: "生产订单条码",
@@ -310,24 +287,30 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "入库料号",
         dataIndex: "itmid",
         key: "itmid",
-        width: 180,
+        width: 100,
       },
       {
         title: "追溯条码",
         dataIndex: "traceabilityNumber",
         key: "traceabilityNumber",
-        width: 130,
+        width: 80,
       },
       {
         title: "品名",
         dataIndex: "name",
         key: "name",
-        width: 120,
+        width: 80,
       },
       {
         title: "规格",
         dataIndex: "spec",
         key: "spec",
+        width: 100,
+      },
+      {
+        title: "图号",
+        dataIndex: "itmTEID",
+        key: "itmTEID ",
         width: 100,
       },
 
@@ -353,7 +336,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "创建（流转）时间",
         dataIndex: "createTime",
         key: "createTime",
-        width: 160,
+        width: 100,
         render: (text) => text?.slice(0, 19),
       },
 
@@ -361,7 +344,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "单位",
         dataIndex: "unit",
         key: "unit",
-        width: 100,
+        width: 60,
       },
       {
         title: "生产数量总量",

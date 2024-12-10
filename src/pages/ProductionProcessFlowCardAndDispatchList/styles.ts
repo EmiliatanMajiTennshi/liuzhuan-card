@@ -55,6 +55,10 @@ const bold24 = {
   ...fontSize24,
   ...boldWeight,
 };
+const bold18 = {
+  ...fontSize18,
+  ...boldWeight,
+};
 
 const redLabel = {
   ...fontColorRed,
@@ -76,4 +80,5 @@ export {
   bold28,
   bold24,
   bold26,
+  bold18,
 };

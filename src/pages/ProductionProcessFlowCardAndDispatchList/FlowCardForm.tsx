@@ -11,7 +11,7 @@ import { IData } from "./indexType";
 import styles from "./index.module.scss";
 import { useEffect } from "react";
 import { FINISHED_CODE, SUCCESS_CODE } from "@/constants";
-import { normalStyle, normalStyle18 } from "./styles";
+import { bold18, bold24, normalStyle, normalStyle18 } from "./styles";
 import { debounce } from "lodash";
 import { queryFurnaceByTraceabilityHalf } from "@/api";
 
@@ -120,7 +120,7 @@ const FlowCardForm = (props: IProps) => {
           // placeholder="请选择商标"
         />
         <ReadOnlyInput
-          style={{ lineHeight: "24px", ...normalStyle18 }}
+          style={{ lineHeight: "24px", ...bold18 }}
           title="追溯单号"
           name="traceabilityNumber"
           colSpan={isSemiFinished ? 3 : 1}

@@ -20,6 +20,7 @@ export type FieldType = {
   name: string;
   menu: IMenuItem[];
   permissionDto?: any[];
+  roles: any[];
 };
 
 /**

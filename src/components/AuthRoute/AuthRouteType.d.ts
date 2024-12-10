@@ -11,6 +11,7 @@ export interface IUserInfo {
   regTime: string;
   sex: number | null;
   username: string;
+  roleName: string;
 }
 
 export interface IRes {

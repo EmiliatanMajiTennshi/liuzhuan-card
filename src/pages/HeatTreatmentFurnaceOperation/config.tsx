@@ -3,83 +3,56 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { App, Button, DatePicker, Input, Select, Tag } from "antd";
+import { Button, DatePicker, Input, Select, Tag } from "antd";
 import { RuleObject } from "antd/es/form";
-import {
-  getHeatTreatmentFurnacePlatformsList,
-  updateHeatTreatmentStatus,
-} from "@/api";
+import { updateHeatTreatmentStatus } from "@/api";
 import { ERROR_MESSAGE, SUCCESS_CODE, kgArr } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
 import { message } from "@/utils";
+import { SelectHeatTreatmentFurnacePlatform } from "@/components/SelectHeatTreatmentFurnacePlatform";
+import { CustomInput } from "@/components/CustomInput";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
     formExtend: true,
-    formItems: ({ options, setOptions }) => {
-      if (!options.heatTreatmentFurnacePlatforms) {
-        setOptions({
-          ...options,
-          heatTreatmentFurnacePlatforms: [{}],
-        });
-        getHeatTreatmentFurnacePlatformsList().then((res) => {
-          // 热处理炉台号
-          if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
-            const platformsOptions = res?.data?.data?.map(
-              (item: { id: string; name: string }) => ({
-                value: item?.name,
-                label: item?.name,
-              })
-            );
-            setOptions({
-              ...options,
-              heatTreatmentFurnacePlatforms: platformsOptions,
-            });
-          }
-        });
-      }
+    formItems: () => {
       return [
         {
           key: "barCode",
           name: "生产订单条码",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
         {
           key: "partNumber",
           name: "料号",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
 
         {
           key: "specs",
           name: "规格",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
           key: "transferCardCode",
           name: "流转卡编号",
-          children: <Input></Input>,
+          children: <CustomInput allowScanner></CustomInput>,
           rules: [],
         },
 
         {
           key: "name",
           name: "品名",
-          children: <Input></Input>,
+          children: <CustomInput></CustomInput>,
           rules: [],
         },
         {
           key: "heatTreatmentFurnacePlatform",
           name: "热处理炉台号",
-          children: (
-            <Select
-              allowClear
-              options={options?.heatTreatmentFurnacePlatforms || []}
-            ></Select>
-          ),
+          children: <SelectHeatTreatmentFurnacePlatform />,
           rules: [],
         },
 
@@ -173,7 +146,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   return {
     rowKey: "id", // 唯一标识
     api: "queryHeatTreatment",
-
+    disableFirstLoading: true,
     columns: [
       //   {
       //     title: "流转卡类型",
@@ -363,6 +336,3 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
 };
 
 export { formConfig, tableConfig };
-function dayjs(): string {
-  throw new Error("Function not implemented.");
-}

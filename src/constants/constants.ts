@@ -77,4 +77,9 @@ export const EXTEND_TITLE_ARR = [
     parent: "链条流转卡",
     label: "申诉管理",
   },
+  {
+    key: "/statistical_details",
+    parent: "链条流转卡",
+    label: "统计明细",
+  },
 ];

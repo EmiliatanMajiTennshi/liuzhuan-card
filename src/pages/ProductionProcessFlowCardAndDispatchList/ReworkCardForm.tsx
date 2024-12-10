@@ -45,6 +45,7 @@ const ReworkCardForm = (props: IProps) => {
   // 防抖
   // 流转卡
   const debounceGetTransferCard = debounce(async function (e) {
+    if (e === "") return;
     try {
       setOptions({ ...options, transferCardOptionsLoading: true });
       const res = await queryInfoByTransferCard({ transferCardCode: e });

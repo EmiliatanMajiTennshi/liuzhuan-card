@@ -8,6 +8,7 @@ import { RuleObject } from "antd/es/form";
 
 import { kgArr } from "@/constants";
 import { formatDate } from "@/utils";
+import { CustomInput } from "@/components/CustomInput";
 
 const formConfig: (form?: any) => IFormConfig = (form) => {
   return {
@@ -16,27 +17,27 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
       {
         key: "transferCardCode",
         name: "流转卡编号",
-        children: <Input></Input>,
+        children: <CustomInput allowScanner></CustomInput>,
         rules: [],
       },
       {
         key: "barCode",
         name: "订单号",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
 
       {
         key: "partNumber",
         name: "零件料号",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
 
       {
         key: "specs",
         name: "规格",
-        children: <Input></Input>,
+        children: <CustomInput></CustomInput>,
         rules: [],
       },
 
@@ -132,55 +133,55 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转卡编号",
         dataIndex: "transferCardCode",
         key: "transferCardCode",
-        width: 260,
+        width: 160,
       },
       {
         title: "生产订单号",
         dataIndex: "barCode",
         key: "barCode",
-        width: 170,
+        width: 100,
       },
       {
         title: "零件料号",
         dataIndex: "partNumber",
         key: "partNumber",
-        width: 130,
+        width: 100,
       },
       {
         title: "追溯单号",
         dataIndex: "traceabilityNumber",
         key: "traceabilityNumber",
-        width: 110,
+        width: 80,
       },
       {
         title: "品名",
         dataIndex: "name",
         key: "name",
-        width: 100,
+        width: 80,
       },
       {
         title: "规格",
         dataIndex: "specs",
         key: "specs",
-        width: 100,
+        width: 80,
       },
       {
         title: "材质",
         dataIndex: "material",
         key: "material",
-        width: 100,
+        width: 80,
       },
       {
         title: "字样",
         dataIndex: "trademark",
         key: "trademark",
-        width: 150,
+        width: 100,
       },
       {
         title: "完成时间",
         dataIndex: "finishTime",
         key: "finishTime",
-        width: 120,
+        width: 100,
       },
       //   {
       //     title: "入库料号",
@@ -231,7 +232,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "订单数量pcs",
         dataIndex: "productionPcs",
         key: "productionPcs",
-        width: 120,
+        width: 100,
       },
       {
         title: "流转数量kg",
@@ -243,7 +244,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转数量pcs",
         dataIndex: "transferPcs",
         key: "transferPcs",
-        width: 120,
+        width: 100,
       },
       {
         title: "入库数量",
@@ -261,13 +262,13 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "入库名",
         dataIndex: "bname",
         key: "bname",
-        width: 120,
+        width: 100,
       },
       {
         title: "入库时间",
         dataIndex: "caddtime",
         key: "caddtime",
-        width: 180,
+        width: 100,
         render: (text) => text?.slice(0, 19),
       },
       // {
