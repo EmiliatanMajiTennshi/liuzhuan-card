@@ -124,7 +124,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "getOutsourcingPurchasing",
     queryFlowCardApi: "queryoutsourcingPurchasingByOI",
     flowCardType: "outsourcing",
-    issuedFlowCardApi: "queryoutsourcingPurchasingByOI",
+    issuedFlowCardApi: "queryfinishedProductsByOI",
     // 下发成品
     needIssueFinished: true,
     defaultParam: { category: "半品" },

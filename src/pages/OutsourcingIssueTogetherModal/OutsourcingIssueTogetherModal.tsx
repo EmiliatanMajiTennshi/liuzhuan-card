@@ -15,6 +15,7 @@ import {
   useTableColumns,
 } from "../ProductionProcessFlowCardAndDispatchList/config";
 import OutsourcingForm from "../ProductionProcessFlowCardAndDispatchList/OutsourcingForm";
+import CommonForm from "../ProductionProcessFlowCardAndDispatchList/CommonForm";
 
 const OutsourcingPage = (props: any) => {
   return (
@@ -60,7 +61,11 @@ const OutsourcingPage = (props: any) => {
             </>
           </div>
           <table style={{ overflow: "hidden", tableLayout: "fixed" }}>
-            <OutsourcingForm {...props} />
+            {props?.type === "unfinished" ? (
+              <CommonForm {...props} />
+            ) : (
+              <OutsourcingForm {...props} />
+            )}
           </table>
         </Form>
         <>
@@ -346,6 +351,7 @@ const OutsourcingIssueTogetherModal = (props: any) => {
     transferNum: transferNum31,
     uncoverData: uncoverData31,
     setMaxTNumFinishedKg,
+    type: "unfinished",
   };
   return (
     <div>

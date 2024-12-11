@@ -99,6 +99,8 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     setPrintModalOpen,
     finishedPrintProps,
   } = props;
+  console.log(flowCardType, "flowCardType1");
+
   // 数据
   const [data, setData] = useState<IData>({});
   // loading
@@ -450,7 +452,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
 
   const is2MO = data?.orderid?.startsWith("2MO");
   console.log(is2MO, 1241411);
-  console.log(data, 1211);
 
   const onFinish = async (values: IFormFields) => {
     setSaveLoading(true);
@@ -923,6 +924,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
                 {/* 打印 自制*/}
                 {flowCardType === "print" &&
                   isOutsourcing === false &&
+                  !isRework &&
                   !isRollChian && <PrintFlowCardForm {...flowCardFormProps} />}
                 {/* 打印 外协外购/苏州/五金*/}
                 {flowCardType === "print" && isOutsourcing && (
