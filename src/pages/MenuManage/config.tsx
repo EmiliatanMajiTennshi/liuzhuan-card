@@ -224,7 +224,7 @@ const formConfig: IFormConfig = {
 };
 
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
-  const { setSearchedData, setRefreshFlag, message } = props;
+  const { setSearchedData, setRefreshFlag } = props;
   return {
     rowKey: "id", // 唯一标识
     api: "queryAllMenu",

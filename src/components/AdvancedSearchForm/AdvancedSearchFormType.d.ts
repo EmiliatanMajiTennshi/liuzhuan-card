@@ -55,16 +55,22 @@ export interface IFormConfig {
   handleDate?: boolean;
   name?: string;
   initValues?: AnyObject;
+  extraButtons?: Button[] | ((props?: IButtons) => Button[]);
 }
 
 /**
  * 搜索表单
  */
 export interface IAdvancedSearchForm {
-  formConfig: IFormConfig | ((form?: any) => IFormConfig);
+  formConfig: IFormConfig;
   setSearchParams: React.Dispatch<React.SetStateAction<object>>;
   loading: boolean;
   selectedRowKeys: any[];
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
   initValues?: AnyObject;
+  form: any;
+  reworkModalOpen: boolean;
+  setReworkModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  rollChainModalOpen: boolean;
+  setRollChainModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }

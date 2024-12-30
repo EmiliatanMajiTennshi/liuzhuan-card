@@ -17,7 +17,7 @@ import dayjs from "dayjs";
 import { formatTime, message } from "@/utils";
 import { SelectHeatTreatmentFurnacePlatform } from "@/components/SelectHeatTreatmentFurnacePlatform";
 import { CustomInput } from "@/components/CustomInput";
-const formConfig: (form?: any) => IFormConfig = (form) => {
+const formConfig: (props?: any) => IFormConfig = ({ form }) => {
   return {
     span: 4,
     formExtend: true,
@@ -70,7 +70,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["createTimeEnd"]);
+                  form?.validateFields(["createTimeEnd"]);
                 }
               }}
             ></DatePicker>
@@ -102,7 +102,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["createTimeStart"]);
+                  form?.validateFields(["createTimeStart"]);
                 }
               }}
             ></DatePicker>
@@ -135,7 +135,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["finishTimeEnd"]);
+                  form?.validateFields(["finishTimeEnd"]);
                 }
               }}
             ></DatePicker>
@@ -167,7 +167,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["finishTimeStart"]);
+                  form?.validateFields(["finishTimeStart"]);
                 }
               }}
             ></DatePicker>
@@ -192,9 +192,24 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
             },
           ],
         },
+        {
+          key: "heatTreatmentFurnacePlatformStatus",
+          name: "是否下发",
+          children: (
+            <Select
+              allowClear
+              options={[
+                { value: "1", label: "已下发" },
+                { value: "2", label: "未下发" },
+              ]}
+            ></Select>
+          ),
+          rules: [],
+        },
       ];
     },
     handleDate: true,
+    initValues: { heatTreatmentFurnacePlatformStatus: "2" },
   };
 };
 
@@ -206,6 +221,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     rowKey: "transferCardCode", // 唯一标识
     api: "queryFurnaceChangeNew",
     optionList: [furnaceOptionsApi],
+    defaultParam: { heatTreatmentFurnacePlatformStatus: "2" },
     columns: [
       //   {
       //     title: "流转卡类型",
@@ -226,14 +242,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "transferCardCode",
         width: 160,
       },
-
       {
         title: "生产订单条码",
         dataIndex: "barCode",
         key: "barCode",
-        width: 120,
+        width: 100,
       },
-
       {
         title: "料号",
         dataIndex: "partNumber",
@@ -248,12 +262,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         width: 80,
       },
       {
-        title: "流转时间",
-        dataIndex: "transferTime",
-        key: "transferTime",
-        width: 100,
-      },
-      {
         title: "规格",
         dataIndex: "specs",
         key: "specs",
@@ -265,13 +273,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "material",
         width: 90,
       },
-      {
-        title: "表面处理",
-        dataIndex: "surfaceTreatment",
-        key: "surfaceTreatment",
-        width: 80,
-      },
-
       {
         title: "字样",
         dataIndex: "trademark",
@@ -286,6 +287,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         width: 60,
       },
       {
+        title: "交期",
+        dataIndex: "ljFinDate",
+        key: "ljFinDate",
+        width: 100,
+      },
+      {
         title: "派工数量",
         dataIndex: "dispatchWorkNumber",
         key: "dispatchWorkNumber",
@@ -293,30 +300,75 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       },
 
       {
-        title: "完工数量",
-        dataIndex: "finishedNumber",
-        key: "finishedNumber",
-        render: (text) => emptyRenderCustomPlaceHolder(text, "0"),
-        width: 80,
+        title: "半品流转卡",
+        dataIndex: "halfTransferCardCode",
+        key: "halfTransferCardCode",
+        width: 160,
       },
       {
-        title: "生料料号",
-        dataIndex: "halfItmid",
-        key: "halfItmid",
-        width: 90,
+        title: "半品入库数量",
+        dataIndex: "halfStoreName",
+        key: "halfStoreName",
+        width: 160,
       },
       {
-        title: "生料数量",
-        dataIndex: "kcnum",
-        key: "kcnum",
-        width: 80,
+        title: "半品入库时间",
+        dataIndex: "halfStoreTime",
+        key: "halfStoreTime",
+        width: 160,
       },
-      {
-        title: "生料单位",
-        dataIndex: "kcunit",
-        key: "kcunit",
-        width: 80,
-      },
+
+      // {
+      //   title: "流转时间",
+      //   dataIndex: "transferTime",
+      //   key: "transferTime",
+      //   width: 100,
+      // },
+
+      // {
+      //   title: "表面处理",
+      //   dataIndex: "surfaceTreatment",
+      //   key: "surfaceTreatment",
+      //   width: 80,
+      // },
+
+      // {
+      //   title: "完工数量",
+      //   dataIndex: "finishedNumber",
+      //   key: "finishedNumber",
+      //   render: (text) => emptyRenderCustomPlaceHolder(text, "0"),
+      //   width: 80,
+      // },
+      // {
+      //   title: "生料料号",
+      //   dataIndex: "halfItmid",
+      //   key: "halfItmid",
+      //   width: 90,
+      // },
+      // {
+      //   title: "生料数量",
+      //   dataIndex: "kcnum",
+      //   key: "kcnum",
+      //   width: 80,
+      // },
+      // {
+      //   title: "生料单位",
+      //   dataIndex: "kcunit",
+      //   key: "kcunit",
+      //   width: 80,
+      // },
+      // {
+      //   title: "入库数量",
+      //   dataIndex: "halfStoreNumber",
+      //   key: "halfStoreNumber",
+      //   width: 80,
+      // },
+      // {
+      //   title: "入库时间",
+      //   dataIndex: "halfStoreTime",
+      //   key: "halfStoreTime",
+      //   width: 80,
+      // },
       // {
       //   title: "炉台",
       //   dataIndex: "heatTreatmentFurnacePlatform",

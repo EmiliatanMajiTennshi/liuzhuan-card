@@ -5,6 +5,7 @@ import {
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { Button, ConfigProvider, DatePicker, Popconfirm, Select } from "antd";
 import { RuleObject } from "antd/es/form";
+import { PlusOutlined } from "@ant-design/icons";
 
 import { updatePrintTransferCard } from "@/api";
 import {
@@ -17,11 +18,26 @@ import { allowRecoverPrintState } from "@/constants/config";
 import { message } from "@/utils";
 import { CustomInput } from "@/components/CustomInput";
 
-const formConfig: (form?: any) => IFormConfig = (form) => {
+const formConfig: (props?: any) => IFormConfig = ({
+  form,
+  setReworkModalOpen,
+}) => {
   return {
     span: 4,
     name: "ReworkTransferCard",
     formExtend: true,
+    extraButtons: [
+      <Button
+        type="dashed"
+        onClick={() => {
+          setReworkModalOpen(true);
+        }}
+      >
+        <PlusOutlined />
+        新增返工流转卡
+      </Button>,
+    ],
+
     formItems: () => {
       return [
         {
@@ -132,7 +148,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
                   "lastCreateTimeStart",
                   createTimeStart.$d
                 );
-                form.validateFields(["createTimeEnd"]);
+                form?.validateFields(["createTimeEnd"]);
               }
 
               return undefined as unknown as RuleObject;
@@ -166,7 +182,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
                 createTimeEnd.$d.toString() !== lastCreateTimeEnd
               ) {
                 sessionStorage.setItem("lastCreateTimeEnd", createTimeEnd.$d);
-                form.validateFields(["createTimeStart"]);
+                form?.validateFields(["createTimeStart"]);
               }
 
               return undefined as unknown as RuleObject;

@@ -1,18 +1,10 @@
-import { App, Button, Col, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, Row } from "antd";
 import { IAdvancedSearchForm, IButtons } from "./AdvancedSearchFormType";
 import { useState } from "react";
-import {
-  SearchOutlined,
-  PlusOutlined,
-  RedoOutlined,
-  ExceptionOutlined,
-  BarChartOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined, PlusOutlined, RedoOutlined } from "@ant-design/icons";
 import { ProductionProcessFlowCardAndDispatchList } from "@/pages/ProductionProcessFlowCardAndDispatchList";
 import { transformDateToString } from "@/utils";
-import { useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
-import QRCodeScanner from "../QRCodeScanner/QRCodeScanner";
 const defaultSpan = 6;
 
 const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
@@ -23,35 +15,29 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
     selectedRowKeys,
     setRefreshFlag,
     initValues,
+    form,
+    reworkModalOpen,
+    setReworkModalOpen,
+    rollChainModalOpen,
+    setRollChainModalOpen,
   } = props;
-  const [form] = Form.useForm();
+
   // 控制按钮是否加载
   const [buttonLoading, setButtonLoading] = useState({ insertButton: false });
 
   // 需要远程获取的选项
   const [options, setOptions] = useState({});
 
-  // 添加返工流转卡modal
-  const [reworkModalOpen, setReworkModalOpen] = useState(false);
-
-  // 添加车间卷装链条
-  const [rollChainModalOpen, setRollChainModalOpen] = useState(false);
-
-  // 跳转
-  const navigate = useNavigate();
-
   const [modal, contextHolder] = Modal.useModal();
 
-  // 可能是函数
-  const _formConfig =
-    typeof formConfig === "function" ? formConfig(form) : formConfig;
   const {
     formItems: _formItems,
     span: _span,
     buttons,
     handleDate,
     name,
-  } = _formConfig;
+    extraButtons,
+  } = formConfig;
 
   const span = _span || defaultSpan;
 
@@ -159,48 +145,29 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
         </Row>
         {!buttons && (
           <div className={styles.formButtons}>
-            {name === "TransferCardUnfinishToStore" && (
-              <>
-                <Button
-                  color="primary"
-                  onClick={() => {
-                    navigate("/statistical_details");
-                  }}
-                >
-                  <BarChartOutlined />
-                  统计明细
-                </Button>
-                <Button
-                  type="dashed"
-                  danger
-                  onClick={() => {
-                    navigate("/appeal_info_page");
-                  }}
-                >
-                  <ExceptionOutlined />
-                  申诉
-                </Button>
-              </>
+            {extraButtons && typeof extraButtons !== "function" && (
+              <Form.Item>{extraButtons}</Form.Item>
             )}
-            <Button type="primary" htmlType="submit" loading={loading}>
-              <SearchOutlined />
+            {extraButtons && typeof extraButtons === "function" && (
+              <Form.Item>{extraButtons()}</Form.Item>
+            )}
+
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              icon={<SearchOutlined />}
+            >
               查询
             </Button>
-            <Button onClick={handleReset} disabled={loading}>
-              <RedoOutlined />
+            <Button
+              onClick={handleReset}
+              disabled={loading}
+              icon={<RedoOutlined />}
+            >
               重置
             </Button>
-            {name === "ReworkTransferCard" && (
-              <Button
-                type="dashed"
-                onClick={() => {
-                  setReworkModalOpen(true);
-                }}
-              >
-                <PlusOutlined />
-                新增返工流转卡
-              </Button>
-            )}
+
             {name === "QueryRollChain" && (
               <Button
                 type="dashed"

@@ -7,7 +7,7 @@ import { CustomInput } from "@/components/CustomInput";
 import { DatePicker, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
-const formConfig: (form?: any) => IFormConfig = (form) => {
+const formConfig: (props?: any) => IFormConfig = ({ form }) => {
   return {
     formExtend: true,
     formItems: [
@@ -71,8 +71,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
-              if (form) {
-                form.validateFields(["createTimeEnd"]);
+              if (form?.validateFields) {
+                form?.validateFields(["createTimeEnd"]);
               }
             }}
           ></DatePicker>
@@ -103,8 +103,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
-              if (form) {
-                form.validateFields(["createTimeStart"]);
+              if (form?.validateFields) {
+                form?.validateFields(["createTimeStart"]);
               }
             }}
           ></DatePicker>
@@ -136,8 +136,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
-              if (form) {
-                form.validateFields(["finishTimeEnd"]);
+              if (form?.validateFields) {
+                form?.validateFields(["finishTimeEnd"]);
               }
             }}
           ></DatePicker>
@@ -168,8 +168,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
-              if (form) {
-                form.validateFields(["finishTimeStart"]);
+              if (form?.validateFields) {
+                form?.validateFields(["finishTimeStart"]);
               }
             }}
           ></DatePicker>

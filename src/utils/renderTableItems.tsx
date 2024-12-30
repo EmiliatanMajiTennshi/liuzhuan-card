@@ -360,6 +360,7 @@ const RenderSelect = ({
   onClear,
   autoComplete,
   style,
+  disableCopy,
 }: {
   title: string;
   name: string;
@@ -384,12 +385,14 @@ const RenderSelect = ({
   empty?: boolean;
   onClear?: (() => void) | undefined;
   autoComplete?: boolean;
+  disableCopy?: boolean;
 }) => {
   useEffect(() => {
     if (form && (defaultValue || empty)) {
       form.setFieldValue(name, defaultValue);
     }
   }, [data, defaultValue]);
+  console.log(required, name, 12445);
 
   return (
     <>
@@ -467,50 +470,55 @@ const RenderSelect = ({
               {options?.map((item) => {
                 return (
                   <Select.Option
+                    title={item?.label}
                     {...item}
                     key={optionKey ? item?.[optionKey as "value"] : item.value}
                     className={styles?.optionItem}
                   >
                     {item?.label}
-                    <Button
-                      type="link"
-                      className={styles?.copyBtn}
-                      style={{
-                        position: "absolute",
-                        right: 0,
-                        bottom: "-1px",
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // navigator.clipboard
-                        //   ?.writeText(item?.label)
-                        //   .then(() => {
-                        //     message.success("复制成功");
-                        //   })
-                        //   .catch((err) => {
-                        //     message.error("复制失败");
-                        //   });
-                        const textArea = document.createElement("textarea");
-                        textArea.value = item?.label;
-                        // 使text area不在viewport，同时设置不可见
-                        document.body.appendChild(textArea);
-                        textArea.focus();
-                        textArea.select();
-                        return new Promise((res, rej) => {
-                          // 执行复制命令并移除文本框
-                          document.execCommand("copy") ? res("success") : rej();
-                          textArea.remove();
-                        })
-                          .then((res) => {
-                            message.success("复制成功");
+                    {!disableCopy && (
+                      <Button
+                        type="link"
+                        className={styles?.copyBtn}
+                        style={{
+                          position: "absolute",
+                          right: 0,
+                          bottom: "-1px",
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // navigator.clipboard
+                          //   ?.writeText(item?.label)
+                          //   .then(() => {
+                          //     message.success("复制成功");
+                          //   })
+                          //   .catch((err) => {
+                          //     message.error("复制失败");
+                          //   });
+                          const textArea = document.createElement("textarea");
+                          textArea.value = item?.label;
+                          // 使text area不在viewport，同时设置不可见
+                          document.body.appendChild(textArea);
+                          textArea.focus();
+                          textArea.select();
+                          return new Promise((res, rej) => {
+                            // 执行复制命令并移除文本框
+                            document.execCommand("copy")
+                              ? res("success")
+                              : rej();
+                            textArea.remove();
                           })
-                          .catch((err) => {
-                            message.error("复制失败");
-                          });
-                      }}
-                    >
-                      复制
-                    </Button>
+                            .then((res) => {
+                              message.success("复制成功");
+                            })
+                            .catch((err) => {
+                              message.error("复制失败");
+                            });
+                        }}
+                      >
+                        复制
+                      </Button>
+                    )}
                   </Select.Option>
                 );
               })}

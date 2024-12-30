@@ -20,7 +20,7 @@ import { allowRecoverPrintState } from "@/constants/config";
 import { SelectHeatTreatmentFurnacePlatform } from "@/components/SelectHeatTreatmentFurnacePlatform";
 import { CustomInput } from "@/components/CustomInput";
 import dayjs from "dayjs";
-const formConfig: (form?: any) => IFormConfig = (form) => {
+const formConfig: (props?: any) => IFormConfig = ({ form }) => {
   return {
     span: 4,
     formExtend: true,
@@ -72,7 +72,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["createTimeEnd"]);
+                  form?.validateFields(["createTimeEnd"]);
                 }
               }}
             ></DatePicker>
@@ -104,7 +104,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["createTimeStart"]);
+                  form?.validateFields(["createTimeStart"]);
                 }
               }}
             ></DatePicker>
@@ -191,7 +191,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["finishTimeEnd"]);
+                  form?.validateFields(["finishTimeEnd"]);
                 }
               }}
             ></DatePicker>
@@ -223,7 +223,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["finishTimeStart"]);
+                  form?.validateFields(["finishTimeStart"]);
                 }
               }}
             ></DatePicker>

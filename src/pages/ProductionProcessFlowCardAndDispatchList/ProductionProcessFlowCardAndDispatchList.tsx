@@ -80,6 +80,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
   setRefreshFlag: React.Dispatch<React.SetStateAction<boolean>>;
   name?: string;
   setPrintModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  // 被下发的成品
   finishedPrintProps?: {
     issueID: {
       orderid?: string;
@@ -451,7 +452,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     Boolean(data?.rollChainTraceabilityNumber) || flowCardType === "rollChain";
 
   const is2MO = data?.orderid?.startsWith("2MO");
-  console.log(is2MO, 1241411);
+  console.log(flowCardType, is2MO, 124141);
 
   const onFinish = async (values: IFormFields) => {
     setSaveLoading(true);
@@ -460,9 +461,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       data,
       values,
       mainsize,
-      isKg,
       flowCardType,
-      tableData,
     });
     const isSemiFinished = data?.itmid?.startsWith("32");
     const isFinished = data?.itmid?.startsWith("31");
@@ -713,6 +712,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
       flowCardType === "unfinished" ||
       flowCardType === "outsourcing"
     ) {
+      // 未完成
       if (isSelf && (flowCardType === "unfinished" || isSemiFinished)) {
         insertUnfinishedProductsNew(params)
           .then((res) => {
@@ -729,6 +729,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
             setSaveLoading(false);
           });
       }
+      // 完成
       if (isSelf && (flowCardType === "finished" || !isSemiFinished)) {
         insertfinishedProductsNew(params)
           .then((res) => {
@@ -814,7 +815,6 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     verifierList,
     equipmentList,
   });
-
   return (
     <>
       <div

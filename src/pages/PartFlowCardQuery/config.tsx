@@ -72,7 +72,7 @@ const formConfig: IFormConfig = {
             createTimeStart.$d.toString() !== lastCreateTimeStart
           ) {
             sessionStorage.setItem("lastCreateTimeStart", createTimeStart.$d);
-            form.validateFields(["createTimeEnd"]);
+            form?.validateFields(["createTimeEnd"]);
           }
 
           return undefined as unknown as RuleObject;
@@ -105,7 +105,7 @@ const formConfig: IFormConfig = {
             createTimeEnd.$d.toString() !== lastCreateTimeEnd
           ) {
             sessionStorage.setItem("lastCreateTimeEnd", createTimeEnd.$d);
-            form.validateFields(["createTimeStart"]);
+            form?.validateFields(["createTimeStart"]);
           }
 
           return undefined as unknown as RuleObject;
@@ -202,7 +202,7 @@ const formConfig: IFormConfig = {
               "lastCompleteTimeStart",
               completeTimeStart.$d
             );
-            form.validateFields(["completeTimeEnd"]);
+            form?.validateFields(["completeTimeEnd"]);
           }
 
           return undefined as unknown as RuleObject;
@@ -237,7 +237,7 @@ const formConfig: IFormConfig = {
             completeTimeEnd.$d.toString() !== lastCompleteTimeEnd
           ) {
             sessionStorage.setItem("lastCompleteTimeEnd", completeTimeEnd.$d);
-            form.validateFields(["completeTimeStart"]);
+            form?.validateFields(["completeTimeStart"]);
           }
 
           return undefined as unknown as RuleObject;

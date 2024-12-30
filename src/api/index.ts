@@ -120,6 +120,11 @@ import { insertAppealInfo } from "./insertAppealInfo";
 import { queryAppealInfo } from "./queryAppealInfo";
 import { queryStoreList } from "./queryStroeList";
 import { queryPartNumberByU9Code } from "./queryPartNumberByU9Code";
+import { queryHeatTreatDashBoard } from "./queryHeatTreatDashBoard";
+import { exportHeatTreatExcel } from "./exportHeatTreatExcel";
+import { queryTransferCardCode } from "./queryTransferCardCode";
+import { reduceFinishPartNumberById } from "./reduceFinishPartNumberById";
+import { queryOutSourcetransferCardRelation } from "./queryOutSourcetransferCardRelation";
 
 export {
   countProductType,
@@ -260,6 +265,7 @@ export {
   countProcessUnfinishToStore,
   countProcessUnfinishToStoreYestereday,
   countProcessUnfinishToStoreMonth,
+  exportHeatTreatExcel,
   getUnfinishedProducts,
   getFinishedProducts,
   getOutsourcingPurchasing,
@@ -297,6 +303,10 @@ export {
   queryAppealInfo,
   queryStoreList,
   queryPartNumberByU9Code,
+  queryHeatTreatDashBoard,
+  queryTransferCardCode,
+  queryOutSourcetransferCardRelation,
+  reduceFinishPartNumberById,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,
@@ -320,6 +330,7 @@ const apisNew = {
   countProcessUnfinishToStore,
   countProcessUnfinishToStoreYestereday,
   countProcessUnfinishToStoreMonth,
+  exportHeatTreatExcel,
   getUnfinishedProducts,
   getFinishedProducts,
   getOutsourcingPurchasing,
@@ -356,6 +367,10 @@ const apisNew = {
   queryAppealInfo,
   queryStoreList,
   queryPartNumberByU9Code,
+  queryHeatTreatDashBoard,
+  queryTransferCardCode,
+  queryOutSourcetransferCardRelation,
+  reduceFinishPartNumberById,
   supplementByOI,
   insertUnfinishedProductsNew,
   insertfinishedProductsNew,

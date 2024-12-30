@@ -308,10 +308,34 @@ const StatisticalDetails = React.lazy(() =>
     default: res.StatisticalDetails,
   }))
 );
-/**外协外购同时下发 */
+/**外购半品下发成品 */
 const OutsourcingIssueTogether = React.lazy(() =>
   import("@/pages/OutsourcingIssueTogether").then((res) => ({
     default: res.OutsourcingIssueTogether,
+  }))
+);
+/**外购半品同时打印成品 */
+const OutsourcingPrintTogether = React.lazy(() =>
+  import("@/pages/OutsourcingPrintTogether").then((res) => ({
+    default: res.OutsourcingPrintTogether,
+  }))
+);
+/**外购半品同时打印成品 */
+const HeatTreatmentStock = React.lazy(() =>
+  import("@/pages/HeatTreatmentStock").then((res) => ({
+    default: res.HeatTreatmentStock,
+  }))
+);
+/**成品拆分 */
+const SplitFinishedCard = React.lazy(() =>
+  import("@/pages/SplitFinishedCard").then((res) => ({
+    default: res.SplitFinishedCard,
+  }))
+);
+/**成品同时打印外购半品 */
+const UnfinishedPrintOutsourcing = React.lazy(() =>
+  import("@/pages/UnfinishedPrintOutsourcing").then((res) => ({
+    default: res.UnfinishedPrintOutsourcing,
   }))
 );
 
@@ -488,6 +512,22 @@ const routeMap = [
     path: "/outsourcing_issue_together",
     element: <OutsourcingIssueTogether />,
   },
+  {
+    path: "/outsourcing_print_together",
+    element: <OutsourcingPrintTogether />,
+  },
+  {
+    path: "/heat_treatment_stock",
+    element: <HeatTreatmentStock />,
+  },
+  {
+    path: "/split_finished_card",
+    element: <SplitFinishedCard />,
+  },
+  {
+    path: "/unfinished_print_outsourcing",
+    element: <UnfinishedPrintOutsourcing />,
+  },
 ];
 
 // 转成对象
@@ -549,12 +589,15 @@ const PrivateRoute = () => {
           path: "statistical_details",
           element: <StatisticalDetails />,
         },
+        {
+          path: "heat_treatment_stock",
+          element: <HeatTreatmentStock />,
+        },
+        {
+          path: "*",
+          element: "404 Not Found",
+        },
       ],
-    },
-
-    {
-      path: "*",
-      element: <Navigate to="/404" />,
     },
   ];
 

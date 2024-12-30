@@ -1,4 +1,11 @@
-import { EditAbleInput, minus, ReadOnlyInput, RenderQRCode } from "@/utils";
+import {
+  div,
+  EditAbleInput,
+  minus,
+  mul,
+  ReadOnlyInput,
+  RenderQRCode,
+} from "@/utils";
 import { FormInstance } from "antd";
 import { IData } from "./indexType";
 
@@ -9,12 +16,23 @@ import { normalStyle, normalStyle18 } from "./styles";
 
 interface IProps {
   data: IData;
+  beIssuedData?: IData;
   isKg: boolean;
   form: FormInstance<any>;
+  beIssuedForm?: FormInstance<any>;
   mainsize: any;
+  needIssueFinished?: boolean;
 }
 const OutsourcingForm = (props: IProps) => {
-  const { data, isKg, form, mainsize } = props;
+  const {
+    data,
+    isKg,
+    form,
+    mainsize,
+    needIssueFinished,
+    beIssuedForm,
+    beIssuedData,
+  } = props;
   // 最大流转数量
   const [liuMaxKg, setLiuMaxKg] = useState(0);
   const [liuMaxPCS, setLiuMaxPCS] = useState(0);
@@ -40,7 +58,14 @@ const OutsourcingForm = (props: IProps) => {
         setLiuMaxPCS(parseFloat(transferPcsMax));
       }
     }
+    if (needIssueFinished && beIssuedForm) {
+      beIssuedForm.setFieldsValue({
+        orderCatchHalf: data?.traceabilityNumber,
+      });
+    }
   }, [data]);
+  console.log(props, 11234);
+
   return (
     <tbody className={styles.normalForm}>
       <tr>
@@ -132,6 +157,21 @@ const OutsourcingForm = (props: IProps) => {
             //       : transformToKg(value, data?.parseWeight)
             //     : value;
             // form.setFieldValue("liuhuancount", transferValue?.toString());
+            if (needIssueFinished && beIssuedData?.weight) {
+              if (isKg) {
+                beIssuedForm?.setFieldValue("transferKg", e);
+                beIssuedForm?.setFieldValue(
+                  "transferPcs",
+                  div(e, beIssuedData?.weight)
+                );
+              } else {
+                beIssuedForm?.setFieldValue("transferPcs", e);
+                beIssuedForm?.setFieldValue(
+                  "transferKg",
+                  mul(e, beIssuedData?.weight)
+                );
+              }
+            }
           }}
           // rules={[{ validator: validateNotZero }]}
         />

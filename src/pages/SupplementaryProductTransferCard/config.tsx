@@ -9,7 +9,7 @@ import { FINISHED_CODE, kgArr, SEMI_FINISHED_CODE } from "@/constants";
 import { sumTransferNumberRender } from "@/utils/tableRender";
 import { CustomInput } from "@/components/CustomInput";
 
-const formConfig: (form?: any) => IFormConfig = (form) => {
+const formConfig: (props?: any) => IFormConfig = ({ form }) => {
   return {
     formExtend: true,
     formItems: [
@@ -53,8 +53,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
-              if (form) {
-                form.validateFields(["finishTimeEnd"]);
+              if (form?.validateFields) {
+                form?.validateFields(["finishTimeEnd"]);
               }
             }}
           ></DatePicker>
@@ -85,8 +85,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
-              if (form) {
-                form.validateFields(["finishTimeStart"]);
+              if (form?.validateFields) {
+                form?.validateFields(["finishTimeStart"]);
               }
             }}
           ></DatePicker>

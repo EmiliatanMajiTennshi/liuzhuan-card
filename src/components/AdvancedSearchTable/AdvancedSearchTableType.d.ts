@@ -113,6 +113,7 @@ export interface ITableConfigProps {
   setFinishedParams: React.Dispatch<React.SetStateAction<AnyObject>>;
   setMultiDetailModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   modal: HookAPI;
+  setSplitCardModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface IIssueID {

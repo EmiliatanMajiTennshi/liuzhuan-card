@@ -118,6 +118,7 @@ const MultiDetail = (props: {
                     updateMultiProcessByTransferCardCode({
                       id: record?.id,
                       logisticsQuantity: record?.logisticsQuantity,
+                      transferCardCode: record?.transferCardCode,
                     })
                       .then((res) => {
                         if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {

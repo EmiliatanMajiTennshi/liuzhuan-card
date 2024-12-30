@@ -21,6 +21,7 @@ import { getErrorMessage, message } from "@/utils";
 import { MultiDetail } from "@/pages/MultiDetail";
 import { UnfinishedIssueFinishedModal } from "@/pages/UnfinishedIssueFinishedModal";
 import { OutsourcingIssueTogetherModal } from "@/pages/OutsourcingIssueTogetherModal";
+import { SplitCardModal } from "@/pages/SplitCardModal";
 
 const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const {
@@ -60,6 +61,8 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
   const [weightViews, setWeightViews] = useState<AnyObject>([]);
   // // 鼠标所在行
   // const [hoveredRow, setHoveredRow] = useState(null);
+  // 分卡modal
+  const [splitCardModalOpen, setSplitCardModalOpen] = useState(false);
   const tableRef = useRef<any>(null);
   // 首次是否加载
   const isFirstRender = useRef(true);
@@ -80,6 +83,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     setFinishedParams,
     setMultiDetailModalOpen,
     modal,
+    setSplitCardModalOpen,
   };
 
   const _tableConfig =
@@ -410,6 +414,22 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
           width={1600}
         >
           <MultiDetail requestParams={issueID} readOnly={readonly} />
+        </Modal>
+      )}
+      {splitCardModalOpen && (
+        <Modal
+          open={splitCardModalOpen}
+          onCancel={() => setSplitCardModalOpen(false)}
+          footer={null}
+          width={800}
+        >
+          <SplitCardModal
+            issueID={issueID}
+            queryFlowCardApi={queryFlowCardApi}
+            flowCardType={flowCardType}
+            setRefreshFlag={setRefreshFlag}
+            issuedFlowCardApi={issuedFlowCardApi}
+          />
         </Modal>
       )}
       <div className={styles.modalContent}> {contextHolder}</div>

@@ -82,4 +82,9 @@ export const EXTEND_TITLE_ARR = [
     parent: "链条流转卡",
     label: "统计明细",
   },
+  {
+    key: "/heat_treatment_stock",
+    parent: "链条流转卡",
+    label: "热处理库存",
+  },
 ];

@@ -1221,11 +1221,7 @@ interface IGetParams {
   data: IData;
   values: any;
   mainsize: any;
-  isKg: boolean;
   flowCardType: ITableConfig["flowCardType"];
-  remark?: string;
-  dataString?: string;
-  tableData: any[];
 }
 
 export const getParams = ({
@@ -1233,10 +1229,8 @@ export const getParams = ({
   data,
   values,
   mainsize,
-  isKg,
+
   flowCardType,
-  remark,
-  tableData,
 }: IGetParams) => {
   if (!values) {
     return {};
@@ -1271,7 +1265,7 @@ export const getParams = ({
       //客户订单号
       customerOrderNo: values.ordernum,
       //图号
-      drawingNumber: values.goodsItmTEID,
+      drawingNumber: values.goodsItmTEID || values.itmTEID,
       //生产公斤数
       productionKg: values.productKg,
       //流转公斤数
@@ -1291,37 +1285,39 @@ export const getParams = ({
       //材料材质
       materialQuality: values.mItmTDID,
       //主要尺寸名字1
-      project1Name: mainsize.project1,
+      project1Name: mainsize?.project1,
       //主要尺寸名字1内容
-      project1Item: mainsize.projectitem1,
+      project1Item: mainsize?.projectitem1,
       //主要尺寸名字2
-      project2Name: mainsize.project2,
+      project2Name: mainsize?.project2,
       //主要尺寸名字2内容
-      project2Item: mainsize.projectitem2,
+      project2Item: mainsize?.projectitem2,
       //主要尺寸名字3
-      project3Name: mainsize.project3,
+      project3Name: mainsize?.project3,
       //主要尺寸名字3内容
-      project3Item: mainsize.projectitem3,
+      project3Item: mainsize?.projectitem3,
       //主要尺寸名字4
-      project4Name: mainsize.project4,
+      project4Name: mainsize?.project4,
       //主要尺寸名字4内容
-      project4Item: mainsize.projectitem4,
+      project4Item: mainsize?.projectitem4,
       //主要尺寸名字5
-      project5Name: mainsize.project5,
+      project5Name: mainsize?.project5,
       //主要尺寸名字5内容
-      project5Item: mainsize.projectitem5,
+      project5Item: mainsize?.projectitem5,
       //商标
       trademark: values.trademark,
       //追溯单号(半品)
-      orderCatchHalf: values.orderCatchHalf,
+      orderCatchHalf:
+        values.orderCatchHalf || values.associationTraceabilityNumber,
       //热处理炉台
-      heatTreatmentFurnacePlatform: values.heatTreatmentFurnace,
+      heatTreatmentFurnacePlatform:
+        values.heatTreatmentFurnace || values.heatTreatmentFurnacePlatforms,
       //优先顺序
       priorityOrder: values.priority,
       //零件流转时间
-      tranferTime: values.transferTime
-        ? formatTime(values.transferTime)
-        : undefined,
+      tranferTime:
+        (values.transferTime ? formatTime(values.transferTime) : undefined) ||
+        values.tranferTime,
       //工艺
       process:
         (data?.processList || [])?.length >= 5
@@ -1334,6 +1330,7 @@ export const getParams = ({
         : form?.getFieldValue("pnumber"),
       // parentID
       parentId: data?.id,
+      relation: data?.relation,
     },
     outsourcing: {
       //零件类型
@@ -1372,25 +1369,25 @@ export const getParams = ({
       //   : form.getFieldValue("liuhuancount")
       // )?.toString(),
       //主要尺寸名字1
-      project1Name: mainsize.project1,
+      project1Name: mainsize?.project1,
       //主要尺寸名字1内容
-      project1Item: mainsize.projectitem1,
+      project1Item: mainsize?.projectitem1,
       //主要尺寸名字2
-      project2Name: mainsize.project2,
+      project2Name: mainsize?.project2,
       //主要尺寸名字2内容
-      project2Item: mainsize.projectitem2,
+      project2Item: mainsize?.projectitem2,
       //主要尺寸名字3
-      project3Name: mainsize.project3,
+      project3Name: mainsize?.project3,
       //主要尺寸名字3内容
-      project3Item: mainsize.projectitem3,
+      project3Item: mainsize?.projectitem3,
       //主要尺寸名字4
-      project4Name: mainsize.project4,
+      project4Name: mainsize?.project4,
       //主要尺寸名字4内容
-      project4Item: mainsize.projectitem4,
+      project4Item: mainsize?.projectitem4,
       //主要尺寸名字5
-      project5Name: mainsize.project5,
+      project5Name: mainsize?.project5,
       //主要尺寸名字5内容
-      project5Item: mainsize.projectitem5,
+      project5Item: mainsize?.projectitem5,
       //商标
       trademark: values.trademark,
       //工艺
@@ -1424,6 +1421,8 @@ export const getParams = ({
       // 追溯单号
       traceabilityNumber: values.traceabilityNumber,
       orderid: values?.orderid,
+      itmid: values.itmid,
+      U9LineNo: data.u9LineNo,
     },
     print: {},
     rework: {

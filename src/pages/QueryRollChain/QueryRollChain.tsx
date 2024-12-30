@@ -5,7 +5,7 @@ import { formConfig, tableConfig } from "./config";
 
 const QueryRollChain = () => {
   return (
-    <ContentRender title="生料库存查询">
+    <ContentRender title="车间卷转链条管理">
       <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}

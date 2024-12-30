@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { AdvancedSearchForm } from "../AdvancedSearchForm";
 import { AdvancedSearchTable } from "../AdvancedSearchTable";
-import { Collapse, CollapseProps, ConfigProvider, theme } from "antd";
+import { Collapse, CollapseProps, ConfigProvider, Form, theme } from "antd";
 import styles from "./index.module.scss";
 import classNames from "classnames";
 import { IAdvancedSearchCom } from "./AdvancedSearchComType";
+import { useNavigate } from "react-router-dom";
 
 const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
   const { formConfig, tableConfig } = props;
@@ -17,8 +18,21 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
+  // 添加返工流转卡modal
+  const [reworkModalOpen, setReworkModalOpen] = useState(false);
+
+  // 添加车间卷装链条
+  const [rollChainModalOpen, setRollChainModalOpen] = useState(false);
+
+  const [form] = Form.useForm();
+
+  // 跳转
+  const navigate = useNavigate();
+
   const _formConfig =
-    typeof formConfig === "function" ? formConfig() : formConfig;
+    typeof formConfig === "function"
+      ? formConfig({ form, navigate, setReworkModalOpen })
+      : formConfig;
   const formTitle = _formConfig.formTitle;
   const formExtend = _formConfig.formExtend;
   const {
@@ -40,12 +54,17 @@ const AdvancedSearchCom = (props: IAdvancedSearchCom) => {
           {formConfig && (
             <div>
               <AdvancedSearchForm
-                formConfig={formConfig}
+                form={form}
+                formConfig={_formConfig}
                 loading={loading}
                 setSearchParams={setSearchParams}
                 selectedRowKeys={selectedRowKeys}
                 setRefreshFlag={setRefreshFlag}
                 initValues={_formConfig?.initValues}
+                reworkModalOpen={reworkModalOpen}
+                rollChainModalOpen={rollChainModalOpen}
+                setReworkModalOpen={setReworkModalOpen}
+                setRollChainModalOpen={setRollChainModalOpen}
               ></AdvancedSearchForm>
             </div>
           )}

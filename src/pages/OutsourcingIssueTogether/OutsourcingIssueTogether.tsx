@@ -5,7 +5,7 @@ import { formConfig, tableConfig } from "./config";
 
 const OutsourcingIssueTogether = () => {
   return (
-    <ContentRender title="外购外协同时下发">
+    <ContentRender title="外购半品下发成品">
       <AdvancedSearchCom
         formConfig={formConfig}
         tableConfig={tableConfig}

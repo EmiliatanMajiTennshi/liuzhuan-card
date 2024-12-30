@@ -264,6 +264,7 @@ const CommonForm = (props: IProps) => {
             data={data}
             remark={data?.trademark}
             titleStyle={normalStyle}
+            disableCopy={true}
             options={[
               ...(data?.trademarkList1?.map((item) => ({
                 value: item.trademark,
@@ -423,7 +424,7 @@ const CommonForm = (props: IProps) => {
                   : "";
 
               form.setFieldValue("transferPcs", valuePCS);
-              form.validateFields(["transferPcs"]);
+              form?.validateFields(["transferPcs"]);
               beIssuedForm?.setFieldValue("transferPcs", valuePCS);
               beIssuedForm?.setFieldValue("transferKg", e);
             }}
@@ -486,7 +487,7 @@ const CommonForm = (props: IProps) => {
               //   });
               // }
               form.setFieldValue("transferKg", valueKg);
-              form.validateFields(["transferKg"]);
+              form?.validateFields(["transferKg"]);
               beIssuedForm?.setFieldValue("transferPcs", e);
               beIssuedForm?.setFieldValue("transferKg", valueKg);
             }}
@@ -698,6 +699,7 @@ const CommonForm = (props: IProps) => {
             colSpan={1}
             labelColSpan={2}
             placeholder="请选择炉台"
+            required={!notSelfIssue}
           />
           <RenderSelect
             title="优先顺序"

@@ -27,6 +27,7 @@ import {
   minus,
   mul,
   div,
+  downloadFile,
 } from "./common";
 import { setToken, getToken, removeToken } from "./token";
 import {
@@ -82,4 +83,5 @@ export {
   minus,
   mul,
   div,
+  downloadFile,
 };

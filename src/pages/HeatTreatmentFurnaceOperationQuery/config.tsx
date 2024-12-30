@@ -68,7 +68,7 @@ const getModalConfig = ({
     ),
   };
 };
-const formConfig: (form?: any) => IFormConfig = (form) => {
+const formConfig: (props?: any) => IFormConfig = ({ form }) => {
   return {
     formExtend: true,
     formItems: () => {
@@ -107,27 +107,27 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         // },
 
         {
-          key: "createTimeStart",
-          name: "创建时间开始",
+          key: "transferTimeStart",
+          name: "流转时间开始",
           children: (
             <DatePicker
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["createTimeEnd"]);
+                  form?.validateFields(["transferTimeEnd"]);
                 }
               }}
             ></DatePicker>
           ),
           rules: [
             (form: any) => {
-              const createTimeStart = form.getFieldValue("createTimeStart");
-              const createTimeEnd = form.getFieldValue("createTimeEnd");
+              const transferTimeStart = form.getFieldValue("transferTimeStart");
+              const transferTimeEnd = form.getFieldValue("transferTimeEnd");
 
               if (
-                createTimeEnd &&
-                createTimeStart &&
-                createTimeEnd < createTimeStart
+                transferTimeEnd &&
+                transferTimeStart &&
+                transferTimeEnd < transferTimeStart
               ) {
                 return {
                   validator: true,
@@ -139,27 +139,27 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           ],
         },
         {
-          key: "createTimeEnd",
-          name: "创建时间结束",
+          key: "transferTimeEnd",
+          name: "流转时间结束",
           children: (
             <DatePicker
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["createTimeStart"]);
+                  form?.validateFields(["transferTimeStart"]);
                 }
               }}
             ></DatePicker>
           ),
           rules: [
             (form: any) => {
-              const createTimeStart = form.getFieldValue("createTimeStart");
-              const createTimeEnd = form.getFieldValue("createTimeEnd");
+              const transferTimeStart = form.getFieldValue("transferTimeStart");
+              const transferTimeEnd = form.getFieldValue("transferTimeEnd");
 
               if (
-                createTimeEnd &&
-                createTimeStart &&
-                createTimeEnd < createTimeStart
+                transferTimeEnd &&
+                transferTimeStart &&
+                transferTimeEnd < transferTimeStart
               ) {
                 return {
                   validator: true,
@@ -195,8 +195,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
     },
     handleDate: true,
     initValues: {
-      createTimeStart: dayjs(),
-      createTimeEnd: dayjs(),
+      transferTimeStart: dayjs(),
+      transferTimeEnd: dayjs(),
       finishStatus: "未完工",
     },
   };
@@ -211,8 +211,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "queryTransferCardNew",
     defaultParam: {
       heatTreatmentFurnacePlatformsStatus: "1",
-      createTimeStart: formatDate(),
-      createTimeEnd: formatDate(),
+      transferTimeStart: formatDate(),
+      transferTimeEnd: formatDate(),
       finishStatus: "未完工",
     },
     noPaging: true,
@@ -336,8 +336,8 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "创建（流转）时间",
         dataIndex: "createTime",
         key: "createTime",
-        width: 100,
-        render: (text) => text?.slice(0, 19),
+        width: 140,
+        render: (text) => text?.slice(0, 10),
       },
 
       {
@@ -356,7 +356,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "材质",
         dataIndex: "material",
         key: "material",
-        width: 100,
+        width: 80,
       },
       {
         title: "流转数量累积",
@@ -370,7 +370,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "流转桶数",
         dataIndex: "barrelageNumebr",
         key: "barrelageNumebr",
-        width: 120,
+        width: 80,
       },
       {
         title: "单桶数量",

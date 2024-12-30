@@ -14,8 +14,8 @@ var requestLz = axios.create({
   baseURL: BASE_URL, //基准地址
   timeout: TIMEOUT,
 });
-//拦截请求
 
+//拦截请求
 requestLz.interceptors.request.use(
   (config) => {
     const token = getToken();

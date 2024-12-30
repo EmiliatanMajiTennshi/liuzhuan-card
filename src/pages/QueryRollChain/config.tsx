@@ -17,7 +17,7 @@ import {
 } from "antd";
 import { RuleObject } from "antd/es/form";
 
-const formConfig: (form?: any) => IFormConfig = (form) => {
+const formConfig: (props?: any) => IFormConfig = ({ form }) => {
   return {
     formExtend: true,
     name: "QueryRollChain",
@@ -55,8 +55,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
-              if (form) {
-                form.validateFields(["createTimeEnd"]);
+              if (form?.validateFields) {
+                form?.validateFields(["createTimeEnd"]);
               }
             }}
           ></DatePicker>
@@ -87,8 +87,8 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
-              if (form) {
-                form.validateFields(["createTimeStart"]);
+              if (form?.validateFields) {
+                form?.validateFields(["createTimeStart"]);
               }
             }}
           ></DatePicker>

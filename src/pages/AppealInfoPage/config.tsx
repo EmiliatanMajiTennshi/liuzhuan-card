@@ -15,7 +15,7 @@ import { SUCCESS_CODE } from "@/constants";
 import { message } from "@/utils";
 import { CustomInput } from "@/components/CustomInput";
 
-const formConfig: (form?: any) => IFormConfig = (form) => {
+const formConfig: (props?: any) => IFormConfig = ({ form }) => {
   return {
     formExtend: true,
     buttons: (props: IButtons) => {
@@ -87,7 +87,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         //       style={{ width: "100%" }}
         //       onChange={() => {
         //         if (form) {
-        //           form.validateFields(["createTimeEnd"]);
+        //           form?.validateFields(["createTimeEnd"]);
         //         }
         //       }}
         //     ></DatePicker>
@@ -119,7 +119,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
         //       style={{ width: "100%" }}
         //       onChange={() => {
         //         if (form) {
-        //           form.validateFields(["createTimeStart"]);
+        //           form?.validateFields(["createTimeStart"]);
         //         }
         //       }}
         //     ></DatePicker>

@@ -60,7 +60,7 @@ const formatDate = (time?: any, format?: string) => {
 };
 
 /** 把时间格式化成YYYY-MM-DD HH:mm:ss*/
-const formatTime = (time: any) => {
+const formatTime = (time?: any) => {
   return dayjs(time).format("YYYY-MM-DD HH:mm:ss");
 };
 
@@ -330,6 +330,14 @@ const transformDateToString = (values: any) => {
     const _tempTime = formatDate(values?.finishTime);
     values.finishTime = _tempTime;
   }
+  if (values?.transferTimeStart) {
+    const _tempTime = formatDate(values?.transferTimeStart);
+    values.transferTimeStart = _tempTime;
+  }
+  if (values.transferTimeEnd) {
+    const _tempTime = formatDate(values?.transferTimeEnd);
+    values.transferTimeEnd = _tempTime;
+  }
   return values;
 };
 
@@ -425,6 +433,29 @@ const div = (a: BigNumber.Value, b: BigNumber.Value) => {
   const newDiv = new BigNumber(a);
   return newDiv.div(b).toNumber();
 };
+function downloadFile(content: string, fileName: string) {
+  let mimeType =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+  if (fileName.endsWith(".docx")) {
+    mimeType =
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  } else if (fileName.endsWith(".pdf")) {
+    mimeType = "application/pdf";
+  } else if (fileName.endsWith(".doc")) {
+    mimeType = "application/msword";
+  }
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
 export {
   getTrackingNumber,
   getLZCardNumber,
@@ -453,4 +484,5 @@ export {
   minus,
   mul,
   div,
+  downloadFile,
 };

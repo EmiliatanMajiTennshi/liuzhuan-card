@@ -98,6 +98,7 @@ export interface IData {
   relation?: string;
   rollChainTraceabilityNumber?: string;
   id?: string | number;
+  u9LineNo?: string;
 }
 
 export interface IFormFields {

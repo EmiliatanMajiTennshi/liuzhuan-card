@@ -4,7 +4,7 @@ import getApi, {
   updateDelmkByTransferCardCode,
 } from "@/api";
 import { kgArr, SUCCESS_CODE } from "@/constants";
-import { message, RenderQRCode, sleep } from "@/utils";
+import { message, plus, RenderQRCode, sleep } from "@/utils";
 import { App, Button, ConfigProvider, Form, Table, Tabs } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import React, { useEffect, useState } from "react";
@@ -175,18 +175,14 @@ const UnfinishedIssueFinishedModal = (props: any) => {
       data: unfinishedData || {},
       values: value32,
       mainsize: unfinishedData?.mainsizeList?.[0] || {},
-      isKg: kgArr.indexOf(unfinishedData?.unit) !== -1,
       flowCardType: "unfinished",
-      tableData: unfinishedData?.processList || unfinishedData?.detailProcesses,
     });
     const params31: any = getParams({
       form: finishedForm,
       data: finishedData || {},
       values: value31,
       mainsize: finishedData?.mainsizeList?.[0] || {},
-      isKg: kgArr.indexOf(finishedData?.unit) !== -1,
       flowCardType: "finished",
-      tableData: finishedData?.processList || finishedData?.detailProcesses,
     });
 
     const now = new Date().getTime();
@@ -243,9 +239,13 @@ const UnfinishedIssueFinishedModal = (props: any) => {
         const [resUnfinished, resFinished] = await Promise.all([
           insertUnfinishedProductsNew({ ...params32, relation: now }),
           (async () => {
-            await sleep(300); // 延迟 1 秒
+            await sleep(1000); // 延迟 1 秒
             return insertfinishedProductsNew({
               ...params31,
+              traceabilityNumber:
+                params31?.traceabilityNumber !== params32?.traceabilityNumber
+                  ? params31?.traceabilityNumber
+                  : plus(params31?.traceabilityNumber, 1),
               relation: now,
             });
           })(),

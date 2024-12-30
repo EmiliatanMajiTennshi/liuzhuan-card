@@ -59,7 +59,7 @@ const getModalConfig = ({
     ),
   };
 };
-const formConfig: (form?: any) => IFormConfig = (form) => {
+const formConfig: (props?: any) => IFormConfig = ({ form }) => {
   return {
     formExtend: true,
     formItems: () => {
@@ -111,7 +111,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["createTimeEnd"]);
+                  form?.validateFields(["createTimeEnd"]);
                 }
               }}
             ></DatePicker>
@@ -143,7 +143,7 @@ const formConfig: (form?: any) => IFormConfig = (form) => {
               style={{ width: "100%" }}
               onChange={() => {
                 if (form) {
-                  form.validateFields(["createTimeStart"]);
+                  form?.validateFields(["createTimeStart"]);
                 }
               }}
             ></DatePicker>

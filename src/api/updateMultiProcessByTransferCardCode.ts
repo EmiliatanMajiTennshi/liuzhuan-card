@@ -3,6 +3,7 @@ import { request } from "@/utils";
 interface IUpdateMultiProcessByTransferCardCode {
   id: number;
   logisticsQuantity: number;
+  transferCardCode: string;
 }
 /**
  * 通过id更新多工序物流数量

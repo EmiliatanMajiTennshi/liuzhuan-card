@@ -86,8 +86,8 @@ const formConfig: (form: any) => IFormConfig = (form) => {
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
-              if (form) {
-                form.validateFields(["finishTimeEnd"]);
+              if (form?.validateFields) {
+                form?.validateFields(["finishTimeEnd"]);
               }
             }}
           ></DatePicker>
@@ -118,8 +118,8 @@ const formConfig: (form: any) => IFormConfig = (form) => {
           <DatePicker
             style={{ width: "100%" }}
             onChange={() => {
-              if (form) {
-                form.validateFields(["finishTimeStart"]);
+              if (form?.validateFields) {
+                form?.validateFields(["finishTimeStart"]);
               }
             }}
           ></DatePicker>

@@ -1,9 +1,10 @@
 import getApi, {
   insertfinishedProductsNew,
+  insertoutsourcingPurchasingNew,
   insertUnfinishedProductsNew,
 } from "@/api";
 import { kgArr, SUCCESS_CODE } from "@/constants";
-import { message, RenderQRCode, sleep } from "@/utils";
+import { message, plus, RenderQRCode, sleep } from "@/utils";
 import { Button, ConfigProvider, Form, Table, Tabs } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import { useEffect, useState } from "react";
@@ -179,53 +180,49 @@ const OutsourcingIssueTogetherModal = (props: any) => {
       data: unfinishedData || {},
       values: value32,
       mainsize: unfinishedData?.mainsizeList?.[0] || {},
-      isKg: kgArr.indexOf(unfinishedData?.unit) !== -1,
-      flowCardType: "unfinished",
-      tableData: unfinishedData?.processList || unfinishedData?.detailProcesses,
+      flowCardType: "outsourcing",
     });
     const params31: any = getParams({
       form: finishedForm,
       data: finishedData || {},
       values: value31,
       mainsize: finishedData?.mainsizeList?.[0] || {},
-      isKg: kgArr.indexOf(finishedData?.unit) !== -1,
       flowCardType: "finished",
-      tableData: finishedData?.processList || finishedData?.detailProcesses,
     });
 
     const now = new Date().getTime();
-    const requiredTrademark31 =
-      params31?.name && params31?.name?.indexOf("外链板") !== -1;
-    const requiredTrademark32 =
-      params32?.name && params32?.name?.indexOf("外链板") !== -1;
-    // 扶梯链不需要商标
-    const isFuti =
-      unfinishedData?.department === "扶梯链" ||
-      finishedData?.department === "扶梯链";
+    // const requiredTrademark31 =
+    //   params31?.name && params31?.name?.indexOf("外链板") !== -1;
+    // const requiredTrademark32 =
+    //   params32?.name && params32?.name?.indexOf("外链板") !== -1;
+    // // 扶梯链不需要商标
+    // const isFuti =
+    //   unfinishedData?.department === "扶梯链" ||
+    //   finishedData?.department === "扶梯链";
     const request32to31 = async () => {
-      if (params31?.trademark && !params32?.trademark && !isFuti) {
-        // 半品有商标，成品没有无法下发
-        message?.error("成品（31）零件没有选择商标，请选择商标后再保存");
-        setSaveLoading(false);
-        return;
-      }
-      if (requiredTrademark31 && !params31?.trademark && !isFuti) {
-        // 零件品名包含 “外链板” 必须选择商标
-        message?.error("该零件成品（31）必须选择商标！");
-        setSaveLoading(false);
-        return;
-      }
-      if (requiredTrademark32 && !params32?.trademark && !isFuti) {
-        // 零件品名包含 “外链板” 必须选择商标
-        message?.error("该零件必须选择商标！");
-        setSaveLoading(false);
-        return;
-      }
-      if (!params32?.process || params32?.process?.length === 0) {
-        message?.error("半品（32）没有工序，无法下发！");
-        setSaveLoading(false);
-        return;
-      }
+      // if (params31?.trademark && !params32?.trademark && !isFuti) {
+      //   // 半品有商标，成品没有无法下发
+      //   message?.error("成品（31）零件没有选择商标，请选择商标后再保存");
+      //   setSaveLoading(false);
+      //   return;
+      // }
+      // if (requiredTrademark31 && !params31?.trademark && !isFuti) {
+      //   // 零件品名包含 “外链板” 必须选择商标
+      //   message?.error("该零件成品（31）必须选择商标！");
+      //   setSaveLoading(false);
+      //   return;
+      // }
+      // if (requiredTrademark32 && !params32?.trademark && !isFuti) {
+      //   // 零件品名包含 “外链板” 必须选择商标
+      //   message?.error("该零件必须选择商标！");
+      //   setSaveLoading(false);
+      //   return;
+      // }
+      // if (!params32?.process || params32?.process?.length === 0) {
+      //   message?.error("半品（32）没有工序，无法下发！");
+      //   setSaveLoading(false);
+      //   return;
+      // }
       if (!params31?.process || params31?.process?.length === 0) {
         message?.error("成品（31）没有工序，无法下发！");
         setSaveLoading(false);
@@ -245,11 +242,16 @@ const OutsourcingIssueTogetherModal = (props: any) => {
 
       try {
         const [resUnfinished, resFinished] = await Promise.all([
-          insertUnfinishedProductsNew({ ...params32, relation: now }),
+          insertoutsourcingPurchasingNew({ ...params32, relation: now }),
           (async () => {
             await sleep(300); // 延迟 1 秒
             return insertfinishedProductsNew({
               ...params31,
+              // 防止重复
+              traceabilityNumber:
+                params31?.traceabilityNumber !== params32?.traceabilityNumber
+                  ? params31?.traceabilityNumber
+                  : plus(params31?.transferNumber, 1).toString(),
               relation: now,
             });
           })(),

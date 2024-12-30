@@ -4,11 +4,23 @@ import {
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
 import { CustomInput } from "@/components/CustomInput";
-import { Input } from "antd";
-
-const formConfig: (form?: any) => IFormConfig = (form) => {
+import { Button } from "antd";
+import { FireOutlined } from "@ant-design/icons";
+const formConfig: (props?: any) => IFormConfig = ({ form, navigate }) => {
   return {
     formExtend: true,
+    extraButtons: [
+      <Button
+        color="primary"
+        type="dashed"
+        onClick={() => {
+          navigate("/heat_treatment_stock");
+        }}
+        icon={<FireOutlined />}
+      >
+        热处理库存
+      </Button>,
+    ],
     formItems: [
       {
         key: "partNumber",
