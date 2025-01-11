@@ -338,6 +338,18 @@ const UnfinishedPrintOutsourcing = React.lazy(() =>
     default: res.UnfinishedPrintOutsourcing,
   }))
 );
+/**生料配发库存 */
+const RawMaterialDistributionInventory = React.lazy(() =>
+  import("@/pages/RawMaterialDistributionInventory").then((res) => ({
+    default: res.RawMaterialDistributionInventory,
+  }))
+);
+/**生料库存已完成配发查询 */
+const QueryPfInfo = React.lazy(() =>
+  import("@/pages/QueryPfInfo").then((res) => ({
+    default: res.QueryPfInfo,
+  }))
+);
 
 /**路由 */
 const routeMap = [
@@ -528,6 +540,14 @@ const routeMap = [
     path: "/unfinished_print_outsourcing",
     element: <UnfinishedPrintOutsourcing />,
   },
+  {
+    path: "/raw_material_distribution_inventory",
+    element: <RawMaterialDistributionInventory />,
+  },
+  {
+    path: "/query_pfinfo",
+    element: <QueryPfInfo />,
+  },
 ];
 
 // 转成对象
@@ -592,6 +612,10 @@ const PrivateRoute = () => {
         {
           path: "heat_treatment_stock",
           element: <HeatTreatmentStock />,
+        },
+        {
+          path: "query_pfinfo",
+          element: <QueryPfInfo />,
         },
         {
           path: "*",

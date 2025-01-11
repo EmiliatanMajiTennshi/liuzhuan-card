@@ -87,4 +87,9 @@ export const EXTEND_TITLE_ARR = [
     parent: "链条流转卡",
     label: "热处理库存",
   },
+  {
+    key: "/query_pfinfo",
+    parent: "链条流转卡",
+    label: "生料库存已完成配发",
+  },
 ];

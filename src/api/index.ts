@@ -125,6 +125,9 @@ import { exportHeatTreatExcel } from "./exportHeatTreatExcel";
 import { queryTransferCardCode } from "./queryTransferCardCode";
 import { reduceFinishPartNumberById } from "./reduceFinishPartNumberById";
 import { queryOutSourcetransferCardRelation } from "./queryOutSourcetransferCardRelation";
+import { queryPfInfo } from "./queryPfInfo";
+import { queryPfInfoByPfId } from "./queryPfInfoByPfId";
+import { insertRawMaterial } from "./insertRawMaterial";
 
 export {
   countProductType,
@@ -181,6 +184,7 @@ export {
   queryReviewFormNumber,
   queryProcess,
   queryReformInfoByItemId,
+  queryPfInfoByPfId,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
@@ -249,6 +253,7 @@ const apisOld = {
   queryReviewFormNumber,
   queryProcess,
   queryReformInfoByItemId,
+  queryPfInfo,
   updateUser,
   updateRoleInfoPermission,
   updateMenuById,
@@ -306,6 +311,7 @@ export {
   queryHeatTreatDashBoard,
   queryTransferCardCode,
   queryOutSourcetransferCardRelation,
+  queryPfInfo,
   reduceFinishPartNumberById,
   supplementByOI,
   insertUnfinishedProductsNew,
@@ -317,6 +323,7 @@ export {
   insertPrintTransferCardNew,
   insertRollChain,
   insertAppealInfo,
+  insertRawMaterial,
   updateTransferCardInfoByCardId,
   updateFTransferCardInfoByCardId,
   updateOTransferCardInfoByCardId,
@@ -370,6 +377,7 @@ const apisNew = {
   queryHeatTreatDashBoard,
   queryTransferCardCode,
   queryOutSourcetransferCardRelation,
+  queryPfInfoByPfId,
   reduceFinishPartNumberById,
   supplementByOI,
   insertUnfinishedProductsNew,
@@ -380,6 +388,7 @@ const apisNew = {
   insertDeliveryNew,
   insertPrintTransferCardNew,
   insertAppealInfo,
+  insertRawMaterial,
   updateTransferCardInfoByCardId,
   updateFTransferCardInfoByCardId,
   updateOTransferCardInfoByCardId,

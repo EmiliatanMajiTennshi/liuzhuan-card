@@ -54,31 +54,18 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
     api: "queryHeatTreatDashBoard",
 
     columns: [
-      //   {
-      //     title: "流转卡类型",
-      //     dataIndex: "transferCardType",
-      //     key: "transferCardType",
-      //     width: 100,
-      //   },
-      //   {
-      //     title: "零件类型",
-      //     dataIndex: "type",
-      //     key: "type",
-      //     width: 100,
-      //   },
-
-      {
-        title: "流转卡编号",
-        dataIndex: "transferCardCode",
-        key: "transferCardCode",
-        width: 160,
-      },
-      {
-        title: "生产订单条码",
-        dataIndex: "orderid",
-        key: "orderid",
-        width: 130,
-      },
+      // {
+      //   title: "流转卡编号",
+      //   dataIndex: "transferCardCode",
+      //   key: "transferCardCode",
+      //   width: 160,
+      // },
+      // {
+      //   title: "生产订单条码",
+      //   dataIndex: "orderid",
+      //   key: "orderid",
+      //   width: 130,
+      // },
 
       {
         title: "入库料号",
@@ -111,12 +98,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "drawNumber",
         width: 120,
       },
-      {
-        title: "字样",
-        dataIndex: "trademark",
-        key: "trademark",
-        width: 120,
-      },
 
       //     title: "入库料号",
       //     dataIndex: "storePartNumber",
@@ -125,19 +106,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
       //   },
 
       {
-        title: "下发时间",
-        dataIndex: "createTime",
-        key: "createTime",
-        width: 100,
-      },
-      {
-        title: "完成时间",
-        dataIndex: "finishTime",
-        key: "finishTime",
-        width: 100,
-      },
-      {
-        title: "流转数量",
+        title: "数量",
         dataIndex: "transferNumber",
         key: "transferNumber",
         width: 100,
@@ -147,12 +116,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         dataIndex: "unit",
         key: "unit",
         width: 60,
-      },
-      {
-        title: "当前工序",
-        dataIndex: "currentProcess",
-        key: "currentProcess",
-        width: 120,
       },
 
       // {

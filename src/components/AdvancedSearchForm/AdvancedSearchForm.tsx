@@ -145,12 +145,10 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
         </Row>
         {!buttons && (
           <div className={styles.formButtons}>
-            {extraButtons && typeof extraButtons !== "function" && (
-              <Form.Item>{extraButtons}</Form.Item>
-            )}
-            {extraButtons && typeof extraButtons === "function" && (
-              <Form.Item>{extraButtons()}</Form.Item>
-            )}
+            {extraButtons && typeof extraButtons !== "function" && extraButtons}
+            {extraButtons &&
+              typeof extraButtons === "function" &&
+              extraButtons()}
 
             <Button
               type="primary"

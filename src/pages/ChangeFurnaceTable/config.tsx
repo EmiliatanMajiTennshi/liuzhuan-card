@@ -3,11 +3,10 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Select } from "antd";
+import { Button, DatePicker, Select } from "antd";
 import { RuleObject } from "antd/es/form";
-
+import { TruckOutlined } from "@ant-design/icons";
 import { insertFurnaceChange } from "@/api";
-import { emptyRenderCustomPlaceHolder } from "@/utils/tableRender";
 import {
   SUCCESS_CODE,
   UPDATE_FAILED,
@@ -17,10 +16,24 @@ import dayjs from "dayjs";
 import { formatTime, message } from "@/utils";
 import { SelectHeatTreatmentFurnacePlatform } from "@/components/SelectHeatTreatmentFurnacePlatform";
 import { CustomInput } from "@/components/CustomInput";
-const formConfig: (props?: any) => IFormConfig = ({ form }) => {
+const formConfig: (props?: any) => IFormConfig = ({ form, navigate }) => {
   return {
     span: 4,
     formExtend: true,
+    extraButtons: () => {
+      return [
+        <Button
+          icon={<TruckOutlined />}
+          type="dashed"
+          danger
+          onClick={() => {
+            navigate("/query_pfinfo");
+          }}
+        >
+          已配发
+        </Button>,
+      ];
+    },
     formItems: () => {
       return [
         {
@@ -306,7 +319,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         width: 160,
       },
       {
-        title: "半品入库数量",
+        title: "半品仓库",
         dataIndex: "halfStoreName",
         key: "halfStoreName",
         width: 160,
