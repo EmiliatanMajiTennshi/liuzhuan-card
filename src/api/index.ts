@@ -128,6 +128,8 @@ import { queryOutSourcetransferCardRelation } from "./queryOutSourcetransferCard
 import { queryPfInfo } from "./queryPfInfo";
 import { queryPfInfoByPfId } from "./queryPfInfoByPfId";
 import { insertRawMaterial } from "./insertRawMaterial";
+import { queryPfInfostatus } from "./queryPfInfostatus";
+import { updatePfStatus } from "./updatePfStatus";
 
 export {
   countProductType,
@@ -311,6 +313,7 @@ export {
   queryHeatTreatDashBoard,
   queryTransferCardCode,
   queryOutSourcetransferCardRelation,
+  queryPfInfostatus,
   queryPfInfo,
   reduceFinishPartNumberById,
   supplementByOI,
@@ -332,6 +335,7 @@ export {
   updatePrintTransferCard,
   updateMultiProcessByTransferCardCode,
   updateDelmkByTransferCardCode,
+  updatePfStatus,
 };
 const apisNew = {
   countProcessUnfinishToStore,
@@ -378,6 +382,7 @@ const apisNew = {
   queryTransferCardCode,
   queryOutSourcetransferCardRelation,
   queryPfInfoByPfId,
+  queryPfInfostatus,
   reduceFinishPartNumberById,
   supplementByOI,
   insertUnfinishedProductsNew,
@@ -397,6 +402,7 @@ const apisNew = {
   updatePrintTransferCard,
   updateMultiProcessByTransferCardCode,
   updateDelmkByTransferCardCode,
+  updatePfStatus,
 };
 
 const apis = {

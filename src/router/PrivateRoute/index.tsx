@@ -350,6 +350,12 @@ const QueryPfInfo = React.lazy(() =>
     default: res.QueryPfInfo,
   }))
 );
+/**生料物流配送 */
+const RawMaterialLogisticsDistribution = React.lazy(() =>
+  import("@/pages/RawMaterialLogisticsDistribution").then((res) => ({
+    default: res.RawMaterialLogisticsDistribution,
+  }))
+);
 
 /**路由 */
 const routeMap = [
@@ -547,6 +553,10 @@ const routeMap = [
   {
     path: "/query_pfinfo",
     element: <QueryPfInfo />,
+  },
+  {
+    path: "/raw_material_logistics_distribution",
+    element: <RawMaterialLogisticsDistribution />,
   },
 ];
 
