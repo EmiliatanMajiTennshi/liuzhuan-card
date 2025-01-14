@@ -51,6 +51,8 @@ export interface ITableConfig {
   defaultPageSize?: number;
   // 不显示总数量
   hideCountView?: boolean;
+  // 刷新不保留列表数据
+  RefreshNoData?: boolean;
 }
 
 /**

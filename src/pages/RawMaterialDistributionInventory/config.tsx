@@ -42,9 +42,9 @@ const formConfig: (props?: any) => IFormConfig = ({ form, navigate }) => {
 const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   const { setRefreshFlag } = props;
   return {
-    rowKey: "id", // 唯一标识
+    rowKey: "customFields1", // 唯一标识
     api: "queryPfInfo",
-
+    RefreshNoData: true,
     columns: [
       {
         title: "零件料号",
@@ -69,6 +69,12 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         title: "材质",
         dataIndex: "customFields3",
         key: "customFields3",
+        width: 100,
+      },
+      {
+        title: "字样",
+        dataIndex: "customFields5",
+        key: "customFields5",
         width: 100,
       },
 
@@ -98,10 +104,10 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         render: (text, record) => {
           return (
             <InputNumber
-              defaultValue={text}
+              // value={record?.pfcountInput || 0}
               onChange={(e) => {
-                console.log(e, 1214);
-                record.pfcount = e;
+                console.log(e, record, 1214);
+                record.pfcountInput = e;
               }}
             />
           );
@@ -141,13 +147,14 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               size="small"
               onClick={() => {
                 insertRawMaterial({
-                  pfcount: record?.pfcount,
+                  pfcount: record?.pfcountInput,
                   pftime: record?.pftime,
                   goodsId: record?.goodsId,
                 }).then((res) => {
                   if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
                     message.success(`${res?.data?.data || UPDATE_SUCCESS}`);
                     setRefreshFlag((flag) => !flag);
+                    record.pfcountInput = 0;
                   } else {
                     message.error(`${res?.data?.data || UPDATE_FAILED}`);
                   }

@@ -3,66 +3,13 @@ import {
   ITableConfig,
   ITableConfigProps,
 } from "@/components/AdvancedSearchTable/AdvancedSearchTableType";
-import { Button, DatePicker, Input, Modal, Select, Tag } from "antd";
-import { RuleObject } from "antd/es/form";
-
-import { formatDate, message, RenderQRCode } from "@/utils";
-import {
-  getHeatTreatmentFurnacePlatformsList,
-  insertDeliveryNew,
-  updatePfStatus,
-} from "@/api";
-import { ERROR_MESSAGE, DEFAULT_ORANGE, SUCCESS_CODE } from "@/constants";
+import { Button, DatePicker, Select, Tag } from "antd";
+import { formatDate, message } from "@/utils";
+import { updatePfStatus } from "@/api";
+import { ERROR_MESSAGE, SUCCESS_CODE } from "@/constants";
 import dayjs from "dayjs";
-import { SelectHeatTreatmentFurnacePlatform } from "@/components/SelectHeatTreatmentFurnacePlatform";
 import { CustomInput } from "@/components/CustomInput";
 
-interface IGetModalConfigProps {
-  barCode: string;
-  transferCardCode: string;
-}
-const getModalConfig = ({
-  barCode,
-  transferCardCode,
-}: IGetModalConfigProps) => {
-  return {
-    title: "二维码",
-    width: 500,
-    closable: true,
-    icon: null,
-
-    content: (
-      <div
-        style={{ margin: 20, display: "flex", justifyContent: "space-between" }}
-      >
-        <RenderQRCode
-          size={100}
-          noTd
-          name="barCode"
-          value={barCode}
-          footer={
-            <span>
-              订单号：<div>{barCode}</div>
-            </span>
-          }
-          notInForm
-        />
-        <RenderQRCode
-          size={100}
-          noTd
-          name="transferCardCode"
-          value={transferCardCode}
-          footer={
-            <>
-              流转卡编号：<div>{transferCardCode}</div>
-            </>
-          }
-          notInForm
-        />
-      </div>
-    ),
-  };
-};
 const formConfig: (props?: any) => IFormConfig = ({ form }) => {
   return {
     formExtend: true,
@@ -100,15 +47,15 @@ const formConfig: (props?: any) => IFormConfig = ({ form }) => {
           ),
           rules: [],
         },
+        {
+          key: "pftime",
+          name: "配发时间",
+          children: <DatePicker style={{ width: "100%" }}></DatePicker>,
+          rules: [],
+        },
       ];
     },
     handleDate: true,
-
-    initValues: {
-      heatTreatmentDelivery: "未完成",
-      createTimeStart: dayjs(),
-      createTimeEnd: dayjs(),
-    },
   };
 };
 
@@ -117,14 +64,6 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
   return {
     rowKey: "id", // 唯一标识
     api: "queryPfInfostatus",
-    queryFlowCardApi: "clickTransferCard",
-    flowCardType: "flowCard",
-    noPaging: true,
-    defaultParam: {
-      heatTreatmentDelivery: "未完成",
-      createTimeStart: formatDate(),
-      createTimeEnd: formatDate(),
-    },
     columns: [
       {
         title: "入库料号",
@@ -151,6 +90,7 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
         key: "customFields3",
         width: 100,
       },
+
       {
         title: "库名",
         dataIndex: "house_name",
@@ -214,9 +154,10 @@ const tableConfig: (props: ITableConfigProps) => ITableConfig = (props) => {
               type="primary"
               size="small"
               onClick={async () => {
-                const { goodsId } = record;
+                const { goodsId, pftime } = record;
                 const res = await updatePfStatus({
                   goodsId,
+                  pftime,
                 });
                 if (SUCCESS_CODE.indexOf(res?.data?.code) !== -1) {
                   message.success(res?.data?.data);

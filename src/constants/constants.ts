@@ -65,7 +65,7 @@ export const DEFAULT_ORANGE = "#ffa940";
 export const GET_TABLE_OPTIONS_ERROR = "获取列表下拉数据失败";
 
 /**请求成功CODE */
-export const SUCCESS_CODE = [20000, 200, 601, 604];
+export const SUCCESS_CODE = [20000, 200, 601, 604, 605];
 
 /**需要自检的页面 */
 export const SELF_CHECK_LIST = ["flowCard"];

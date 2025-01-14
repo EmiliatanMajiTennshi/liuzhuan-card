@@ -12,6 +12,16 @@ module.exports = function (app) {
     })
   );
   app.use(
+    "/targetMJ",
+    createProxyMiddleware({
+      target: "http://192.168.20.8:8087",
+      changeOrigin: true,
+      pathRewrite: {
+        "/targetMJ": "",
+      },
+    })
+  );
+  app.use(
     "/apiDJ",
     createProxyMiddleware({
       target: "http://192.168.20.222:90/lz",

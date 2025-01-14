@@ -2,6 +2,7 @@ import { request } from "@/utils";
 
 interface IUpdatePfStatus {
   goodsId: string;
+  pftime: string;
 }
 
 /**

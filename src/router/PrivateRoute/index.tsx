@@ -356,6 +356,12 @@ const RawMaterialLogisticsDistribution = React.lazy(() =>
     default: res.RawMaterialLogisticsDistribution,
   }))
 );
+/**模具信息 */
+const MoldInfo = React.lazy(() =>
+  import("@/pages/MoldInfo").then((res) => ({
+    default: res.MoldInfo,
+  }))
+);
 
 /**路由 */
 const routeMap = [
@@ -557,6 +563,10 @@ const routeMap = [
   {
     path: "/raw_material_logistics_distribution",
     element: <RawMaterialLogisticsDistribution />,
+  },
+  {
+    path: "/mold_info",
+    element: <MoldInfo />,
   },
 ];
 

@@ -106,6 +106,7 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     issuedFlowCardApi,
     defaultPageSize,
     hideCountView,
+    RefreshNoData,
   } = _tableConfig;
 
   // 获取当前页面table数据的请求
@@ -119,6 +120,10 @@ const AdvancedSearchTable = (props: IAdvancedSearchTable) => {
     pageNum: currentPage,
   };
   const fetchData = async () => {
+    if (RefreshNoData) {
+      setSearchedData([]);
+    }
+
     try {
       setLoading(true);
       setSelectedRowKeys([]);

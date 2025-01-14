@@ -338,6 +338,10 @@ const transformDateToString = (values: any) => {
     const _tempTime = formatDate(values?.transferTimeEnd);
     values.transferTimeEnd = _tempTime;
   }
+  if (values.pftime) {
+    const _tempTime = formatDate(values?.pftime);
+    values.pftime = _tempTime;
+  }
   return values;
 };
 

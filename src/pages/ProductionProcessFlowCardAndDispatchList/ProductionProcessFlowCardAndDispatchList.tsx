@@ -465,12 +465,12 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     });
     const isSemiFinished = data?.itmid?.startsWith("32");
     const isFinished = data?.itmid?.startsWith("31");
-
     // 非自制
     const isSelf =
-      data?.type?.indexOf("自制") !== -1 ||
-      data?.type?.indexOf("补单") !== -1 ||
-      data?.type?.indexOf("盘点") !== -1;
+      data?.type &&
+      (data?.type?.indexOf("自制") !== -1 ||
+        data?.type?.indexOf("补单") !== -1 ||
+        data?.type?.indexOf("盘点") !== -1);
 
     if (flowCardType === "rework") {
       const cloneErrors = cloneDeep(errors);

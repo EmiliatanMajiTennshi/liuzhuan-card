@@ -130,6 +130,7 @@ import { queryPfInfoByPfId } from "./queryPfInfoByPfId";
 import { insertRawMaterial } from "./insertRawMaterial";
 import { queryPfInfostatus } from "./queryPfInfostatus";
 import { updatePfStatus } from "./updatePfStatus";
+import { findMoldInfo } from "./findMoldInfo";
 
 export {
   countProductType,
@@ -209,6 +210,7 @@ const apisOld = {
   deleteRoleInfoByRoleId,
   deleteMenuById,
   deletePermissionById,
+
   getMenu,
   getUserInfo,
   getUserList,
@@ -273,6 +275,7 @@ export {
   countProcessUnfinishToStoreYestereday,
   countProcessUnfinishToStoreMonth,
   exportHeatTreatExcel,
+  findMoldInfo,
   getUnfinishedProducts,
   getFinishedProducts,
   getOutsourcingPurchasing,
@@ -342,6 +345,7 @@ const apisNew = {
   countProcessUnfinishToStoreYestereday,
   countProcessUnfinishToStoreMonth,
   exportHeatTreatExcel,
+  findMoldInfo,
   getUnfinishedProducts,
   getFinishedProducts,
   getOutsourcingPurchasing,
