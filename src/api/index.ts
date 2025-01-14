@@ -131,6 +131,7 @@ import { insertRawMaterial } from "./insertRawMaterial";
 import { queryPfInfostatus } from "./queryPfInfostatus";
 import { updatePfStatus } from "./updatePfStatus";
 import { findMoldInfo } from "./findMoldInfo";
+import { addMoldInfo } from "./addMoldInfo";
 
 export {
   countProductType,
@@ -271,6 +272,7 @@ const apisOld = {
 };
 
 export {
+  addMoldInfo,
   countProcessUnfinishToStore,
   countProcessUnfinishToStoreYestereday,
   countProcessUnfinishToStoreMonth,
@@ -341,6 +343,7 @@ export {
   updatePfStatus,
 };
 const apisNew = {
+  addMoldInfo,
   countProcessUnfinishToStore,
   countProcessUnfinishToStoreYestereday,
   countProcessUnfinishToStoreMonth,

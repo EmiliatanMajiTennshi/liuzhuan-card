@@ -425,7 +425,7 @@ const ProductionProcessFlowCardAndDispatchList = (props: {
     );
   }, [data]);
 
-  const isOnly32 = data?.orderid?.endsWith("BL");
+  // const isOnly32 = data?.orderid?.endsWith("BL");
 
   const isRework = useMemo(() => {
     return (

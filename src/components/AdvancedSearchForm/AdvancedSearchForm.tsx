@@ -148,7 +148,14 @@ const AdvancedSearchForm = (props: IAdvancedSearchForm) => {
             {extraButtons && typeof extraButtons !== "function" && extraButtons}
             {extraButtons &&
               typeof extraButtons === "function" &&
-              extraButtons()}
+              extraButtons({
+                selectedRowKeys,
+                setRefreshFlag,
+                modal,
+                buttonLoading,
+                setButtonLoading,
+                loading,
+              })}
 
             <Button
               type="primary"

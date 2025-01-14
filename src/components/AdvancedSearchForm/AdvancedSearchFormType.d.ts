@@ -55,7 +55,7 @@ export interface IFormConfig {
   handleDate?: boolean;
   name?: string;
   initValues?: AnyObject;
-  extraButtons?: Button[] | ((props?: IButtons) => Button[]);
+  extraButtons?: Button[] | ((props: IButtons) => Button[]);
 }
 
 /**
